@@ -35,12 +35,16 @@ function editable(modelNode, propertyName, extraClasses) {
     }}, [])
 }
 
+function row() {
+    return h("div.row", {}, Array.from(arguments));
+}
+
 window.render_calc = function(modelNode) {
     return h('div#calc.editor', {}, [
-        h("div.row", {}, [
+        row(
             h("span.title.fixed", {}, ["Calculations"]),
             editable(modelNode, "name", "title")
-            ])
+        )
     ])
 };
 
