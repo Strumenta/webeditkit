@@ -1,3 +1,21 @@
 body {
     font-family: monospace;
 }
+
+input.editable {
+    background-color: #DEF7FF;
+    padding: 5px;
+    border-style: none;
+}
+
+span.fixed {
+    margin-right:0.4em;
+}
+
+.title {
+    font-size: 1.4em;
+}
+
+input:invalid {
+    background-color: #FFBDB3;
+}

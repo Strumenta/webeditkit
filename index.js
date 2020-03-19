@@ -7,6 +7,7 @@ var patch = snabbdom.init([ // Init patch function with chosen modules
 ]);
 var h = require('snabbdom/h').default; // helper function for creating vnodes
 const toVNode = require('snabbdom/tovnode').default;
+const uiutils = require('./uiutils.js');
 
 function dataToNode(data) {
     if (data == null) {
@@ -54,9 +55,28 @@ class ModelNode {
 
 window.render_calc = function() {
     return h('div#calc.editor', {}, [
-        h("h1", {}, ["Calculations"])
+        h("span.title.fixed", {}, ["Calculations"]),
+        h("input.editable.title", {
+            props:{
+                value: "ciao",
+                //value:window.datamodel.activity.labelText(),
+                required: true
+            },
+            hook: { insert: addAutoresize, update: triggerResize },
+            /*on: { keyup: function(e){
+                    triggerChangeOnPropertyNode(window.activity.childByLinkName("label").idString(), "text", $(e.target).val());
+                }
+            }*/}, [])
     ])
 };
+
+function addAutoresize(vnode) {
+    $(vnode.elm).autoresize(myAutoresizeOptions);
+}
+
+function triggerResize(vnode) {
+    $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
+}
 
 function renderDataModels() {
     console.log("render", window.datamodel);
@@ -94,5 +114,6 @@ function loadDataModel(model, nodeId, target) {
 }
 
 $('document').ready(function(){
+    uiutils.installAutoresize();
     loadDataModel("com.strumenta.financialcalc.sandbox.company", "324292001770075100", "calc");
 });
