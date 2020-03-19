@@ -8,65 +8,39 @@ var patch = snabbdom.init([ // Init patch function with chosen modules
 var h = require('snabbdom/h').default; // helper function for creating vnodes
 const toVNode = require('snabbdom/tovnode').default;
 const uiutils = require('./uiutils.js');
+const datamodel = require('./datamodel.js');
+const wscommunication = require('./wscommunication.js');
 
-function dataToNode(data) {
-    if (data == null) {
-        return null;
-    }
-    return new ModelNode(data)
+function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
+    console.log("triggerChangeOnPropertyNode", modelNode, propertyName, propertyValue);
+    window.wscommunication.sendJSON({
+        type: "propertyChange",
+        nodeId: modelNode.idString(),
+        modelName: modelNode.modelName,
+        propertyName: propertyName,
+        propertyValue: propertyValue
+    });
 }
 
-class ModelNode {
-    constructor(data) {
-        this.data = data;
-    }
-    childByLinkName(linkName) {
-        let filtered = this.data.children.filter(function(el){return el.containingLink == linkName;})
-        if (filtered.length == 0) {
-            return null;
-        } else if (filtered.length == 1) {
-            return dataToNode(filtered[0]);
-        } else {
-            throw "Unexpected to find multiple children for link name " + linkName;
+function editable(modelNode, propertyName, extraClasses) {
+    return h("input.editable.title", {
+    props:{
+        value: modelNode.property(propertyName),
+        required: true
+    },
+    hook: { insert: addAutoresize, update: triggerResize },
+    on: { keyup: function(e){
+            triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
         }
-    }
-    childrenByLinkName(linkName) {
-        let filtered = this.data.children.filter(function(el){return el.containingLink == linkName;})
-        return $(filtered).map(function() { return dataToNode(this); });
-    }
-    property(propertyName) {
-        return this.data.properties[propertyName];
-    }
-    ref(referenceName) {
-        return new Ref(this.data.refs[referenceName]);
-    }
-    name() {
-        return this.property("name");
-    }
-    idString() {
-        return this.data.id.regularId;
-    }
-    simpleConceptName() {
-        let parts = this.data.concept.split(".");
-        let simpleName = parts[parts.length - 1];
-        return simpleName;
-    }
+    }}, [])
 }
 
-window.render_calc = function() {
+window.render_calc = function(modelNode) {
     return h('div#calc.editor', {}, [
-        h("span.title.fixed", {}, ["Calculations"]),
-        h("input.editable.title", {
-            props:{
-                value: "ciao",
-                //value:window.datamodel.activity.labelText(),
-                required: true
-            },
-            hook: { insert: addAutoresize, update: triggerResize },
-            /*on: { keyup: function(e){
-                    triggerChangeOnPropertyNode(window.activity.childByLinkName("label").idString(), "text", $(e.target).val());
-                }
-            }*/}, [])
+        h("div.row", {}, [
+            h("span.title.fixed", {}, ["Calculations"]),
+            editable(modelNode, "name", "title")
+            ])
     ])
 };
 
@@ -78,8 +52,7 @@ function triggerResize(vnode) {
     $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-function renderDataModels() {
-    console.log("render", window.datamodel);
+window.renderDataModels = function() {
     if (window.datamodel == undefined) {
         return;
     }
@@ -88,10 +61,8 @@ function renderDataModels() {
     for (var i=0;i<keys.length;i++) {
         let key = keys[i];
         let renderFunctionName = "render_" + key;
-        console.log("renderFunctionName", renderFunctionName);
         let renderFunction = window[renderFunctionName];
-        console.log("renderFunction", renderFunction);
-        let vnode = renderFunction();
+        let vnode = renderFunction(window.datamodel[key]);
         if (window.vnodes == undefined) {
             window.vnodes = {};
         }
@@ -106,14 +77,16 @@ function loadDataModel(model, nodeId, target) {
     let nodeURL = "http://localhost:2904/models/" + model + "/" + nodeId;
     $.getJSON(nodeURL, function(data) {
         if (window.datamodel == undefined) {
-            window.datamodel = {}
+            window.datamodel = {};
         }
-        window.datamodel[target] = dataToNode(data);
+        window.datamodel[target] = datamodel.dataToNode(data);
+        window.datamodel[target].injectModelName(model);
         renderDataModels();
     });
 }
 
 $('document').ready(function(){
     uiutils.installAutoresize();
+    window.wscommunication = new wscommunication.WsCommunication("com.strumenta.financialcalc.sandbox.company", "calc");
     loadDataModel("com.strumenta.financialcalc.sandbox.company", "324292001770075100", "calc");
 });
