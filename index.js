@@ -80,9 +80,8 @@ function registererRenderer(name, renderer) {
 }
 
 function getRenderer(name) {
-    console.log("getRenderer", name);
-    if (window.renderers == undefined) {
-        return null;
+    if ((window.renderers == undefined) || !(name in window.renderers)){
+        throw "No renderer found for " + name;
     }
     return window.renderers[name];
 }
@@ -91,14 +90,28 @@ registererRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
     if (modelNode == undefined) {
         throw "modelNode should not be undefined in renderer";
     }
-    return horizontalGroupCell(editableCell(modelNode, "name"),
-        fixedCell("of type", ["keyword"]));
+    return horizontalGroupCell(
+        editableCell(modelNode, "name"),
+        fixedCell("of type", ["keyword"]),
+        childCell(modelNode, "type"));
 });
+
+registererRenderer("com.strumenta.financialcalc.StringType", function(modelNode) {
+    return fixedCell("string", ["type"]);
+});
+
+function renderModelNode(modelNode) {
+    return getRenderer(modelNode.conceptName())(modelNode);
+}
+
+function childCell(modelNode, containmentName) {
+    return renderModelNode(modelNode.childByLinkName(containmentName));
+}
 
 function verticalCollectionCell(modelNode, containmentName) {
     return h('div.vertical-collection', {},
         map(modelNode.childrenByLinkName(containmentName), function () {
-            return row(getRenderer(this.conceptName())(this));
+            return row(renderModelNode(this));
         }));
 }
 

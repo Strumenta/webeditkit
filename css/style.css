@@ -35,6 +35,11 @@ div.row {
     color: darkblue;
 }
 
+.type {
+    font-weight: bold;
+    color: darkgreen;
+}
+
 div.tab {
     min-width: 2em;
     display: inline-block;
