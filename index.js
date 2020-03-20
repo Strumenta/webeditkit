@@ -16,7 +16,7 @@ function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
     window.wscommunication.sendJSON({
         type: "propertyChange",
         nodeId: modelNode.idString(),
-        modelName: modelNode.modelName,
+        modelName: modelNode.modelName(),
         propertyName: propertyName,
         propertyValue: propertyValue
     });
@@ -50,7 +50,11 @@ function fixedCell(text, extraClasses) {
 }
 
 function row() {
-    return h("div.row", {}, Array.from(arguments));
+    return h("div.row", {}, flattenArray(arguments));
+}
+
+function flattenArray(value) {
+    return Array.from(value).flat();
 }
 
 function emptyRow() {
@@ -61,21 +65,28 @@ function tabCell() {
     return h("div.tab", {}, []);
 }
 
+function map(originalArray, op) {
+    return Array.from($(originalArray).map(op));
+}
+
 window.render_calc = function(modelNode) {
-    return h('div#calc.editor', {}, [
+    return h('div#calc.editor', {}, flattenArray([
         row(
             fixedCell("Calculations", ["title"]),
             editableCell(modelNode, "name", ["title"])
         ),
         emptyRow(),
         row(
-            fixedCell("inputs:", ["keyword"])
+            fixedCell("inputs:", ["strong"])
         ),
-        row(
-            tabCell(),
-            fixedCell("foo")
-        )
-    ])
+        map(modelNode.childrenByLinkName("inputs"), function () {
+            return row(
+                tabCell(),
+                editableCell(this, "name"),
+                fixedCell("of type", ["keyword"])
+            );
+        })
+    ]))
 };
 
 function addAutoresize(vnode) {

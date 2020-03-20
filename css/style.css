@@ -6,6 +6,7 @@ input.editable {
     background-color: #DEF7FF;
     padding: 5px;
     border-style: none;
+    margin-right:0.4em;
 }
 
 span.fixed {
@@ -22,6 +23,11 @@ input:invalid {
 
 div.row {
     min-height: 1em;
+}
+
+.strong {
+    font-weight: bold;
+    color: black;
 }
 
 .keyword {

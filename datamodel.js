@@ -41,12 +41,13 @@ class ModelNode {
         return simpleName;
     }
     injectModelName(modelName) {
-        this.modelName = modelName;
+        this.data.modelName = modelName;
         $(this.data.children).each(function () {
-           $(this.children).each(function () {
-               dataToNode(this).injectModelName(modelName);
-           });
+            dataToNode(this).injectModelName(modelName);
         });
+    }
+    modelName() {
+        return this.data.modelName;
     }
 }
 
