@@ -1,4 +1,5 @@
 //const renderer = require('./renderer');
+const datamodel = require('./datamodel.js');
 
 function findNode(root, searchedID) {
     if (root.id.regularId == searchedID.regularId) {
@@ -31,13 +32,24 @@ class WsCommunication {
             console.log("onmessage", event);
             let data = JSON.parse(event.data);
             console.log("  data: ", data);
-            console.log("  window.datamodel: ", window.datamodel);
-            console.log("  localName: ", localName);
-            let node = findNode(window.datamodel[localName].data, data.nodeId);
-            console.log("  node: ", node);
-            node.properties[data.propertyName] = data.propertyValue;
-            console.log("  changed: ", node);
-            renderDataModels();
+            if (data.type == "propertyChange") {
+                console.log("  window.datamodel: ", window.datamodel);
+                console.log("  localName: ", localName);
+                let node = findNode(window.datamodel[localName].data, data.nodeId);
+                console.log("  node: ", node);
+                node.properties[data.propertyName] = data.propertyValue;
+                console.log("  changed: ", node);
+                renderDataModels();
+            } else if (data.type == "nodeAdded") {
+                console.log("NODE ADDED");
+                let parentNode = findNode(window.datamodel[localName].data, data.parentNodeId);
+                console.log("parentNode", parentNode);
+                // TODO consider index
+                new datamodel.ModelNode(parentNode).addChild(data.relatioName, data.index, data.child);
+                renderDataModels();
+            } else {
+                throw "Unknown change type: " + data.type;
+            }
         };
     }
 

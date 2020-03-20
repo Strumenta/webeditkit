@@ -52,6 +52,10 @@ class ModelNode {
     modelName() {
         return this.data.modelName;
     }
+    addChild(relationName, index, childData){
+        this.data.children.push(childData);
+        new ModelNode(childData).injectModelName(this.data.modelName);
+    }
 }
 
 module.exports.dataToNode = dataToNode;

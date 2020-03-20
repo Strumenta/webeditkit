@@ -100,6 +100,10 @@ registererRenderer("com.strumenta.financialcalc.StringType", function(modelNode)
     return fixedCell("string", ["type"]);
 });
 
+registererRenderer("com.strumenta.financialcalc.Type", function(modelNode) {
+    return fixedCell("<TYPE>", ["type"]);
+});
+
 function renderModelNode(modelNode) {
     return getRenderer(modelNode.conceptName())(modelNode);
 }
