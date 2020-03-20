@@ -22,8 +22,13 @@ function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
     });
 }
 
-function editable(modelNode, propertyName, extraClasses) {
-    return h("input.editable.title", {
+function editableCell(modelNode, propertyName, extraClasses) {
+    extraClasses = extraClasses || [];
+    extraClassesStr = "";
+    if (extraClasses.length > 0) {
+        extraClassesStr = "." + extraClasses.join(".");
+    }
+    return h("input.editable" + extraClassesStr, {
     props:{
         value: modelNode.property(propertyName),
         required: true
@@ -35,15 +40,40 @@ function editable(modelNode, propertyName, extraClasses) {
     }}, [])
 }
 
+function fixedCell(text, extraClasses) {
+    extraClasses = extraClasses || [];
+    extraClassesStr = "";
+    if (extraClasses.length > 0) {
+        extraClassesStr = "." + extraClasses.join(".");
+    }
+    return h("span.fixed" + extraClassesStr, {}, [text]);
+}
+
 function row() {
     return h("div.row", {}, Array.from(arguments));
+}
+
+function emptyRow() {
+    return row();
+}
+
+function tabCell() {
+    return h("div.tab", {}, []);
 }
 
 window.render_calc = function(modelNode) {
     return h('div#calc.editor', {}, [
         row(
-            h("span.title.fixed", {}, ["Calculations"]),
-            editable(modelNode, "name", "title")
+            fixedCell("Calculations", ["title"]),
+            editableCell(modelNode, "name", ["title"])
+        ),
+        emptyRow(),
+        row(
+            fixedCell("inputs:", ["keyword"])
+        ),
+        row(
+            tabCell(),
+            fixedCell("foo")
         )
     ])
 };
@@ -75,7 +105,7 @@ window.renderDataModels = function() {
         }
         window.vnodes[key] = patch(window.vnodes[key], vnode);
     }
-}
+};
 
 function loadDataModel(model, nodeId, target) {
     let nodeURL = "http://localhost:2904/models/" + model + "/" + nodeId;
