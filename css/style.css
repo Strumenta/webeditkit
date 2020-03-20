@@ -39,3 +39,11 @@ div.tab {
     min-width: 2em;
     display: inline-block;
 }
+
+div.vertical-collection {
+    display: inline-block;
+}
+
+div.horizontal-group {
+    display: inline-block;
+}

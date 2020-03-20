@@ -23,6 +23,9 @@ function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
 }
 
 function editableCell(modelNode, propertyName, extraClasses) {
+    if (modelNode == undefined) {
+        throw "modelNode should not be undefined";
+    }
     extraClasses = extraClasses || [];
     extraClassesStr = "";
     if (extraClasses.length > 0) {
@@ -69,6 +72,40 @@ function map(originalArray, op) {
     return Array.from($(originalArray).map(op));
 }
 
+function registererRenderer(name, renderer) {
+    if (window.renderers == undefined) {
+        window.renderers = {};
+    }
+    window.renderers[name] = renderer;
+}
+
+function getRenderer(name) {
+    console.log("getRenderer", name);
+    if (window.renderers == undefined) {
+        return null;
+    }
+    return window.renderers[name];
+}
+
+registererRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
+    if (modelNode == undefined) {
+        throw "modelNode should not be undefined in renderer";
+    }
+    return horizontalGroupCell(editableCell(modelNode, "name"),
+        fixedCell("of type", ["keyword"]));
+});
+
+function verticalCollectionCell(modelNode, containmentName) {
+    return h('div.vertical-collection', {},
+        map(modelNode.childrenByLinkName(containmentName), function () {
+            return row(getRenderer(this.conceptName())(this));
+        }));
+}
+
+function horizontalGroupCell(modelNode) {
+    return h('div.horizontal-group', {}, flattenArray(arguments));
+}
+
 window.render_calc = function(modelNode) {
     return h('div#calc.editor', {}, flattenArray([
         row(
@@ -79,13 +116,9 @@ window.render_calc = function(modelNode) {
         row(
             fixedCell("inputs:", ["strong"])
         ),
-        map(modelNode.childrenByLinkName("inputs"), function () {
-            return row(
-                tabCell(),
-                editableCell(this, "name"),
-                fixedCell("of type", ["keyword"])
-            );
-        })
+        row(
+            tabCell(),
+            verticalCollectionCell(modelNode, 'inputs'))
     ]))
 };
 

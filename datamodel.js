@@ -35,6 +35,9 @@ class ModelNode {
     idString() {
         return this.data.id.regularId;
     }
+    conceptName() {
+        return this.data.concept;
+    }
     simpleConceptName() {
         let parts = this.data.concept.split(".");
         let simpleName = parts[parts.length - 1];
