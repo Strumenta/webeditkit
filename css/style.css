@@ -25,6 +25,11 @@ input:invalid {
     background-color: #FFBDB3;
 }
 
+.missing-element {
+    background-color: #FFBDB3;
+    color: gray;
+}
+
 .default-cell-concrete {
     background-color: #b123ff;
 }

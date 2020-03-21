@@ -12,18 +12,6 @@ const datamodel = require('./datamodel.js');
 const wscommunication = require('./wscommunication.js');
 const autocomplete = require('autocompleter');
 
-// TODO move to wscommunication
-function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
-    console.log("triggerChangeOnPropertyNode", modelNode, propertyName, propertyValue);
-    window.wscommunication.sendJSON({
-        type: "propertyChange",
-        nodeId: modelNode.idString(),
-        modelName: modelNode.modelName(),
-        propertyName: propertyName,
-        propertyValue: propertyValue
-    });
-}
-
 function editableCell(modelNode, propertyName, extraClasses, opts) {
     let placeholder = "<no " + propertyName+">";
     if (modelNode == undefined) {
@@ -42,7 +30,7 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
     },
     hook: { insert: addAutoresize, update: triggerResize },
     on: { keyup: function(e){
-            triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
+            window.wscommunication.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
         }
     }}, [])
 }
@@ -80,11 +68,12 @@ function installAutocomplete(vnode, valuesProvider, fixed) {
         fetch: function (text, update) {
             text = text.toLowerCase();
             //var suggestions = ["A", "B", "C", "doo", "foo"];
-            let suggestions = valuesProvider();
-            if (!fixed) {
-                suggestions = suggestions.filter(n => n.label.toLowerCase().startsWith(text));
-            }
-            update(suggestions);
+            valuesProvider(function(suggestions) {
+                if (!fixed) {
+                    suggestions = suggestions.filter(n => n.label.toLowerCase().startsWith(text));
+                }
+                update(suggestions);
+            });
         },
         onSelect: function (item) {
             item.execute();
@@ -158,6 +147,40 @@ function alternativesProvider(modelNode) {
     }
 }
 
+// function alternativesProvider2(modelNode) {
+//     return function() {
+//         return [
+//             {
+//                 label: "boolean",
+//                 execute: function () {
+//                     window.wscommunication.addChild(modelNode, 'type', 'com.strumenta.financialcalc.BooleanType');
+//                 }
+//             },
+//             {
+//                 label: "string",
+//                 execute: function () {
+//                     console.log("selected string");
+//                 }}];
+//     }
+// }
+
+function alternativesProviderForAddingChild(modelNode, containmentName) {
+    // we should get all the alternatives from the server
+    return function (alternativesUser) {
+        window.wscommunication.askAlternatives(modelNode, containmentName, function (alternatives) {
+           let adder = function(conceptName){
+               return function() {
+                   window.wscommunication.addChild(modelNode, containmentName, conceptName);
+               };
+           };
+           let uiAlternatives = Array.from($(alternatives).map(function(){ return {label: this.alias, execute: adder(this.conceptName)}}));
+           console.log("uiAlternatives", uiAlternatives);
+           window.uia = uiAlternatives;
+           alternativesUser(uiAlternatives);
+        });
+    };
+}
+
 function getDefaultRenderer(modelNode) {
     let abstractConcept = modelNode.isAbstract();
     let conceptName = modelNode.simpleConceptName();
@@ -223,7 +246,11 @@ function renderModelNode(modelNode) {
 }
 
 function childCell(modelNode, containmentName) {
-    return renderModelNode(modelNode.childByLinkName(containmentName));
+    let child = modelNode.childByLinkName(containmentName);
+    if (child == null) {
+        return fixedCell("<no "+containmentName + ">", ["missing-element"], alternativesProviderForAddingChild(modelNode, containmentName));
+    }
+    return renderModelNode(child);
 }
 
 function verticalCollectionCell(modelNode, containmentName) {
@@ -233,8 +260,8 @@ function verticalCollectionCell(modelNode, containmentName) {
     let children = modelNode.childrenByLinkName(containmentName);
     if (children.length == 0) {
         return h('div.vertical-collection', {}, [
-            fixedCell("<< ... >>", ['empty-collection'], function () {
-                return [{label: "Input", execute: addInputChild}];
+            fixedCell("<< ... >>", ['empty-collection'], function (alternativesUser) {
+                alternativesUser([{label: "Input", execute: addInputChild}]);
             })]);
     } else {
         return h('div.vertical-collection', {},

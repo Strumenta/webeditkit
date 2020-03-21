@@ -15,12 +15,20 @@ function findNode(root, searchedID) {
     }
 }
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 class WsCommunication {
 
     constructor(modelName, localName) {
         this.ws = new WebSocket("ws://localhost:2904/socket");
         this.modelName = modelName;
         this.localName = localName;
+        this.callbacks = {};
         console.log("connected to ws -> ", this.ws);
 
         this.ws.onopen = function(event) {
@@ -28,6 +36,7 @@ class WsCommunication {
 
         };
 
+        let thisWS = this;
         this.ws.onmessage = function(event) {
             console.log("onmessage", event);
             let data = JSON.parse(event.data);
@@ -54,7 +63,11 @@ class WsCommunication {
                 // TODO consider index
                 new datamodel.ModelNode(parentNode).removeChild(data.relatioName, data.child);
                 renderDataModels();
+            } else if (data.type == "AnswerAlternatives") {
+                let alternativesReceiver = thisWS.callbacks[data.requestId];
+                alternativesReceiver(data.items);
             } else {
+                console.log("data", data);
                 throw "Unknown change type: " + data.type;
             }
         };
@@ -87,6 +100,29 @@ class WsCommunication {
             container: container.idString(),
             containmentName: containmentName,
             conceptToInstantiate: conceptName
+        });
+    }
+
+    triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
+        window.wscommunication.sendJSON({
+            type: "propertyChange",
+            nodeId: modelNode.idString(),
+            modelName: modelNode.modelName(),
+            propertyName: propertyName,
+            propertyValue: propertyValue
+        });
+    }
+
+    askAlternatives(modelNode, containmentName, alternativesReceiver) {
+        // we generate a UUID and ask the server to answer us using such UUID
+        let uuid = uuidv4();
+        this.callbacks[uuid] = alternativesReceiver;
+        window.wscommunication.sendJSON({
+            type: "askAlternatives",
+            requestId: uuid,
+            modelName: modelNode.modelName(),
+            nodeId: modelNode.idString(),
+            containmentName: containmentName
         });
     }
 }
