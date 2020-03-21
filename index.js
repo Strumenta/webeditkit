@@ -135,24 +135,16 @@ function verticalCollectionCell(modelNode, containmentName) {
         }));
 }
 
-function horizontalGroupCell(modelNode) {
+function horizontalGroupCell() {
     return h('div.horizontal-group', {}, flattenArray(arguments));
 }
 
+function verticalGroupCell() {
+    return h('div.vertical-group', {}, flattenArray(arguments));
+}
+
 window.render_calc = function(modelNode) {
-    return h('div#calc.editor', {}, flattenArray([
-        row(
-            fixedCell("Calculations", ["title"]),
-            editableCell(modelNode, "name", ["title"])
-        ),
-        emptyRow(),
-        row(
-            fixedCell("inputs:", ["strong"])
-        ),
-        row(
-            tabCell(),
-            verticalCollectionCell(modelNode, 'inputs'))
-    ]))
+    return h('div#calc.editor', {}, [renderModelNode(modelNode)])
 };
 
 function addAutoresize(vnode) {
