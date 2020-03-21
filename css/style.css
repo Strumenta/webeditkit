@@ -79,3 +79,8 @@ input.fixed {
 .autocomplete-item {
     padding: 2px;
 }
+
+.autocomplete-item.selected {
+    background-color: #475D9D;
+    color: white;
+}

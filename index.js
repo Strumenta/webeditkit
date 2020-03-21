@@ -85,6 +85,14 @@ function installAutocomplete(vnode, valuesProvider) {
         onSelect: function (item) {
             //autocompleteTriggered(input, item);
             item.execute();
+        },
+        customize: function(input, inputRect, container, maxHeight) {
+            console.log("customize called2");
+            console.log("input", input);
+            console.log("inputRect", inputRect);
+            console.log("container", container);
+            $(container).css('width', 'auto');
+            window.container2 = container;
         }
     });
 }
