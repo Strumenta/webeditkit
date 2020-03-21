@@ -195,9 +195,9 @@ registererRenderer("com.strumenta.financialcalc.StringType", function(modelNode)
     return fixedCell("string", ["type"]);
 });
 
-// registererRenderer("com.strumenta.financialcalc.Type", function(modelNode) {
-//     return fixedCell("<TYPE>", ["type"]);
-// });
+registererRenderer("com.strumenta.financialcalc.BooleanType", function(modelNode) {
+    return fixedCell("boolean", ["type"]);
+});
 
 registererRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(modelNode) {
     return verticalGroupCell(
