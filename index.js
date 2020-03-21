@@ -12,6 +12,7 @@ const datamodel = require('./datamodel.js');
 const wscommunication = require('./wscommunication.js');
 const autocomplete = require('autocompleter');
 
+// TODO move to wscommunication
 function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
     console.log("triggerChangeOnPropertyNode", modelNode, propertyName, propertyValue);
     window.wscommunication.sendJSON({
@@ -83,16 +84,10 @@ function installAutocomplete(vnode, valuesProvider) {
             update(suggestions);
         },
         onSelect: function (item) {
-            //autocompleteTriggered(input, item);
             item.execute();
         },
         customize: function(input, inputRect, container, maxHeight) {
-            console.log("customize called2");
-            console.log("input", input);
-            console.log("inputRect", inputRect);
-            console.log("container", container);
             $(container).css('width', 'auto');
-            window.container2 = container;
         }
     });
 }
@@ -143,13 +138,13 @@ function registererRenderer(name, renderer) {
     window.renderers[name] = renderer;
 }
 
-function alternativesProvider() {
+function alternativesProvider(modelNode) {
     return function() {
         return [
             {
                 label: "boolean",
                 execute: function () {
-                    console.log("selected boolean");
+                    window.wscommunication.instantiate('com.strumenta.financialcalc.BooleanType', modelNode);
                 }
             },
             {
@@ -160,22 +155,30 @@ function alternativesProvider() {
     }
 }
 
-function getDefaultRenderer(name, abstractConcept) {
+function getDefaultRenderer(modelNode) {
+    let abstractConcept = modelNode.isAbstract();
+    let conceptName = modelNode.simpleConceptName();
     return function (dataModel) {
         if (abstractConcept) {
-            return fixedCell("", ['default-cell-abstract'], alternativesProvider(name));
+            return fixedCell("", ['default-cell-abstract'], alternativesProvider(modelNode));
         } else {
-            return fixedCell("[default " + name + "]", ['default-cell-concrete']);
+            return fixedCell("[default " + conceptName + "]", ['default-cell-concrete']);
         }
     };
 }
 
-function getRenderer(name, abstractConcept) {
-    if ((window.renderers == undefined) || !(name in window.renderers)){
-        //throw "No renderer found for " + name;
-        return getDefaultRenderer(name, abstractConcept);
+function getRenderer(modelNode) {
+    if (modelNode == null) {
+        // it happens during node replacements
+        return function() { return fixedCell("null"); };
     }
-    return window.renderers[name];
+    let abstractConcept = modelNode.isAbstract();
+    let conceptName = modelNode.conceptName();
+    if ((window.renderers == undefined) || !(conceptName in window.renderers)){
+        //throw "No renderer found for " + name;
+        return getDefaultRenderer(modelNode);
+    }
+    return window.renderers[conceptName];
 }
 
 registererRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
@@ -213,7 +216,7 @@ registererRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(mo
 });
 
 function renderModelNode(modelNode) {
-    return getRenderer(modelNode.conceptName(), modelNode.isAbstract())(modelNode);
+    return getRenderer(modelNode)(modelNode);
 }
 
 function childCell(modelNode, containmentName) {

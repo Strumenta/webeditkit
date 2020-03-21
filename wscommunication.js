@@ -47,6 +47,13 @@ class WsCommunication {
                 // TODO consider index
                 new datamodel.ModelNode(parentNode).addChild(data.relatioName, data.index, data.child);
                 renderDataModels();
+            } else if (data.type == "nodeRemoved") {
+                console.log("NODE REMOVED");
+                let parentNode = findNode(window.datamodel[localName].data, data.parentNodeId);
+                console.log("parentNode", parentNode);
+                // TODO consider index
+                new datamodel.ModelNode(parentNode).removeChild(data.relatioName, data.child);
+                renderDataModels();
             } else {
                 throw "Unknown change type: " + data.type;
             }
@@ -61,6 +68,15 @@ class WsCommunication {
         this.sendJSON({
             type: 'registerForChanges',
             modelName: modelName
+        });
+    }
+
+    instantiate(conceptName, nodeToReplace) {
+        this.sendJSON({
+            type: 'instantiateConcept',
+            modelName: nodeToReplace.modelName(),
+            conceptToInstantiate: conceptName,
+            nodeToReplace: nodeToReplace.idString()
         });
     }
 }

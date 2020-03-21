@@ -59,6 +59,16 @@ class ModelNode {
         this.data.children.push(childData);
         new ModelNode(childData).injectModelName(this.data.modelName);
     }
+    removeChild(relationName, childData){
+        for (var i=0;i<this.data.children.length;i++){
+            let child = this.data.children[i];
+            if (child.id.regularId == childData.id.regularId) {
+                this.data.children.splice(i, 1);
+                return;
+            }
+        }
+        throw "Child not found " + JSON.stringify(childData);
+    }
 }
 
 module.exports.dataToNode = dataToNode;
