@@ -104,6 +104,22 @@ registererRenderer("com.strumenta.financialcalc.Type", function(modelNode) {
     return fixedCell("<TYPE>", ["type"]);
 });
 
+registererRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(modelNode) {
+    return verticalGroupCell(
+        row(
+            fixedCell("Calculations", ["title"]),
+            editableCell(modelNode, "name", ["title"])
+        ),
+        emptyRow(),
+        row(
+            fixedCell("inputs:", ["strong"])
+        ),
+        row(
+            tabCell(),
+            verticalCollectionCell(modelNode, 'inputs'))
+    );
+});
+
 function renderModelNode(modelNode) {
     return getRenderer(modelNode.conceptName())(modelNode);
 }
