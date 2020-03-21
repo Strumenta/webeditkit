@@ -10,6 +10,7 @@ const toVNode = require('snabbdom/tovnode').default;
 const uiutils = require('./uiutils.js');
 const datamodel = require('./datamodel.js');
 const wscommunication = require('./wscommunication.js');
+const autocomplete = require('autocompleter');
 
 function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
     console.log("triggerChangeOnPropertyNode", modelNode, propertyName, propertyValue);
@@ -45,13 +46,66 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
     }}, [])
 }
 
-function fixedCell(text, extraClasses) {
+function installAutocomplete(vnode, valuesProvider) {
+    let input = vnode.elm;
+    // $(input).keyup(function(){
+    //     console.log("keyup autocomplete");
+    //     let text = input.value.toLowerCase();
+    //     console.log("VALUES " + valuesProvider(input));
+    //     let matched = valuesProvider(input).filter(n => n.label.toLowerCase() == text);
+    //     console.log("TEXT "+text+" MATCHED " + matched);
+    //     if (matched.length == 1) {
+    //         autocompleteTriggered(input, matched[0]);
+    //     } else {
+    //         $(input).attr("selected-id", null);
+    //         //$(input).removeClass("selection-done");
+    //     }
+    // });
+    autocomplete({
+        input: input,
+        minLength: 0,
+        render: function(item, currentValue) {
+            var div = document.createElement("div");
+            div.className = "autocomplete-item";
+            div.textContent = item.label;
+            return div;
+        },
+        // renderGroup: function(groupName, currentValue) {
+        //     var div = document.createElement("div");
+        //     div.className = "autosuggest-group";
+        //     div.textContent = groupName;
+        //     return div;
+        // },
+        fetch: function (text, update) {
+            text = text.toLowerCase();
+            //var suggestions = ["A", "B", "C", "doo", "foo"];
+            var suggestions = valuesProvider().filter(n => n.label.toLowerCase().startsWith(text));
+            update(suggestions);
+        },
+        onSelect: function (item) {
+            //autocompleteTriggered(input, item);
+            item.execute();
+        }
+    });
+}
+
+function fixedCell(text, extraClasses, alternativesProvider) {
     extraClasses = extraClasses || [];
     extraClassesStr = "";
     if (extraClasses.length > 0) {
         extraClassesStr = "." + extraClasses.join(".");
     }
-    return h("span.fixed" + extraClassesStr, {}, [text]);
+    return h("input.fixed" + extraClassesStr, {
+        props: {value:text},
+        hook: {
+            insert: function(vnode){
+                addAutoresize(vnode);
+                if (alternativesProvider != null && alternativesProvider != undefined) {
+                    installAutocomplete(vnode, alternativesProvider);
+                }
+            },
+            update: triggerResize },
+        }, []);
 }
 
 function row() {
@@ -81,10 +135,27 @@ function registererRenderer(name, renderer) {
     window.renderers[name] = renderer;
 }
 
+function alternativesProvider() {
+    return function() {
+        return [
+            {
+                label: "boolean",
+                execute: function () {
+                    console.log("selected boolean");
+                }
+            },
+            {
+                label: "string",
+                execute: function () {
+                    console.log("selected string");
+            }}];
+    }
+}
+
 function getDefaultRenderer(name, abstractConcept) {
     return function (dataModel) {
         if (abstractConcept) {
-            return fixedCell("[default " + name + "]", ['default-cell-abstract']);
+            return fixedCell("", ['default-cell-abstract'], alternativesProvider(name));
         } else {
             return fixedCell("[default " + name + "]", ['default-cell-concrete']);
         }
