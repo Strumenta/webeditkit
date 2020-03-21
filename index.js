@@ -22,7 +22,8 @@ function triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
     });
 }
 
-function editableCell(modelNode, propertyName, extraClasses) {
+function editableCell(modelNode, propertyName, extraClasses, opts) {
+    let placeholder = "<no " + propertyName+">";
     if (modelNode == undefined) {
         throw "modelNode should not be undefined";
     }
@@ -34,6 +35,7 @@ function editableCell(modelNode, propertyName, extraClasses) {
     return h("input.editable" + extraClassesStr, {
     props:{
         value: modelNode.property(propertyName),
+        placeholder: placeholder,
         required: true
     },
     hook: { insert: addAutoresize, update: triggerResize },
@@ -79,9 +81,20 @@ function registererRenderer(name, renderer) {
     window.renderers[name] = renderer;
 }
 
-function getRenderer(name) {
+function getDefaultRenderer(name, abstractConcept) {
+    return function (dataModel) {
+        if (abstractConcept) {
+            return fixedCell("[default " + name + "]", ['default-cell-abstract']);
+        } else {
+            return fixedCell("[default " + name + "]", ['default-cell-concrete']);
+        }
+    };
+}
+
+function getRenderer(name, abstractConcept) {
     if ((window.renderers == undefined) || !(name in window.renderers)){
-        throw "No renderer found for " + name;
+        //throw "No renderer found for " + name;
+        return getDefaultRenderer(name, abstractConcept);
     }
     return window.renderers[name];
 }
@@ -100,9 +113,9 @@ registererRenderer("com.strumenta.financialcalc.StringType", function(modelNode)
     return fixedCell("string", ["type"]);
 });
 
-registererRenderer("com.strumenta.financialcalc.Type", function(modelNode) {
-    return fixedCell("<TYPE>", ["type"]);
-});
+// registererRenderer("com.strumenta.financialcalc.Type", function(modelNode) {
+//     return fixedCell("<TYPE>", ["type"]);
+// });
 
 registererRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(modelNode) {
     return verticalGroupCell(
@@ -121,7 +134,7 @@ registererRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(mo
 });
 
 function renderModelNode(modelNode) {
-    return getRenderer(modelNode.conceptName())(modelNode);
+    return getRenderer(modelNode.conceptName(), modelNode.isAbstract())(modelNode);
 }
 
 function childCell(modelNode, containmentName) {
@@ -143,6 +156,9 @@ function verticalGroupCell() {
     return h('div.vertical-group', {}, flattenArray(arguments));
 }
 
+/*
+ It should be removed and implicit
+ */
 window.render_calc = function(modelNode) {
     return h('div#calc.editor', {}, [renderModelNode(modelNode)])
 };

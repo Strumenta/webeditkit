@@ -43,6 +43,9 @@ class ModelNode {
         let simpleName = parts[parts.length - 1];
         return simpleName;
     }
+    isAbstract() {
+        return this.data.abstractConcept;
+    }
     injectModelName(modelName) {
         this.data.modelName = modelName;
         $(this.data.children).each(function () {

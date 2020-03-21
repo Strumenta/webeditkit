@@ -4,7 +4,7 @@ body {
 
 input.editable {
     background-color: #DEF7FF;
-    padding: 5px;
+    padding: 3px;
     border-style: none;
     margin-right:0.4em;
 }
@@ -21,8 +21,17 @@ input:invalid {
     background-color: #FFBDB3;
 }
 
+.default-cell-abstract {
+    background-color: #FFBDB3;
+}
+
+.default-cell-concrete {
+    background-color: #b123ff;
+}
+
 div.row {
     min-height: 1em;
+    margin-bottom: 0.5em;
 }
 
 .strong {
