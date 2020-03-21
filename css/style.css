@@ -84,3 +84,7 @@ input.fixed {
     background-color: #475D9D;
     color: white;
 }
+
+.empty-collection {
+    color: gray;
+}

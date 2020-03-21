@@ -47,7 +47,7 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
     }}, [])
 }
 
-function installAutocomplete(vnode, valuesProvider) {
+function installAutocomplete(vnode, valuesProvider, fixed) {
     let input = vnode.elm;
     // $(input).keyup(function(){
     //     console.log("keyup autocomplete");
@@ -80,7 +80,10 @@ function installAutocomplete(vnode, valuesProvider) {
         fetch: function (text, update) {
             text = text.toLowerCase();
             //var suggestions = ["A", "B", "C", "doo", "foo"];
-            var suggestions = valuesProvider().filter(n => n.label.toLowerCase().startsWith(text));
+            let suggestions = valuesProvider();
+            if (!fixed) {
+                suggestions = suggestions.filter(n => n.label.toLowerCase().startsWith(text));
+            }
             update(suggestions);
         },
         onSelect: function (item) {
@@ -104,7 +107,7 @@ function fixedCell(text, extraClasses, alternativesProvider) {
             insert: function(vnode){
                 addAutoresize(vnode);
                 if (alternativesProvider != null && alternativesProvider != undefined) {
-                    installAutocomplete(vnode, alternativesProvider);
+                    installAutocomplete(vnode, alternativesProvider, true);
                 }
             },
             update: triggerResize },
@@ -224,10 +227,21 @@ function childCell(modelNode, containmentName) {
 }
 
 function verticalCollectionCell(modelNode, containmentName) {
-    return h('div.vertical-collection', {},
-        map(modelNode.childrenByLinkName(containmentName), function () {
-            return row(renderModelNode(this));
-        }));
+    let addInputChild = function() {
+        window.wscommunication.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
+    };
+    let children = modelNode.childrenByLinkName(containmentName);
+    if (children.length == 0) {
+        return h('div.vertical-collection', {}, [
+            fixedCell("<< ... >>", ['empty-collection'], function () {
+                return [{label: "Input", execute: addInputChild}];
+            })]);
+    } else {
+        return h('div.vertical-collection', {},
+            map(modelNode.childrenByLinkName(containmentName), function () {
+                return row(renderModelNode(this));
+            }));
+    }
 }
 
 function horizontalGroupCell() {

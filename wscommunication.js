@@ -79,6 +79,16 @@ class WsCommunication {
             nodeToReplace: nodeToReplace.idString()
         });
     }
+
+    addChild(container, containmentName, conceptName) {
+        this.sendJSON({
+            type: 'addChild',
+            modelName: container.modelName(),
+            container: container.idString(),
+            containmentName: containmentName,
+            conceptToInstantiate: conceptName
+        });
+    }
 }
 
 module.exports.WsCommunication = WsCommunication;
