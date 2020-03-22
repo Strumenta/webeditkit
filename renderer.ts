@@ -1,16 +1,13 @@
 let cells = require('./cells');
 
-let renderers = {};
+let renderersByName = {};
 
-function registerRenderer(name, renderer) {
-    if (renderers == undefined) {
-        renderers = {};
-    }
-    renderers[name] = renderer;
+function registerRenderer(name: string, renderer: any) {
+    renderersByName[name] = renderer;
 }
 
 function getRegisteredRenderer(conceptName) {
-    return renderers[conceptName];
+    return renderersByName[conceptName];
 }
 
 function renderModelNode(modelNode) {
@@ -32,7 +29,7 @@ function getDefaultRenderer(modelNode) {
 function getRenderer(modelNode) {
     if (modelNode == null) {
         // it happens during node replacements
-        return function() { return fixedCell("null"); };
+        return function() { return cells.fixedCell("null"); };
     }
     let abstractConcept = modelNode.isAbstract();
     let conceptName = modelNode.conceptName();

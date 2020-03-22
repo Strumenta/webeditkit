@@ -14,7 +14,7 @@ function alternativesProviderForAddingChild(modelNode: ModelNode, containmentNam
     }
     // we should get all the alternatives from the server
     return function (alternativesUser: any) {
-        let ws = wscommunication.getWsCommunication(modelNode.modelName());
+        let ws = wscommunication.WsCommunication.getWsCommunication(modelNode.modelName());
         ws.askAlternatives(modelNode, containmentName, function (alternatives: any) {
             let adder = function(conceptName: string){
                 return function() {
@@ -90,7 +90,7 @@ function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: 
     if (extraClasses.length > 0) {
         extraClassesStr = "." + extraClasses.join(".");
     }
-    let ws = wscommunication.getWsCommunication(modelNode.modelName());
+    let ws = wscommunication.WsCommunication.getWsCommunication(modelNode.modelName());
     return h("input.editable" + extraClassesStr, {
         props:{
             value: modelNode.property(propertyName),
@@ -160,7 +160,7 @@ function childCell(modelNode: ModelNode, containmentName: string) {
 }
 
 function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
-    let ws = wscommunication.getWsCommunication(modelNode.modelName());
+    let ws = wscommunication.WsCommunication.getWsCommunication(modelNode.modelName());
     let addInputChild = function() {
         ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
     };
