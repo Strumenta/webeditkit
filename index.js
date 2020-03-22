@@ -36,22 +36,7 @@ const childCell = cells.childCell;
 
 
 
-function alternativesProvider(modelNode) {
-    return function() {
-        return [
-            {
-                label: "boolean",
-                execute: function () {
-                    window.wscommunication.instantiate('com.strumenta.financialcalc.BooleanType', modelNode);
-                }
-            },
-            {
-                label: "string",
-                execute: function () {
-                    console.log("selected string");
-            }}];
-    }
-}
+
 
 // function alternativesProvider2(modelNode) {
 //     return function() {

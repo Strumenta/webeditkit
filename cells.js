@@ -2,13 +2,24 @@ var h = require('snabbdom/h').default; // helper function for creating vnodes
 var renderer = require('./renderer');
 const autocomplete = require('autocompleter');
 
-function alternativesProviderForAddingChild(modelNode, containmentName) {
+function alternativesProviderForAbstractConcept(modelNode) {
+    return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
+}
+
+function alternativesProviderForAddingChild(modelNode, containmentName, replacing) {
+    if (replacing == undefined) {
+        replacing = false;
+    }
     // we should get all the alternatives from the server
     return function (alternativesUser) {
         window.wscommunication.askAlternatives(modelNode, containmentName, function (alternatives) {
             let adder = function(conceptName){
                 return function() {
-                    window.wscommunication.addChild(modelNode, containmentName, conceptName);
+                    if (replacing) {
+                        window.wscommunication.setChild(modelNode, containmentName, conceptName);
+                    } else {
+                        window.wscommunication.addChild(modelNode, containmentName, conceptName);
+                    }
                 };
             };
             let uiAlternatives = Array.from($(alternatives).map(function(){ return {label: this.alias, execute: adder(this.conceptName)}}));
@@ -182,3 +193,4 @@ module.exports.fixedCell = fixedCell;
 module.exports.row = row;
 module.exports.emptyRow = emptyRow;
 module.exports.tabCell = tabCell;
+module.exports.alternativesProviderForAbstractConcept = alternativesProviderForAbstractConcept;

@@ -1,3 +1,5 @@
+let cells = require('./cells');
+
 let renderers = {};
 
 function registerRenderer(name, renderer) {
@@ -20,9 +22,9 @@ function getDefaultRenderer(modelNode) {
     let conceptName = modelNode.simpleConceptName();
     return function (dataModel) {
         if (abstractConcept) {
-            return fixedCell("", ['default-cell-abstract'], alternativesProvider(modelNode));
+            return cells.fixedCell("", ['default-cell-abstract'], cells.alternativesProviderForAbstractConcept(modelNode));
         } else {
-            return fixedCell("[default " + conceptName + "]", ['default-cell-concrete']);
+            return cells.fixedCell("[default " + conceptName + "]", ['default-cell-concrete']);
         }
     };
 }

@@ -48,7 +48,9 @@ class ModelNode {
     }
     injectModelName(modelName) {
         this.data.modelName = modelName;
+        let parent = this;
         $(this.data.children).each(function () {
+            this.parent = parent.data;
             dataToNode(this).injectModelName(modelName);
         });
     }
@@ -57,7 +59,8 @@ class ModelNode {
     }
     addChild(relationName, index, childData){
         this.data.children.push(childData);
-        new ModelNode(childData).injectModelName(this.data.modelName);
+        childData.parent = this.data;
+        dataToNode(childData).injectModelName(this.data.modelName);
     }
     removeChild(relationName, childData){
         for (var i=0;i<this.data.children.length;i++){
@@ -68,6 +71,12 @@ class ModelNode {
             }
         }
         throw "Child not found " + JSON.stringify(childData);
+    }
+    containmentName() {
+        return this.data.containingLink;
+    }
+    parent() {
+        return dataToNode(this.data.parent);
     }
 }
 

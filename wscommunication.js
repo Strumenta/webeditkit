@@ -102,6 +102,16 @@ class WsCommunication {
         });
     }
 
+    setChild(container, containmentName, conceptName) {
+        this.sendJSON({
+            type: 'setChild',
+            modelName: container.modelName(),
+            container: container.idString(),
+            containmentName: containmentName,
+            conceptToInstantiate: conceptName
+        });
+    }
+
     triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
         window.wscommunication.sendJSON({
             type: "propertyChange",
