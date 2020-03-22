@@ -11,31 +11,23 @@ const uiutils = require('./uiutils.js');
 const datamodel = require('./datamodel.js');
 const wscommunication = require('./wscommunication.js');
 const autocomplete = require('autocompleter');
+
 const renderers = require('./renderer');
 const registerRenderer = renderers.registerRenderer;
+const renderModelNode = renderers.renderModelNode;
 
-function editableCell(modelNode, propertyName, extraClasses, opts) {
-    let placeholder = "<no " + propertyName+">";
-    if (modelNode == undefined) {
-        throw "modelNode should not be undefined";
-    }
-    extraClasses = extraClasses || [];
-    extraClassesStr = "";
-    if (extraClasses.length > 0) {
-        extraClassesStr = "." + extraClasses.join(".");
-    }
-    return h("input.editable" + extraClassesStr, {
-    props:{
-        value: modelNode.property(propertyName),
-        placeholder: placeholder,
-        required: true
-    },
-    hook: { insert: addAutoresize, update: triggerResize },
-    on: { keyup: function(e){
-            window.wscommunication.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
-        }
-    }}, [])
-}
+const cells = require('./cells');
+const editableCell = cells.editableCell;
+const fixedCell = cells.fixedCell;
+const row = cells.row;
+const emptyRow = cells.emptyRow;
+const tabCell = cells.tabCell;
+const verticalGroupCell = cells.verticalGroupCell;
+const horizontalGroupCell = cells.horizontalGroupCell;
+const verticalCollectionCell = cells.verticalCollectionCell;
+const childCell = cells.childCell;
+
+
 
 function installAutocomplete(vnode, valuesProvider, fixed) {
     let input = vnode.elm;
@@ -86,44 +78,9 @@ function installAutocomplete(vnode, valuesProvider, fixed) {
     });
 }
 
-function fixedCell(text, extraClasses, alternativesProvider) {
-    extraClasses = extraClasses || [];
-    extraClassesStr = "";
-    if (extraClasses.length > 0) {
-        extraClassesStr = "." + extraClasses.join(".");
-    }
-    return h("input.fixed" + extraClassesStr, {
-        props: {value:text},
-        hook: {
-            insert: function(vnode){
-                addAutoresize(vnode);
-                if (alternativesProvider != null && alternativesProvider != undefined) {
-                    installAutocomplete(vnode, alternativesProvider, true);
-                }
-            },
-            update: triggerResize },
-        }, []);
-}
 
-function row() {
-    return h("div.row", {}, flattenArray(arguments));
-}
 
-function flattenArray(value) {
-    return Array.from(value).flat();
-}
 
-function emptyRow() {
-    return row();
-}
-
-function tabCell() {
-    return h("div.tab", {}, []);
-}
-
-function map(originalArray, op) {
-    return Array.from($(originalArray).map(op));
-}
 
 
 function alternativesProvider(modelNode) {
@@ -177,27 +134,7 @@ function alternativesProviderForAddingChild(modelNode, containmentName) {
     };
 }
 
-function getDefaultRenderer(modelNode) {
-    let abstractConcept = modelNode.isAbstract();
-    let conceptName = modelNode.simpleConceptName();
-    return function (dataModel) {
-        if (abstractConcept) {
-            return fixedCell("", ['default-cell-abstract'], alternativesProvider(modelNode));
-        } else {
-            return fixedCell("[default " + conceptName + "]", ['default-cell-concrete']);
-        }
-    };
-}
 
-function getRenderer(modelNode) {
-    if (modelNode == null) {
-        // it happens during node replacements
-        return function() { return fixedCell("null"); };
-    }
-    let abstractConcept = modelNode.isAbstract();
-    let conceptName = modelNode.conceptName();
-    return renderers.getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
-}
 
 registerRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
     if (modelNode == undefined) {
@@ -233,43 +170,8 @@ registerRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(mode
     );
 });
 
-function renderModelNode(modelNode) {
-    return getRenderer(modelNode)(modelNode);
-}
 
-function childCell(modelNode, containmentName) {
-    let child = modelNode.childByLinkName(containmentName);
-    if (child == null) {
-        return fixedCell("<no "+containmentName + ">", ["missing-element"], alternativesProviderForAddingChild(modelNode, containmentName));
-    }
-    return renderModelNode(child);
-}
 
-function verticalCollectionCell(modelNode, containmentName) {
-    let addInputChild = function() {
-        window.wscommunication.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
-    };
-    let children = modelNode.childrenByLinkName(containmentName);
-    if (children.length == 0) {
-        return h('div.vertical-collection', {}, [
-            fixedCell("<< ... >>", ['empty-collection'], function (alternativesUser) {
-                alternativesUser([{label: "Input", execute: addInputChild}]);
-            })]);
-    } else {
-        return h('div.vertical-collection', {},
-            map(modelNode.childrenByLinkName(containmentName), function () {
-                return row(renderModelNode(this));
-            }));
-    }
-}
-
-function horizontalGroupCell() {
-    return h('div.horizontal-group', {}, flattenArray(arguments));
-}
-
-function verticalGroupCell() {
-    return h('div.vertical-group', {}, flattenArray(arguments));
-}
 
 /*
  It should be removed and implicit
@@ -278,13 +180,6 @@ window.render_calc = function(modelNode) {
     return h('div#calc.editor', {}, [renderModelNode(modelNode)])
 };
 
-function addAutoresize(vnode) {
-    $(vnode.elm).autoresize(myAutoresizeOptions);
-}
-
-function triggerResize(vnode) {
-    $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
-}
 
 window.renderDataModels = function() {
     if (window.datamodel == undefined) {
