@@ -29,54 +29,7 @@ const childCell = cells.childCell;
 
 
 
-function installAutocomplete(vnode, valuesProvider, fixed) {
-    let input = vnode.elm;
-    // $(input).keyup(function(){
-    //     console.log("keyup autocomplete");
-    //     let text = input.value.toLowerCase();
-    //     console.log("VALUES " + valuesProvider(input));
-    //     let matched = valuesProvider(input).filter(n => n.label.toLowerCase() == text);
-    //     console.log("TEXT "+text+" MATCHED " + matched);
-    //     if (matched.length == 1) {
-    //         autocompleteTriggered(input, matched[0]);
-    //     } else {
-    //         $(input).attr("selected-id", null);
-    //         //$(input).removeClass("selection-done");
-    //     }
-    // });
-    autocomplete({
-        input: input,
-        minLength: 0,
-        render: function(item, currentValue) {
-            var div = document.createElement("div");
-            div.className = "autocomplete-item";
-            div.textContent = item.label;
-            return div;
-        },
-        // renderGroup: function(groupName, currentValue) {
-        //     var div = document.createElement("div");
-        //     div.className = "autosuggest-group";
-        //     div.textContent = groupName;
-        //     return div;
-        // },
-        fetch: function (text, update) {
-            text = text.toLowerCase();
-            //var suggestions = ["A", "B", "C", "doo", "foo"];
-            valuesProvider(function(suggestions) {
-                if (!fixed) {
-                    suggestions = suggestions.filter(n => n.label.toLowerCase().startsWith(text));
-                }
-                update(suggestions);
-            });
-        },
-        onSelect: function (item) {
-            item.execute();
-        },
-        customize: function(input, inputRect, container, maxHeight) {
-            $(container).css('width', 'auto');
-        }
-    });
-}
+
 
 
 
@@ -116,23 +69,6 @@ function alternativesProvider(modelNode) {
 //                 }}];
 //     }
 // }
-
-function alternativesProviderForAddingChild(modelNode, containmentName) {
-    // we should get all the alternatives from the server
-    return function (alternativesUser) {
-        window.wscommunication.askAlternatives(modelNode, containmentName, function (alternatives) {
-           let adder = function(conceptName){
-               return function() {
-                   window.wscommunication.addChild(modelNode, containmentName, conceptName);
-               };
-           };
-           let uiAlternatives = Array.from($(alternatives).map(function(){ return {label: this.alias, execute: adder(this.conceptName)}}));
-           console.log("uiAlternatives", uiAlternatives);
-           window.uia = uiAlternatives;
-           alternativesUser(uiAlternatives);
-        });
-    };
-}
 
 
 
