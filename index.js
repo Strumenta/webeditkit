@@ -26,36 +26,11 @@ const verticalGroupCell = cells.verticalGroupCell;
 const horizontalGroupCell = cells.horizontalGroupCell;
 const verticalCollectionCell = cells.verticalCollectionCell;
 const childCell = cells.childCell;
+const webeditkit = require('./webeditkit');
 
-
-
-
-
-
-
-
-
-
-
-
-// function alternativesProvider2(modelNode) {
-//     return function() {
-//         return [
-//             {
-//                 label: "boolean",
-//                 execute: function () {
-//                     window.wscommunication.addChild(modelNode, 'type', 'com.strumenta.financialcalc.BooleanType');
-//                 }
-//             },
-//             {
-//                 label: "string",
-//                 execute: function () {
-//                     console.log("selected string");
-//                 }}];
-//     }
-// }
-
-
+/////////////////////////////////////////////////
+// Specific renderers - start
+/////////////////////////////////////////////////
 
 registerRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
     if (modelNode == undefined) {
@@ -91,52 +66,12 @@ registerRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(mode
     );
 });
 
-
-
-
-/*
- It should be removed and implicit
- */
-window.render_calc = function(modelNode) {
-    return h('div#calc.editor', {}, [renderModelNode(modelNode)])
-};
-
-
-window.renderDataModels = function() {
-    if (window.datamodel == undefined) {
-        return;
-    }
-
-    let keys = Object.keys(window.datamodel);
-    for (var i=0;i<keys.length;i++) {
-        let key = keys[i];
-        let renderFunctionName = "render_" + key;
-        let renderFunction = window[renderFunctionName];
-        let vnode = renderFunction(window.datamodel[key]);
-        if (window.vnodes == undefined) {
-            window.vnodes = {};
-        }
-        if (window.vnodes[key] == undefined) {
-            window.vnodes[key] = toVNode($("div#"+key)[0]);
-        }
-        window.vnodes[key] = patch(window.vnodes[key], vnode);
-    }
-};
-
-function loadDataModel(model, nodeId, target) {
-    let nodeURL = "http://localhost:2904/models/" + model + "/" + nodeId;
-    $.getJSON(nodeURL, function(data) {
-        if (window.datamodel == undefined) {
-            window.datamodel = {};
-        }
-        window.datamodel[target] = datamodel.dataToNode(data);
-        window.datamodel[target].injectModelName(model);
-        renderDataModels();
-    });
-}
+/////////////////////////////////////////////////
+// Specific renderers - end
+/////////////////////////////////////////////////
 
 $('document').ready(function(){
     uiutils.installAutoresize();
     window.wscommunication = new wscommunication.WsCommunication("com.strumenta.financialcalc.sandbox.company", "calc");
-    loadDataModel("com.strumenta.financialcalc.sandbox.company", "324292001770075100", "calc");
+    webeditkit.loadDataModel("http://localhost:2904", "com.strumenta.financialcalc.sandbox.company", "324292001770075100", "calc");
 });

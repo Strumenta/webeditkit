@@ -41,23 +41,25 @@ class WsCommunication {
             let data = JSON.parse(event.data);
             console.log("  data: ", data);
             if (data.type == "propertyChange") {
-                console.log("  window.datamodel: ", window.datamodel);
                 console.log("  localName: ", localName);
-                let node = findNode(window.datamodel[localName].data, data.nodeId);
+                let root = datamodel.getDatamodelRoot(localName);
+                let node = findNode(root.data, data.nodeId);
                 console.log("  node: ", node);
                 node.properties[data.propertyName] = data.propertyValue;
                 console.log("  changed: ", node);
                 renderDataModels();
             } else if (data.type == "nodeAdded") {
                 console.log("NODE ADDED");
-                let parentNode = findNode(window.datamodel[localName].data, data.parentNodeId);
+                let root = datamodel.getDatamodelRoot(localName);
+                let parentNode = findNode(root.data, data.parentNodeId);
                 console.log("parentNode", parentNode);
                 // TODO consider index
                 new datamodel.ModelNode(parentNode).addChild(data.relatioName, data.index, data.child);
                 renderDataModels();
             } else if (data.type == "nodeRemoved") {
                 console.log("NODE REMOVED");
-                let parentNode = findNode(window.datamodel[localName].data, data.parentNodeId);
+                let root = datamodel.getDatamodelRoot(localName);
+                let parentNode = findNode(root.data, data.parentNodeId);
                 console.log("parentNode", parentNode);
                 // TODO consider index
                 new datamodel.ModelNode(parentNode).removeChild(data.relatioName, data.child);

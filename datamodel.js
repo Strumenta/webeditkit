@@ -1,3 +1,5 @@
+let datamodelRoots = {};
+
 function dataToNode(data) {
     if (data == null) {
         return null;
@@ -80,5 +82,24 @@ class ModelNode {
     }
 }
 
+function setDatamodelRoot(name, root) {
+    datamodelRoots[name] = root;
+}
+
+function getDatamodelRoot(name) {
+    return datamodelRoots[name];
+}
+
+function forEachDataModel(op) {
+    let keys = Object.keys(datamodelRoots);
+    for (var i=0;i<keys.length;i++) {
+        let key = keys[i];
+        op(key, getDatamodelRoot(key));
+    }
+}
+
 module.exports.dataToNode = dataToNode;
 module.exports.ModelNode = ModelNode;
+module.exports.setDatamodelRoot = setDatamodelRoot;
+module.exports.getDatamodelRoot = getDatamodelRoot;
+module.exports.forEachDataModel = forEachDataModel;
