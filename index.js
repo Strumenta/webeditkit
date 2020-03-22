@@ -11,6 +11,8 @@ const uiutils = require('./uiutils.js');
 const datamodel = require('./datamodel.js');
 const wscommunication = require('./wscommunication.js');
 const autocomplete = require('autocompleter');
+const renderers = require('./renderer');
+const registerRenderer = renderers.registerRenderer;
 
 function editableCell(modelNode, propertyName, extraClasses, opts) {
     let placeholder = "<no " + propertyName+">";
@@ -123,12 +125,6 @@ function map(originalArray, op) {
     return Array.from($(originalArray).map(op));
 }
 
-function registererRenderer(name, renderer) {
-    if (window.renderers == undefined) {
-        window.renderers = {};
-    }
-    window.renderers[name] = renderer;
-}
 
 function alternativesProvider(modelNode) {
     return function() {
@@ -200,14 +196,10 @@ function getRenderer(modelNode) {
     }
     let abstractConcept = modelNode.isAbstract();
     let conceptName = modelNode.conceptName();
-    if ((window.renderers == undefined) || !(conceptName in window.renderers)){
-        //throw "No renderer found for " + name;
-        return getDefaultRenderer(modelNode);
-    }
-    return window.renderers[conceptName];
+    return renderers.getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
 }
 
-registererRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
+registerRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
     if (modelNode == undefined) {
         throw "modelNode should not be undefined in renderer";
     }
@@ -217,15 +209,15 @@ registererRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
         childCell(modelNode, "type"));
 });
 
-registererRenderer("com.strumenta.financialcalc.StringType", function(modelNode) {
+registerRenderer("com.strumenta.financialcalc.StringType", function(modelNode) {
     return fixedCell("string", ["type"]);
 });
 
-registererRenderer("com.strumenta.financialcalc.BooleanType", function(modelNode) {
+registerRenderer("com.strumenta.financialcalc.BooleanType", function(modelNode) {
     return fixedCell("boolean", ["type"]);
 });
 
-registererRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(modelNode) {
+registerRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(modelNode) {
     return verticalGroupCell(
         row(
             fixedCell("Calculations", ["title"]),

@@ -29,14 +29,13 @@ class WsCommunication {
         this.modelName = modelName;
         this.localName = localName;
         this.callbacks = {};
-        console.log("connected to ws -> ", this.ws);
-
-        this.ws.onopen = function(event) {
-            window.wscommunication.registerForChangesInModel(modelName);
-
-        };
 
         let thisWS = this;
+
+        this.ws.onopen = function(event) {
+            thisWS.registerForChangesInModel(modelName);
+        };
+
         this.ws.onmessage = function(event) {
             console.log("onmessage", event);
             let data = JSON.parse(event.data);
