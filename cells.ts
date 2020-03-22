@@ -3,6 +3,7 @@ var renderer = require('./renderer');
 const autocomplete = require('autocompleter');
 const uiutils = require('./uiutils');
 const wscommunication = require('./wscommunication');
+const navigation = require('./navigation');
 
 function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
     return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
@@ -98,7 +99,15 @@ function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: 
             required: true
         },
         hook: { insert: addAutoresize, update: triggerResize },
-        on: { keyup: function(e: any){
+        on: {
+            keydown: function(e: KeyboardEvent) {
+                if (navigation.isAtEnd(e.target)) {
+                    navigation.moveToNextElement(e.target);
+                    e.preventDefault();
+                    return true;
+                }
+            },
+            keyup: function(e: KeyboardEvent){
                 ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
             }
         }}, [])
@@ -130,6 +139,15 @@ function fixedCell(text: string, extraClasses: Array<string>, alternativesProvid
                 }
             },
             update: triggerResize },
+        on: {
+            keydown: function (e:KeyboardEvent) {
+                if (e.key == "ArrowRight") {
+                    navigation.moveToNextElement(e.target);
+                }
+                e.preventDefault();
+                return false;
+            }
+        }
     }, []);
 }
 

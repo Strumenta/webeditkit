@@ -2,6 +2,7 @@ module WsCommunication {
 
     //const renderer = require('./renderer');
     const datamodel = require('./datamodel');
+    const webeditkit = require('./webeditkit');
 
     function findNode(root, searchedID) {
         if (root.id.regularId == searchedID.regularId) {
@@ -53,7 +54,7 @@ module WsCommunication {
                     console.log("  node: ", node);
                     node.properties[data.propertyName] = data.propertyValue;
                     console.log("  changed: ", node);
-                    renderDataModels();
+                    webeditkit.renderDataModels();
                 } else if (data.type == "nodeAdded") {
                     console.log("NODE ADDED");
                     let root = datamodel.getDatamodelRoot(localName);
@@ -61,7 +62,7 @@ module WsCommunication {
                     console.log("parentNode", parentNode);
                     // TODO consider index
                     new datamodel.ModelNode(parentNode).addChild(data.relatioName, data.index, data.child);
-                    renderDataModels();
+                    webeditkit.renderDataModels();
                 } else if (data.type == "nodeRemoved") {
                     console.log("NODE REMOVED");
                     let root = datamodel.getDatamodelRoot(localName);
@@ -69,7 +70,7 @@ module WsCommunication {
                     console.log("parentNode", parentNode);
                     // TODO consider index
                     new datamodel.ModelNode(parentNode).removeChild(data.relatioName, data.child);
-                    renderDataModels();
+                    webeditkit.renderDataModels();
                 } else if (data.type == "AnswerAlternatives") {
                     let alternativesReceiver = thisWS.callbacks[data.requestId];
                     alternativesReceiver(data.items);
