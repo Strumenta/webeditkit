@@ -1,4 +1,4 @@
-window.myAutoresizeOptions = {padding:2,minWidth:10,maxWidth:800};
+myAutoresizeOptions = {padding:2,minWidth:10,maxWidth:800};
 
 function installAutoresize() {
     $.fn.textWidth = function(_text, _font){//get width of text with font.  usage: $("div").textWidth();
@@ -30,3 +30,4 @@ function installAutoresize() {
 }
 
 module.exports.installAutoresize = installAutoresize;
+module.exports.myAutoresizeOptions = myAutoresizeOptions;

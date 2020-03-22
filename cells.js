@@ -1,6 +1,7 @@
 var h = require('snabbdom/h').default; // helper function for creating vnodes
 var renderer = require('./renderer');
 const autocomplete = require('autocompleter');
+const uiutils = require('./uiutils');
 
 function alternativesProviderForAbstractConcept(modelNode) {
     return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
@@ -101,11 +102,11 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
 }
 
 function addAutoresize(vnode) {
-    $(vnode.elm).autoresize(myAutoresizeOptions);
+    $(vnode.elm).autoresize(uiutils.myAutoresizeOptions);
 }
 
 function triggerResize(vnode) {
-    $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
+    $(vnode.elm).inputWidthUpdate(uiutils.myAutoresizeOptions);
 }
 
 function fixedCell(text, extraClasses, alternativesProvider) {
