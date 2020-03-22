@@ -24,8 +24,8 @@ function uuidv4() {
 
 class WsCommunication {
 
-    constructor(modelName, localName) {
-        this.ws = new WebSocket("ws://localhost:2904/socket");
+    constructor(url, modelName, localName) {
+        this.ws = new WebSocket(url);
         this.modelName = modelName;
         this.localName = localName;
         this.callbacks = {};
@@ -115,7 +115,7 @@ class WsCommunication {
     }
 
     triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
-        window.wscommunication.sendJSON({
+        this.sendJSON({
             type: "propertyChange",
             nodeId: modelNode.idString(),
             modelName: modelNode.modelName(),
@@ -128,7 +128,7 @@ class WsCommunication {
         // we generate a UUID and ask the server to answer us using such UUID
         let uuid = uuidv4();
         this.callbacks[uuid] = alternativesReceiver;
-        window.wscommunication.sendJSON({
+        this.sendJSON({
             type: "askAlternatives",
             requestId: uuid,
             modelName: modelNode.modelName(),
@@ -138,4 +138,17 @@ class WsCommunication {
     }
 }
 
+let instances = {};
+
+function getWsCommunication(modelName) {
+    return instances[modelName];
+}
+
+function createInstance(url, modelName, localName) {
+    let instance = new WsCommunication(url, modelName, localName);
+    instances[modelName] = instance;
+}
+
 module.exports.WsCommunication = WsCommunication;
+module.exports.getWsCommunication = getWsCommunication;
+module.exports.createInstance = createInstance;

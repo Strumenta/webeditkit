@@ -72,6 +72,6 @@ registerRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(mode
 
 $('document').ready(function(){
     uiutils.installAutoresize();
-    window.wscommunication = new wscommunication.WsCommunication("com.strumenta.financialcalc.sandbox.company", "calc");
+    wscommunication.createInstance("ws://localhost:2904/socket", "com.strumenta.financialcalc.sandbox.company", "calc");
     webeditkit.loadDataModel("http://localhost:2904", "com.strumenta.financialcalc.sandbox.company", "324292001770075100", "calc");
 });

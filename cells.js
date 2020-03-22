@@ -2,6 +2,7 @@ var h = require('snabbdom/h').default; // helper function for creating vnodes
 var renderer = require('./renderer');
 const autocomplete = require('autocompleter');
 const uiutils = require('./uiutils');
+const wscommunication = require('./wscommunication');
 
 function alternativesProviderForAbstractConcept(modelNode) {
     return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
@@ -13,13 +14,14 @@ function alternativesProviderForAddingChild(modelNode, containmentName, replacin
     }
     // we should get all the alternatives from the server
     return function (alternativesUser) {
-        window.wscommunication.askAlternatives(modelNode, containmentName, function (alternatives) {
+        let ws = wscommunication.getWsCommunication(modelNode.modelName());
+        ws.askAlternatives(modelNode, containmentName, function (alternatives) {
             let adder = function(conceptName){
                 return function() {
                     if (replacing) {
-                        window.wscommunication.setChild(modelNode, containmentName, conceptName);
+                        ws.setChild(modelNode, containmentName, conceptName);
                     } else {
-                        window.wscommunication.addChild(modelNode, containmentName, conceptName);
+                        ws.addChild(modelNode, containmentName, conceptName);
                     }
                 };
             };
@@ -88,6 +90,7 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
     if (extraClasses.length > 0) {
         extraClassesStr = "." + extraClasses.join(".");
     }
+    let ws = wscommunication.getWsCommunication(modelNode.modelName());
     return h("input.editable" + extraClassesStr, {
         props:{
             value: modelNode.property(propertyName),
@@ -96,7 +99,7 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
         },
         hook: { insert: addAutoresize, update: triggerResize },
         on: { keyup: function(e){
-                window.wscommunication.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
+                ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
             }
         }}, [])
 }
@@ -155,8 +158,9 @@ function childCell(modelNode, containmentName) {
 }
 
 function verticalCollectionCell(modelNode, containmentName) {
+    let ws = wscommunication.getWsCommunication(modelNode.modelName());
     let addInputChild = function() {
-        window.wscommunication.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
+        ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
     };
     let children = modelNode.childrenByLinkName(containmentName);
     if (children.length == 0) {
