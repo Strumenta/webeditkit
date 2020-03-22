@@ -14,18 +14,15 @@ var patch = snabbdom.init([ // Init patch function with chosen modules
 var h = require('snabbdom/h').default; // helper function for creating vnodes
 const toVNode = require('snabbdom/tovnode').default;
 
+let vnodes = {};
+
 renderDataModels = function() {
     datamodel.forEachDataModel(function(name, root) {
-        //let renderFunctionName = "render_" + name;
-        //let renderFunction = window[renderFunctionName];
         let vnode = h('div#' + name + '.editor', {}, [renderModelNode(root)]);
-        if (window.vnodes == undefined) {
-            window.vnodes = {};
+        if (vnodes[name] == undefined) {
+            vnodes[name] = toVNode($("div#"+name)[0]);
         }
-        if (window.vnodes[name] == undefined) {
-            window.vnodes[name] = toVNode($("div#"+name)[0]);
-        }
-        window.vnodes[name] = patch(window.vnodes[name], vnode);
+        vnodes[name] = patch(vnodes[name], vnode);
     });
 };
 
