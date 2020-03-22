@@ -4,19 +4,19 @@ const autocomplete = require('autocompleter');
 const uiutils = require('./uiutils');
 const wscommunication = require('./wscommunication');
 
-function alternativesProviderForAbstractConcept(modelNode) {
+function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
     return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
 }
 
-function alternativesProviderForAddingChild(modelNode, containmentName, replacing) {
+function alternativesProviderForAddingChild(modelNode: ModelNode, containmentName: string, replacing: boolean) {
     if (replacing == undefined) {
         replacing = false;
     }
     // we should get all the alternatives from the server
-    return function (alternativesUser) {
+    return function (alternativesUser: any) {
         let ws = wscommunication.getWsCommunication(modelNode.modelName());
-        ws.askAlternatives(modelNode, containmentName, function (alternatives) {
-            let adder = function(conceptName){
+        ws.askAlternatives(modelNode, containmentName, function (alternatives: any) {
+            let adder = function(conceptName: string){
                 return function() {
                     if (replacing) {
                         ws.setChild(modelNode, containmentName, conceptName);
@@ -31,7 +31,7 @@ function alternativesProviderForAddingChild(modelNode, containmentName, replacin
     };
 }
 
-function installAutocomplete(vnode, valuesProvider, fixed) {
+function installAutocomplete(vnode: any, valuesProvider: any, fixed: boolean) {
     let input = vnode.elm;
     // $(input).keyup(function(){
     //     console.log("keyup autocomplete");
@@ -49,7 +49,7 @@ function installAutocomplete(vnode, valuesProvider, fixed) {
     autocomplete({
         input: input,
         minLength: 0,
-        render: function(item, currentValue) {
+        render: function(item: any, currentValue: any) {
             var div = document.createElement("div");
             div.className = "autocomplete-item";
             div.textContent = item.label;
@@ -61,32 +61,32 @@ function installAutocomplete(vnode, valuesProvider, fixed) {
         //     div.textContent = groupName;
         //     return div;
         // },
-        fetch: function (text, update) {
+        fetch: function (text: string, update: any) {
             text = text.toLowerCase();
             //var suggestions = ["A", "B", "C", "doo", "foo"];
-            valuesProvider(function(suggestions) {
+            valuesProvider(function(suggestions: any) {
                 if (!fixed) {
-                    suggestions = suggestions.filter(n => n.label.toLowerCase().startsWith(text));
+                    suggestions = suggestions.filter((n: { label: string; }) => n.label.toLowerCase().startsWith(text));
                 }
                 update(suggestions);
             });
         },
-        onSelect: function (item) {
+        onSelect: function (item: any) {
             item.execute();
         },
-        customize: function(input, inputRect, container, maxHeight) {
+        customize: function(input: any, inputRect: any, container: any, maxHeight: any) {
             $(container).css('width', 'auto');
         }
     });
 }
 
-function editableCell(modelNode, propertyName, extraClasses, opts) {
+function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: Array<string>) {
     let placeholder = "<no " + propertyName+">";
     if (modelNode == undefined) {
         throw "modelNode should not be undefined";
     }
     extraClasses = extraClasses || [];
-    extraClassesStr = "";
+    let extraClassesStr = "";
     if (extraClasses.length > 0) {
         extraClassesStr = "." + extraClasses.join(".");
     }
@@ -98,30 +98,32 @@ function editableCell(modelNode, propertyName, extraClasses, opts) {
             required: true
         },
         hook: { insert: addAutoresize, update: triggerResize },
-        on: { keyup: function(e){
+        on: { keyup: function(e: any){
                 ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
             }
         }}, [])
 }
 
-function addAutoresize(vnode) {
+function addAutoresize(vnode: any) {
+    // @ts-ignore
     $(vnode.elm).autoresize(uiutils.myAutoresizeOptions);
 }
 
-function triggerResize(vnode) {
+function triggerResize(vnode: any) {
+    // @ts-ignore
     $(vnode.elm).inputWidthUpdate(uiutils.myAutoresizeOptions);
 }
 
-function fixedCell(text, extraClasses, alternativesProvider) {
+function fixedCell(text: string, extraClasses: Array<string>, alternativesProvider: any) {
     extraClasses = extraClasses || [];
-    extraClassesStr = "";
+    let extraClassesStr = "";
     if (extraClasses.length > 0) {
         extraClassesStr = "." + extraClasses.join(".");
     }
     return h("input.fixed" + extraClassesStr, {
         props: {value:text},
         hook: {
-            insert: function(vnode){
+            insert: function(vnode: any){
                 addAutoresize(vnode);
                 if (alternativesProvider != null && alternativesProvider != undefined) {
                     installAutocomplete(vnode, alternativesProvider, true);
@@ -135,8 +137,6 @@ function row() {
     return h("div.row", {}, flattenArray(arguments));
 }
 
-
-
 function emptyRow() {
     return row();
 }
@@ -145,19 +145,21 @@ function tabCell() {
     return h("div.tab", {}, []);
 }
 
-function flattenArray(value) {
+function flattenArray(value: any) {
+    // @ts-ignore
     return Array.from(value).flat();
 }
 
-function childCell(modelNode, containmentName) {
+function childCell(modelNode: ModelNode, containmentName: string) {
     let child = modelNode.childByLinkName(containmentName);
     if (child == null) {
+        // @ts-ignore
         return fixedCell("<no "+containmentName + ">", ["missing-element"], alternativesProviderForAddingChild(modelNode, containmentName));
     }
     return renderer.renderModelNode(child);
 }
 
-function verticalCollectionCell(modelNode, containmentName) {
+function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
     let ws = wscommunication.getWsCommunication(modelNode.modelName());
     let addInputChild = function() {
         ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
@@ -165,12 +167,13 @@ function verticalCollectionCell(modelNode, containmentName) {
     let children = modelNode.childrenByLinkName(containmentName);
     if (children.length == 0) {
         return h('div.vertical-collection', {}, [
-            fixedCell("<< ... >>", ['empty-collection'], function (alternativesUser) {
+            fixedCell("<< ... >>", ['empty-collection'], function (alternativesUser: any) {
                 alternativesUser([{label: "Input", execute: addInputChild}]);
             })]);
     } else {
         return h('div.vertical-collection', {},
             map(modelNode.childrenByLinkName(containmentName), function () {
+                // @ts-ignore
                 return row(renderer.renderModelNode(this));
             }));
     }
@@ -184,7 +187,7 @@ function verticalGroupCell() {
     return h('div.vertical-group', {}, flattenArray(arguments));
 }
 
-function map(originalArray, op) {
+function map(originalArray: any, op: any) {
     return Array.from($(originalArray).map(op));
 }
 

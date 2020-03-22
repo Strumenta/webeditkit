@@ -1,5 +1,5 @@
 //const renderer = require('./renderer');
-const datamodel = require('./datamodel.js');
+const datamodel = require('./datamodel');
 
 function findNode(root, searchedID) {
     if (root.id.regularId == searchedID.regularId) {

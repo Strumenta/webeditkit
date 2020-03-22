@@ -8,7 +8,7 @@ var patch = snabbdom.init([ // Init patch function with chosen modules
 var h = require('snabbdom/h').default; // helper function for creating vnodes
 const toVNode = require('snabbdom/tovnode').default;
 const uiutils = require('./uiutils.js');
-const datamodel = require('./datamodel.js');
+const datamodel = require('./datamodel');
 const wscommunication = require('./wscommunication.js');
 const autocomplete = require('autocompleter');
 

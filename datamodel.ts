@@ -7,7 +7,27 @@ function dataToNode(data) {
     return new ModelNode(data)
 }
 
+class Ref {
+    private data: any;
+    constructor(data) {
+        if (data == null || data == undefined) {
+            throw "Ref cannot be built with null data"
+        }
+        this.data = data;
+    }
+    loadData(cb){
+        let url = "http://localhost:2904/models/" + this.data.model.qualifiedName + "/" + this.data.id.regularId;
+        $.getJSON(url, function(data) {
+            if (data == null) {
+                throw "Data not received correctly on request to " + url;
+            }
+            cb(dataToNode(data));
+        });
+    }
+}
+
 class ModelNode {
+    private data: any;
     constructor(data) {
         this.data = data;
     }

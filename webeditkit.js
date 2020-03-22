@@ -1,4 +1,4 @@
-const datamodel = require('./datamodel.js');
+const datamodel = require('./datamodel');
 
 const renderers = require('./renderer');
 const registerRenderer = renderers.registerRenderer;
