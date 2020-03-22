@@ -1,3 +1,5 @@
+const wscommunication = require('./wscommunication');
+
 let datamodelRoots = {};
 
 function dataToNode(data) {
@@ -99,6 +101,12 @@ class ModelNode {
     }
     parent() {
         return dataToNode(this.data.parent);
+    }
+    private ws() {
+        return wscommunication.WsCommunication.getWsCommunication(this.modelName());
+    }
+    deleteMe() {
+        this.ws().deleteNode(this);
     }
 }
 

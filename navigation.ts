@@ -53,7 +53,7 @@ export function moveToNextElement(t) {
         if ((parent).hasClass("editor")) {
             // cannot move outside the editor;
             // @ts-ignore
-            window.errorSound.play();
+            //window.errorSound.play();
             return false;
         }
         // @ts-ignore
@@ -125,7 +125,7 @@ export function moveToPrevElement(t) {
         } else {
             //console.log("prev is unknown " + tag);
             // @ts-ignore
-            window.errorSound.play();
+            //window.errorSound.play();
             return;
         }
     } while (true);

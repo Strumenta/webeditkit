@@ -38,16 +38,22 @@ registerRenderer("com.strumenta.financialcalc.Input", function(modelNode) {
     }
     return horizontalGroupCell(
         editableCell(modelNode, "name"),
-        fixedCell("of type", ["keyword"]),
+        fixedCell("of type", ["keyword"], null, function(){
+            modelNode.deleteMe();
+        }),
         childCell(modelNode, "type"));
 });
 
 registerRenderer("com.strumenta.financialcalc.StringType", function(modelNode) {
-    return fixedCell("string", ["type"]);
+    return fixedCell("string", ["type"], null, function(){
+        modelNode.deleteMe();
+    });
 });
 
 registerRenderer("com.strumenta.financialcalc.BooleanType", function(modelNode) {
-    return fixedCell("boolean", ["type"]);
+    return fixedCell("boolean", ["type"], null, function(){
+        modelNode.deleteMe();
+    });
 });
 
 registerRenderer("com.strumenta.financialcalc.FinancialCalcSheet", function(modelNode) {

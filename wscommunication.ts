@@ -121,6 +121,14 @@ module WsCommunication {
             });
         }
 
+        deleteNode(node) {
+            this.sendJSON({
+                type: 'deleteNode',
+                modelName: node.modelName(),
+                node: node.idString()
+            });
+        }
+
         triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
             this.sendJSON({
                 type: "propertyChange",
