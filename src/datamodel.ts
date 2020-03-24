@@ -34,17 +34,17 @@ export class ModelNode {
         this.data = data;
     }
     childByLinkName(linkName) {
-        const filtered = this.data.children.filter(el => el.containingLink == linkName)
-        if (filtered.length == 0) {
+        const filtered = this.data.children.filter(el => el.containingLink === linkName);
+        if (filtered.length ==- 0) {
             return null;
-        } else if (filtered.length == 1) {
+        } else if (filtered.length === 1) {
             return dataToNode(filtered[0]);
         } else {
-            throw "Unexpected to find multiple children for link name " + linkName;
+            throw new Error("Unexpected to find multiple children for link name " + linkName);
         }
     }
     childrenByLinkName(linkName) {
-        let filtered = this.data.children.filter(el => el.containingLink == linkName)
+        const filtered = this.data.children.filter(el => el.containingLink === linkName);
         return $(filtered).map(function() { return dataToNode(this); });
     }
     property(propertyName) {
