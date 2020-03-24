@@ -94,7 +94,7 @@ export class ModelNode {
                 return;
             }
         }
-        throw "Child not found " + JSON.stringify(childData);
+        throw new Error("Child not found " + JSON.stringify(childData));
     }
     containmentName() {
         return this.data.containingLink;
@@ -119,9 +119,8 @@ export function getDatamodelRoot(name) {
 }
 
 export function forEachDataModel(op) {
-    let keys = Object.keys(datamodelRoots);
-    for (var i=0;i<keys.length;i++) {
-        let key = keys[i];
+    const keys = Object.keys(datamodelRoots);
+    for (const key of keys) {
         op(key, getDatamodelRoot(key));
     }
 }
