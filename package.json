@@ -2,7 +2,8 @@
   "name": "webeditkit",
   "version": "1.0.0",
   "description": "A framework to create projectional editors",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
   "dependencies": {
     "@types/jquery": "^3.3.33",
     "@types/node": "^13.9.3",
@@ -20,7 +21,8 @@
     "test": "echo \"No test specified\" && exit 0",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
-    "lint": "tslint -p tsconfig.json"    
+    "lint": "tslint -p tsconfig.json",
+    "prepare" : "npm run build"    
   },
   "repository": {
     "type": "git",
@@ -31,5 +33,6 @@
   "bugs": {
     "url": "https://github.com/Strumenta/webeditkit/issues"
   },
-  "homepage": "https://github.com/Strumenta/webeditkit#readme"
+  "homepage": "https://github.com/Strumenta/webeditkit#readme",
+  "files":["dist/**/*"]
 }
