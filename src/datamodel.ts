@@ -1,15 +1,15 @@
-const wscommunication = require('./wscommunication');
+import {getWsCommunication} from "./wscommunication";
 
 let datamodelRoots = {};
 
-function dataToNode(data) {
+export function dataToNode(data) {
     if (data == null) {
         return null;
     }
     return new ModelNode(data)
 }
 
-class Ref {
+export class Ref {
     private data: any;
     constructor(data) {
         if (data == null || data == undefined) {
@@ -103,31 +103,25 @@ export class ModelNode {
         return dataToNode(this.data.parent);
     }
     private ws() {
-        return wscommunication.WsCommunication.getWsCommunication(this.modelName());
+        return getWsCommunication(this.modelName());
     }
     deleteMe() {
         this.ws().deleteNode(this);
     }
 }
 
-function setDatamodelRoot(name, root) {
+export function setDatamodelRoot(name, root) {
     datamodelRoots[name] = root;
 }
 
-function getDatamodelRoot(name) {
+export function getDatamodelRoot(name) {
     return datamodelRoots[name];
 }
 
-function forEachDataModel(op) {
+export function forEachDataModel(op) {
     let keys = Object.keys(datamodelRoots);
     for (var i=0;i<keys.length;i++) {
         let key = keys[i];
         op(key, getDatamodelRoot(key));
     }
 }
-
-module.exports.dataToNode = dataToNode;
-module.exports.ModelNode = ModelNode;
-module.exports.setDatamodelRoot = setDatamodelRoot;
-module.exports.getDatamodelRoot = getDatamodelRoot;
-module.exports.forEachDataModel = forEachDataModel;
