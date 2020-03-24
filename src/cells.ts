@@ -133,7 +133,7 @@ export function fixedCell(text: string, extraClasses?: string[], alternativesPro
                 if (e.key === "ArrowRight") {
                     moveToNextElement(e.target);
                 } else if (e.key === "Backspace") {
-                    if (deleter != undefined) {
+                    if (deleter !== undefined) {
                         deleter();
                     }
                 }
@@ -162,7 +162,7 @@ function flattenArray(value: any) {
 }
 
 export function childCell(modelNode: ModelNode, containmentName: string) {
-    let child = modelNode.childByLinkName(containmentName);
+    const child = modelNode.childByLinkName(containmentName);
     if (child == null) {
         // @ts-ignore
         return fixedCell("<no " + containmentName + ">", ["missing-element"], alternativesProviderForAddingChild(modelNode, containmentName));
@@ -171,8 +171,8 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
 }
 
 export function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
-    let ws = getWsCommunication(modelNode.modelName());
-    let addInputChild = function () {
+    const ws = getWsCommunication(modelNode.modelName());
+    const addInputChild = function () {
         ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
     };
     let children = modelNode.childrenByLinkName(containmentName);
