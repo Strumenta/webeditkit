@@ -82,19 +82,19 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
     return h("input.editable" + extraClassesStr, {
         props: {
             value: modelNode.property(propertyName),
-            placeholder: placeholder,
+            placeholder,
             required: true
         },
         hook: {insert: addAutoresize, update: triggerResize},
         on: {
-            keydown: function (e: KeyboardEvent) {
+            keydown: (e: KeyboardEvent) => {
                 if (isAtEnd(e.target) && e.key == 'ArrowRight') {
                     moveToNextElement(e.target);
                     e.preventDefault();
                     return true;
                 }
             },
-            keyup: function (e: KeyboardEvent) {
+            keyup: (e: KeyboardEvent) => {
                 ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
             }
         }
