@@ -176,9 +176,9 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
         ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
     };
     const children = modelNode.childrenByLinkName(containmentName);
-    if (children.length == 0) {
+    if (children.length === 0) {
         return h('div.vertical-collection', {}, [
-            fixedCell("<< ... >>", ['empty-collection'], function (alternativesUser: any) {
+            fixedCell("<< ... >>", ['empty-collection'], (alternativesUser: any) => {
                 alternativesUser([{label: "Input", execute: addInputChild}]);
             })]);
     } else {
