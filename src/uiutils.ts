@@ -1,6 +1,6 @@
-let myAutoresizeOptions = {padding:2,minWidth:10,maxWidth:800};
+export let myAutoresizeOptions = {padding:2,minWidth:10,maxWidth:800};
 
-function installAutoresize() {
+export function installAutoresize() {
     // @ts-ignore
     $.fn.textWidth = function(_text, _font){//get width of text with font.  usage: $("div").textWidth();
         var textToConsider = _text || this.val();
@@ -33,6 +33,3 @@ function installAutoresize() {
         return this;
     };
 }
-
-module.exports.installAutoresize = installAutoresize;
-module.exports.myAutoresizeOptions = myAutoresizeOptions;

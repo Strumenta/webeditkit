@@ -2,8 +2,9 @@ import {ModelNode} from "./datamodel";
 
 import h, {VNodeChildElement} from "snabbdom/h"; // helper function for creating vnodes
 
+import {renderModelNode} from "./renderer";
+
 module cellsns {
-    var renderer = require('./renderer');
     const autocomplete = require('autocompleter');
     const uiutils = require('./uiutils');
     const wscommunication = require('./wscommunication');
@@ -187,7 +188,7 @@ module cellsns {
             // @ts-ignore
             return fixedCell("<no " + containmentName + ">", ["missing-element"], alternativesProviderForAddingChild(modelNode, containmentName));
         }
-        return renderer.renderModelNode(child);
+        return renderModelNode(child);
     }
 
     export function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
@@ -205,7 +206,7 @@ module cellsns {
             return h('div.vertical-collection', {},
                 map(modelNode.childrenByLinkName(containmentName), function () {
                     // @ts-ignore
-                    return row(renderer.renderModelNode(this));
+                    return row(renderModelNode(this));
                 }));
         }
     }

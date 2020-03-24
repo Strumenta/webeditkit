@@ -2,15 +2,15 @@ let cells = require('./cells');
 
 let renderersByName = {};
 
-function registerRenderer(name: string, renderer: any) {
+export function registerRenderer(name: string, renderer: any) {
     renderersByName[name] = renderer;
 }
 
-function getRegisteredRenderer(conceptName) {
+export function getRegisteredRenderer(conceptName) {
     return renderersByName[conceptName];
 }
 
-function renderModelNode(modelNode) {
+export function renderModelNode(modelNode) {
     return getRenderer(modelNode)(modelNode);
 }
 
@@ -35,7 +35,3 @@ function getRenderer(modelNode) {
     let conceptName = modelNode.conceptName();
     return getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
 }
-
-module.exports.registerRenderer = registerRenderer;
-module.exports.getRegisteredRenderer = getRegisteredRenderer;
-module.exports.renderModelNode = renderModelNode;
