@@ -172,10 +172,10 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
 
 export function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
     const ws = getWsCommunication(modelNode.modelName());
-    const addInputChild = function () {
+    const addInputChild = () => {
         ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
     };
-    let children = modelNode.childrenByLinkName(containmentName);
+    const children = modelNode.childrenByLinkName(containmentName);
     if (children.length == 0) {
         return h('div.vertical-collection', {}, [
             fixedCell("<< ... >>", ['empty-collection'], function (alternativesUser: any) {
