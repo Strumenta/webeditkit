@@ -35,7 +35,7 @@ export class ModelNode {
     }
     childByLinkName(linkName) {
         const filtered = this.data.children.filter(el => el.containingLink === linkName);
-        if (filtered.length ==- 0) {
+        if (filtered.length === 0) {
             return null;
         } else if (filtered.length === 1) {
             return dataToNode(filtered[0]);
@@ -63,8 +63,8 @@ export class ModelNode {
         return this.data.concept;
     }
     simpleConceptName() {
-        let parts = this.data.concept.split(".");
-        let simpleName = parts[parts.length - 1];
+        const parts = this.data.concept.split(".");
+        const simpleName = parts[parts.length - 1];
         return simpleName;
     }
     isAbstract() {
@@ -72,7 +72,7 @@ export class ModelNode {
     }
     injectModelName(modelName) {
         this.data.modelName = modelName;
-        let parent = this;
+        const parent = this;
         $(this.data.children).each(function () {
             this.parent = parent.data;
             dataToNode(this).injectModelName(modelName);
@@ -87,9 +87,9 @@ export class ModelNode {
         dataToNode(childData).injectModelName(this.data.modelName);
     }
     removeChild(relationName, childData){
-        for (var i=0;i<this.data.children.length;i++){
-            let child = this.data.children[i];
-            if (child.id.regularId == childData.id.regularId) {
+        for (let i=0;i<this.data.children.length;i++){
+            const child = this.data.children[i];
+            if (child.id.regularId === childData.id.regularId) {
                 this.data.children.splice(i, 1);
                 return;
             }
