@@ -28,7 +28,7 @@ class Ref {
     }
 }
 
-class ModelNode {
+export class ModelNode {
     private data: any;
     constructor(data) {
         this.data = data;

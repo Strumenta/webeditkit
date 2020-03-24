@@ -1,6 +1,8 @@
-module cellsns {
+import {ModelNode} from "./datamodel";
 
-    var h = require('snabbdom/h').default; // helper function for creating vnodes
+import h, {VNodeChildElement} from "snabbdom/h"; // helper function for creating vnodes
+
+module cellsns {
     var renderer = require('./renderer');
     const autocomplete = require('autocompleter');
     const uiutils = require('./uiutils');
@@ -216,7 +218,7 @@ module cellsns {
         return h('div.vertical-group', {}, flattenArray(arguments));
     }
 
-    function map(originalArray: any, op: any) {
+    function map(originalArray: any, op: any) : VNodeChildElement[] {
         return Array.from($(originalArray).map(op));
     }
 }
