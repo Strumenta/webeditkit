@@ -122,22 +122,21 @@ export function fixedCell(text: string, extraClasses?: string[], alternativesPro
         hook: {
             insert: (vnode: any) => {
                 addAutoresize(vnode);
-                if (alternativesProvider != null && alternativesProvider != undefined) {
+                if (alternativesProvider != null && alternativesProvider !== undefined) {
                     installAutocomplete(vnode, alternativesProvider, true);
                 }
             },
             update: triggerResize
         },
         on: {
-            keydown: function (e: KeyboardEvent) {
-                if (e.key == "ArrowRight") {
+            keydown: (e: KeyboardEvent) => {
+                if (e.key === "ArrowRight") {
                     moveToNextElement(e.target);
-                } else if (e.key == "Backspace") {
+                } else if (e.key === "Backspace") {
                     if (deleter != undefined) {
                         deleter();
                     }
                 }
-                //console.log("fixed: ", e.key);
                 e.preventDefault();
                 return false;
             }
