@@ -8,8 +8,9 @@ import {myAutoresizeOptions} from "./uiutils";
 
 import {getWsCommunication, WsCommunication} from "./wscommunication";
 
+import {isAtEnd, moveToNextElement} from "./navigation";
+
 module cellsns {
-    const navigation = require('./navigation');
     const autocomplete = require("autocompleter");
 
     export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
@@ -110,8 +111,8 @@ module cellsns {
             hook: {insert: addAutoresize, update: triggerResize},
             on: {
                 keydown: function (e: KeyboardEvent) {
-                    if (navigation.isAtEnd(e.target) && e.key == 'ArrowRight') {
-                        navigation.moveToNextElement(e.target);
+                    if (isAtEnd(e.target) && e.key == 'ArrowRight') {
+                        moveToNextElement(e.target);
                         e.preventDefault();
                         return true;
                     }
@@ -153,7 +154,7 @@ module cellsns {
             on: {
                 keydown: function (e: KeyboardEvent) {
                     if (e.key == "ArrowRight") {
-                        navigation.moveToNextElement(e.target);
+                        moveToNextElement(e.target);
                     } else if (e.key == "Backspace") {
                         if (deleter != undefined) {
                             deleter();
