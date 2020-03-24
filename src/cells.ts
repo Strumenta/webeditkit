@@ -88,7 +88,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
         hook: {insert: addAutoresize, update: triggerResize},
         on: {
             keydown: (e: KeyboardEvent) => {
-                if (isAtEnd(e.target) && e.key == 'ArrowRight') {
+                if (isAtEnd(e.target) && e.key === 'ArrowRight') {
                     moveToNextElement(e.target);
                     e.preventDefault();
                     return true;
@@ -111,7 +111,7 @@ function triggerResize(vnode: any) {
     $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-export function fixedCell(text: string, extraClasses?: Array<string>, alternativesProvider?: any, deleter?: any) {
+export function fixedCell(text: string, extraClasses?: string[], alternativesProvider?: any, deleter?: any) {
     extraClasses = extraClasses || [];
     let extraClassesStr = "";
     if (extraClasses.length > 0) {
@@ -120,7 +120,7 @@ export function fixedCell(text: string, extraClasses?: Array<string>, alternativ
     return h("input.fixed" + extraClassesStr, {
         props: {value: text},
         hook: {
-            insert: function (vnode: any) {
+            insert: (vnode: any) => {
                 addAutoresize(vnode);
                 if (alternativesProvider != null && alternativesProvider != undefined) {
                     installAutocomplete(vnode, alternativesProvider, true);
