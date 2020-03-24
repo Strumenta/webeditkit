@@ -13,20 +13,20 @@ const wscommunication = require('./wscommunication');
 const autocomplete = require('autocompleter');
 
 const renderers = require('./renderer');
-const registerRenderer = renderers.registerRenderer;
-const renderModelNode = renderers.renderModelNode;
+export const registerRenderer = renderers.registerRenderer;
+export const renderModelNode = renderers.renderModelNode;
 
-const cells = require('./cells');
-const editableCell = cells.editableCell;
-const fixedCell = cells.fixedCell;
-const row = cells.row;
-const emptyRow = cells.emptyRow;
-const tabCell = cells.tabCell;
-const verticalGroupCell = cells.verticalGroupCell;
-const horizontalGroupCell = cells.horizontalGroupCell;
-const verticalCollectionCell = cells.verticalCollectionCell;
-const childCell = cells.childCell;
-const webeditkit = require('./webeditkit');
+export const cells = require('./cells');
+export const editableCell = cells.editableCell;
+export const fixedCell = cells.fixedCell;
+export const row = cells.row;
+export const emptyRow = cells.emptyRow;
+export const tabCell = cells.tabCell;
+export const verticalGroupCell = cells.verticalGroupCell;
+export const horizontalGroupCell = cells.horizontalGroupCell;
+export const verticalCollectionCell = cells.verticalCollectionCell;
+export const childCell = cells.childCell;
+export const webeditkit = require('./webeditkit');
 
 export function setup() {
     uiutils.installAutoresize();
