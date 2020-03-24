@@ -1,0 +1,29 @@
+{
+  "name": "webeditkit",
+  "version": "1.0.0",
+  "description": "A framework to create projectional editors",
+  "main": "index.js",
+  "dependencies": {
+    "@types/jquery": "^3.3.33",
+    "@types/node": "^13.9.3",
+    "autocompleter": "^6.0.2",
+    "snabbdom": "^0.7.4",
+    "tsify": "^4.0.1",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"No test specified\" && exit 0",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Strumenta/webeditkit.git"
+  },
+  "author": "Federico Tomassetti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Strumenta/webeditkit/issues"
+  },
+  "homepage": "https://github.com/Strumenta/webeditkit#readme"
+}
