@@ -62,7 +62,7 @@ function installAutocomplete(vnode: any, valuesProvider: any, fixed: boolean) {
         onSelect: (item: any) => {
             item.execute();
         },
-        customize: (input: any, inputRect: any, container: any, maxHeight: any) => {
+        customize: (_input: any, inputRect: any, container: any, maxHeight: any) => {
             $(container).css('width', 'auto');
         }
     });
@@ -78,7 +78,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
     if (extraClasses.length > 0) {
         extraClassesStr = "." + extraClasses.join(".");
     }
-    let ws = getWsCommunication(modelNode.modelName());
+    const ws = getWsCommunication(modelNode.modelName());
     return h("input.editable" + extraClassesStr, {
         props: {
             value: modelNode.property(propertyName),
