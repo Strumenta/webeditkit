@@ -33,6 +33,6 @@ export function setup() {
 }
 
 export function addModel(baseUrl, modelName, nodeId, target) {
-    wscommunication.WsCommunication.createInstance("ws://" + baseUrl + "/socket", modelName, target);
+    wscommunication.createInstance("ws://" + baseUrl + "/socket", modelName, target);
     webeditkit.loadDataModel("http://" + baseUrl, modelName, nodeId, target);
 }

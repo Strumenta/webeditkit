@@ -1,4 +1,4 @@
-module WsCommunication {
+//module WsCommunication {
 
     //const renderer = require('./renderer');
     const datamodel = require('./datamodel');
@@ -25,7 +25,7 @@ module WsCommunication {
         });
     }
 
-    class WsCommunication {
+    export class WsCommunication {
         private ws: WebSocket;
         private modelName: string;
         private localName: string;
@@ -163,8 +163,8 @@ module WsCommunication {
         let instance = new WsCommunication(url, modelName, localName);
         instances[modelName] = instance;
     }
-}
+//}
 
-module.exports.WsCommunication = WsCommunication;
+//module.exports.WsCommunication = WsCommunication;
 //module.exports.getWsCommunication = WsCommunication.getWsCommunication;
 //module.exports.createInstance = WsCommunication.createInstance;

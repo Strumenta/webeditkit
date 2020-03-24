@@ -4,11 +4,13 @@ import h, {VNodeChildElement} from "snabbdom/h"; // helper function for creating
 
 import {renderModelNode} from "./renderer";
 
+import {myAutoresizeOptions} from "./uiutils";
+
+import {getWsCommunication, WsCommunication} from "./wscommunication";
+
 module cellsns {
-    const autocomplete = require('autocompleter');
-    const uiutils = require('./uiutils');
-    const wscommunication = require('./wscommunication');
     const navigation = require('./navigation');
+    const autocomplete = require("autocompleter");
 
     export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
         return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
@@ -20,7 +22,7 @@ module cellsns {
         }
         // we should get all the alternatives from the server
         return function (alternativesUser: any) {
-            let ws = wscommunication.WsCommunication.getWsCommunication(modelNode.modelName());
+            let ws = getWsCommunication(modelNode.modelName());
             ws.askAlternatives(modelNode, containmentName, function (alternatives: any) {
                 let adder = function (conceptName: string) {
                     return function () {
@@ -98,7 +100,7 @@ module cellsns {
         if (extraClasses.length > 0) {
             extraClassesStr = "." + extraClasses.join(".");
         }
-        let ws = wscommunication.WsCommunication.getWsCommunication(modelNode.modelName());
+        let ws = getWsCommunication(modelNode.modelName());
         return h("input.editable" + extraClassesStr, {
             props: {
                 value: modelNode.property(propertyName),
@@ -123,12 +125,12 @@ module cellsns {
 
     function addAutoresize(vnode: any) {
         // @ts-ignore
-        $(vnode.elm).autoresize(uiutils.myAutoresizeOptions);
+        $(vnode.elm).autoresize(myAutoresizeOptions);
     }
 
     function triggerResize(vnode: any) {
         // @ts-ignore
-        $(vnode.elm).inputWidthUpdate(uiutils.myAutoresizeOptions);
+        $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
     }
 
     export function fixedCell(text: string, extraClasses?: Array<string>, alternativesProvider?: any, deleter?: any) {
@@ -192,7 +194,7 @@ module cellsns {
     }
 
     export function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
-        let ws = wscommunication.WsCommunication.getWsCommunication(modelNode.modelName());
+        let ws = getWsCommunication(modelNode.modelName());
         let addInputChild = function () {
             ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
         };
