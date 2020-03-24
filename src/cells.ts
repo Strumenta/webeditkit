@@ -17,23 +17,21 @@ export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
 }
 
 function alternativesProviderForAddingChild(modelNode: ModelNode, containmentName: string, replacing: boolean) {
-    if (replacing == undefined) {
+    if (replacing === undefined) {
         replacing = false;
     }
     // we should get all the alternatives from the server
-    return function (alternativesUser: any) {
-        let ws = getWsCommunication(modelNode.modelName());
-        ws.askAlternatives(modelNode, containmentName, function (alternatives: any) {
-            let adder = function (conceptName: string) {
-                return function () {
-                    if (replacing) {
-                        ws.setChild(modelNode, containmentName, conceptName);
-                    } else {
-                        ws.addChild(modelNode, containmentName, conceptName);
-                    }
-                };
+    return (alternativesUser: any) => {
+        const ws = getWsCommunication(modelNode.modelName());
+        ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
+            const adder = (conceptName: string) => () => {
+                if (replacing) {
+                    ws.setChild(modelNode, containmentName, conceptName);
+                } else {
+                    ws.addChild(modelNode, containmentName, conceptName);
+                }
             };
-            let uiAlternatives = Array.from($(alternatives).map(function () {
+            const uiAlternatives = Array.from($(alternatives).map(() => {
                 return {label: this.alias, execute: adder(this.conceptName)}
             }));
             alternativesUser(uiAlternatives);
@@ -42,58 +40,38 @@ function alternativesProviderForAddingChild(modelNode: ModelNode, containmentNam
 }
 
 function installAutocomplete(vnode: any, valuesProvider: any, fixed: boolean) {
-    let input = vnode.elm;
-    // $(input).keyup(function(){
-    //     console.log("keyup autocomplete");
-    //     let text = input.value.toLowerCase();
-    //     console.log("VALUES " + valuesProvider(input));
-    //     let matched = valuesProvider(input).filter(n => n.label.toLowerCase() == text);
-    //     console.log("TEXT "+text+" MATCHED " + matched);
-    //     if (matched.length == 1) {
-    //         autocompleteTriggered(input, matched[0]);
-    //     } else {
-    //         $(input).attr("selected-id", null);
-    //         //$(input).removeClass("selection-done");
-    //     }
-    // });
+    const input = vnode.elm;
     autocomplete({
-        input: input,
+        input,
         minLength: 0,
-        render: function (item: any, currentValue: any) {
-            var div = document.createElement("div");
+        render: (item: any, currentValue: any) => {
+            const div = document.createElement("div");
             div.className = "autocomplete-item";
             div.textContent = item.label;
             return div;
         },
-        // renderGroup: function(groupName, currentValue) {
-        //     var div = document.createElement("div");
-        //     div.className = "autosuggest-group";
-        //     div.textContent = groupName;
-        //     return div;
-        // },
-        fetch: function (text: string, update: any) {
+        fetch: (text: string, update: any) => {
             text = text.toLowerCase();
-            //var suggestions = ["A", "B", "C", "doo", "foo"];
-            valuesProvider(function (suggestions: any) {
+            valuesProvider((suggestions: any) => {
                 if (!fixed) {
                     suggestions = suggestions.filter((n: { label: string; }) => n.label.toLowerCase().startsWith(text));
                 }
                 update(suggestions);
             });
         },
-        onSelect: function (item: any) {
+        onSelect: (item: any) => {
             item.execute();
         },
-        customize: function (input: any, inputRect: any, container: any, maxHeight: any) {
+        customize: (input: any, inputRect: any, container: any, maxHeight: any) => {
             $(container).css('width', 'auto');
         }
     });
 }
 
-export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: Array<string>) {
-    let placeholder = "<no " + propertyName + ">";
-    if (modelNode == undefined) {
-        throw "modelNode should not be undefined";
+export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[]) {
+    const placeholder = "<no " + propertyName + ">";
+    if (modelNode === undefined) {
+        throw new Error("modelNode should not be undefined");
     }
     extraClasses = extraClasses || [];
     let extraClassesStr = "";
