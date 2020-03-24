@@ -1,6 +1,6 @@
 import {getWsCommunication} from "./wscommunication";
 
-let datamodelRoots = {};
+const datamodelRoots = {};
 
 export function dataToNode(data) {
     if (data == null) {
@@ -12,16 +12,16 @@ export function dataToNode(data) {
 export class Ref {
     private data: any;
     constructor(data) {
-        if (data == null || data == undefined) {
-            throw "Ref cannot be built with null data"
+        if (data == null || data === undefined) {
+            throw new Error("Ref cannot be built with null data");
         }
         this.data = data;
     }
     loadData(cb){
-        let url = "http://localhost:2904/models/" + this.data.model.qualifiedName + "/" + this.data.id.regularId;
-        $.getJSON(url, function(data) {
+        const url = "http://localhost:2904/models/" + this.data.model.qualifiedName + "/" + this.data.id.regularId;
+        $.getJSON(url, data => {
             if (data == null) {
-                throw "Data not received correctly on request to " + url;
+                throw new Error("Data not received correctly on request to " + url);
             }
             cb(dataToNode(data));
         });
@@ -29,12 +29,12 @@ export class Ref {
 }
 
 export class ModelNode {
-    private data: any;
+    private readonly data: any;
     constructor(data) {
         this.data = data;
     }
     childByLinkName(linkName) {
-        let filtered = this.data.children.filter(function(el){return el.containingLink == linkName;})
+        const filtered = this.data.children.filter(el => el.containingLink == linkName)
         if (filtered.length == 0) {
             return null;
         } else if (filtered.length == 1) {
@@ -44,7 +44,7 @@ export class ModelNode {
         }
     }
     childrenByLinkName(linkName) {
-        let filtered = this.data.children.filter(function(el){return el.containingLink == linkName;})
+        let filtered = this.data.children.filter(el => el.containingLink == linkName)
         return $(filtered).map(function() { return dataToNode(this); });
     }
     property(propertyName) {
