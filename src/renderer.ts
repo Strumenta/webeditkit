@@ -2,7 +2,7 @@ let cells = require('./cells');
 
 let renderersByName = {};
 
-export function registerRenderer(name: string, renderer: any) {
+export function registerRenderer(name: string, renderer: any) : void {
     renderersByName[name] = renderer;
 }
 

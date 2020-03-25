@@ -144,6 +144,43 @@ export function fixedCell(text: string, extraClasses?: string[], alternativesPro
     }, []);
 }
 
+export function referenceCell(modelNode: ModelNode, referenceName: string, extraClasses?: string[], alternativesProvider?: any, deleter?: any) {
+    extraClasses = extraClasses || [];
+    let extraClassesStr = "";
+    if (extraClasses.length > 0) {
+        extraClassesStr = "." + extraClasses.join(".");
+    }
+    return h("input.reference" + extraClassesStr, {
+        props: {value: "Loading..."},
+        hook: {
+            insert: (vnode: any) => {
+                addAutoresize(vnode);
+                if (alternativesProvider != null && alternativesProvider !== undefined) {
+                    installAutocomplete(vnode, alternativesProvider, true);
+                }
+                modelNode.ref(referenceName).loadData(function(refModelNode) {
+                    $(vnode.elm).val(refModelNode.name());
+                    triggerResize(vnode);
+                });
+            },
+            update: triggerResize
+        },
+        on: {
+            keydown: (e: KeyboardEvent) => {
+                if (e.key === "ArrowRight") {
+                    moveToNextElement(e.target);
+                } else if (e.key === "Backspace") {
+                    if (deleter !== undefined) {
+                        deleter();
+                    }
+                }
+                e.preventDefault();
+                return false;
+            }
+        }
+    }, []);
+}
+
 export function row() {
     return h("div.row", {}, flattenArray(arguments));
 }
@@ -173,6 +210,7 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
 export function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
     const ws = getWsCommunication(modelNode.modelName());
     const addInputChild = () => {
+        // TODO FIXME
         ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
     };
     const children = modelNode.childrenByLinkName(containmentName);
@@ -190,6 +228,27 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
     }
 }
 
+export function horizontalCollectionCell(modelNode: ModelNode, containmentName: string, separatorGenerator?: any) {
+    const ws = getWsCommunication(modelNode.modelName());
+    const addInputChild = () => {
+        // TODO FIXME
+        ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
+    };
+    const children = modelNode.childrenByLinkName(containmentName);
+    if (children.length === 0) {
+        return h('div.horizontal-collection', {}, [
+            fixedCell("<< ... >>", ['empty-collection'], (alternativesUser: any) => {
+                alternativesUser([{label: "Input", execute: addInputChild}]);
+            })]);
+    } else {
+        return h('div.horizontal-collection', {},
+            separate(map(modelNode.childrenByLinkName(containmentName), function () {
+                // @ts-ignore
+                return renderModelNode(this);
+            }), separatorGenerator));
+    }
+}
+
 export function horizontalGroupCell() {
     return h('div.horizontal-group', {}, flattenArray(arguments));
 }
@@ -200,4 +259,18 @@ export function verticalGroupCell() {
 
 function map(originalArray: any, op: any) : VNodeChildElement[] {
     return Array.from($(originalArray).map(op));
+}
+
+function separate(original: any[], separatorGenerator?: any) : any[] {
+    if (separatorGenerator === undefined) {
+        return original;
+    }
+    let separated = [];
+    for (let i=0;i<original.length;i++) {
+        separated.push(original[i]);
+        if ((i+1)<original.length) {
+            separated.push(separatorGenerator());
+        }
+    }
+    return separated;
 }

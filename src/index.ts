@@ -5,10 +5,10 @@ var patch = snabbdom.init([ // Init patch function with chosen modules
     require('snabbdom/modules/style').default, // handles styling on elements with support for animations
     require('snabbdom/modules/eventlisteners').default, // attaches event listeners
 ]);
-var h = require('snabbdom/h').default; // helper function for creating vnodes
+export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const toVNode = require('snabbdom/tovnode').default;
 const uiutils = require('./uiutils');
-const datamodel = require('./datamodel');
+export const datamodel = require('./datamodel');
 const wscommunication = require('./wscommunication');
 const autocomplete = require('autocompleter');
 
@@ -18,6 +18,7 @@ export const renderModelNode = renderers.renderModelNode;
 
 export const cells = require('./cells');
 export const editableCell = cells.editableCell;
+export const referenceCell = cells.referenceCell;
 export const fixedCell = cells.fixedCell;
 export const row = cells.row;
 export const emptyRow = cells.emptyRow;
@@ -25,8 +26,10 @@ export const tabCell = cells.tabCell;
 export const verticalGroupCell = cells.verticalGroupCell;
 export const horizontalGroupCell = cells.horizontalGroupCell;
 export const verticalCollectionCell = cells.verticalCollectionCell;
+export const horizontalCollectionCell = cells.horizontalCollectionCell;
 export const childCell = cells.childCell;
 export const webeditkit = require('./webeditkit');
+export const registerDataModelClass = datamodel.registerDataModelClass;
 
 export function setup() {
     uiutils.installAutoresize();

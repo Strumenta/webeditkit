@@ -37,3 +37,4 @@ function loadDataModel(baseUrl, model, nodeId, target) {
 
 module.exports.renderDataModels = renderDataModels;
 module.exports.loadDataModel = loadDataModel;
+module.exports.h = h;

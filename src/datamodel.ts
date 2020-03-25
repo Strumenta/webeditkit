@@ -1,12 +1,34 @@
 import {getWsCommunication} from "./wscommunication";
 
 const datamodelRoots = {};
+const datamodelClasses = {};
+
+export function registerDataModelClass(name: string, clazz) : void {
+    datamodelClasses[name] = clazz;
+}
+
+function instantiate(clazz, args) {
+    var o, f, c;
+    //c = window[className]; // get reference to class constructor function
+    c = clazz;
+    f = function(){}; // dummy function
+    f.prototype = c.prototype; // reference same prototype
+    o = new f(); // instantiate dummy function to copy prototype properties
+    c.apply(o, args); // call class constructor, supplying new object as context
+    o.constructor = c; // assign correct constructor (not f)
+    return o;
+}
 
 export function dataToNode(data) {
     if (data == null) {
         return null;
     }
-    return new ModelNode(data)
+    let clazz = datamodelClasses[data.concept];
+    if (clazz === undefined) {
+        return new ModelNode(data)
+    } else {
+        return new clazz(data);
+    }
 }
 
 export class Ref {
@@ -18,6 +40,7 @@ export class Ref {
         this.data = data;
     }
     loadData(cb){
+        // TODO fixme, this address should not be set in this way...
         const url = "http://localhost:2904/models/" + this.data.model.qualifiedName + "/" + this.data.id.regularId;
         $.getJSON(url, data => {
             if (data == null) {
@@ -80,6 +103,15 @@ export class ModelNode {
     }
     modelName() {
         return this.data.modelName;
+    }
+    index() : number {
+        const siblings = this.parent().childrenByLinkName(this.containmentName());
+        for (let i=0;i<siblings.length;i++){
+            if (this.idString() == siblings[i].idString()) {
+                return i;
+            }
+        }
+        throw new Error("This element was not found among the children of its parent");
     }
     addChild(relationName, index, childData){
         this.data.children.push(childData);
