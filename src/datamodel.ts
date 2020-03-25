@@ -118,6 +118,9 @@ export class ModelNode {
         childData.parent = this.data;
         dataToNode(childData).injectModelName(this.data.modelName);
     }
+    createChild(containmentName, index, childConcept) {
+        this.ws().addChildAtIndex(this, containmentName, childConcept, index);
+    }
     removeChild(relationName, childData){
         for (let i=0;i<this.data.children.length;i++){
             const child = this.data.children[i];

@@ -111,6 +111,18 @@
             });
         }
 
+        addChildAtIndex(container, containmentName, conceptName, index: number) {
+            console.log("addChildAtIndex");
+            this.sendJSON({
+                type: 'addChild',
+                index: index,
+                modelName: container.modelName(),
+                container: container.idString(),
+                containmentName: containmentName,
+                conceptToInstantiate: conceptName
+            });
+        }
+
         setChild(container, containmentName, conceptName) {
             this.sendJSON({
                 type: 'setChild',
