@@ -53,18 +53,18 @@ export function moveToNextElement(t) {
     }
     do {
         const tag = next.prop("tagName");
-        if (tag == "INPUT") {
+        if (tag === "INPUT") {
             moveFocusToStart(next);
             return;
-        } else if (tag == "DIV") {
-            if (next.find("input").length == 0) {
+        } else if (tag === "DIV") {
+            if (next.find("input").length === 0) {
                 next = findNext(next);
             } else {
                 next = next.find("input").first();
                 moveFocusToStart(next);
                 return;
             }
-        } else if (tag == "SPAN") {
+        } else if (tag === "SPAN") {
             next = findNext(next);
         } else {
             return;
@@ -76,25 +76,25 @@ export function moveToPrevElement(t) {
     let elConsidered = $(t).prev();
 
     do {
-        if (elConsidered.length == 0) {
+        if (elConsidered.length === 0) {
             moveToPrevElement($(t).parent());
             return;
         }
-        let tag = elConsidered.prop("tagName");
-        if (tag == "INPUT") {
+        const tag = elConsidered.prop("tagName");
+        if (tag === "INPUT") {
             moveFocusToEnd(elConsidered);
             return;
-        } else if (tag == "DIV") {
-            if (elConsidered.find("input").length == 0) {
+        } else if (tag === "DIV") {
+            if (elConsidered.find("input").length === 0) {
                 elConsidered = findPrev(elConsidered);
             } else {
                 elConsidered = elConsidered.find("input").last();
                 moveFocusToEnd(elConsidered);
                 return;
             }
-        } else if (tag == "SPAN") {
+        } else if (tag === "SPAN") {
             elConsidered = findPrev(elConsidered);
-        } else if (tag == "BR") {
+        } else if (tag === "BR") {
             elConsidered = elConsidered.prev();
         } else {
             // Perhaps we could play an error sound
@@ -105,7 +105,7 @@ export function moveToPrevElement(t) {
 
 function findPrev(n) {
     console.log("PREV WAS " + n[0]);
-    if (n.prev() == undefined) {
+    if (n.prev() === undefined) {
         return undefined;
     } else {
         return n.prev();
@@ -116,5 +116,5 @@ export function isAtEnd(element: any) {
     const cursorPos = element.selectionStart;
     // @ts-ignore
     const length = $(element).val().length;
-    return cursorPos == length;
+    return cursorPos === length;
 }
