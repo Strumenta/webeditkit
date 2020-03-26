@@ -31,8 +31,8 @@ function alternativesProviderForAddingChild(modelNode: ModelNode, containmentNam
                     ws.addChild(modelNode, containmentName, conceptName);
                 }
             };
-            const uiAlternatives = Array.from($(alternatives).map(() => {
-                return {label: this.alias, execute: adder(this.conceptName)}
+            const uiAlternatives = Array.from($(alternatives).map((index, domElement) => {
+                return {label: domElement.alias, execute: adder(domElement.conceptName)}
             }));
             alternativesUser(uiAlternatives);
         });
