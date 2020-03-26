@@ -12,3 +12,7 @@ An example is available [here](https://github.com/Strumenta/calc-webeditkit-exam
 
 * **css**: it contains an example of CSS file to be used in the projects based on WebEditKit
 * **src**: the source code of this project, in TypeScript
+
+## Development
+
+We suggest using nvm

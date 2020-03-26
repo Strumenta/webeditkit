@@ -1,10 +1,11 @@
 var snabbdom = require('snabbdom/snabbdom');
-var patch = snabbdom.init([ // Init patch function with chosen modules
-    require('snabbdom/modules/class').default, // makes it easy to toggle classes
-    require('snabbdom/modules/props').default, // for setting properties on DOM elements
-    require('snabbdom/modules/style').default, // handles styling on elements with support for animations
-    require('snabbdom/modules/eventlisteners').default, // attaches event listeners
-    require('snabbdom/modules/dataset').default,
+var patch = snabbdom.init([
+  // Init patch function with chosen modules
+  require('snabbdom/modules/class').default, // makes it easy to toggle classes
+  require('snabbdom/modules/props').default, // for setting properties on DOM elements
+  require('snabbdom/modules/style').default, // handles styling on elements with support for animations
+  require('snabbdom/modules/eventlisteners').default, // attaches event listeners
+  require('snabbdom/modules/dataset').default,
 ]);
 export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const toVNode = require('snabbdom/tovnode').default;
@@ -36,10 +37,10 @@ export const renderDataModels = webeditkit.renderDataModels;
 export const findNode = datamodel.findNode;
 
 export function setup() {
-    uiutils.installAutoresize();
+  uiutils.installAutoresize();
 }
 
 export function addModel(baseUrl, modelName, nodeId, target) {
-    wscommunication.createInstance("ws://" + baseUrl + "/socket", modelName, target);
-    webeditkit.loadDataModel("http://" + baseUrl, modelName, nodeId, target);
+  wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
+  webeditkit.loadDataModel('http://' + baseUrl, modelName, nodeId, target);
 }
