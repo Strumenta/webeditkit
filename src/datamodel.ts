@@ -85,6 +85,19 @@ export class ModelNode {
     conceptName() {
         return this.data.concept;
     }
+    findNodeById(nodeIdStr) {
+        if (this.idString() === nodeIdStr) {
+            return this;
+        }
+        for (let i=0;i<this.data.children.length;i++) {
+            let child = dataToNode(this.data.children[i]);
+            let childRes = child.findNodeById(nodeIdStr);
+            if (childRes != null) {
+                return childRes;
+            }
+        }
+        return null;
+    }
     simpleConceptName() {
         const parts = this.data.concept.split(".");
         const simpleName = parts[parts.length - 1];
@@ -114,7 +127,20 @@ export class ModelNode {
         throw new Error("This element was not found among the children of its parent");
     }
     addChild(relationName, index, childData){
-        this.data.children.push(childData);
+        let children = this.data.children;
+        let leftToFind = index;
+        var i = 0;
+        for (; i < children.length && leftToFind > 0; i++) {
+            let child = children[i];
+            if (child.containingLink == relationName) {
+                leftToFind--;
+            }
+        }
+        if (leftToFind > 0) {
+            throw new Error("Invalid index " + index + " in relation " + relationName);
+        }
+
+        this.data.children.splice(i, 0, childData);
         childData.parent = this.data;
         dataToNode(childData).injectModelName(this.data.modelName);
     }
@@ -151,6 +177,10 @@ export function setDatamodelRoot(name, root) {
 
 export function getDatamodelRoot(name) {
     return datamodelRoots[name];
+}
+
+export function findNode(localModelName, nodeId) {
+    return getDatamodelRoot(localModelName).findNodeById(nodeId);
 }
 
 export function forEachDataModel(op) {

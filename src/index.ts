@@ -32,6 +32,9 @@ export const childCell = cells.childCell;
 export const webeditkit = require('./webeditkit');
 export const registerDataModelClass = datamodel.registerDataModelClass;
 
+export const renderDataModels = webeditkit.renderDataModels;
+export const findNode = datamodel.findNode;
+
 export function setup() {
     uiutils.installAutoresize();
 }

@@ -48,28 +48,28 @@
                 let data = JSON.parse(event.data);
                 console.log("  data: ", data);
                 if (data.type == "propertyChange") {
-                    console.log("  localName: ", localName);
+                    //console.log("  localName: ", localName);
                     let root = datamodel.getDatamodelRoot(localName);
                     let node = findNode(root.data, data.nodeId);
-                    console.log("  node: ", node);
+                    //console.log("  node: ", node);
                     node.properties[data.propertyName] = data.propertyValue;
-                    console.log("  changed: ", node);
+                    //console.log("  changed: ", node);
                     webeditkit.renderDataModels();
                 } else if (data.type == "nodeAdded") {
-                    console.log("NODE ADDED");
+                    //console.log("NODE ADDED");
                     let root = datamodel.getDatamodelRoot(localName);
                     let parentNode = findNode(root.data, data.parentNodeId);
-                    console.log("parentNode", parentNode);
+                    //console.log("parentNode", parentNode);
                     // TODO consider index
-                    new datamodel.ModelNode(parentNode).addChild(data.relatioName, data.index, data.child);
+                    new datamodel.ModelNode(parentNode).addChild(data.relationName, data.index, data.child);
                     webeditkit.renderDataModels();
                 } else if (data.type == "nodeRemoved") {
-                    console.log("NODE REMOVED");
+                    //console.log("NODE REMOVED");
                     let root = datamodel.getDatamodelRoot(localName);
                     let parentNode = findNode(root.data, data.parentNodeId);
-                    console.log("parentNode", parentNode);
+                    //console.log("parentNode", parentNode);
                     // TODO consider index
-                    new datamodel.ModelNode(parentNode).removeChild(data.relatioName, data.child);
+                    new datamodel.ModelNode(parentNode).removeChild(data.relationName, data.child);
                     webeditkit.renderDataModels();
                 } else if (data.type == "AnswerAlternatives") {
                     let alternativesReceiver = thisWS.callbacks[data.requestId];
@@ -112,7 +112,7 @@
         }
 
         addChildAtIndex(container, containmentName, conceptName, index: number) {
-            console.log("addChildAtIndex");
+            console.log("addChildAtIndex", index);
             this.sendJSON({
                 type: 'addChild',
                 index: index,

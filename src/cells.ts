@@ -207,7 +207,7 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
     return renderModelNode(child);
 }
 
-export function verticalCollectionCell(modelNode: ModelNode, containmentName: string) {
+export function verticalCollectionCell(modelNode: ModelNode, containmentName: string, wrapInRows : boolean = true) {
     const ws = getWsCommunication(modelNode.modelName());
     const addInputChild = () => {
         // TODO FIXME
@@ -222,8 +222,12 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
     } else {
         return h('div.vertical-collection', {},
             map(modelNode.childrenByLinkName(containmentName), function () {
-                // @ts-ignore
-                return row(renderModelNode(this));
+                if (wrapInRows) {
+                    // @ts-ignore
+                    return row(renderModelNode(this));
+                } else {
+                    return renderModelNode(this);
+                }
             }));
     }
 }
@@ -257,7 +261,7 @@ export function verticalGroupCell() {
     return h('div.vertical-group', {}, flattenArray(arguments));
 }
 
-function map(originalArray: any, op: any) : VNodeChildElement[] {
+export function map(originalArray: any, op: any) : VNodeChildElement[] {
     return Array.from($(originalArray).map(op));
 }
 
