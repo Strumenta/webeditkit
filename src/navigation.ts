@@ -1,7 +1,7 @@
 function moveFocusToStart(next) {
     next.focus();
     const el = next[0];
-    if (el != undefined && el.setSelectionRange != null) {
+    if (el !== undefined && el.setSelectionRange != null) {
         el.setSelectionRange(0, 0);
     }
 }
@@ -9,14 +9,14 @@ function moveFocusToStart(next) {
 function moveFocusToEnd(next) {
     next.focus();
     const el = next[0];
-    if (el != undefined && el.setSelectionRange != null) {
-        let text = next.val();
+    if (el !== undefined && el.setSelectionRange != null) {
+        const text = next.val();
         el.setSelectionRange(text.length, text.length);
     }
 }
 
 function findNext(n) {
-    if (n.next() == undefined) {
+    if (n.next() === undefined) {
         return undefined;
     } else {
         return n.next();
@@ -26,13 +26,13 @@ function findNext(n) {
 export function moveUp(t) {
     // @ts-ignore
     const l = $(t).closest(".line");
-    if (l.length == 0) {
+    if (l.length === 0) {
         console.warn("no line found");
     } else if (l.length > 1) {
         console.warn("too many lines found");
     } else {
         console.log("element found");
-        //We must find the previous line and pick the first element there
+        // We must find the previous line and pick the first element there
     }
 }
 
@@ -41,95 +41,67 @@ export function moveDown(t) {
 }
 
 export function moveToNextElement(t) {
-    //console.log("move to next element");
-    // @ts-ignore
     let next = $(t).next();
-    if (next.length == 0) {
-        // @ts-ignore
-        //console.log("no next brother, moving up to parent", $(t).parent());
-        // @ts-ignore
-        var parent = $(t).parent();
+    if (next.length === 0) {
+        const parent = $(t).parent();
         if ((parent).hasClass("editor")) {
             // cannot move outside the editor;
-            // @ts-ignore
-            //window.errorSound.play();
             return false;
         }
-        // @ts-ignore
         moveToNextElement($(t).parent());
         return;
     }
-    //console.log("NEXT CALCULATED AS " + next.length);
     do {
-        let tag = next.prop("tagName");
+        const tag = next.prop("tagName");
         if (tag == "INPUT") {
-            console.log("  next is input");
             moveFocusToStart(next);
             return;
         } else if (tag == "DIV") {
-            //console.log("  next is div");
             if (next.find("input").length == 0) {
                 next = findNext(next);
-                //console.log("  NEXT IS NOW " + next[0]);
             } else {
                 next = next.find("input").first();
-                //console.log("  NEXT IS NOW input child " + next[0] + " "+next.length);
-                //console.log(next[0]);
                 moveFocusToStart(next);
                 return;
             }
         } else if (tag == "SPAN") {
             next = findNext(next);
-            //console.log("  (span) NEXT IS NOW " + next[0]);
         } else {
-            //console.log("  next is unknown " + tag);
             return;
         }
     } while (true);
 }
 
 export function moveToPrevElement(t) {
-    //console.log("move to prev element");
-    // @ts-ignore
     let elConsidered = $(t).prev();
 
     do {
         if (elConsidered.length == 0) {
-            // @ts-ignore
             moveToPrevElement($(t).parent());
             return;
         }
         let tag = elConsidered.prop("tagName");
         if (tag == "INPUT") {
-            //console.log("prev is input");
             moveFocusToEnd(elConsidered);
             return;
         } else if (tag == "DIV") {
-            //console.log("prev is div");
             if (elConsidered.find("input").length == 0) {
                 elConsidered = findPrev(elConsidered);
-                //console.log("prev IS NOW " + elConsidered[0]);
             } else {
                 elConsidered = elConsidered.find("input").last();
-                //console.log("  PREV IS NOW input child " + elConsidered[0] + " "+elConsidered.length);
-                //console.log(elConsidered[0]);
                 moveFocusToEnd(elConsidered);
                 return;
             }
         } else if (tag == "SPAN") {
             elConsidered = findPrev(elConsidered);
-            //console.log("prev IS NOW " + elConsidered[0]);
         } else if (tag == "BR") {
             elConsidered = elConsidered.prev();
         } else {
-            //console.log("prev is unknown " + tag);
-            // @ts-ignore
-            //window.errorSound.play();
+            // Perhaps we could play an error sound
             return;
         }
     } while (true);
 }
-
 
 function findPrev(n) {
     console.log("PREV WAS " + n[0]);
@@ -141,8 +113,8 @@ function findPrev(n) {
 }
 
 export function isAtEnd(element: any) {
-    let cursorPos = element.selectionStart;
+    const cursorPos = element.selectionStart;
     // @ts-ignore
-    let length = $(element).val().length;
+    const length = $(element).val().length;
     return cursorPos == length;
 }
