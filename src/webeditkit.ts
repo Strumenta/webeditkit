@@ -1,6 +1,8 @@
-const datamodel = require('./datamodel');
+//import renderers from "./renderer";
 
-const renderers = require('./renderer');
+import {renderModelNode} from "./renderer";
+
+import {dataToNode, forEachDataModel, setDatamodelRoot} from "./datamodel";
 
 var snabbdom = require('snabbdom/snabbdom');
 var patch = snabbdom.init([ // Init patch function with chosen modules
@@ -16,8 +18,8 @@ const toVNode = require('snabbdom/tovnode').default;
 let vnodes = {};
 
 let renderDataModels = function() {
-    datamodel.forEachDataModel(function(name, root) {
-        let vnode = h('div#' + name + '.editor', {}, [renderers.renderModelNode(root)]);
+    forEachDataModel(function(name, root) {
+        let vnode = h('div#' + name + '.editor', {}, [renderModelNode(root)]);
         if (vnodes[name] == undefined) {
             vnodes[name] = toVNode($("div#"+name)[0]);
         }
@@ -28,9 +30,9 @@ let renderDataModels = function() {
 function loadDataModel(baseUrl, model, nodeId, target) {
     let nodeURL = baseUrl + "/models/" + model + "/" + nodeId;
     $.getJSON(nodeURL, function(data) {
-        let root = datamodel.dataToNode(data);
+        let root = dataToNode(data);
         root.injectModelName(model);
-        datamodel.setDatamodelRoot(target, root);
+        setDatamodelRoot(target, root);
 
         renderDataModels();
     });
