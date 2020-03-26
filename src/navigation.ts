@@ -1,6 +1,6 @@
 function moveFocusToStart(next) {
     next.focus();
-    let el = next[0];
+    const el = next[0];
     if (el != undefined && el.setSelectionRange != null) {
         el.setSelectionRange(0, 0);
     }
@@ -8,7 +8,7 @@ function moveFocusToStart(next) {
 
 function moveFocusToEnd(next) {
     next.focus();
-    let el = next[0];
+    const el = next[0];
     if (el != undefined && el.setSelectionRange != null) {
         let text = next.val();
         el.setSelectionRange(text.length, text.length);
@@ -16,7 +16,6 @@ function moveFocusToEnd(next) {
 }
 
 function findNext(n) {
-    console.log("NEXT WAS " + n[0]);
     if (n.next() == undefined) {
         return undefined;
     } else {

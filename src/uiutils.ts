@@ -3,12 +3,15 @@ export let myAutoresizeOptions = {padding:2,minWidth:10,maxWidth:800};
 export function installAutoresize() {
     // @ts-ignore
     $.fn.textWidth = function(_text, _font){//get width of text with font.  usage: $("div").textWidth();
-        var textToConsider = _text || this.val();
+        let textToConsider = _text || this.val();
         if (textToConsider == "") {
             //console.log("NO TEXT "+ this[0].placeholder);
             textToConsider = this[0].placeholder;
         }
-        var fakeEl = $('<span>').hide().appendTo(document.body).text(textToConsider).css({font: _font || this.css('font'), whiteSpace: "pre"}),
+        let fakeEl = $('<span>').hide().appendTo(document.body).text(textToConsider).css({
+                font: _font || this.css('font'),
+                whiteSpace: "pre"
+            }),
             width = fakeEl.width();
         fakeEl.remove();
         return width;
