@@ -16,8 +16,9 @@ function findNode(root, searchedID) {
 }
 
 function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        const v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 }
@@ -34,38 +35,38 @@ export class WsCommunication {
         this.localName = localName;
         this.callbacks = {};
 
-        let thisWS = this;
+        const thisWS = this;
 
-        this.ws.onopen = function (event) {
+        this.ws.onopen = event => {
             thisWS.registerForChangesInModel(modelName);
         };
 
-        this.ws.onmessage = function (event) {
+        this.ws.onmessage = event => {
             console.log("onmessage", event);
-            let data = JSON.parse(event.data);
+            const data = JSON.parse(event.data);
             console.log("  data: ", data);
-            if (data.type == "propertyChange") {
+            if (data.type === "propertyChange") {
                 const root = getDatamodelRoot(localName);
                 const node = findNode(root.data, data.nodeId);
                 node.properties[data.propertyName] = data.propertyValue;
                 renderDataModels();
-            } else if (data.type == "nodeAdded") {
+            } else if (data.type === "nodeAdded") {
                 const root = getDatamodelRoot(localName);
                 const parentNode = findNode(root.data, data.parentNodeId);
                 new ModelNode(parentNode).addChild(data.relationName, data.index, data.child);
                 renderDataModels();
-            } else if (data.type == "nodeRemoved") {
+            } else if (data.type === "nodeRemoved") {
                 const root = getDatamodelRoot(localName);
                 const parentNode = findNode(root.data, data.parentNodeId);
                 // TODO consider index
                 new ModelNode(parentNode).removeChild(data.relationName, data.child);
                 renderDataModels();
-            } else if (data.type == "AnswerAlternatives") {
+            } else if (data.type === "AnswerAlternatives") {
                 const alternativesReceiver = thisWS.callbacks[data.requestId];
                 alternativesReceiver(data.items);
             } else {
                 console.log("data", data);
-                throw "Unknown change type: " + data.type;
+                throw new Error("Unknown change type: " + data.type);
             }
         };
     }
@@ -77,7 +78,7 @@ export class WsCommunication {
     registerForChangesInModel(modelName) {
         this.sendJSON({
             type: 'registerForChanges',
-            modelName: modelName
+            modelName
         });
     }
 
@@ -153,7 +154,7 @@ export class WsCommunication {
     }
 }
 
-let instances = {};
+const instances = {};
 
 export function getWsCommunication(modelName) {
     return instances[modelName];
