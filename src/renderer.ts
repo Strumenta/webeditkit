@@ -15,8 +15,8 @@ export function renderModelNode(modelNode) {
 }
 
 function getDefaultRenderer(modelNode) {
-    let abstractConcept = modelNode.isAbstract();
-    let conceptName = modelNode.simpleConceptName();
+    const abstractConcept = modelNode.isAbstract();
+    const conceptName = modelNode.simpleConceptName();
     return (dataModel) => {
         if (abstractConcept) {
             return fixedCell("", ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
@@ -29,9 +29,8 @@ function getDefaultRenderer(modelNode) {
 function getRenderer(modelNode) {
     if (modelNode == null) {
         // it happens during node replacements
-        return function() { return fixedCell("null"); };
+        return () => fixedCell("null");
     }
-    let abstractConcept = modelNode.isAbstract();
-    let conceptName = modelNode.conceptName();
+    const conceptName = modelNode.conceptName();
     return getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
 }
