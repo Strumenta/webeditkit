@@ -15,4 +15,4 @@ An example is available [here](https://github.com/Strumenta/calc-webeditkit-exam
 
 ## Development
 
-We suggest using nvm
+We suggest using nvm to specify the exact version of node we use.

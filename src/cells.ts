@@ -17,11 +17,8 @@ export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
 }
 
 function alternativesProviderForAddingChild(modelNode: ModelNode, containmentName: string, replacing: boolean = false) {
-  if (replacing === undefined) {
-    replacing = false;
-  }
   // we should get all the alternatives from the server
-  return (alternativesUser: any) => {
+  return (alternativesUser: (alternatives: { label: any; execute: () => void; }[]) => void) => {
     const ws = getWsCommunication(modelNode.modelName());
     ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
       const adder = (conceptName: string) => () => {
@@ -41,7 +38,7 @@ function alternativesProviderForAddingChild(modelNode: ModelNode, containmentNam
   };
 }
 
-function installAutocomplete(vnode: any, valuesProvider: any, fixed: boolean) {
+function installAutocomplete(vnode: any, valuesProvider: (arg0: (suggestions: any) => void) => void, fixed: boolean) {
   const input = vnode.elm;
   autocomplete({
     input,
