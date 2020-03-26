@@ -2,11 +2,11 @@ import {getDatamodelRoot, ModelNode} from "./datamodel";
 import {renderDataModels} from "./webeditkit";
 
 function findNode(root, searchedID) {
-    if (root.id.regularId == searchedID.regularId) {
+    if (root.id.regularId === searchedID.regularId) {
         return root;
     } else {
-        for (var i = 0; i < root.children.length; i++) {
-            var res = findNode(root.children[i], searchedID);
+        for (let i = 0; i < root.children.length; i++) {
+            const res = findNode(root.children[i], searchedID);
             if (res != null) {
                 return res;
             }
@@ -26,7 +26,7 @@ export class WsCommunication {
     private ws: WebSocket;
     private modelName: string;
     private localName: string;
-    private callbacks: {};
+    private readonly callbacks: {};
 
     constructor(url, modelName, localName) {
         this.ws = new WebSocket(url);
@@ -45,31 +45,23 @@ export class WsCommunication {
             let data = JSON.parse(event.data);
             console.log("  data: ", data);
             if (data.type == "propertyChange") {
-                //console.log("  localName: ", localName);
-                let root = getDatamodelRoot(localName);
-                let node = findNode(root.data, data.nodeId);
-                //console.log("  node: ", node);
+                const root = getDatamodelRoot(localName);
+                const node = findNode(root.data, data.nodeId);
                 node.properties[data.propertyName] = data.propertyValue;
-                //console.log("  changed: ", node);
                 renderDataModels();
             } else if (data.type == "nodeAdded") {
-                //console.log("NODE ADDED");
-                let root = getDatamodelRoot(localName);
-                let parentNode = findNode(root.data, data.parentNodeId);
-                //console.log("parentNode", parentNode);
-                // TODO consider index
+                const root = getDatamodelRoot(localName);
+                const parentNode = findNode(root.data, data.parentNodeId);
                 new ModelNode(parentNode).addChild(data.relationName, data.index, data.child);
                 renderDataModels();
             } else if (data.type == "nodeRemoved") {
-                //console.log("NODE REMOVED");
-                let root = getDatamodelRoot(localName);
-                let parentNode = findNode(root.data, data.parentNodeId);
-                //console.log("parentNode", parentNode);
+                const root = getDatamodelRoot(localName);
+                const parentNode = findNode(root.data, data.parentNodeId);
                 // TODO consider index
                 new ModelNode(parentNode).removeChild(data.relationName, data.child);
                 renderDataModels();
             } else if (data.type == "AnswerAlternatives") {
-                let alternativesReceiver = thisWS.callbacks[data.requestId];
+                const alternativesReceiver = thisWS.callbacks[data.requestId];
                 alternativesReceiver(data.items);
             } else {
                 console.log("data", data);
@@ -103,19 +95,18 @@ export class WsCommunication {
             type: 'addChild',
             modelName: container.modelName(),
             container: container.idString(),
-            containmentName: containmentName,
+            containmentName,
             conceptToInstantiate: conceptName
         });
     }
 
     addChildAtIndex(container, containmentName, conceptName, index: number) {
-        console.log("addChildAtIndex", index);
         this.sendJSON({
             type: 'addChild',
-            index: index,
+            index,
             modelName: container.modelName(),
             container: container.idString(),
-            containmentName: containmentName,
+            containmentName,
             conceptToInstantiate: conceptName
         });
     }
@@ -125,7 +116,7 @@ export class WsCommunication {
             type: 'setChild',
             modelName: container.modelName(),
             container: container.idString(),
-            containmentName: containmentName,
+            containmentName,
             conceptToInstantiate: conceptName
         });
     }
@@ -143,14 +134,14 @@ export class WsCommunication {
             type: "propertyChange",
             nodeId: modelNode.idString(),
             modelName: modelNode.modelName(),
-            propertyName: propertyName,
-            propertyValue: propertyValue
+            propertyName,
+            propertyValue
         });
     }
 
     askAlternatives(modelNode, containmentName, alternativesReceiver) {
         // we generate a UUID and ask the server to answer us using such UUID
-        let uuid = uuidv4();
+        const uuid = uuidv4();
         this.callbacks[uuid] = alternativesReceiver;
         this.sendJSON({
             type: "askAlternatives",
@@ -169,6 +160,6 @@ export function getWsCommunication(modelName) {
 }
 
 export function createInstance(url, modelName, localName) {
-    let instance = new WsCommunication(url, modelName, localName);
+    const instance = new WsCommunication(url, modelName, localName);
     instances[modelName] = instance;
 }
