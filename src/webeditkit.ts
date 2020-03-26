@@ -23,7 +23,7 @@ const patch = init([ // Init patch function with chosen modules
 ]);
 const vnodes = {};
 
-const renderDataModels = () => {
+export const renderDataModels = () => {
     forEachDataModel((name, root) => {
         const vnode = h('div#' + name + '.editor', {}, [renderModelNode(root)]);
         if (vnodes[name] === undefined) {
@@ -34,9 +34,9 @@ const renderDataModels = () => {
 };
 
 function loadDataModel(baseUrl, model, nodeId, target) {
-    let nodeURL = baseUrl + "/models/" + model + "/" + nodeId;
-    $.getJSON(nodeURL, function(data) {
-        let root = dataToNode(data);
+    const nodeURL = baseUrl + "/models/" + model + "/" + nodeId;
+    $.getJSON(nodeURL, data => {
+        const root = dataToNode(data);
         root.injectModelName(model);
         setDatamodelRoot(target, root);
 
