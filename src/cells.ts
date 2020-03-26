@@ -158,7 +158,7 @@ export function referenceCell(modelNode: ModelNode, referenceName: string, extra
                 if (alternativesProvider != null && alternativesProvider !== undefined) {
                     installAutocomplete(vnode, alternativesProvider, true);
                 }
-                modelNode.ref(referenceName).loadData(function(refModelNode) {
+                modelNode.ref(referenceName).loadData(refModelNode => {
                     $(vnode.elm).val(refModelNode.name());
                     triggerResize(vnode);
                 });
@@ -269,7 +269,7 @@ function separate(original: any[], separatorGenerator?: any) : any[] {
     if (separatorGenerator === undefined) {
         return original;
     }
-    let separated = [];
+    const separated = [];
     for (let i=0;i<original.length;i++) {
         separated.push(original[i]);
         if ((i+1)<original.length) {

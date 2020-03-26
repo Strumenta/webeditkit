@@ -8,10 +8,11 @@ export function registerDataModelClass(name: string, clazz) : void {
 }
 
 function instantiate(clazz, args) {
-    var o, f, c;
-    //c = window[className]; // get reference to class constructor function
+    let o;
+    let f;
+    let c;
     c = clazz;
-    f = function(){}; // dummy function
+    f = () => {}; // dummy function
     f.prototype = c.prototype; // reference same prototype
     o = new f(); // instantiate dummy function to copy prototype properties
     c.apply(o, args); // call class constructor, supplying new object as context
@@ -23,7 +24,7 @@ export function dataToNode(data) {
     if (data == null) {
         return null;
     }
-    let clazz = datamodelClasses[data.concept];
+    const clazz = datamodelClasses[data.concept];
     if (clazz === undefined) {
         return new ModelNode(data)
     } else {
@@ -90,8 +91,8 @@ export class ModelNode {
             return this;
         }
         for (let i=0;i<this.data.children.length;i++) {
-            let child = dataToNode(this.data.children[i]);
-            let childRes = child.findNodeById(nodeIdStr);
+            const child = dataToNode(this.data.children[i]);
+            const childRes = child.findNodeById(nodeIdStr);
             if (childRes != null) {
                 return childRes;
             }
@@ -126,12 +127,13 @@ export class ModelNode {
         }
         throw new Error("This element was not found among the children of its parent");
     }
+
     addChild(relationName, index, childData){
-        let children = this.data.children;
+        const children = this.data.children;
         let leftToFind = index;
-        var i = 0;
+        let i = 0;
         for (; i < children.length && leftToFind > 0; i++) {
-            let child = children[i];
+            const child = children[i];
             if (child.containingLink == relationName) {
                 leftToFind--;
             }
