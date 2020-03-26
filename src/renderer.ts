@@ -1,6 +1,6 @@
-let cells = require('./cells');
+import {fixedCell, alternativesProviderForAbstractConcept} from "./cells";
 
-let renderersByName = {};
+const renderersByName = {};
 
 export function registerRenderer(name: string, renderer: any) : void {
     renderersByName[name] = renderer;
@@ -17,11 +17,11 @@ export function renderModelNode(modelNode) {
 function getDefaultRenderer(modelNode) {
     let abstractConcept = modelNode.isAbstract();
     let conceptName = modelNode.simpleConceptName();
-    return function (dataModel) {
+    return (dataModel) => {
         if (abstractConcept) {
-            return cells.fixedCell("", ['default-cell-abstract'], cells.alternativesProviderForAbstractConcept(modelNode));
+            return fixedCell("", ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
         } else {
-            return cells.fixedCell("[default " + conceptName + "]", ['default-cell-concrete']);
+            return fixedCell("[default " + conceptName + "]", ['default-cell-concrete']);
         }
     };
 }
@@ -29,7 +29,7 @@ function getDefaultRenderer(modelNode) {
 function getRenderer(modelNode) {
     if (modelNode == null) {
         // it happens during node replacements
-        return function() { return cells.fixedCell("null"); };
+        return function() { return fixedCell("null"); };
     }
     let abstractConcept = modelNode.isAbstract();
     let conceptName = modelNode.conceptName();
