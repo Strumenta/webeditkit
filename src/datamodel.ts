@@ -53,7 +53,7 @@ export class Ref {
 }
 
 export class ModelNode {
-  private readonly data: any;
+  readonly data: any;
   constructor(data) {
     this.data = data;
   }
@@ -89,7 +89,7 @@ export class ModelNode {
     return this.data.concept;
   }
   findNodeById(nodeIdStr) {
-    if (this.idString() === nodeIdStr) {
+    if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
     for (let i = 0; i < this.data.children.length; i++) {
@@ -109,16 +109,20 @@ export class ModelNode {
   isAbstract() {
     return this.data.abstractConcept;
   }
-  injectModelName(modelName) {
+  injectModelName(modelName, rootName) {
+    this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;
     $(this.data.children).each(function () {
       this.parent = parent.data;
-      dataToNode(this).injectModelName(modelName);
+      dataToNode(this).injectModelName(modelName, rootName);
     });
   }
   modelName() {
     return this.data.modelName;
+  }
+  rootName() {
+    return this.data.rootName;
   }
   index(): number {
     const siblings = this.parent().childrenByLinkName(this.containmentName());
@@ -146,7 +150,7 @@ export class ModelNode {
 
     this.data.children.splice(i, 0, childData);
     childData.parent = this.data;
-    dataToNode(childData).injectModelName(this.data.modelName);
+    dataToNode(childData).injectModelName(this.data.modelName, this.data.rootName);
   }
 
   createChild(containmentName: string, index: number, childConcept : string) {
@@ -186,7 +190,7 @@ export function setDatamodelRoot(name, root) {
   datamodelRoots[name] = root;
 }
 
-export function getDatamodelRoot(name) {
+export function getDatamodelRoot(name) : ModelNode {
   return datamodelRoots[name];
 }
 

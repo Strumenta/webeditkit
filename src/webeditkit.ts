@@ -38,7 +38,7 @@ function loadDataModel(baseUrl, model, nodeId, target) {
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
   $.getJSON(nodeURL, (data) => {
     const root = dataToNode(data);
-    root.injectModelName(model);
+    root.injectModelName(model, target);
     setDatamodelRoot(target, root);
 
     renderDataModels();
