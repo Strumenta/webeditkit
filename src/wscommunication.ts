@@ -91,6 +91,15 @@ export class WsCommunication {
     });
   }
 
+  triggerDefaultInsertion(container, containmentName) {
+    this.sendJSON({
+      type: 'defaultInsertion',
+      modelName: container.modelName(),
+      container: container.idString(),
+      containmentName
+    });
+  }
+
   addChild(container, containmentName, conceptName) {
     this.sendJSON({
       type: 'addChild',

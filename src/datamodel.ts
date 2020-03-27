@@ -161,6 +161,7 @@ export class ModelNode {
     }
     throw new Error('Child not found ' + JSON.stringify(childData));
   }
+
   containmentName() {
     return this.data.containingLink;
   }

@@ -116,3 +116,8 @@ export function isAtEnd(element: any) {
   const length = $(element).val().length;
   return cursorPos === length;
 }
+
+export function isAtStart(element: any) {
+  const cursorPos = element.selectionStart;
+  return cursorPos === 0;
+}

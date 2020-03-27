@@ -8,7 +8,8 @@ import { myAutoresizeOptions } from './uiutils';
 
 import { getWsCommunication, WsCommunication } from './wscommunication';
 
-import { isAtEnd, moveToNextElement } from './navigation';
+import {isAtEnd, isAtStart, moveToNextElement} from './navigation';
+import {VNode} from "snabbdom/vnode";
 
 const autocomplete = require('autocompleter');
 
@@ -94,6 +95,16 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
             e.preventDefault();
             return true;
           }
+          if (isAtStart(e.target) && e.key === 'Backspace') {
+            //$(".deleting").each(function () { $(this).removeClass('deleting'); })
+            if ($(e.target).closest(".represent-node").hasClass('deleting')) {
+              modelNode.deleteMe();
+            } else {
+              $(e.target).closest(".represent-node").addClass('deleting');
+            }
+            return false;
+          }
+          return false;
         },
         keyup: (e: KeyboardEvent) => {
           ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
@@ -114,7 +125,8 @@ function triggerResize(vnode: any) {
   $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-export function fixedCell(text: string, extraClasses?: string[], alternativesProvider?: any, deleter?: any) {
+export function fixedCell(text: string, extraClasses?: string[], alternativesProvider?: any,
+                          deleter?: () => void, onEnter?: () => void) {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
@@ -140,6 +152,10 @@ export function fixedCell(text: string, extraClasses?: string[], alternativesPro
           } else if (e.key === 'Backspace') {
             if (deleter !== undefined) {
               deleter();
+            }
+          } else if (e.key == 'Enter') {
+            if (onEnter !== undefined) {
+              onEnter();
             }
           }
           e.preventDefault();
@@ -215,6 +231,45 @@ function flattenArray(value: any) {
   return Array.from(value).flat();
 }
 
+export function addInsertHook(vnode: VNode, f: (VNode) => void) : VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.hook === undefined) {
+    vnode.data.hook = {};
+  }
+  vnode.data.hook.insert = f;
+  return vnode;
+}
+
+export function addClass(vnode: VNode, className: string) : VNode{
+  vnode.sel += '.' + className;
+  return vnode;
+}
+
+export function setDataset(vnode: VNode, dataset: any) : VNode {
+  vnode.data['dataset'] = dataset;
+  return vnode;
+}
+
+export function addToDataset(vnode: VNode, key:string, value: any) : VNode {
+  if (vnode.data['dataset'] === undefined) {
+    vnode.data['dataset'] = {};
+  };
+  vnode.data['dataset'][key] = value;
+  return vnode;
+}
+
+export function addId(vnode: VNode, myId: string) : VNode {
+  let tagName = vnode.sel.split(/\.(.+)/)[0];
+  let classes = vnode.sel.split(/\.(.+)/)[1];
+  vnode.sel = tagName + "#" + myId;
+  if (classes !== undefined) {
+    vnode.sel += "." + classes;
+  }
+  return vnode;
+}
+
 export function childCell(modelNode: ModelNode, containmentName: string) {
   const child = modelNode.childByLinkName(containmentName);
   if (child == null) {
@@ -239,6 +294,8 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
     return h('div.vertical-collection', {}, [
       fixedCell('<< ... >>', ['empty-collection'], (alternativesUser: any) => {
         alternativesUser([{ label: 'Input', execute: addInputChild }]);
+      }, null, () => {
+        ws.triggerDefaultInsertion(modelNode, containmentName);
       }),
     ]);
   } else {

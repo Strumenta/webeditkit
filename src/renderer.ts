@@ -1,4 +1,4 @@
-import { fixedCell, alternativesProviderForAbstractConcept } from './cells';
+import {fixedCell, alternativesProviderForAbstractConcept, addClass, addToDataset} from './cells';
 
 const renderersByName = {};
 
@@ -11,7 +11,7 @@ export function getRegisteredRenderer(conceptName) {
 }
 
 export function renderModelNode(modelNode) {
-  return getRenderer(modelNode)(modelNode);
+  return addToDataset(addClass(getRenderer(modelNode)(modelNode), 'represent-node'), 'node_represented', modelNode.idString());
 }
 
 function getDefaultRenderer(modelNode) {
