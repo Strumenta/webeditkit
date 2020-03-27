@@ -68,6 +68,14 @@ function installAutocomplete(vnode: any, valuesProvider: (arg0: (suggestions: an
   });
 }
 
+function handleSelfDeletion(element: any, modelNode: ModelNode) : void{
+  if ($(element).closest(".represent-node").hasClass('deleting')) {
+    modelNode.deleteMe();
+  } else {
+    $(element).closest(".represent-node").addClass('deleting');
+  }
+}
+
 export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[]) {
   const placeholder = '<no ' + propertyName + '>';
   if (modelNode === undefined) {
@@ -96,12 +104,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
             return true;
           }
           if (isAtStart(e.target) && e.key === 'Backspace') {
-            //$(".deleting").each(function () { $(this).removeClass('deleting'); })
-            if ($(e.target).closest(".represent-node").hasClass('deleting')) {
-              modelNode.deleteMe();
-            } else {
-              $(e.target).closest(".represent-node").addClass('deleting');
-            }
+            handleSelfDeletion(e.target, modelNode);
             return false;
           }
           return false;
@@ -125,7 +128,7 @@ function triggerResize(vnode: any) {
   $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-export function fixedCell(text: string, extraClasses?: string[], alternativesProvider?: any,
+export function fixedCell(modelNode: ModelNode, text: string, extraClasses?: string[], alternativesProvider?: any,
                           deleter?: () => void, onEnter?: () => void) {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
@@ -152,6 +155,10 @@ export function fixedCell(text: string, extraClasses?: string[], alternativesPro
           } else if (e.key === 'Backspace') {
             if (deleter !== undefined) {
               deleter();
+            } else {
+              handleSelfDeletion(e.target, modelNode);
+              e.preventDefault();
+              return false;
             }
           } else if (e.key == 'Enter') {
             if (onEnter !== undefined) {
@@ -275,6 +282,7 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
   if (child == null) {
     // @ts-ignore
     return fixedCell(
+        modelNode,
       '<no ' + containmentName + '>',
       ['missing-element'],
       alternativesProviderForAddingChild(modelNode, containmentName),
@@ -292,7 +300,7 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
   const children = modelNode.childrenByLinkName(containmentName);
   if (children.length === 0) {
     return h('div.vertical-collection', {}, [
-      fixedCell('<< ... >>', ['empty-collection'], (alternativesUser: any) => {
+      fixedCell(modelNode, '<< ... >>', ['empty-collection'], (alternativesUser: any) => {
         alternativesUser([{ label: 'Input', execute: addInputChild }]);
       }, null, () => {
         ws.triggerDefaultInsertion(modelNode, containmentName);
@@ -323,7 +331,7 @@ export function horizontalCollectionCell(modelNode: ModelNode, containmentName: 
   const children = modelNode.childrenByLinkName(containmentName);
   if (children.length === 0) {
     return h('div.horizontal-collection', {}, [
-      fixedCell('<< ... >>', ['empty-collection'], (alternativesUser: any) => {
+      fixedCell(modelNode, '<< ... >>', ['empty-collection'], (alternativesUser: any) => {
         alternativesUser([{ label: 'Input', execute: addInputChild }]);
       }),
     ]);

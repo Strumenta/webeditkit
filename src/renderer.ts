@@ -19,9 +19,9 @@ function getDefaultRenderer(modelNode) {
   const conceptName = modelNode.simpleConceptName();
   return (dataModel) => {
     if (abstractConcept) {
-      return fixedCell('', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
+      return fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
     } else {
-      return fixedCell('[default ' + conceptName + ']', ['default-cell-concrete']);
+      return fixedCell(modelNode, '[default ' + conceptName + ']', ['default-cell-concrete']);
     }
   };
 }
@@ -29,7 +29,7 @@ function getDefaultRenderer(modelNode) {
 function getRenderer(modelNode) {
   if (modelNode == null) {
     // it happens during node replacements
-    return () => fixedCell('null');
+    return () => fixedCell(modelNode, 'null');
   }
   const conceptName = modelNode.conceptName();
   return getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
