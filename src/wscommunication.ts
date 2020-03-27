@@ -110,7 +110,7 @@ export class WsCommunication {
     });
   }
 
-  addChildAtIndex(container, containmentName, conceptName, index: number) {
+  addChildAtIndex(container, containmentName, index: number, conceptName?: string) {
     this.sendJSON({
       type: 'addChild',
       index,
@@ -118,6 +118,14 @@ export class WsCommunication {
       container: container.idString(),
       containmentName,
       conceptToInstantiate: conceptName,
+    });
+  }
+
+  insertNextSibling(sibling: ModelNode) {
+    this.sendJSON({
+      type: 'insertNextSibling',
+      modelName: sibling.modelName(),
+      sibling: sibling.idString(),
     });
   }
 

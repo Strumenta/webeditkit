@@ -76,6 +76,14 @@ function handleSelfDeletion(element: any, modelNode: ModelNode) : void{
   }
 }
 
+function handleAddingElement(element: any, modelNode: ModelNode) : void{
+  // TODO check the found collection belongs to the model we are considering
+  //let collectionElement = $(element).closest(".represent-collection");
+  //let relationName = collectionElement.data('relation_represented');
+  // TODO find right index
+  modelNode.insertNextSibling();
+};
+
 export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[]) {
   const placeholder = '<no ' + propertyName + '>';
   if (modelNode === undefined) {
@@ -163,6 +171,10 @@ export function fixedCell(modelNode: ModelNode, text: string, extraClasses?: str
           } else if (e.key == 'Enter') {
             if (onEnter !== undefined) {
               onEnter();
+            } else {
+              handleAddingElement(e.target, modelNode);
+              e.preventDefault();
+              return false;
             }
           }
           e.preventDefault();
@@ -298,8 +310,9 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
     ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
   };
   const children = modelNode.childrenByLinkName(containmentName);
+  const data = { dataset: { relation_represented: containmentName } };
   if (children.length === 0) {
-    return h('div.vertical-collection', {}, [
+    return h('div.vertical-collection.represent-collection', data, [
       fixedCell(modelNode, '<< ... >>', ['empty-collection'], (alternativesUser: any) => {
         alternativesUser([{ label: 'Input', execute: addInputChild }]);
       }, null, () => {
@@ -308,8 +321,7 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
     ]);
   } else {
     return h(
-      'div.vertical-collection',
-      {},
+      'div.vertical-collection.represent-collection', data,
       map(modelNode.childrenByLinkName(containmentName), function () {
         if (wrapInRows) {
           // @ts-ignore
