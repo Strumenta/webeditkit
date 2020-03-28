@@ -3,21 +3,12 @@ import { getWsCommunication } from './wscommunication';
 const datamodelRoots = {};
 const datamodelClasses = {};
 
+///
+/// DataModel classes registry
+///
+
 export function registerDataModelClass(name: string, clazz): void {
   datamodelClasses[name] = clazz;
-}
-
-function instantiate(clazz, args) {
-  let o;
-  let f;
-  let c;
-  c = clazz;
-  f = () => {}; // dummy function
-  f.prototype = c.prototype; // reference same prototype
-  o = new f(); // instantiate dummy function to copy prototype properties
-  c.apply(o, args); // call class constructor, supplying new object as context
-  o.constructor = c; // assign correct constructor (not f)
-  return o;
 }
 
 export function dataToNode(data) {
@@ -31,6 +22,10 @@ export function dataToNode(data) {
     return new clazz(data);
   }
 }
+
+///
+/// DataModel classes
+///
 
 export class Ref {
   private data: any;
@@ -186,6 +181,10 @@ export class ModelNode {
   }
 }
 
+///
+/// DataModel roots
+///
+
 export function setDatamodelRoot(name, root) {
   datamodelRoots[name] = root;
 }
@@ -194,13 +193,17 @@ export function getDatamodelRoot(name) : ModelNode {
   return datamodelRoots[name];
 }
 
-export function findNode(localModelName, nodeId) {
-  return getDatamodelRoot(localModelName).findNodeById(nodeId);
-}
-
 export function forEachDataModel(op) {
   const keys = Object.keys(datamodelRoots);
   for (const key of keys) {
     op(key, getDatamodelRoot(key));
   }
+}
+
+///
+/// Node navigation
+///
+
+export function findNode(localModelName, nodeId) {
+  return getDatamodelRoot(localModelName).findNodeById(nodeId);
 }
