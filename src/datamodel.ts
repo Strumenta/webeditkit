@@ -108,8 +108,8 @@ export class ModelNode {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;
-    $(this.data.children).each(function () {
-      this.parent = parent.data;
+    $(this.data.children).each((i, el) => {
+      el.parent = parent.data;
       dataToNode(this).injectModelName(modelName, rootName);
     });
   }
@@ -148,11 +148,11 @@ export class ModelNode {
     dataToNode(childData).injectModelName(this.data.modelName, this.data.rootName);
   }
 
-  createChild(containmentName: string, index: number, childConcept : string) {
+  createChild(containmentName: string, index: number, childConcept: string) {
     this.ws().addChildAtIndex(this, containmentName, index, childConcept);
   }
 
-  insertNextSibling() : void {
+  insertNextSibling(): void {
     this.ws().insertNextSibling(this);
   }
 
@@ -189,7 +189,7 @@ export function setDatamodelRoot(name, root) {
   datamodelRoots[name] = root;
 }
 
-export function getDatamodelRoot(name) : ModelNode {
+export function getDatamodelRoot(name): ModelNode {
   return datamodelRoots[name];
 }
 

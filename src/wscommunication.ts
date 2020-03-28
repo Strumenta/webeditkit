@@ -96,7 +96,7 @@ export class WsCommunication {
       type: 'defaultInsertion',
       modelName: container.modelName(),
       container: container.idString(),
-      containmentName
+      containmentName,
     });
   }
 

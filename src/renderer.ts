@@ -1,5 +1,5 @@
-import {fixedCell} from './cells';
-import {alternativesProviderForAbstractConcept, addClass, addToDataset} from './cells';
+import { fixedCell } from './cells';
+import { alternativesProviderForAbstractConcept, addClass, addToDataset } from './cells';
 
 const renderersByName = {};
 
@@ -12,7 +12,11 @@ export function getRegisteredRenderer(conceptName) {
 }
 
 export function renderModelNode(modelNode) {
-  return addToDataset(addClass(getRenderer(modelNode)(modelNode), 'represent-node'), 'node_represented', modelNode.idString());
+  return addToDataset(
+    addClass(getRenderer(modelNode)(modelNode), 'represent-node'),
+    'node_represented',
+    modelNode.idString(),
+  );
 }
 
 function getDefaultRenderer(modelNode) {

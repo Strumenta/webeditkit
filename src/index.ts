@@ -1,6 +1,30 @@
-import {fixedCell, referenceCell,horizontalCollectionCell,editableCell,emptyRow,childCell,horizontalGroupCell,row,tabCell,verticalCollectionCell,verticalGroupCell} from "./cells";
+import {
+  fixedCell,
+  referenceCell,
+  horizontalCollectionCell,
+  editableCell,
+  emptyRow,
+  childCell,
+  horizontalGroupCell,
+  row,
+  tabCell,
+  verticalCollectionCell,
+  verticalGroupCell,
+} from './cells';
 
-export {fixedCell, referenceCell,horizontalCollectionCell,editableCell,emptyRow,childCell,horizontalGroupCell,row,tabCell,verticalCollectionCell,verticalGroupCell}
+export {
+  fixedCell,
+  referenceCell,
+  horizontalCollectionCell,
+  editableCell,
+  emptyRow,
+  childCell,
+  horizontalGroupCell,
+  row,
+  tabCell,
+  verticalCollectionCell,
+  verticalGroupCell,
+};
 
 var snabbdom = require('snabbdom/snabbdom');
 var patch = snabbdom.init([
