@@ -29,12 +29,14 @@ export function dataToNode(data) {
 
 export class Ref {
   private data: any;
+
   constructor(data) {
     if (data == null || data === undefined) {
       throw new Error('Ref cannot be built with null data');
     }
     this.data = data;
   }
+
   loadData(cb) {
     // TODO fixme, this address should not be set in this way...
     const url = 'http://localhost:2904/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
@@ -49,9 +51,11 @@ export class Ref {
 
 export class ModelNode {
   readonly data: any;
+
   constructor(data) {
     this.data = data;
   }
+
   childByLinkName(linkName) {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     if (filtered.length === 0) {
@@ -62,27 +66,34 @@ export class ModelNode {
       throw new Error('Unexpected to find multiple children for link name ' + linkName);
     }
   }
+
   childrenByLinkName(linkName) {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     return $(filtered).map(function () {
       return dataToNode(this);
     });
   }
+
   property(propertyName) {
     return this.data.properties[propertyName];
   }
+
   ref(referenceName) {
     return new Ref(this.data.refs[referenceName]);
   }
+
   name() {
     return this.property('name');
   }
+
   idString() {
     return this.data.id.regularId;
   }
+
   conceptName() {
     return this.data.concept;
   }
+
   findNodeById(nodeIdStr) {
     if (this.idString() === nodeIdStr.toString()) {
       return this;
@@ -170,12 +181,15 @@ export class ModelNode {
   containmentName() {
     return this.data.containingLink;
   }
+
   parent() {
     return dataToNode(this.data.parent);
   }
+
   private ws() {
     return getWsCommunication(this.modelName());
   }
+
   deleteMe() {
     this.ws().deleteNode(this);
   }
