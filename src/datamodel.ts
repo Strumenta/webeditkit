@@ -7,25 +7,38 @@ const datamodelClasses = {};
 /// Node Data
 ///
 
-interface NodeData {
+interface NodeId {
+  regularId: string
+}
+
+interface ModelId {
+  qualifiedName: string;
+}
+
+export interface NodeData {
   abstractConcept: boolean;
-  properties: any;
+  properties: { [key: string]: string | boolean | number; };
   children: NodeData[];
   concept: string;
   containingLink: string;
-  id: any;
-  refs: any[];
+  id: NodeId;
+  refs: { [key: string]: ReferenceData; };
   rootName: string;
   modelName: string;
   parent?: NodeData;
+}
+
+interface ReferenceData {
+  model: ModelId;
+  id: NodeId;
 }
 
 ///
 /// DataModel classes registry
 ///
 
-export function registerDataModelClass(name: string, clazz): void {
-  datamodelClasses[name] = clazz;
+export function registerDataModelClass(conceptName: string, clazz): void {
+  datamodelClasses[conceptName] = clazz;
 }
 
 export function dataToNode(data: NodeData) {
@@ -45,7 +58,7 @@ export function dataToNode(data: NodeData) {
 ///
 
 export class Ref {
-  private data: any;
+  private data: ReferenceData;
 
   constructor(data) {
     if (data == null || data === undefined) {
