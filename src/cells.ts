@@ -78,8 +78,6 @@ function handleSelfDeletion(element: any, modelNode: ModelNode) : void{
 
 function handleAddingElement(element: any, modelNode: ModelNode) : void{
   const parents = $(element).parents();
-  // @ts-ignore
-  window.ps = parents;
 
   // First find the collection containing this node
   const collectionIndex = Array.from(parents).findIndex(function(e) { return $(e).hasClass('represent-collection'); } );
@@ -87,31 +85,9 @@ function handleAddingElement(element: any, modelNode: ModelNode) : void{
   const nodesToConsider = $(parentsToConsider).filter(function(){return $(this).hasClass('represent-node');});
   const lastNode = nodesToConsider[nodesToConsider.length - 1];
 
-  //let thisNode = $(element).closest('.represent-node');
-  // TODO check the found collection belongs to the model we are considering
-  //let collectionElement = thisNode.closest(".represent-collection");
-
-  // @ts-ignore
-  //window.ce = collectionElement;
-  //let parentOfCollection = collectionElement.closest('.represent-node');
-  // @ts-ignore
-  //window.tn = thisNode;
   const nodeId = $(lastNode).data('node_represented');
-  // @ts-ignore
-  window.ni = nodeId;
-  // @ts-ignore
-  window.rn = modelNode.rootName();
-  // @ts-ignore
-  window.r = getDatamodelRoot(modelNode.rootName());
   const sibling = getDatamodelRoot(modelNode.rootName()).findNodeById(nodeId);
-  // @ts-ignore
-  window.s = sibling;
-  //let relationName = collectionElement.data('relation_represented');
-  // TODO find right index
   sibling.insertNextSibling();
-  //
-  // QUI TROVIAMO LA PRIMA COLLEZIONE. DOBBIAMO POI TROVARE IL PRIMO FIGLIO CHE RAPPRESENTI UN NODO
-  // FRA NOI E LA COLLEZIONE, PARTENDO DALLA COLLEZIONE
 };
 
 export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[]) {
@@ -198,10 +174,10 @@ export function fixedCell(modelNode: ModelNode, text: string, extraClasses?: str
               e.preventDefault();
               return false;
             }
-          } else if (e.key == 'Enter') {
+          } else if (e.key === 'Enter') {
             if (onEnter !== undefined) {
               onEnter();
-            } else if (alternativesProvider === null){
+            } else if (alternativesProvider === undefined){
               // We do not want to do this for cells with autocompletion
               handleAddingElement(e.target, modelNode);
               e.preventDefault();
