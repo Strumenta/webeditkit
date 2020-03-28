@@ -3,7 +3,8 @@ import {getWsCommunication} from "../wscommunication";
 import {myAutoresizeOptions} from "../uiutils";
 import {VNode} from "snabbdom/vnode";
 import {VNodeChildElement} from "snabbdom/h";
-import autocomplete from "autocompleter";
+
+const autocomplete = require('autocompleter');
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
     return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
