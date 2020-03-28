@@ -4,6 +4,23 @@ const datamodelRoots = {};
 const datamodelClasses = {};
 
 ///
+/// Node Data
+///
+
+interface NodeData {
+  abstractConcept: boolean;
+  properties: any;
+  children: NodeData[];
+  concept: string;
+  containingLink: string;
+  id: any;
+  refs: any[];
+  rootName: string;
+  modelName: string;
+  parent?: NodeData;
+}
+
+///
 /// DataModel classes registry
 ///
 
@@ -11,7 +28,7 @@ export function registerDataModelClass(name: string, clazz): void {
   datamodelClasses[name] = clazz;
 }
 
-export function dataToNode(data) {
+export function dataToNode(data: NodeData) {
   if (data == null) {
     return null;
   }
@@ -50,9 +67,9 @@ export class Ref {
 }
 
 export class ModelNode {
-  readonly data: any;
+  readonly data: NodeData;
 
-  constructor(data) {
+  constructor(data: NodeData) {
     this.data = data;
   }
 
@@ -70,6 +87,7 @@ export class ModelNode {
   childrenByLinkName(linkName) {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     return $(filtered).map(function () {
+      // @ts-ignore
       return dataToNode(this);
     });
   }
@@ -119,9 +137,11 @@ export class ModelNode {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;
-    $(this.data.children).each((i, el) => {
+    $(this.data.children).each((i: number, el) => {
+      // @ts-ignore
       el.parent = parent.data;
-      dataToNode(this).injectModelName(modelName, rootName);
+      // @ts-ignore
+      dataToNode(el).injectModelName(modelName, rootName);
     });
   }
   modelName() {
