@@ -1,4 +1,5 @@
-import {fixedCell, alternativesProviderForAbstractConcept, addClass, addToDataset} from './cells';
+import {fixedCell} from './cells';
+import {alternativesProviderForAbstractConcept, addClass, addToDataset} from './cells';
 
 const renderersByName = {};
 

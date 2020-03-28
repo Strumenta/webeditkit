@@ -1,3 +1,7 @@
+import {fixedCell, referenceCell,horizontalCollectionCell,editableCell,emptyRow,childCell,horizontalGroupCell,row,tabCell,verticalCollectionCell,verticalGroupCell} from "./cells";
+
+export {fixedCell, referenceCell,horizontalCollectionCell,editableCell,emptyRow,childCell,horizontalGroupCell,row,tabCell,verticalCollectionCell,verticalGroupCell}
+
 var snabbdom = require('snabbdom/snabbdom');
 var patch = snabbdom.init([
   // Init patch function with chosen modules
@@ -17,19 +21,6 @@ const autocomplete = require('autocompleter');
 const renderers = require('./renderer');
 export const registerRenderer = renderers.registerRenderer;
 export const renderModelNode = renderers.renderModelNode;
-
-export const cells = require('./cells');
-export const editableCell = cells.editableCell;
-export const referenceCell = cells.referenceCell;
-export const fixedCell = cells.fixedCell;
-export const row = cells.row;
-export const emptyRow = cells.emptyRow;
-export const tabCell = cells.tabCell;
-export const verticalGroupCell = cells.verticalGroupCell;
-export const horizontalGroupCell = cells.horizontalGroupCell;
-export const verticalCollectionCell = cells.verticalCollectionCell;
-export const horizontalCollectionCell = cells.horizontalCollectionCell;
-export const childCell = cells.childCell;
 export const webeditkit = require('./webeditkit');
 export const registerDataModelClass = datamodel.registerDataModelClass;
 
