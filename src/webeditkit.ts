@@ -34,7 +34,16 @@ export const renderDataModels = () => {
   });
 };
 
-function loadDataModel(baseUrl, model, nodeId, target) {
+interface TargetDataType {
+  baseUrl: string;
+  model: string;
+  nodeId: string;
+}
+
+const targetData : {[key:string]: TargetDataType } = {};
+
+function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) {
+  targetData[target] = {baseUrl, model, nodeId};
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
   $.getJSON(nodeURL, (data) => {
     const root = dataToNode(data);
@@ -43,6 +52,19 @@ function loadDataModel(baseUrl, model, nodeId, target) {
 
     renderDataModels();
   });
+}
+
+export function baseUrlForTarget(target) : string {
+  return targetData[target].baseUrl;
+}
+
+export function baseUrlForModelName(model: string) : string {
+  for (let target in targetData) {
+    if (targetData[target].model === model) {
+      return targetData[target].baseUrl;
+    }
+  }
+  return null;
 }
 
 module.exports.renderDataModels = renderDataModels;

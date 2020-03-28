@@ -38,7 +38,7 @@ describe('Data Model Class Registry', () => {
             properties: {},
             refs: {},
             rootName: 'bar'
-        }
+        };
         expect(dataToNode(data)).to.be.an.instanceof(ModelNode);
         registerDataModelClass('my.awesome.other.concept', MyDummyModelNode);
         expect(dataToNode(data)).to.be.an.instanceof(MyDummyModelNode);

@@ -1,4 +1,5 @@
 import { getWsCommunication } from './wscommunication';
+import {baseUrlForModelName} from "./webeditkit";
 
 const datamodelRoots = {};
 const datamodelClasses = {};
@@ -68,8 +69,8 @@ export class Ref {
   }
 
   loadData(cb) {
-    // TODO fixme, this address should not be set in this way...
-    const url = 'http://localhost:2904/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
+    const baseUrl = baseUrlForModelName(this.data.model.qualifiedName);
+    const url = 'http://' + baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
     $.getJSON(url, (data) => {
       if (data == null) {
         throw new Error('Data not received correctly on request to ' + url);
