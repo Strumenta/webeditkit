@@ -34,6 +34,10 @@ export const renderDataModels = () => {
   });
 };
 
+///
+/// Model Registry
+///
+
 interface TargetDataType {
   baseUrl: string;
   model: string;

@@ -104,11 +104,16 @@ export function verticalGroupCell() {
   return h('div.vertical-group', {}, flattenArray(arguments));
 }
 
+/**
+ * @param modelNode
+ * @param propertyName
+ * @param extraClasses deprecated, use addClass instead
+ */
 export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[]) {
-  const placeholder = '<no ' + propertyName + '>';
-  if (modelNode === undefined) {
-    throw new Error('modelNode should not be undefined');
+  if (modelNode == null) {
+    throw new Error('modelNode should not be null');
   }
+  const placeholder = '<no ' + propertyName + '>';
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
@@ -119,7 +124,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
     'input.editable' + extraClassesStr,
     {
       props: {
-        value: modelNode.property(propertyName),
+        value: modelNode.property(propertyName) || "",
         placeholder,
         required: true,
       },
