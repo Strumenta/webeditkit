@@ -19,6 +19,7 @@ export function alternativesProviderForAddingChild(
   return (alternativesUser: (alternatives: { label: any; execute: () => void }[]) => void) => {
     const ws = getWsCommunication(modelNode.modelName());
     ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
+      console.log("alternatives received", alternatives);
       const adder = (conceptName: string) => () => {
         if (replacing) {
           ws.setChild(modelNode, containmentName, conceptName);
@@ -31,6 +32,7 @@ export function alternativesProviderForAddingChild(
           return { label: domElement.alias, execute: adder(domElement.conceptName) };
         }),
       );
+      console.log("uiAlternatives", uiAlternatives);
       alternativesUser(uiAlternatives);
     });
   };
@@ -61,6 +63,7 @@ export function installAutocomplete(
       });
     },
     onSelect: (item: any) => {
+      console.log("on select");
       item.execute();
     },
     customize: (_input: any, inputRect: any, container: any, maxHeight: any) => {

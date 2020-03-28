@@ -31,10 +31,6 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
 
 export function verticalCollectionCell(modelNode: ModelNode, containmentName: string, wrapInRows: boolean = true) {
   const ws = getWsCommunication(modelNode.modelName());
-  const addInputChild = () => {
-    // TODO FIXME
-    ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
-  };
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
   if (children.length === 0) {
@@ -43,11 +39,10 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
         modelNode,
         '<< ... >>',
         ['empty-collection'],
-        (alternativesUser: any) => {
-          alternativesUser([{ label: 'Input', execute: addInputChild }]);
-        },
+          alternativesProviderForAddingChild(modelNode, containmentName),
         null,
         () => {
+          console.log("on enter");
           ws.triggerDefaultInsertion(modelNode, containmentName);
         },
       ),
@@ -178,6 +173,14 @@ export function fixedCell(
         update: triggerResize,
       },
       on: {
+        click: (e: MouseEvent) => {
+          // @ts-ignore
+          e.target.setSelectionRange(0, 0);
+        },
+        focus: (e: FocusEvent) => {
+          // @ts-ignore
+          e.target.setSelectionRange(0, 0);
+        },
         keydown: (e: KeyboardEvent) => {
           if (e.key === 'ArrowRight') {
             moveToNextElement(e.target);
@@ -190,13 +193,18 @@ export function fixedCell(
               return false;
             }
           } else if (e.key === 'Enter') {
-            if (onEnter !== undefined) {
-              onEnter();
-            } else if (alternativesProvider === undefined) {
-              // We do not want to do this for cells with autocompletion
-              handleAddingElement(e.target, modelNode);
-              e.preventDefault();
-              return false;
+            if ($(".autocomplete").length == 0) {
+              if (onEnter !== undefined) {
+                onEnter();
+              } else if (alternativesProvider === undefined) {
+                // We should stop this when the autocomplete is displayed
+
+
+                // We do not want to do this for cells with autocompletion
+                handleAddingElement(e.target, modelNode);
+                e.preventDefault();
+                return false;
+              }
             }
           }
           e.preventDefault();
