@@ -9,6 +9,8 @@ import {
     installAutocomplete, separate,
     triggerResize, map
 } from "./support";
+import {ModelNode} from "../datamodel";
+import {renderModelNode} from "../renderer";
 
 export function childCell(modelNode: ModelNode, containmentName: string) {
     const child = modelNode.childByLinkName(containmentName);
