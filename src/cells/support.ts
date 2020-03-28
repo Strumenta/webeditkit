@@ -139,6 +139,11 @@ export function addToDataset(vnode: VNode, key: string, value: any): VNode {
   return vnode;
 }
 
+export function setKey(vnode: VNode, key: string): VNode {
+  vnode.key = key;
+  return vnode;
+}
+
 export function addId(vnode: VNode, myId: string): VNode {
   let tagName = vnode.sel.split(/\.(.+)/)[0];
   let classes = vnode.sel.split(/\.(.+)/)[1];
