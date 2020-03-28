@@ -37,12 +37,12 @@ interface ReferenceData {
 /// DataModel classes registry
 ///
 
-export function registerDataModelClass(conceptName: string, clazz): void {
+export function registerDataModelClass(conceptName: string, clazz: new (data: NodeData) => ModelNode): void {
   datamodelClasses[conceptName] = clazz;
 }
 
-export function dataToNode(data: NodeData) {
-  if (data == null) {
+export function dataToNode(data: NodeData) : ModelNode {
+  if (data === null) {
     return null;
   }
   const clazz = datamodelClasses[data.concept];
@@ -60,8 +60,8 @@ export function dataToNode(data: NodeData) {
 export class Ref {
   private data: ReferenceData;
 
-  constructor(data) {
-    if (data == null || data === undefined) {
+  constructor(data: ReferenceData) {
+    if (data == null) {
       throw new Error('Ref cannot be built with null data');
     }
     this.data = data;

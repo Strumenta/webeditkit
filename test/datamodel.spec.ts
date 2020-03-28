@@ -1,4 +1,4 @@
-import {registerDataModelClass, dataToNode, ModelNode, NodeData} from '../src/datamodel';
+import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
 
@@ -42,6 +42,14 @@ describe('Data Model Class Registry', () => {
         expect(dataToNode(data)).to.be.an.instanceof(ModelNode);
         registerDataModelClass('my.awesome.other.concept', MyDummyModelNode);
         expect(dataToNode(data)).to.be.an.instanceof(MyDummyModelNode);
+    });
+
+});
+
+describe('References', () => {
+
+    it('should not accept null', () => {
+        expect(()=> { new Ref(null); }).to.throw('Ref cannot be built with null data');
     });
 
 });
