@@ -6,10 +6,7 @@ import {moveToNextElement} from "../src/navigation";
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-describe('Navigation', () => {
-
-    it('should support moveFocusToStart', () => {
-        const dom = new JSDOM(`<html>
+const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
 \t\t<div id="calc" class="editor">
 \t\t\t<div class="vertical-group represent-node" data-node_represented="324292001770075100">
@@ -50,7 +47,12 @@ describe('Navigation', () => {
 \t\t\t</div>
 \t\t</div>
 \t</body>
-</html>`)
+</html>`;
+
+describe('Navigation', () => {
+
+    it('should support moveToNextElement - not at end', () => {
+        const dom = new JSDOM(html1);
         const doc = dom.window.document;
         // @ts-ignore
         global.$ = require('jquery')(dom.window);
@@ -76,7 +78,20 @@ describe('Navigation', () => {
         expect(doc.activeElement).to.equals(keyword_b);
         expect(moveToNextElement(keyword_b)).to.equals(true);
         expect(doc.activeElement).to.equals(type_b);
+    });
 
+    it('should support moveToNextElement - at end', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const type_c = doc.querySelector('div[data-node_represented="1848360241685547705"] .fixed.type');
+
+        type_c.focus();
+        expect(doc.activeElement).to.equals(type_c);
+        expect(moveToNextElement(type_c)).to.equals(false);
+        expect(doc.activeElement).to.equals(type_c);
     });
 
 });
