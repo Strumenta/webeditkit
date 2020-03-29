@@ -118,17 +118,14 @@ export class WsCommunication {
     });
   }
 
-  addChild(container, containmentName, conceptName) {
-    this.sendJSON({
-      type: 'addChild',
-      modelName: container.modelName(),
-      container: container.idString(),
-      containmentName,
-      conceptToInstantiate: conceptName,
-    });
+  addChild(container: ModelNode, containmentName: string, conceptName: string) : void {
+    this.addChildAtIndex(container, containmentName, -1, conceptName);
   }
 
-  addChildAtIndex(container, containmentName, index: number, conceptName?: string) {
+  addChildAtIndex(container, containmentName, index: number, conceptName: string) {
+    if (index < -1) {
+      throw new Error("Index should -1 to indicate to add at the end, or a value >= 0")
+    }
     this.sendJSON({
       type: 'addChild',
       index,
