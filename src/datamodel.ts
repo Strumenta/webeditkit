@@ -8,6 +8,8 @@ const datamodelClasses = {};
 /// Node Data
 ///
 
+export type PropertyType = string | boolean | number;
+
 export interface NodeId {
   regularId: string;
 }
@@ -22,7 +24,7 @@ interface ModelId {
 
 export interface NodeData {
   abstractConcept: boolean;
-  properties: { [key: string]: string | boolean | number };
+  properties: { [key: string]: PropertyType };
   children: NodeData[];
   concept: string;
   containingLink?: string;
@@ -91,7 +93,7 @@ export class ModelNode {
     this.data = data;
   }
 
-  childByLinkName(linkName) {
+  childByLinkName(linkName) : ModelNode {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     if (filtered.length === 0) {
       return null;
@@ -102,18 +104,20 @@ export class ModelNode {
     }
   }
 
-  childrenByLinkName(linkName) {
+  childrenByLinkName(linkName: string) : ModelNode[] {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
-    return filtered.map(function (el) {
-      return dataToNode(el);
-    });
+    return filtered.map(el => dataToNode(el));
   }
 
-  property(propertyName) {
-    return this.data.properties[propertyName];
+  property(propertyName: string) : PropertyType{
+    const value = this.data.properties[propertyName];
+    if (value == null) {
+      throw new Error('Property ' + propertyName + " not found");
+    }
+    return value;
   }
 
-  ref(referenceName) {
+  ref(referenceName: string) : Ref {
     return new Ref(this.data.refs[referenceName]);
   }
 
