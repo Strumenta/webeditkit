@@ -141,8 +141,8 @@ export class ModelNode {
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
-    for (let i = 0; i < this.data.children.length; i++) {
-      const child = dataToNode(this.data.children[i]);
+    for (const childData of this.data.children){
+      const child = dataToNode(childData);
       const childRes = child.findNodeById(nodeIdStr);
       if (childRes != null) {
         return childRes;
@@ -183,7 +183,7 @@ export class ModelNode {
   index(): number {
     const siblings = this.parent().childrenByLinkName(this.containmentName());
     for (let i = 0; i < siblings.length; i++) {
-      if (this.idString() == siblings[i].idString()) {
+      if (this.idString() === siblings[i].idString()) {
         return i;
       }
     }
@@ -196,7 +196,7 @@ export class ModelNode {
     let i = 0;
     for (; i < children.length && leftToFind > 0; i++) {
       const child = children[i];
-      if (child.containingLink == relationName) {
+      if (child.containingLink === relationName) {
         leftToFind--;
       }
     }
