@@ -38,7 +38,7 @@ export function moveUp(t) {
 
 export function moveDown(t) {}
 
-export function moveToNextElement(t) {
+export function moveToNextElement(t) : boolean {
   let next = $(t).next();
   if (next.length === 0) {
     const parent = $(t).parent();
@@ -46,26 +46,25 @@ export function moveToNextElement(t) {
       // cannot move outside the editor;
       return false;
     }
-    moveToNextElement($(t).parent());
-    return;
+    return moveToNextElement($(t).parent());
   }
   do {
     const tag = next.prop('tagName');
     if (tag === 'INPUT') {
       moveFocusToStart(next);
-      return;
+      return true;
     } else if (tag === 'DIV') {
       if (next.find('input').length === 0) {
         next = findNext(next);
       } else {
         next = next.find('input').first();
         moveFocusToStart(next);
-        return;
+        return true;
       }
     } else if (tag === 'SPAN') {
       next = findNext(next);
     } else {
-      return;
+      return false;
     }
   } while (true);
 }

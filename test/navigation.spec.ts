@@ -57,10 +57,26 @@ describe('Navigation', () => {
 
         const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
         const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
+        const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type');
+
         editableName_a.focus();
         expect(doc.activeElement).to.equals(editableName_a);
-        moveToNextElement(editableName_a);
+        expect(moveToNextElement(editableName_a)).to.equals(true);
         expect(doc.activeElement).to.equals(keyword_a);
+        expect(moveToNextElement(keyword_a)).to.equals(true);
+        expect(doc.activeElement).to.equals(type_a);
+
+        const editableName_b= doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword');
+        const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type');
+
+        expect(moveToNextElement(type_a)).to.equals(true);
+        expect(doc.activeElement).to.equals(editableName_b);
+        expect(moveToNextElement(editableName_b)).to.equals(true);
+        expect(doc.activeElement).to.equals(keyword_b);
+        expect(moveToNextElement(keyword_b)).to.equals(true);
+        expect(doc.activeElement).to.equals(type_b);
+
     });
 
 });
