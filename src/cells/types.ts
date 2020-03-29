@@ -1,6 +1,6 @@
 import h, { VNodeChildElement } from 'snabbdom/h';
 import { getWsCommunication } from '../wscommunication';
-import { isAtEnd, isAtStart, moveToNextElement } from '../navigation';
+import {isAtEnd, isAtStart, moveToNextElement, moveToPrevElement} from '../navigation';
 import {
   addAutoresize,
   alternativesProviderForAddingChild,
@@ -136,6 +136,11 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
             e.preventDefault();
             return true;
           }
+          if (isAtStart(e.target) && e.key === 'ArrowLeft') {
+            moveToPrevElement(e.target);
+            e.preventDefault();
+            return true;
+          }
           if (isAtStart(e.target) && e.key === 'Backspace') {
             handleSelfDeletion(e.target, modelNode);
             return false;
@@ -189,6 +194,8 @@ export function fixedCell(
         keydown: (e: KeyboardEvent) => {
           if (e.key === 'ArrowRight') {
             moveToNextElement(e.target);
+          } else if (e.key === 'ArrowLeft') {
+            moveToPrevElement(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter !== undefined) {
               deleter();
