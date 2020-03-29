@@ -109,22 +109,22 @@ export class ModelNode {
     return filtered.map((el) => dataToNode(el));
   }
 
-  property(propertyName: string): PropertyType | null {
+  property(propertyName: string): PropertyType | undefined {
     const value = this.data.properties[propertyName];
     // if (value == null) {
     //   throw new Error('Property ' + propertyName + ' not found');
     // }
-    return value;
+    return value || undefined;
   }
 
   ref(referenceName: string): Ref {
     return new Ref(this.data.refs[referenceName]);
   }
 
-  name(): string | null {
+  name(): string | undefined {
     const value = this.property('name');
     if (value == null) {
-      return null;
+      return undefined;
     }
     if (typeof value === 'string') {
       return value;

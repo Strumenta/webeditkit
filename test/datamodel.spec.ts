@@ -144,7 +144,7 @@ describe('ModelNode', () => {
 
     it('should support property - unexisting', () => {
         const root = dataToNode(rootData1);
-        expect(()=> {root.property("unexisting")}).to.throw('Property unexisting not found');
+        expect(root.property("unexisting")).to.equal(undefined);
     });
 
     it('should support name - existing', () => {
@@ -156,7 +156,7 @@ describe('ModelNode', () => {
         const root = dataToNode(rootData1);
         const input_a = root.childrenByLinkName('inputs')[0];
         const type_of_a = input_a.childByLinkName('type');
-        expect(()=> {type_of_a.name()}).to.throw('Property name not found');
+        expect(type_of_a.name()).to.equals(undefined);
     });
 
     it('should support idString', () => {
