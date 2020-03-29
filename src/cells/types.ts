@@ -10,9 +10,9 @@ import {
   installAutocomplete,
   separate,
   triggerResize,
-  map,
+  map, focusOnNode,
 } from './support';
-import { ModelNode } from '../datamodel';
+import {ModelNode, NodeId, nodeIdToString} from '../datamodel';
 import { renderModelNode } from '../renderer';
 
 export function childCell(modelNode: ModelNode, containmentName: string) {
@@ -43,7 +43,12 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
         null,
         () => {
           console.log("on enter");
-          ws.triggerDefaultInsertion(modelNode, containmentName);
+          ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID:NodeId) => {
+            console.log("reactorToInsertion", addedNodeID);
+            const nodeIdStr = nodeIdToString(addedNodeID);
+            console.log("reactorToInsertion", nodeIdStr);
+            focusOnNode(nodeIdStr, modelNode.rootName());
+          });
         },
       ),
     ]);

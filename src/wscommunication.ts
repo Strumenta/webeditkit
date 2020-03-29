@@ -1,4 +1,4 @@
-import { getDatamodelRoot, ModelNode } from './datamodel';
+import {getDatamodelRoot, ModelNode, NodeId} from './datamodel';
 import { renderDataModels } from './webeditkit';
 
 function findNode(root, searchedID) {
@@ -64,6 +64,10 @@ export class WsCommunication {
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
         alternativesReceiver(data.items);
+      } else if (data.type === 'AnswerDefaultInsertion') {
+        console.log("received AnswerDefaultInsertion", data, data.addedNodeID);
+        const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID:NodeId)=>void;
+        reactorToInsertion(data.addedNodeID);
       } else {
         console.log('data', data);
         throw new Error('Unknown change type: ' + data.type);
@@ -91,11 +95,14 @@ export class WsCommunication {
     });
   }
 
-  triggerDefaultInsertion(container, containmentName) {
+  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID:NodeId)=>void) {
+    const uuid = uuidv4();
+    this.callbacks[uuid] = reactorToInsertion;
     this.sendJSON({
       type: 'defaultInsertion',
       modelName: container.modelName(),
       container: container.idString(),
+      requestId: uuid,
       containmentName,
     });
   }

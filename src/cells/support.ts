@@ -174,3 +174,36 @@ export function separate(original: any[], separatorGenerator?: any): any[] {
   }
   return separated;
 }
+
+/**
+ *
+ * @param nodeIdStr
+ */
+export function focusOnNode(nodeIdStr: string, rootName: string) {
+  const domRoot = $("#" + rootName);
+  const found = domRoot.find(".represent-node").filter(function() { return $(this).data('node_represented') == nodeIdStr; });
+  if (found.length == 0) {
+    console.warn("node to focus on not found", nodeIdStr);
+    return;
+  } else if (found.length > 1) {
+    console.warn("more than one representation of node to focus ofound", nodeIdStr);
+  }
+  const firstNodeFound = found[0];
+  // @ts-ignore
+  window.fnf = firstNodeFound;
+  focusOnFirstInputOf(firstNodeFound);
+}
+
+function focusOnFirstInputOf(element) : boolean {
+  if (element.tagName === "INPUT") {
+    $(element).focus();
+    return true;
+  }
+  for (let i=0;i<element.children.length;i++) {
+    const chRes = focusOnFirstInputOf(element.children[i]);
+    if (chRes) {
+      return chRes;
+    }
+  }
+  return false;
+}

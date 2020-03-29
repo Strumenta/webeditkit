@@ -8,8 +8,12 @@ const datamodelClasses = {};
 /// Node Data
 ///
 
-interface NodeId {
+export interface NodeId {
   regularId: string
+}
+
+export function nodeIdToString(nodeId: NodeId) : string {
+  return nodeId.regularId;
 }
 
 interface ModelId {
