@@ -25,11 +25,11 @@ export interface NodeData {
   properties: { [key: string]: string | boolean | number };
   children: NodeData[];
   concept: string;
-  containingLink: string;
+  containingLink?: string;
   id: NodeId;
   refs: { [key: string]: ReferenceData };
-  rootName: string;
-  modelName: string;
+  rootName?: string;
+  modelName?: string;
   parent?: NodeData;
 }
 
@@ -104,9 +104,8 @@ export class ModelNode {
 
   childrenByLinkName(linkName) {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
-    return $(filtered).map(function () {
-      // @ts-ignore
-      return dataToNode(this);
+    return filtered.map(function (el) {
+      return dataToNode(el);
     });
   }
 
