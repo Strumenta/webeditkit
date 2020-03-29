@@ -50,7 +50,7 @@ interface TargetDataType {
 
 const targetData: { [key: string]: TargetDataType } = {};
 
-function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) {
+export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) {
   targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
   $.getJSON(nodeURL, (data) => {
@@ -59,6 +59,8 @@ function loadDataModel(baseUrl: string, model: string, nodeId: string, target: s
     setDatamodelRoot(target, root);
 
     renderDataModels();
+  }).fail(()=>{
+    throw new Error("Failed to load data model, using URL " + nodeURL);
   });
 }
 
@@ -76,5 +78,4 @@ export function baseUrlForModelName(model: string): string {
 }
 
 module.exports.renderDataModels = renderDataModels;
-module.exports.loadDataModel = loadDataModel;
 module.exports.h = h;

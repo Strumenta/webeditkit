@@ -10,7 +10,7 @@ import {
 import { expect } from 'chai';
 import 'mocha';
 import {isAtStart, isAtEnd, moveToNextElement, moveToPrevElement} from "../src/navigation";
-import {renderDataModels} from "../src/webeditkit";
+import {loadDataModel, renderDataModels} from "../src/webeditkit";
 import {installAutoresize} from "../src/uiutils";
 import {clearRendererRegistry} from "../dist/renderer";
 import {registerRenderer} from "../src/renderer";
@@ -124,6 +124,24 @@ describe('WebEditKit', () => {
         delete global.document;
     });
 
+    it('should support loadDataModel - server error', () => {
+        const dom = new JSDOM(html_empty);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+        // @ts-ignore
+        global.window = dom.window;
+        // @ts-ignore
+        global.document = doc;
 
+        expect(()=>{loadDataModel('127.0.0.1:7892','my.qualified.Model', '123','x');}).to.throw('Failed to load data model, using URL 127.0.0.1:7892/models/my.qualified.Model/123');
+
+        // @ts-ignore
+        delete global.$;
+        // @ts-ignore
+        delete global.window;
+        // @ts-ignore
+        delete global.document;
+    });
 
 });
