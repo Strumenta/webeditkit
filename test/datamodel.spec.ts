@@ -155,9 +155,30 @@ describe('ModelNode', () => {
         expect(()=> {type_of_a.name()}).to.throw('Property name not found');
     });
 
-    it('should idString', () => {
+    it('should support idString', () => {
         const root = dataToNode(rootData1);
         expect(root.idString()).to.equals('324292001770075100');
+    });
+
+    it('should support conceptName', () => {
+        const root = dataToNode(rootData1);
+        expect(root.conceptName()).to.equals('com.strumenta.financialcalc.FinancialCalcSheet');
+    });
+
+    it('should support simpleConceptName', () => {
+        const root = dataToNode(rootData1);
+        expect(root.simpleConceptName()).to.equals('FinancialCalcSheet');
+    });
+
+    it('should support findNodeById - unexisting', () => {
+        const root = dataToNode(rootData1);
+        expect(root.findNodeById('unexisting')).to.equals(null);
+    });
+
+    it('should support findNodeById - existing', () => {
+        const root = dataToNode(rootData1);
+        const n = root.findNodeById('1848360241685547705')
+        expect(n.name()).to.equals('b');
     });
 
 });

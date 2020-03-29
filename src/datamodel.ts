@@ -1,5 +1,5 @@
-import { getWsCommunication } from './wscommunication';
-import { baseUrlForModelName } from './webeditkit';
+import {getWsCommunication} from './wscommunication';
+import {baseUrlForModelName} from './webeditkit';
 
 const datamodelRoots = {};
 const datamodelClasses = {};
@@ -137,7 +137,7 @@ export class ModelNode {
     return this.data.concept;
   }
 
-  findNodeById(nodeIdStr) {
+  findNodeById(nodeIdStr) : ModelNode | null {
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
@@ -150,15 +150,17 @@ export class ModelNode {
     }
     return null;
   }
-  simpleConceptName() {
+
+  simpleConceptName() : string {
     const parts = this.data.concept.split('.');
-    const simpleName = parts[parts.length - 1];
-    return simpleName;
+    return parts[parts.length - 1];
   }
-  isAbstract() {
+
+  isAbstract() : boolean {
     return this.data.abstractConcept;
   }
-  injectModelName(modelName, rootName) {
+
+  injectModelName(modelName, rootName) : void {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;
@@ -169,12 +171,15 @@ export class ModelNode {
       dataToNode(el).injectModelName(modelName, rootName);
     });
   }
+
   modelName() {
     return this.data.modelName;
   }
+
   rootName() {
     return this.data.rootName;
   }
+
   index(): number {
     const siblings = this.parent().childrenByLinkName(this.containmentName());
     for (let i = 0; i < siblings.length; i++) {
