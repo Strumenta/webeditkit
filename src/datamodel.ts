@@ -260,11 +260,11 @@ export class ModelNode {
 /// DataModel roots
 ///
 
-export function setDatamodelRoot(name, root) {
+export function setDatamodelRoot(name: string, root: ModelNode) : void {
   datamodelRoots[name] = root;
 }
 
-export function getDatamodelRoot(name): ModelNode {
+export function getDatamodelRoot(name: string): ModelNode {
   return datamodelRoots[name];
 }
 

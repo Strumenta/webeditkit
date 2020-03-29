@@ -8,6 +8,16 @@ import h from 'snabbdom/h'; // helper function for creating vnodes
 
 import toVNode from 'snabbdom/tovnode';
 
+var jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const { window } = new JSDOM();
+const { document } = (new JSDOM('')).window;
+// @ts-ignore
+global.document = document;
+
+// @ts-ignore
+var $ = require('jquery')(window);
+
 import * as sclass from 'snabbdom/modules/class';
 import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
@@ -28,9 +38,14 @@ export const renderDataModels = () => {
   forEachDataModel((name, root) => {
     const vnode = h('div#' + name + '.editor', {}, [renderModelNode(root)]);
     if (vnodes[name] === undefined) {
-      vnodes[name] = toVNode($('div#' + name)[0]);
+      let element = $('div#' + name)[0];
+      if (element != null) {
+        vnodes[name] = toVNode($('div#' + name)[0]);
+      }
     }
-    vnodes[name] = patch(vnodes[name], vnode);
+    if (vnodes[name] != null) {
+      vnodes[name] = patch(vnodes[name], vnode);
+    }
   });
 };
 

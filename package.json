@@ -8,6 +8,8 @@
     "@types/jquery": "^3.3.33",
     "@types/node": "^13.9.3",
     "autocompleter": "^6.0.2",
+    "jquery": "^3.4.1",
+    "jsdom": "^16.2.1",
     "snabbdom": "^0.7.4",
     "tsify": "^4.0.1",
     "typescript": "^3.8.3"

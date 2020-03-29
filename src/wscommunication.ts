@@ -56,6 +56,9 @@ export class WsCommunication {
       }
       if (data.type === 'propertyChange') {
         const root = getDatamodelRoot(localName);
+        if (root == null) {
+          throw new Error('data model with local name ' + localName + ' was not found');
+        }
         const node = findNode(root.data, data.nodeId);
         node.properties[data.propertyName] = data.propertyValue;
         renderDataModels();
