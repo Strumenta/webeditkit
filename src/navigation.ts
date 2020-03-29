@@ -69,25 +69,24 @@ export function moveToNextElement(t) : boolean {
   } while (true);
 }
 
-export function moveToPrevElement(t) {
+export function moveToPrevElement(t) : boolean {
   let elConsidered = $(t).prev();
 
   do {
     if (elConsidered.length === 0) {
-      moveToPrevElement($(t).parent());
-      return;
+      return moveToPrevElement($(t).parent());
     }
     const tag = elConsidered.prop('tagName');
     if (tag === 'INPUT') {
       moveFocusToEnd(elConsidered);
-      return;
+      return true;
     } else if (tag === 'DIV') {
       if (elConsidered.find('input').length === 0) {
         elConsidered = findPrev(elConsidered);
       } else {
         elConsidered = elConsidered.find('input').last();
         moveFocusToEnd(elConsidered);
-        return;
+        return true;
       }
     } else if (tag === 'SPAN') {
       elConsidered = findPrev(elConsidered);
@@ -95,7 +94,7 @@ export function moveToPrevElement(t) {
       elConsidered = elConsidered.prev();
     } else {
       // Perhaps we could play an error sound
-      return;
+      return false;
     }
   } while (true);
 }

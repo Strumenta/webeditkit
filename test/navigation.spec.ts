@@ -1,7 +1,7 @@
 import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {moveToNextElement} from "../src/navigation";
+import {moveToNextElement, moveToPrevElement} from "../src/navigation";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -92,6 +92,49 @@ describe('Navigation', () => {
         expect(doc.activeElement).to.equals(type_c);
         expect(moveToNextElement(type_c)).to.equals(false);
         expect(doc.activeElement).to.equals(type_c);
+    });
+
+    it('should support moveToPrevElement - not at end', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
+        const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
+        const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type');
+
+        const editableName_b= doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword');
+        const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type');
+
+        type_b.focus();
+        expect(doc.activeElement).to.equals(type_b);
+        expect(moveToPrevElement(type_b)).to.equals(true);
+        expect(doc.activeElement).to.equals(keyword_b);
+        expect(moveToPrevElement(keyword_b)).to.equals(true);
+        expect(doc.activeElement).to.equals(editableName_b);
+
+        expect(moveToPrevElement(editableName_b)).to.equals(true);
+        expect(doc.activeElement).to.equals(type_a);
+        expect(moveToPrevElement(type_a)).to.equals(true);
+        expect(doc.activeElement).to.equals(keyword_a);
+        expect(moveToPrevElement(keyword_a)).to.equals(true);
+        expect(doc.activeElement).to.equals(editableName_a);
+    });
+
+    it('should support moveToPrevElement - at end', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const calculationsLabel = doc.querySelector('div[data-node_represented="324292001770075100"] .fixed');
+
+        calculationsLabel.focus();
+        expect(doc.activeElement).to.equals(calculationsLabel);
+        expect(moveToPrevElement(calculationsLabel)).to.equals(false);
+        expect(doc.activeElement).to.equals(calculationsLabel);
     });
 
 });
