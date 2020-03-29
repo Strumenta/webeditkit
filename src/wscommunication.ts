@@ -32,8 +32,8 @@ export class WsCommunication {
   private localName: string;
   private readonly callbacks: {};
 
-  constructor(url, modelName, localName) {
-    this.ws = new WebSocket(url);
+  constructor(url: string, modelName: string, localName: string, ws?: WebSocket) {
+    this.ws = ws || new WebSocket(url);
     this.modelName = modelName;
     this.localName = localName;
     this.callbacks = {};
