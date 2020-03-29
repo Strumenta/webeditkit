@@ -1,8 +1,7 @@
-import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
+import {dataToNode, ModelNode} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {isAtStart, isAtEnd, moveToNextElement, moveToPrevElement} from "../src/navigation";
-import {getRegisteredRenderer} from "../src/renderer";
+import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../src/renderer";
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
@@ -52,6 +51,15 @@ const html1 = `<html>
 \t\t</div>
 \t</body>
 </html>`;
+
+function compareVNodes(rendered: VNode, expectedRendered: VNode) : void {
+    expect(rendered.sel).to.eql(expectedRendered.sel);
+    expect(rendered.data.props).to.eql(expectedRendered.data.props);
+    expect(rendered.data.dataset).to.eql(expectedRendered.data.dataset);
+    expect(rendered.children).deep.equal(expectedRendered.children);
+    expect(rendered.key).to.eql(expectedRendered.key);
+    expect(rendered.text).to.eql(expectedRendered.text);
+}
 
 const rootData1 = {
     "children": [
@@ -138,6 +146,47 @@ describe('Renderer', () => {
         expect(getRegisteredRenderer('concept.with.renderer')(n)).to.eql(h('span.bar'));
         expect(getRegisteredRenderer('concept.with.renderer')(n)).not.eql(h('span.foo'));
         expect(getRegisteredRenderer('concept.with.renderer')(n)).not.eql(h('span.zum'));
+    });
+
+    it('should support clearRendererRegistry', () => {
+        const myDummyRenderer2 = (modelNode: ModelNode) : VNode => { return h('span.zum'); }
+        registerRenderer('concept.with.renderer', myDummyRenderer2);
+        expect(getRegisteredRenderer('concept.with.renderer')).not.equals(undefined);
+        clearRendererRegistry();
+        expect(getRegisteredRenderer('concept.with.renderer')).to.equals(undefined);
+    });
+
+    it('should support getRenderer - using default renderer', () => {
+        const n = dataToNode(rootData1);
+
+        clearRendererRegistry();
+        const rendered = renderModelNode(n);
+        const expectedRendered = h('input.fixed.default-cell-concrete.represent-node', {
+            key: '324292001770075100',
+            dataset: {
+                node_represented: '324292001770075100'
+            },
+            props: {
+                value: '[default FinancialCalcSheet]'
+            }
+        }, []);
+        compareVNodes(rendered, expectedRendered);
+    });
+
+    it('should support getRenderer - using registered renderer', () => {
+        const r = (modelNode: ModelNode) : VNode => { return h('span.bar', {}, [modelNode.name()]); }
+
+        registerRenderer('com.strumenta.financialcalc.FinancialCalcSheet', r);
+
+        const n = dataToNode(rootData1);
+        const rendered = renderModelNode(n);
+        const expectedRendered = h('span.bar.represent-node', {
+            key: '324292001770075100',
+            dataset: {
+                node_represented: '324292001770075100'
+            }
+        }, ['My calculations']);
+        compareVNodes(rendered, expectedRendered);
     });
 
 });
