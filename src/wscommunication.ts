@@ -177,7 +177,7 @@ export class WsCommunication {
     });
   }
 
-  askAlternatives(modelNode, containmentName, alternativesReceiver) {
+  askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver) {
     // we generate a UUID and ask the server to answer us using such UUID
     const uuid = uuidv4();
     this.callbacks[uuid] = alternativesReceiver;
@@ -193,11 +193,11 @@ export class WsCommunication {
 
 const instances = {};
 
-export function getWsCommunication(modelName) {
+export function getWsCommunication(modelName: string) {
   return instances[modelName];
 }
 
-export function createInstance(url, modelName: string, localName: string) {
+export function createInstance(url: string, modelName: string, localName: string) {
   const instance = new WsCommunication(url, modelName, localName);
   instances[modelName] = instance;
 }
