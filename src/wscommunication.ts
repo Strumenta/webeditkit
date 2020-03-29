@@ -1,22 +1,5 @@
-import { getDatamodelRoot, ModelNode, NodeId } from './datamodel';
+import {findNode, getDatamodelRoot, ModelNode, NodeId, PropertyType, dataToNode, nodeIdToString} from './datamodel';
 import { renderDataModels } from './webeditkit';
-
-/**
- * TODO use the one in ModelNode
- */
-function findNode(root, searchedID) {
-  if (root.id.regularId === searchedID.regularId) {
-    return root;
-  } else {
-    for (let i = 0; i < root.children.length; i++) {
-      const res = findNode(root.children[i], searchedID);
-      if (res != null) {
-        return res;
-      }
-    }
-    return null;
-  }
-}
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -59,18 +42,30 @@ export class WsCommunication {
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
         }
-        const node = findNode(root.data, data.nodeId);
-        node.properties[data.propertyName] = data.propertyValue;
+        const node = dataToNode(root.data).findNodeById(nodeIdToString(data.nodeId));
+        node.setProperty(data.propertyName as string, data.propertyValue as PropertyType);
         renderDataModels();
       } else if (data.type === 'nodeAdded') {
         const root = getDatamodelRoot(localName);
-        const parentNode = findNode(root.data, data.parentNodeId);
-        new ModelNode(parentNode).addChild(data.relationName, data.index, data.child);
+        if (root == null) {
+          throw new Error('data model with local name ' + localName + ' was not found');
+        }
+        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(data.parentNodeId));
+        if (parentNode == null) {
+          throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(data.parentNodeId));
+        }
+        parentNode.addChild(data.relationName, data.index, data.child);
         renderDataModels();
       } else if (data.type === 'nodeRemoved') {
         const root = getDatamodelRoot(localName);
-        const parentNode = findNode(root.data, data.parentNodeId);
-        new ModelNode(parentNode).removeChild(data.relationName, data.child);
+        if (root == null) {
+          throw new Error('data model with local name ' + localName + ' was not found');
+        }
+        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(data.parentNodeId));
+        if (parentNode == null) {
+          throw new Error('Cannot remove node because parent was not found');
+        }
+        parentNode.removeChild(data.relationName, data.child);
         renderDataModels();
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];

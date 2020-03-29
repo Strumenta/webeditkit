@@ -168,4 +168,111 @@ describe('WsCommunication', () => {
         ws.setSilent();
     });
 
+    it('should react to node added - to unexisting parent', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                expect(JSON.parse(data as string)).to.eql({type:'registerForChanges',modelName:'myModelName'});
+            });
+            expect(() => { socket.send(JSON.stringify({
+                type: "nodeAdded",
+                parentNodeId: {regularId: "1848360241685575188"},
+                child: {
+                    containingLink: "type",
+                    children: [],
+                    properties: {},
+                    refs: {},
+                    id: {regularId: "1848360241685575208"},
+                    concept: "com.strumenta.financialcalc.BooleanType",
+                    abstractConcept: false,
+                },
+                index: 0, relationName: "type"})) }).to.throw('Cannot add node because parent was not found. ID was: {"regularId":"1848360241685575188"}');
+            mockServer.close();
+            done();
+        });
+
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        setDatamodelRoot('localName', root);
+
+        const ws = new WsCommunication('myurl', 'myModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+    });
+
+    it('should react to node added - to existing parent', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                expect(JSON.parse(data as string)).to.eql({type:'registerForChanges',modelName:'myModelName'});
+            });
+            socket.send(JSON.stringify({
+                type: "nodeAdded",
+                parentNodeId: {regularId: "1848360241685547711"},
+                child: {
+                    containingLink: "type",
+                    children: [],
+                    properties: {},
+                    refs: {},
+                    id: {regularId: "1848360241685575208"},
+                    concept: "com.strumenta.financialcalc.BooleanType",
+                    abstractConcept: false,
+                },
+                index: 0, relationName: "type"}));
+            expect(n_b.childrenByLinkName('type').length).to.equals(1);
+            mockServer.close();
+            done();
+        });
+
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        setDatamodelRoot('localName', root);
+        const n_b = root.findNodeById('1848360241685547711');
+        expect(n_b.childrenByLinkName('type').length).to.equals(0);
+
+        const ws = new WsCommunication('myurl', 'myModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+    });
+
+    it('should react to node removed - to existing parent', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                expect(JSON.parse(data as string)).to.eql({type:'registerForChanges',modelName:'myModelName'});
+            });
+            socket.send(JSON.stringify({
+                type: "nodeRemoved",
+                parentNodeId: {regularId: "1848360241685547698"},
+                child: {
+                    containingLink: "type",
+                    children: [],
+                    properties: {},
+                    refs: {},
+                    id: {
+                        regularId: "1848360241685547702"
+                    },
+                    concept: "com.strumenta.financialcalc.BooleanType",
+                    abstractConcept: false
+                },
+                index: 0, relationName: "type"}));
+            expect(n_a.childrenByLinkName('type').length).to.equals(0);
+            mockServer.close();
+            done();
+        });
+
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        setDatamodelRoot('localName', root);
+        const n_a = root.findNodeById('1848360241685547698');
+        expect(n_a.childrenByLinkName('type').length).to.equals(1);
+
+        const ws = new WsCommunication('myurl', 'myModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+    });
+
 });

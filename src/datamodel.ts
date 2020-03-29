@@ -257,6 +257,10 @@ export class ModelNode {
   isRoot(): boolean {
     return this.data.containingLink == null;
   }
+
+  setProperty(propertyName: string, propertyValue: PropertyType) : void {
+    this.data.properties[propertyName] = propertyValue;
+  }
 }
 
 ///
@@ -282,6 +286,6 @@ export function forEachDataModel(op) {
 /// Node navigation
 ///
 
-export function findNode(localModelName, nodeId) {
+export function findNode(localModelName, nodeId) : ModelNode | null {
   return getDatamodelRoot(localModelName).findNodeById(nodeId);
 }
