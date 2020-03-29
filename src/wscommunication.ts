@@ -9,6 +9,13 @@ function uuidv4() {
   });
 }
 
+interface Alternative {
+  conceptName: string;
+  alias: string;
+}
+
+type Alternatives = Alternative[];
+
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
@@ -154,7 +161,7 @@ export class WsCommunication {
     });
   }
 
-  deleteNode(node) : void {
+  deleteNode(node: ModelNode) : void {
     this.sendJSON({
       type: 'deleteNode',
       modelName: node.modelName(),
@@ -162,7 +169,7 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode, propertyName, propertyValue) {
+  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyType) : void {
     this.sendJSON({
       type: 'propertyChange',
       nodeId: modelNode.idString(),
@@ -172,7 +179,7 @@ export class WsCommunication {
     });
   }
 
-  askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver) {
+  askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver: (Alternatives) => void) : void {
     // we generate a UUID and ask the server to answer us using such UUID
     const uuid = uuidv4();
     this.callbacks[uuid] = alternativesReceiver;

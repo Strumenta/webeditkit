@@ -299,6 +299,38 @@ describe('WsCommunication', () => {
         ws.insertNextSibling(n_a);
     });
 
+    it('should support triggerChangeOnPropertyNode', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        const messagesReceivedByServer = [];
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                messagesReceivedByServer.push(JSON.parse(data as string));
+                if (messagesReceivedByServer.length == 2) {
+                    expect(messagesReceivedByServer[0]).to.eql({
+                        type: 'propertyChange',
+                        modelName: 'my.qualified.ModelName',
+                        nodeId: '1848360241685547698',
+                        propertyName: 'name',
+                        propertyValue: 'my new name'
+                    });
+                    expect(messagesReceivedByServer[1]).to.eql({type:'registerForChanges',modelName:'my.qualified.ModelName'});
+                    mockServer.close();
+                    done();
+                }
+            });
+        });
+
+        const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        ws.triggerChangeOnPropertyNode(n_a, 'name', 'my new name');
+    });
+
     it('should support triggerDefaultInsertion', (done) => {
         const fakeURL = 'ws://localhost:8080';
         const mockServer = new Server(fakeURL);
