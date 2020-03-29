@@ -1,5 +1,5 @@
-import {getWsCommunication} from './wscommunication';
-import {baseUrlForModelName} from './webeditkit';
+import { getWsCommunication } from './wscommunication';
+import { baseUrlForModelName } from './webeditkit';
 
 const datamodelRoots = {};
 const datamodelClasses = {};
@@ -93,7 +93,7 @@ export class ModelNode {
     this.data = data;
   }
 
-  childByLinkName(linkName) : ModelNode {
+  childByLinkName(linkName): ModelNode {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     if (filtered.length === 0) {
       return null;
@@ -104,44 +104,44 @@ export class ModelNode {
     }
   }
 
-  childrenByLinkName(linkName: string) : ModelNode[] {
+  childrenByLinkName(linkName: string): ModelNode[] {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
-    return filtered.map(el => dataToNode(el));
+    return filtered.map((el) => dataToNode(el));
   }
 
-  property(propertyName: string) : PropertyType {
+  property(propertyName: string): PropertyType {
     const value = this.data.properties[propertyName];
     if (value == null) {
-      throw new Error('Property ' + propertyName + " not found");
+      throw new Error('Property ' + propertyName + ' not found');
     }
     return value;
   }
 
-  ref(referenceName: string) : Ref {
+  ref(referenceName: string): Ref {
     return new Ref(this.data.refs[referenceName]);
   }
 
-  name() : string {
+  name(): string {
     const value = this.property('name');
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       return value;
     }
     throw new Error('Name was expected to be a string, while it is ' + value);
   }
 
-  idString() : string {
+  idString(): string {
     return this.data.id.regularId;
   }
 
-  conceptName() : string {
+  conceptName(): string {
     return this.data.concept;
   }
 
-  findNodeById(nodeIdStr) : ModelNode | null {
+  findNodeById(nodeIdStr): ModelNode | null {
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
-    for (const childData of this.data.children){
+    for (const childData of this.data.children) {
       const child = dataToNode(childData);
       const childRes = child.findNodeById(nodeIdStr);
       if (childRes != null) {
@@ -151,16 +151,16 @@ export class ModelNode {
     return null;
   }
 
-  simpleConceptName() : string {
+  simpleConceptName(): string {
     const parts = this.data.concept.split('.');
     return parts[parts.length - 1];
   }
 
-  isAbstract() : boolean {
+  isAbstract(): boolean {
     return this.data.abstractConcept;
   }
 
-  injectModelName(modelName, rootName) : void {
+  injectModelName(modelName, rootName): void {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;
@@ -232,11 +232,11 @@ export class ModelNode {
     throw new Error('Child not found ' + JSON.stringify(childData));
   }
 
-  containmentName() : string | null {
+  containmentName(): string | null {
     return this.data.containingLink || null;
   }
 
-  parent() : ModelNode | undefined {
+  parent(): ModelNode | undefined {
     if (this.data.parent == null) {
       return undefined;
     }
@@ -251,7 +251,7 @@ export class ModelNode {
     this.ws().deleteNode(this);
   }
 
-  isRoot() : boolean {
+  isRoot(): boolean {
     return this.data.containingLink == null;
   }
 }
