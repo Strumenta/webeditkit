@@ -81,9 +81,7 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
   const parents = $(element).parents();
 
   // First find the collection containing this node
-  const collectionIndex = Array.from(parents).findIndex(function (e) {
-    return $(e).hasClass('represent-collection');
-  });
+  const collectionIndex = Array.from(parents).findIndex(e => $(e).hasClass('represent-collection'));
   const parentsToConsider = Array.from(parents).slice(0, collectionIndex);
   const nodesToConsider = $(parentsToConsider).filter(function () {
     return $(this).hasClass('represent-node');
@@ -95,12 +93,12 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
   sibling.insertNextSibling();
 }
 
-export function addAutoresize(vnode: any) {
+export function addAutoresize(vnode: VNode) : void {
   // @ts-ignore
   $(vnode.elm).autoresize(myAutoresizeOptions);
 }
 
-export function triggerResize(vnode: any) {
+export function triggerResize(vnode: VNode) : void {
   // @ts-ignore
   $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
@@ -127,15 +125,15 @@ export function addClass(vnode: VNode, className: string): VNode {
 }
 
 export function setDataset(vnode: VNode, dataset: any): VNode {
-  vnode.data['dataset'] = dataset;
+  vnode.data.dataset = dataset;
   return vnode;
 }
 
 export function addToDataset(vnode: VNode, key: string, value: any): VNode {
-  if (vnode.data['dataset'] === undefined) {
-    vnode.data['dataset'] = {};
+  if (vnode.data.dataset === undefined) {
+    vnode.data.dataset = {};
   }
-  vnode.data['dataset'][key] = value;
+  vnode.data.dataset[key] = value;
   return vnode;
 }
 
@@ -145,8 +143,8 @@ export function setKey(vnode: VNode, key: string): VNode {
 }
 
 export function addId(vnode: VNode, myId: string): VNode {
-  let tagName = vnode.sel.split(/\.(.+)/)[0];
-  let classes = vnode.sel.split(/\.(.+)/)[1];
+  const tagName = vnode.sel.split(/\.(.+)/)[0];
+  const classes = vnode.sel.split(/\.(.+)/)[1];
   vnode.sel = tagName + '#' + myId;
   if (classes !== undefined) {
     vnode.sel += '.' + classes;
