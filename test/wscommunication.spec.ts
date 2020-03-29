@@ -376,6 +376,57 @@ describe('WsCommunication', () => {
         }, uuid);
     });
 
+    it('should support askAlternatives', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        const messagesReceivedByServer = [];
+
+        const uuid = '12345678-1234-4444-9876-123456789012';
+        const newNodeId = '123456';
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                messagesReceivedByServer.push(JSON.parse(data as string));
+                if (messagesReceivedByServer.length == 2) {
+                    expect(messagesReceivedByServer[0]).to.eql({
+                        type: 'askAlternatives',
+                        modelName: 'my.qualified.ModelName',
+                        nodeId: '1848360241685547698',
+                        requestId: uuid,
+                        containmentName: 'type'
+                    });
+                    expect(messagesReceivedByServer[1]).to.eql({type:'registerForChanges',modelName:'my.qualified.ModelName'});
+                    socket.send(JSON.stringify({
+                        type: 'AnswerAlternatives',
+                        requestId: uuid,
+                        items: [
+                            {conceptName:'my.concept.A', alias: 'foo'},
+                            {conceptName:'my.concept.B', alias: 'zum'},
+                            {conceptName:'my.concept.C', alias: 'bar'}
+                        ]
+                    }));
+
+                }
+            });
+        });
+
+        const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        ws.askAlternatives(n_a, 'type', (alternatives) => {
+            expect(alternatives).to.deep.equal([
+                { conceptName: 'my.concept.A', alias: 'foo' },
+                { conceptName: 'my.concept.B', alias: 'zum' },
+                { conceptName: 'my.concept.C', alias: 'bar' }
+            ]);
+            mockServer.close();
+            done();
+        }, uuid);
+    });
+
     it('should react to property change by updating the property - on root', (done) => {
         const fakeURL = 'ws://localhost:8080';
         const mockServer = new Server(fakeURL);

@@ -179,9 +179,8 @@ export class WsCommunication {
     });
   }
 
-  askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver: (Alternatives) => void) : void {
+  askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver: (Alternatives) => void, uuid: string = uuidv4()) : void {
     // we generate a UUID and ask the server to answer us using such UUID
-    const uuid = uuidv4();
     this.callbacks[uuid] = alternativesReceiver;
     this.sendJSON({
       type: 'askAlternatives',
