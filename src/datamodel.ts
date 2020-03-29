@@ -267,6 +267,10 @@ export class ModelNode {
 /// DataModel roots
 ///
 
+export function clearDatamodelRoots() : void {
+  Object.keys(datamodelRoots).forEach(function(key) { delete datamodelRoots[key]; });
+}
+
 export function setDatamodelRoot(name: string, root: ModelNode) : void {
   datamodelRoots[name] = root;
 }

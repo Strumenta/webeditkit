@@ -1,8 +1,17 @@
-import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref, setDatamodelRoot} from '../src/datamodel';
+import {
+    registerDataModelClass,
+    dataToNode,
+    ModelNode,
+    NodeData,
+    Ref,
+    setDatamodelRoot,
+    clearDatamodelRoots
+} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
 import { WebSocket, Server } from 'mock-socket';
 import { WsCommunication} from "../src/wscommunication";
+import {clearRendererRegistry} from "../dist/renderer";
 
 const rootData1 = {
     "children": [
@@ -430,19 +439,33 @@ describe('WsCommunication', () => {
         const fakeURL = 'ws://localhost:8080';
         const mockServer = new Server(fakeURL);
 
+        clearDatamodelRoots();
+        clearRendererRegistry();
+        // @ts-ignore
+        delete global.$;
+        // @ts-ignore
+        delete global.window;
+        // @ts-ignore
+        delete global.document;
+
         mockServer.on('connection', socket => {
             socket.on('message', data => {
                 expect(JSON.parse(data as string)).to.eql({type:'registerForChanges',modelName:'myModelName'});
             });
-            socket.send(JSON.stringify({
-                type: 'propertyChange',
-                nodeId: { regularId: '324292001770075100'},
-                propertyName: 'name',
-                propertyValue: 'My Shiny New Name'
-            }));
-            expect(root.name()).to.equals('My Shiny New Name');
-            mockServer.close();
-            done();
+            try {
+                socket.send(JSON.stringify({
+                    type: 'propertyChange',
+                    nodeId: {regularId: '324292001770075100'},
+                    propertyName: 'name',
+                    propertyValue: 'My Shiny New Name'
+                }));
+                expect(root.name()).to.equals('My Shiny New Name');
+                mockServer.close();
+                done();
+            } catch (e) {
+                mockServer.close();
+                throw e;
+            }
         });
 
         const root = dataToNode(clone(rootData1));
@@ -491,25 +514,31 @@ describe('WsCommunication', () => {
         const mockServer = new Server(fakeURL);
 
         mockServer.on('connection', socket => {
-            socket.on('message', data => {
-                expect(JSON.parse(data as string)).to.eql({type:'registerForChanges',modelName:'myModelName'});
-            });
-            socket.send(JSON.stringify({
-                type: "nodeAdded",
-                parentNodeId: {regularId: "1848360241685547711"},
-                child: {
-                    containingLink: "type",
-                    children: [],
-                    properties: {},
-                    refs: {},
-                    id: {regularId: "1848360241685575208"},
-                    concept: "com.strumenta.financialcalc.BooleanType",
-                    abstractConcept: false,
-                },
-                index: 0, relationName: "type"}));
-            expect(n_b.childrenByLinkName('type').length).to.equals(1);
-            mockServer.close();
-            done();
+            try {
+                socket.on('message', data => {
+                    expect(JSON.parse(data as string)).to.eql({type: 'registerForChanges', modelName: 'myModelName'});
+                });
+                socket.send(JSON.stringify({
+                    type: "nodeAdded",
+                    parentNodeId: {regularId: "1848360241685547711"},
+                    child: {
+                        containingLink: "type",
+                        children: [],
+                        properties: {},
+                        refs: {},
+                        id: {regularId: "1848360241685575208"},
+                        concept: "com.strumenta.financialcalc.BooleanType",
+                        abstractConcept: false,
+                    },
+                    index: 0, relationName: "type"
+                }));
+                expect(n_b.childrenByLinkName('type').length).to.equals(1);
+                mockServer.close();
+                done();
+            } catch (e) {
+                mockServer.close();
+                throw e;
+            }
         });
 
         const root = dataToNode(clone(rootData1));
