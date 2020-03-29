@@ -1,18 +1,22 @@
 import { fixedCell } from './cells';
 import { alternativesProviderForAbstractConcept, addClass, addToDataset } from './cells';
 import { setKey } from './cells/support';
+import {ModelNode} from "./datamodel";
+import {VNode} from "snabbdom/vnode";
 
-const renderersByName = {};
+const renderersByName : {[key:string]: Renderer}= {};
 
-export function registerRenderer(name: string, renderer: any): void {
+type Renderer = (modelNode:ModelNode) => VNode;
+
+export function registerRenderer(name: string, renderer: Renderer): void {
   renderersByName[name] = renderer;
 }
 
-export function getRegisteredRenderer(conceptName) {
+export function getRegisteredRenderer(conceptName: string) : Renderer | undefined {
   return renderersByName[conceptName];
 }
 
-export function renderModelNode(modelNode) {
+export function renderModelNode(modelNode) : VNode {
   return setKey(
     addToDataset(
       addClass(getRenderer(modelNode)(modelNode), 'represent-node'),
@@ -23,7 +27,7 @@ export function renderModelNode(modelNode) {
   );
 }
 
-function getDefaultRenderer(modelNode) {
+function getDefaultRenderer(modelNode) : Renderer {
   const abstractConcept = modelNode.isAbstract();
   const conceptName = modelNode.simpleConceptName();
   return (dataModel) => {
@@ -35,7 +39,7 @@ function getDefaultRenderer(modelNode) {
   };
 }
 
-function getRenderer(modelNode) {
+function getRenderer(modelNode) : Renderer {
   if (modelNode == null) {
     // it happens during node replacements
     return () => fixedCell(modelNode, 'null');
