@@ -1,4 +1,4 @@
-import {getDatamodelRoot, ModelNode, NodeId} from './datamodel';
+import { getDatamodelRoot, ModelNode, NodeId } from './datamodel';
 import { renderDataModels } from './webeditkit';
 
 function findNode(root, searchedID) {
@@ -65,8 +65,8 @@ export class WsCommunication {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
         alternativesReceiver(data.items);
       } else if (data.type === 'AnswerDefaultInsertion') {
-        console.log("received AnswerDefaultInsertion", data, data.addedNodeID);
-        const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID:NodeId)=>void;
+        console.log('received AnswerDefaultInsertion', data, data.addedNodeID);
+        const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
         reactorToInsertion(data.addedNodeID);
       } else {
         console.log('data', data);
@@ -95,7 +95,7 @@ export class WsCommunication {
     });
   }
 
-  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID:NodeId)=>void) {
+  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID: NodeId) => void) {
     const uuid = uuidv4();
     this.callbacks[uuid] = reactorToInsertion;
     this.sendJSON({

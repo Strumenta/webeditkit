@@ -1,6 +1,6 @@
 import h, { VNodeChildElement } from 'snabbdom/h';
 import { getWsCommunication } from '../wscommunication';
-import {isAtEnd, isAtStart, moveToNextElement, moveToPrevElement} from '../navigation';
+import { isAtEnd, isAtStart, moveToNextElement, moveToPrevElement } from '../navigation';
 import {
   addAutoresize,
   alternativesProviderForAddingChild,
@@ -10,9 +10,10 @@ import {
   installAutocomplete,
   separate,
   triggerResize,
-  map, focusOnNode,
+  map,
+  focusOnNode,
 } from './support';
-import {ModelNode, NodeId, nodeIdToString} from '../datamodel';
+import { ModelNode, NodeId, nodeIdToString } from '../datamodel';
 import { renderModelNode } from '../renderer';
 
 export function childCell(modelNode: ModelNode, containmentName: string) {
@@ -39,14 +40,14 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
         modelNode,
         '<< ... >>',
         ['empty-collection'],
-          alternativesProviderForAddingChild(modelNode, containmentName),
+        alternativesProviderForAddingChild(modelNode, containmentName),
         null,
         () => {
-          console.log("on enter");
-          ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID:NodeId) => {
-            console.log("reactorToInsertion", addedNodeID);
+          console.log('on enter');
+          ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
+            console.log('reactorToInsertion', addedNodeID);
             const nodeIdStr = nodeIdToString(addedNodeID);
-            console.log("reactorToInsertion", nodeIdStr);
+            console.log('reactorToInsertion', nodeIdStr);
             focusOnNode(nodeIdStr, modelNode.rootName());
           });
         },
@@ -124,7 +125,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
     'input.editable' + extraClassesStr,
     {
       props: {
-        value: modelNode.property(propertyName) || "",
+        value: modelNode.property(propertyName) || '',
         placeholder,
         required: true,
       },
@@ -205,12 +206,11 @@ export function fixedCell(
               return false;
             }
           } else if (e.key === 'Enter') {
-            if ($(".autocomplete").length == 0) {
+            if ($('.autocomplete').length == 0) {
               if (onEnter !== undefined) {
                 onEnter();
               } else if (alternativesProvider === undefined) {
                 // We should stop this when the autocomplete is displayed
-
 
                 // We do not want to do this for cells with autocompletion
                 handleAddingElement(e.target, modelNode);

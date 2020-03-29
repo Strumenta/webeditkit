@@ -1,5 +1,5 @@
 import { getWsCommunication } from './wscommunication';
-import {baseUrlForModelName} from "./webeditkit";
+import { baseUrlForModelName } from './webeditkit';
 
 const datamodelRoots = {};
 const datamodelClasses = {};
@@ -9,10 +9,10 @@ const datamodelClasses = {};
 ///
 
 export interface NodeId {
-  regularId: string
+  regularId: string;
 }
 
-export function nodeIdToString(nodeId: NodeId) : string {
+export function nodeIdToString(nodeId: NodeId): string {
   return nodeId.regularId;
 }
 
@@ -22,12 +22,12 @@ interface ModelId {
 
 export interface NodeData {
   abstractConcept: boolean;
-  properties: { [key: string]: string | boolean | number; };
+  properties: { [key: string]: string | boolean | number };
   children: NodeData[];
   concept: string;
   containingLink: string;
   id: NodeId;
-  refs: { [key: string]: ReferenceData; };
+  refs: { [key: string]: ReferenceData };
   rootName: string;
   modelName: string;
   parent?: NodeData;
@@ -46,7 +46,7 @@ export function registerDataModelClass(conceptName: string, clazz: new (data: No
   datamodelClasses[conceptName] = clazz;
 }
 
-export function dataToNode(data: NodeData) : ModelNode {
+export function dataToNode(data: NodeData): ModelNode {
   if (data === null) {
     return null;
   }

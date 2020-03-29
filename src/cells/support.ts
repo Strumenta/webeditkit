@@ -19,7 +19,7 @@ export function alternativesProviderForAddingChild(
   return (alternativesUser: (alternatives: { label: any; execute: () => void }[]) => void) => {
     const ws = getWsCommunication(modelNode.modelName());
     ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
-      console.log("alternatives received", alternatives);
+      console.log('alternatives received', alternatives);
       const adder = (conceptName: string) => () => {
         if (replacing) {
           ws.setChild(modelNode, containmentName, conceptName);
@@ -32,7 +32,7 @@ export function alternativesProviderForAddingChild(
           return { label: domElement.alias, execute: adder(domElement.conceptName) };
         }),
       );
-      console.log("uiAlternatives", uiAlternatives);
+      console.log('uiAlternatives', uiAlternatives);
       alternativesUser(uiAlternatives);
     });
   };
@@ -63,7 +63,7 @@ export function installAutocomplete(
       });
     },
     onSelect: (item: any) => {
-      console.log("on select");
+      console.log('on select');
       item.execute();
     },
     customize: (_input: any, inputRect: any, container: any, maxHeight: any) => {
@@ -180,13 +180,15 @@ export function separate(original: any[], separatorGenerator?: any): any[] {
  * @param nodeIdStr
  */
 export function focusOnNode(nodeIdStr: string, rootName: string) {
-  const domRoot = $("#" + rootName);
-  const found = domRoot.find(".represent-node").filter(function() { return $(this).data('node_represented') == nodeIdStr; });
+  const domRoot = $('#' + rootName);
+  const found = domRoot.find('.represent-node').filter(function () {
+    return $(this).data('node_represented') == nodeIdStr;
+  });
   if (found.length == 0) {
-    console.warn("node to focus on not found", nodeIdStr);
+    console.warn('node to focus on not found', nodeIdStr);
     return;
   } else if (found.length > 1) {
-    console.warn("more than one representation of node to focus ofound", nodeIdStr);
+    console.warn('more than one representation of node to focus ofound', nodeIdStr);
   }
   const firstNodeFound = found[0];
   // @ts-ignore
@@ -194,12 +196,12 @@ export function focusOnNode(nodeIdStr: string, rootName: string) {
   focusOnFirstInputOf(firstNodeFound);
 }
 
-function focusOnFirstInputOf(element) : boolean {
-  if (element.tagName === "INPUT") {
+function focusOnFirstInputOf(element): boolean {
+  if (element.tagName === 'INPUT') {
     $(element).focus();
     return true;
   }
-  for (let i=0;i<element.children.length;i++) {
+  for (let i = 0; i < element.children.length; i++) {
     const chRes = focusOnFirstInputOf(element.children[i]);
     if (chRes) {
       return chRes;

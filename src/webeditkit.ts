@@ -44,10 +44,10 @@ interface TargetDataType {
   nodeId: string;
 }
 
-const targetData : {[key:string]: TargetDataType } = {};
+const targetData: { [key: string]: TargetDataType } = {};
 
 function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) {
-  targetData[target] = {baseUrl, model, nodeId};
+  targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
   $.getJSON(nodeURL, (data) => {
     const root = dataToNode(data);
@@ -58,11 +58,11 @@ function loadDataModel(baseUrl: string, model: string, nodeId: string, target: s
   });
 }
 
-export function baseUrlForTarget(target) : string {
+export function baseUrlForTarget(target): string {
   return targetData[target].baseUrl;
 }
 
-export function baseUrlForModelName(model: string) : string {
+export function baseUrlForModelName(model: string): string {
   for (let target in targetData) {
     if (targetData[target].model === model) {
       return targetData[target].baseUrl;
