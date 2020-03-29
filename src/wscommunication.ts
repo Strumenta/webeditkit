@@ -30,6 +30,7 @@ export class WsCommunication {
   private ws: WebSocket;
   private modelName: string;
   private localName: string;
+  private silent: boolean;
   private readonly callbacks: {};
 
   constructor(url: string, modelName: string, localName: string, ws?: WebSocket) {
@@ -37,6 +38,7 @@ export class WsCommunication {
     this.modelName = modelName;
     this.localName = localName;
     this.callbacks = {};
+    this.silent = false;
 
     const thisWS = this;
 
@@ -45,9 +47,13 @@ export class WsCommunication {
     };
 
     this.ws.onmessage = (event) => {
-      console.info('onmessage', event);
+      if (!this.silent) {
+        console.info('onmessage', event);
+      }
       const data = JSON.parse(event.data);
-      console.info('  data: ', data);
+      if (!this.silent) {
+        console.info('  data: ', data);
+      }
       if (data.type === 'propertyChange') {
         const root = getDatamodelRoot(localName);
         const node = findNode(root.data, data.nodeId);
@@ -70,13 +76,19 @@ export class WsCommunication {
         const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
         reactorToInsertion(data.addedNodeID);
       } else {
-        console.warn('data', data);
-        throw new Error('Unknown change type: ' + data.type);
+        if (!this.silent) {
+          console.warn('data', data);
+        }
+        throw new Error('Unknown message type: ' + data.type);
       }
     };
   }
 
-  sendJSON(data) {
+  setSilent() {
+    this.silent = true;
+  }
+
+  private sendJSON(data) {
     this.ws.send(JSON.stringify(data));
   }
 
