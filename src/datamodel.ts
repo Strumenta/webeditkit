@@ -109,11 +109,11 @@ export class ModelNode {
     return filtered.map((el) => dataToNode(el));
   }
 
-  property(propertyName: string): PropertyType {
+  property(propertyName: string): PropertyType | null {
     const value = this.data.properties[propertyName];
-    if (value == null) {
-      throw new Error('Property ' + propertyName + ' not found');
-    }
+    // if (value == null) {
+    //   throw new Error('Property ' + propertyName + ' not found');
+    // }
     return value;
   }
 
@@ -121,8 +121,11 @@ export class ModelNode {
     return new Ref(this.data.refs[referenceName]);
   }
 
-  name(): string {
+  name(): string | null {
     const value = this.property('name');
+    if (value == null) {
+      return null;
+    }
     if (typeof value === 'string') {
       return value;
     }
