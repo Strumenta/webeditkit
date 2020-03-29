@@ -102,7 +102,6 @@ export function moveToPrevElement(t) {
 }
 
 function findPrev(n) {
-  console.log('PREV WAS ' + n[0]);
   if (n.prev() === undefined) {
     return undefined;
   } else {

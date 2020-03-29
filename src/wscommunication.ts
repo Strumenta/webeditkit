@@ -1,6 +1,9 @@
 import { getDatamodelRoot, ModelNode, NodeId } from './datamodel';
 import { renderDataModels } from './webeditkit';
 
+/**
+ * TODO use the one in ModelNode
+ */
 function findNode(root, searchedID) {
   if (root.id.regularId === searchedID.regularId) {
     return root;
@@ -42,9 +45,9 @@ export class WsCommunication {
     };
 
     this.ws.onmessage = (event) => {
-      console.log('onmessage', event);
+      console.info('onmessage', event);
       const data = JSON.parse(event.data);
-      console.log('  data: ', data);
+      console.info('  data: ', data);
       if (data.type === 'propertyChange') {
         const root = getDatamodelRoot(localName);
         const node = findNode(root.data, data.nodeId);
@@ -58,18 +61,16 @@ export class WsCommunication {
       } else if (data.type === 'nodeRemoved') {
         const root = getDatamodelRoot(localName);
         const parentNode = findNode(root.data, data.parentNodeId);
-        // TODO consider index
         new ModelNode(parentNode).removeChild(data.relationName, data.child);
         renderDataModels();
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
         alternativesReceiver(data.items);
       } else if (data.type === 'AnswerDefaultInsertion') {
-        console.log('received AnswerDefaultInsertion', data, data.addedNodeID);
         const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
         reactorToInsertion(data.addedNodeID);
       } else {
-        console.log('data', data);
+        console.warn('data', data);
         throw new Error('Unknown change type: ' + data.type);
       }
     };
