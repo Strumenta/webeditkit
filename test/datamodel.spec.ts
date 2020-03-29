@@ -155,4 +155,9 @@ describe('ModelNode', () => {
         expect(()=> {type_of_a.name()}).to.throw('Property name not found');
     });
 
+    it('should idString', () => {
+        const root = dataToNode(rootData1);
+        expect(root.idString()).to.equals('324292001770075100');
+    });
+
 });

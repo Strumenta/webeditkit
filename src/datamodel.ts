@@ -129,11 +129,11 @@ export class ModelNode {
     throw new Error('Name was expected to be a string, while it is ' + value);
   }
 
-  idString() {
+  idString() : string {
     return this.data.id.regularId;
   }
 
-  conceptName() {
+  conceptName() : string {
     return this.data.concept;
   }
 
