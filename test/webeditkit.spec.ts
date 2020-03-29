@@ -93,9 +93,12 @@ const rootData1 = {
 
 describe('WebEditKit', () => {
 
-    it('should support renderDataModels', () => {
+    let doc = null;
+
+    //initialise the ajax mock before each test
+    beforeEach( function() {
         const dom = new JSDOM(html_empty);
-        const doc = dom.window.document;
+        doc = dom.window.document;
         // @ts-ignore
         global.$ = require('jquery')(dom.window);
         // @ts-ignore
@@ -105,16 +108,13 @@ describe('WebEditKit', () => {
 
         clearDatamodelRoots();
         clearRendererRegistry();
+    });
 
-        installAutoresize();
-        renderDataModels();
-        expect(doc.querySelector('div.editor').outerHTML).to.eql('<div id="root-x" class="editor"></div>');
-        setDatamodelRoot('root-x', dataToNode(rootData1));
-        renderDataModels();
-        expect(doc.querySelector('div.editor').outerHTML).to.eql('<div id="root-x" class="editor"><input class="fixed default-cell-concrete represent-node" data-node_represented="324292001770075100" style="width: 10px;"></div>');
-
+    //remove the mock after each test, in case other tests need real ajax
+    afterEach( function() {
         clearDatamodelRoots();
         clearRendererRegistry();
+
 
         // @ts-ignore
         delete global.$;
@@ -124,24 +124,13 @@ describe('WebEditKit', () => {
         delete global.document;
     });
 
-    it('should support loadDataModel - server error', () => {
-        const dom = new JSDOM(html_empty);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
-        // @ts-ignore
-        global.window = dom.window;
-        // @ts-ignore
-        global.document = doc;
-
-        expect(()=>{loadDataModel('127.0.0.1:7892','my.qualified.Model', '123','x');}).to.throw('Failed to load data model, using URL 127.0.0.1:7892/models/my.qualified.Model/123');
-
-        // @ts-ignore
-        delete global.$;
-        // @ts-ignore
-        delete global.window;
-        // @ts-ignore
-        delete global.document;
+    it('should support renderDataModels', () => {
+        installAutoresize();
+        renderDataModels();
+        expect(doc.querySelector('div.editor').outerHTML).to.eql('<div id="root-x" class="editor"></div>');
+        setDatamodelRoot('root-x', dataToNode(rootData1));
+        renderDataModels();
+        expect(doc.querySelector('div.editor').outerHTML).to.eql('<div id="root-x" class="editor"><input class="fixed default-cell-concrete represent-node" data-node_represented="324292001770075100" style="width: 10px;"></div>');
     });
 
 });
