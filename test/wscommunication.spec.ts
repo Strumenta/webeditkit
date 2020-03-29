@@ -299,6 +299,51 @@ describe('WsCommunication', () => {
         ws.insertNextSibling(n_a);
     });
 
+    it('should support triggerDefaultInsertion', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        const messagesReceivedByServer = [];
+
+        const uuid = '12345678-1234-4444-9876-123456789012';
+        const newNodeId = '123456';
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                messagesReceivedByServer.push(JSON.parse(data as string));
+                if (messagesReceivedByServer.length == 2) {
+                    expect(messagesReceivedByServer[0]).to.eql({
+                        type: 'defaultInsertion',
+                        modelName: 'my.qualified.ModelName',
+                        container: '1848360241685547698',
+                        requestId: uuid,
+                        containmentName: 'type'
+                    });
+                    expect(messagesReceivedByServer[1]).to.eql({type:'registerForChanges',modelName:'my.qualified.ModelName'});
+                    socket.send(JSON.stringify({
+                        type: 'AnswerDefaultInsertion',
+                        requestId: uuid,
+                        addedNodeID: {
+                            regularId: newNodeId
+                        }
+                    }));
+
+                }
+            });
+        });
+
+        const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        ws.triggerDefaultInsertion(n_a, 'type', (addedNodeID) => {
+            expect(addedNodeID).to.eql({regularId:newNodeId});
+            mockServer.close();
+            done();
+        }, uuid);
+    });
+
     it('should react to property change by updating the property - on root', (done) => {
         const fakeURL = 'ws://localhost:8080';
         const mockServer = new Server(fakeURL);

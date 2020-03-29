@@ -106,8 +106,8 @@ export class WsCommunication {
     });
   }
 
-  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID: NodeId) => void) : void {
-    const uuid = uuidv4();
+  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID: NodeId) => void, uuid: string = uuidv4()) : void {
+    //const uuid = uuidv4();
     this.callbacks[uuid] = reactorToInsertion;
     this.sendJSON({
       type: 'defaultInsertion',
