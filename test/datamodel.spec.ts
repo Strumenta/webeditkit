@@ -75,6 +75,10 @@ const rootData1 = {
     "abstractConcept": false
 };
 
+function clone(original) {
+    return JSON.parse(JSON.stringify(original));
+}
+
 describe('Data Model Class Registry', () => {
 
     it('should create a ModelNode if not specific class is registered for the concept', () => {
@@ -207,6 +211,26 @@ describe('ModelNode', () => {
         const root = dataToNode(rootData1);
         const n = root.findNodeById('1848360241685547705');
         expect(n.containmentName()).to.equals('inputs');
+    });
+
+    it('should support index - root', () => {
+        const root = dataToNode(rootData1);
+        expect(()=> {root.index()}).to.throw('Cannot get index of root');
+    });
+
+    it('should support index - no parent set', () => {
+        const root = dataToNode(rootData1);
+        const n = root.findNodeById('1848360241685547705');
+        expect(()=> {n.index()}).to.throw('Cannot get index when parent is not set');
+    });
+
+    it('should support index - parent set', () => {
+        const root =dataToNode(clone(rootData1));
+        root.injectModelName('myModel', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        const n_b = root.findNodeById('1848360241685547705');
+        expect(n_a.index()).to.equals(0);
+        expect(n_b.index()).to.equals(1);
     });
 
 });

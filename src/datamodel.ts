@@ -164,12 +164,10 @@ export class ModelNode {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;
-    $(this.data.children).each((i: number, el) => {
-      // @ts-ignore
+    for (const el of this.data.children) {
       el.parent = parent.data;
-      // @ts-ignore
       dataToNode(el).injectModelName(modelName, rootName);
-    });
+    }
   }
 
   modelName() {
@@ -181,6 +179,12 @@ export class ModelNode {
   }
 
   index(): number {
+    if (this.isRoot()) {
+      throw new Error('Cannot get index of root');
+    }
+    if (this.parent() == null) {
+      throw new Error('Cannot get index when parent is not set');
+    }
     const siblings = this.parent().childrenByLinkName(this.containmentName());
     for (let i = 0; i < siblings.length; i++) {
       if (this.idString() === siblings[i].idString()) {
@@ -232,7 +236,10 @@ export class ModelNode {
     return this.data.containingLink || null;
   }
 
-  parent() {
+  parent() : ModelNode | undefined {
+    if (this.data.parent == null) {
+      return undefined;
+    }
     return dataToNode(this.data.parent);
   }
 
