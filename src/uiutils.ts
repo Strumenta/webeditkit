@@ -1,6 +1,6 @@
-export let myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
+export const myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
 
-export function installAutoresize() {
+export function installAutoresize() : void {
   // @ts-ignore
   $.fn.textWidth = function (_text, _font) {
     // get width of text with font.  usage: $("div").textWidth();
