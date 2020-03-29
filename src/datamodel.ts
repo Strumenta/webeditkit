@@ -228,8 +228,8 @@ export class ModelNode {
     throw new Error('Child not found ' + JSON.stringify(childData));
   }
 
-  containmentName() {
-    return this.data.containingLink;
+  containmentName() : string | null {
+    return this.data.containingLink || null;
   }
 
   parent() {
@@ -242,6 +242,10 @@ export class ModelNode {
 
   deleteMe() {
     this.ws().deleteNode(this);
+  }
+
+  isRoot() : boolean {
+    return this.data.containingLink == null;
   }
 }
 

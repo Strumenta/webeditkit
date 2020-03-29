@@ -177,8 +177,36 @@ describe('ModelNode', () => {
 
     it('should support findNodeById - existing', () => {
         const root = dataToNode(rootData1);
-        const n = root.findNodeById('1848360241685547705')
+        const n = root.findNodeById('1848360241685547705');
         expect(n.name()).to.equals('b');
+    });
+
+    it('should support findNodeById - existing', () => {
+        const root = dataToNode(rootData1);
+        const n = root.findNodeById('1848360241685547705');
+        expect(n.name()).to.equals('b');
+    });
+
+    it('should support root - positive', () => {
+        const root = dataToNode(rootData1);
+        expect(root.isRoot()).to.equals(true);
+    });
+
+    it('should support root - negative', () => {
+        const root = dataToNode(rootData1);
+        const n = root.findNodeById('1848360241685547705');
+        expect(n.isRoot()).to.equals(false);
+    });
+
+    it('should support containmentName - negative', () => {
+        const root = dataToNode(rootData1);
+        expect(root.containmentName()).to.equals(null);
+    });
+
+    it('should support containmentName - positive', () => {
+        const root = dataToNode(rootData1);
+        const n = root.findNodeById('1848360241685547705');
+        expect(n.containmentName()).to.equals('inputs');
     });
 
 });
