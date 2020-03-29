@@ -1,7 +1,8 @@
 import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {moveToNextElement, moveToPrevElement} from "../src/navigation";
+import {isAtStart, moveToNextElement, moveToPrevElement} from "../src/navigation";
+import {isAtEnd} from "../dist/navigation";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -30,7 +31,7 @@ const html1 = `<html>
 \t\t\t\t\t\t</div>
 \t\t\t\t\t\t<div class="row">
 \t\t\t\t\t\t\t<div class="horizontal-group represent-node" data-node_represented="1848360241685575196">
-\t\t\t\t\t\t\t\t<input class="editable" placeholder="<no name>" required="" style="width: 26.6px;">
+\t\t\t\t\t\t\t\t<input class="editable" placeholder="<no name>" required="" style="width: 26.6px;" value="sdsd">
 \t\t\t\t\t\t\t\t<input class="fixed keyword" style="width: 40.225px;">
 \t\t\t\t\t\t\t\t<input class="fixed type represent-node" data-node_represented="1848360241685575206" style="width: 45.2875px;">
 \t\t\t\t\t\t\t</div>
@@ -123,7 +124,7 @@ describe('Navigation', () => {
         const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
         const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type');
 
-        const editableName_b= doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
         const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword');
         const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type');
 
@@ -173,6 +174,74 @@ describe('Navigation', () => {
         expect(moveToPrevElement(doc.activeElement)).to.equals(true);
 
         expect(doc.activeElement).to.equals(calculationsLabel);
+    });
+
+    it('should support isAtStart - positive case', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        expect(editableName_b.value).to.equals('sdsd');
+
+        editableName_b.focus();
+        editableName_b.setSelectionRange(0, 0);
+        expect(isAtStart(editableName_b)).to.equals(true);
+    });
+
+    it('should support isAtStart - negative case', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        expect(editableName_b.value).to.equals('sdsd');
+
+        editableName_b.focus();
+        editableName_b.setSelectionRange(1, 1);
+        expect(isAtStart(editableName_b)).to.equals(false);
+        editableName_b.setSelectionRange(2, 2);
+        expect(isAtStart(editableName_b)).to.equals(false);
+        editableName_b.setSelectionRange(3, 3);
+        expect(isAtStart(editableName_b)).to.equals(false);
+        editableName_b.setSelectionRange(4, 4);
+        expect(isAtStart(editableName_b)).to.equals(false);
+    });
+
+    it('should support isAtEnd - positive case', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        expect(editableName_b.value).to.equals('sdsd');
+
+        editableName_b.focus();
+        editableName_b.setSelectionRange(0, 0);
+        expect(isAtEnd(editableName_b)).to.equals(false);
+        editableName_b.setSelectionRange(1, 1);
+        expect(isAtEnd(editableName_b)).to.equals(false);
+        editableName_b.setSelectionRange(2, 2);
+        expect(isAtEnd(editableName_b)).to.equals(false);
+        editableName_b.setSelectionRange(3, 3);
+        expect(isAtEnd(editableName_b)).to.equals(false);
+    });
+
+    it('should support isAtEnd - negative case', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+        expect(editableName_b.value).to.equals('sdsd');
+
+        editableName_b.focus();
+        editableName_b.setSelectionRange(4, 4);
+        expect(isAtEnd(editableName_b)).to.equals(true);
     });
 
 });

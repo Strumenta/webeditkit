@@ -107,14 +107,14 @@ function findPrev(n) {
   }
 }
 
-export function isAtEnd(element: any) {
+export function isAtEnd(element: any) : boolean {
   const cursorPos = element.selectionStart;
   // @ts-ignore
   const length = $(element).val().length;
   return cursorPos === length;
 }
 
-export function isAtStart(element: any) {
+export function isAtStart(element: any) : boolean {
   const cursorPos = element.selectionStart;
   return cursorPos === 0;
 }
