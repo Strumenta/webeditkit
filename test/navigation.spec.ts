@@ -1,8 +1,7 @@
 import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {isAtStart, moveToNextElement, moveToPrevElement} from "../src/navigation";
-import {isAtEnd} from "../dist/navigation";
+import {isAtStart, isAtEnd, moveToNextElement, moveToPrevElement} from "../src/navigation";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;

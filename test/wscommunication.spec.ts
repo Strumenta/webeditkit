@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import 'mocha';
 import { WebSocket, Server } from 'mock-socket';
 import { WsCommunication} from "../src/wscommunication";
-import {renderDataModels} from "../src/webeditkit";
 
 const rootData1 = {
     "children": [
