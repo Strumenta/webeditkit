@@ -207,6 +207,98 @@ describe('WsCommunication', () => {
         ws.addChildAtIndex(n_a, 'type', 2, 'my.concept.ToInstantiate');
     });
 
+    it('should support setChild', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        const messagesReceivedByServer = [];
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                messagesReceivedByServer.push(JSON.parse(data as string));
+                if (messagesReceivedByServer.length == 2) {
+                    expect(messagesReceivedByServer[0]).to.eql({
+                        type: 'setChild',
+                        modelName: 'my.qualified.ModelName',
+                        container: '1848360241685547698',
+                        containmentName: 'type',
+                        conceptToInstantiate: 'my.concept.ToInstantiate'
+                    });
+                    expect(messagesReceivedByServer[1]).to.eql({type:'registerForChanges',modelName:'my.qualified.ModelName'});
+                    mockServer.close();
+                    done();
+                }
+            });
+        });
+
+        const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        ws.setChild(n_a, 'type', 'my.concept.ToInstantiate');
+    });
+
+    it('should support deleteNode', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        const messagesReceivedByServer = [];
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                messagesReceivedByServer.push(JSON.parse(data as string));
+                if (messagesReceivedByServer.length == 2) {
+                    expect(messagesReceivedByServer[0]).to.eql({
+                        type: 'deleteNode',
+                        modelName: 'my.qualified.ModelName',
+                        node: '1848360241685547698'
+                    });
+                    expect(messagesReceivedByServer[1]).to.eql({type:'registerForChanges',modelName:'my.qualified.ModelName'});
+                    mockServer.close();
+                    done();
+                }
+            });
+        });
+
+        const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        ws.deleteNode(n_a);
+    });
+
+    it('should support insertNextSibling', (done) => {
+        const fakeURL = 'ws://localhost:8080';
+        const mockServer = new Server(fakeURL);
+
+        const messagesReceivedByServer = [];
+
+        mockServer.on('connection', socket => {
+            socket.on('message', data => {
+                messagesReceivedByServer.push(JSON.parse(data as string));
+                if (messagesReceivedByServer.length == 2) {
+                    expect(messagesReceivedByServer[0]).to.eql({
+                        type: 'insertNextSibling',
+                        modelName: 'my.qualified.ModelName',
+                        sibling: '1848360241685547698'
+                    });
+                    expect(messagesReceivedByServer[1]).to.eql({type:'registerForChanges',modelName:'my.qualified.ModelName'});
+                    mockServer.close();
+                    done();
+                }
+            });
+        });
+
+        const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+        ws.setSilent();
+        const root = dataToNode(clone(rootData1));
+        root.injectModelName('my.qualified.ModelName', 'myRoot');
+        const n_a = root.findNodeById('1848360241685547698');
+        ws.insertNextSibling(n_a);
+    });
+
     it('should react to property change by updating the property - on root', (done) => {
         const fakeURL = 'ws://localhost:8080';
         const mockServer = new Server(fakeURL);

@@ -122,7 +122,7 @@ export class WsCommunication {
     this.addChildAtIndex(container, containmentName, -1, conceptName);
   }
 
-  addChildAtIndex(container, containmentName, index: number, conceptName: string) {
+  addChildAtIndex(container, containmentName, index: number, conceptName: string) : void {
     if (index < -1) {
       throw new Error("Index should -1 to indicate to add at the end, or a value >= 0")
     }
@@ -136,7 +136,7 @@ export class WsCommunication {
     });
   }
 
-  insertNextSibling(sibling: ModelNode) {
+  insertNextSibling(sibling: ModelNode) : void {
     this.sendJSON({
       type: 'insertNextSibling',
       modelName: sibling.modelName(),
@@ -144,7 +144,7 @@ export class WsCommunication {
     });
   }
 
-  setChild(container, containmentName, conceptName) {
+  setChild(container: ModelNode, containmentName: string, conceptName: string) : void {
     this.sendJSON({
       type: 'setChild',
       modelName: container.modelName(),
@@ -154,7 +154,7 @@ export class WsCommunication {
     });
   }
 
-  deleteNode(node) {
+  deleteNode(node) : void {
     this.sendJSON({
       type: 'deleteNode',
       modelName: node.modelName(),
