@@ -55,7 +55,7 @@ export function setup() {
   uiutils.installAutoresize();
 }
 
-export function addModel(baseUrl, modelName, nodeId, target) {
+export function addModel(baseUrl: string, modelName: string, nodeId, target: string) {
   wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
   webeditkit.loadDataModel('http://' + baseUrl, modelName, nodeId, target);
 }

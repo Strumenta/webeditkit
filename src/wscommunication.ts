@@ -28,8 +28,8 @@ function uuidv4() {
 
 export class WsCommunication {
   private ws: WebSocket;
-  private modelName: string;
-  private localName: string;
+  private modelName: string; // This is the qualified model name
+  private localName: string; // This is the local model name or target
   private silent: boolean;
   private readonly callbacks: {};
 
@@ -92,14 +92,14 @@ export class WsCommunication {
     this.ws.send(JSON.stringify(data));
   }
 
-  registerForChangesInModel(modelName) {
+  private registerForChangesInModel(modelName: string) : void {
     this.sendJSON({
       type: 'registerForChanges',
       modelName,
     });
   }
 
-  instantiate(conceptName, nodeToReplace) {
+  instantiate(conceptName: string, nodeToReplace: ModelNode) : void {
     this.sendJSON({
       type: 'instantiateConcept',
       modelName: nodeToReplace.modelName(),
@@ -108,7 +108,7 @@ export class WsCommunication {
     });
   }
 
-  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID: NodeId) => void) {
+  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID: NodeId) => void) : void {
     const uuid = uuidv4();
     this.callbacks[uuid] = reactorToInsertion;
     this.sendJSON({
@@ -197,7 +197,7 @@ export function getWsCommunication(modelName) {
   return instances[modelName];
 }
 
-export function createInstance(url, modelName, localName) {
+export function createInstance(url, modelName: string, localName: string) {
   const instance = new WsCommunication(url, modelName, localName);
   instances[modelName] = instance;
 }

@@ -31,7 +31,7 @@ export interface NodeData {
   id: NodeId;
   refs: { [key: string]: ReferenceData };
   rootName?: string;
-  modelName?: string;
+  modelName?: string; // The qualified model name
   parent?: NodeData;
 }
 
