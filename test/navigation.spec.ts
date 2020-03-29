@@ -80,6 +80,25 @@ describe('Navigation', () => {
         expect(doc.activeElement).to.equals(type_b);
     });
 
+    it('should support moveToNextElement - through divs with no inputs', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const calculationsLabel = doc.querySelector('div[data-node_represented="324292001770075100"] .fixed');
+        const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
+
+        calculationsLabel.focus();
+        expect(doc.activeElement).to.equals(calculationsLabel);
+
+        expect(moveToNextElement(doc.activeElement)).to.equals(true);
+        expect(moveToNextElement(doc.activeElement)).to.equals(true);
+        expect(moveToNextElement(doc.activeElement)).to.equals(true);
+
+        expect(doc.activeElement).to.equals(editableName_a);
+    });
+
     it('should support moveToNextElement - at end', () => {
         const dom = new JSDOM(html1);
         const doc = dom.window.document;
@@ -134,6 +153,25 @@ describe('Navigation', () => {
         calculationsLabel.focus();
         expect(doc.activeElement).to.equals(calculationsLabel);
         expect(moveToPrevElement(calculationsLabel)).to.equals(false);
+        expect(doc.activeElement).to.equals(calculationsLabel);
+    });
+
+    it('should support moveToPrevElement - through divs with no inputs', () => {
+        const dom = new JSDOM(html1);
+        const doc = dom.window.document;
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+
+        const calculationsLabel = doc.querySelector('div[data-node_represented="324292001770075100"] .fixed');
+        const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
+
+        editableName_a.focus();
+        expect(doc.activeElement).to.equals(editableName_a);
+
+        expect(moveToPrevElement(doc.activeElement)).to.equals(true);
+        expect(moveToPrevElement(doc.activeElement)).to.equals(true);
+        expect(moveToPrevElement(doc.activeElement)).to.equals(true);
+
         expect(doc.activeElement).to.equals(calculationsLabel);
     });
 
