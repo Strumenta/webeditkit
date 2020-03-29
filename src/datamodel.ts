@@ -109,7 +109,7 @@ export class ModelNode {
     return filtered.map(el => dataToNode(el));
   }
 
-  property(propertyName: string) : PropertyType{
+  property(propertyName: string) : PropertyType {
     const value = this.data.properties[propertyName];
     if (value == null) {
       throw new Error('Property ' + propertyName + " not found");
@@ -121,8 +121,12 @@ export class ModelNode {
     return new Ref(this.data.refs[referenceName]);
   }
 
-  name() {
-    return this.property('name');
+  name() : string {
+    const value = this.property('name');
+    if (typeof value === "string") {
+      return value;
+    }
+    throw new Error('Name was expected to be a string, while it is ' + value);
   }
 
   idString() {

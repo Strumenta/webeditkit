@@ -143,4 +143,16 @@ describe('ModelNode', () => {
         expect(()=> {root.property("unexisting")}).to.throw('Property unexisting not found');
     });
 
+    it('should support name - existing', () => {
+        const root = dataToNode(rootData1);
+        expect(root.name()).to.equals('My calculations');
+    });
+
+    it('should support name - unexisting', () => {
+        const root = dataToNode(rootData1);
+        const input_a = root.childrenByLinkName('inputs')[0];
+        const type_of_a = input_a.childByLinkName('type');
+        expect(()=> {type_of_a.name()}).to.throw('Property name not found');
+    });
+
 });
