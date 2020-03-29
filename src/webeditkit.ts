@@ -67,7 +67,7 @@ export function baseUrlForTarget(target): string {
 }
 
 export function baseUrlForModelName(model: string): string {
-  for (let target in targetData) {
+  for (const target in targetData) {
     if (targetData[target].model === model) {
       return targetData[target].baseUrl;
     }
