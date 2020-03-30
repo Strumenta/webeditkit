@@ -3,17 +3,16 @@ import {
     dataToNode,
     ModelNode,
     NodeData,
-    Ref,
     setDatamodelRoot,
-    clearDatamodelRoots
+    clearDatamodelRoots, getDatamodelRoot
 } from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {isAtStart, isAtEnd, moveToNextElement, moveToPrevElement} from "../src/navigation";
 import {loadDataModel, renderDataModels} from "../src/webeditkit";
 import {installAutoresize} from "../src/uiutils";
 import {clearRendererRegistry} from "../dist/renderer";
-import {registerRenderer} from "../src/renderer";
+
+var sinon = require('sinon');
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -102,6 +101,8 @@ describe('WebEditKit', () => {
         // @ts-ignore
         global.$ = require('jquery')(dom.window);
         // @ts-ignore
+        global.jQuery = global.$;
+        // @ts-ignore
         global.window = dom.window;
         // @ts-ignore
         global.document = doc;
@@ -112,12 +113,15 @@ describe('WebEditKit', () => {
 
     //remove the mock after each test, in case other tests need real ajax
     afterEach( function() {
+        sinon.restore();
+
         clearDatamodelRoots();
         clearRendererRegistry();
 
-
         // @ts-ignore
         delete global.$;
+        // @ts-ignore
+        delete global.jQuery;
         // @ts-ignore
         delete global.window;
         // @ts-ignore
@@ -131,6 +135,32 @@ describe('WebEditKit', () => {
         setDatamodelRoot('root-x', dataToNode(rootData1));
         renderDataModels();
         expect(doc.querySelector('div.editor').outerHTML).to.eql('<div id="root-x" class="editor"><input class="fixed default-cell-concrete represent-node" data-node_represented="324292001770075100" style="width: 10px;"></div>');
+    });
+
+    it('should support loadDataModel', (done) => {
+        installAutoresize();
+
+        let successCb = undefined;
+        let failCb = undefined;
+        sinon.replace(jQuery, 'ajax', function(params) {
+            console.log("GINO", params);
+            expect(params.url).to.equals('http://localhost:2904/models/my.qualified.model/123456');
+            expect(params.type).to.equals('get');
+            successCb = params.success;
+            return {
+                fail: function(_failCb){
+                    console.log("storing failcb")
+                    failCb = _failCb;
+                }
+            }
+        });
+        loadDataModel('http://localhost:2904', 'my.qualified.model', '123456', 'root-x');
+        successCb(rootData1);
+        // TODO verify that the datamodel root is set
+        // TODO spy renderDataModels and verify it gets called and when it is called the data is set
+        console.log('DATA MODEL ROOT', getDatamodelRoot('root-x'));
+        done();
+
     });
 
 });

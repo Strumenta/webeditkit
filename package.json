@@ -22,7 +22,10 @@
     "mock-socket": "^9.0.3",
     "nyc": "^15.0.0",
     "prettier": "^2.0.2",
+    "request": "^2.83.0",
+    "sinon": "^9.0.1",
     "ts-node": "^8.8.1",
+    "ts-sinon": "^1.0.25",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0"
   },
