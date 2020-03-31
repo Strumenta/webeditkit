@@ -177,7 +177,7 @@ export function fixedCell(
       hook: {
         insert: (vnode: any) => {
           addAutoresize(vnode);
-          if (alternativesProvider != null && alternativesProvider !== undefined) {
+          if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
           }
         },
