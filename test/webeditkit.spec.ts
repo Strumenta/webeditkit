@@ -94,7 +94,6 @@ describe('WebEditKit', () => {
 
     let doc = null;
 
-    //initialise the ajax mock before each test
     beforeEach( function() {
         const dom = new JSDOM(html_empty);
         doc = dom.window.document;
@@ -111,7 +110,6 @@ describe('WebEditKit', () => {
         clearRendererRegistry();
     });
 
-    //remove the mock after each test, in case other tests need real ajax
     afterEach( function() {
         sinon.restore();
 
@@ -143,24 +141,24 @@ describe('WebEditKit', () => {
         let successCb = undefined;
         let failCb = undefined;
         sinon.replace(jQuery, 'ajax', function(params) {
-            console.log("GINO", params);
             expect(params.url).to.equals('http://localhost:2904/models/my.qualified.model/123456');
             expect(params.type).to.equals('get');
             successCb = params.success;
             return {
                 fail: function(_failCb){
-                    console.log("storing failcb")
                     failCb = _failCb;
                 }
             }
         });
         loadDataModel('http://localhost:2904', 'my.qualified.model', '123456', 'root-x');
+        expect(getDatamodelRoot('root-x')).to.eql(undefined);
         successCb(rootData1);
-        // TODO verify that the datamodel root is set
-        // TODO spy renderDataModels and verify it gets called and when it is called the data is set
-        console.log('DATA MODEL ROOT', getDatamodelRoot('root-x'));
-        done();
-
+        const rootX = getDatamodelRoot('root-x');
+        expect(rootX.name()).to.eql('My calculations');
+        expect(rootX.conceptName()).to.eql('com.strumenta.financialcalc.FinancialCalcSheetFoo');
+        expect(rootX.rootName()).to.eql('root-x');
+        expect(rootX.modelName()).to.eql('my.qualified.model');
+        done()
     });
 
 });
