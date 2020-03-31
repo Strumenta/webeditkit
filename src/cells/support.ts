@@ -103,7 +103,8 @@ export function triggerResize(vnode: VNode) : void {
   $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-export function flattenArray(value: any) {
+export function flattenArray(value: any) : any[] {
+  console.log('flattenArray', value);
   // @ts-ignore
   return Array.from(value).flat();
 }
