@@ -1,28 +1,47 @@
 import {dataToNode, ModelNode} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../src/renderer";
 import {VNode} from "snabbdom/vnode";
-import {h} from "snabbdom";
-import {registerRenderer} from "../src/renderer";
 import {fixedCell, map, referenceCell, row} from "../src/cells";
-import {addId, flattenArray, separate, setDataset} from "../src/cells/support";
+import {addId, addInsertHook, flattenArray, separate, setDataset} from "../src/cells/support";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-var init = require('snabbdom-to-html/init')
+var init2html = require('snabbdom-to-html/init')
 var modules = require('snabbdom-to-html/modules/index')
-var toHTML = init([
+var toHTML = init2html([
     modules.class,
     modules.props,
     modules.attributes,
     modules.style,
     modules.dataset
-])
+]);
+
+import { init } from 'snabbdom/snabbdom';
+
+import h from 'snabbdom/h'; // helper function for creating vnodes
+
+import toVNode from 'snabbdom/tovnode';
+
+import * as sclass from 'snabbdom/modules/class';
+import * as sprops from 'snabbdom/modules/props';
+import * as sstyle from 'snabbdom/modules/style';
+import * as seventlisteners from 'snabbdom/modules/eventlisteners';
+import * as sdataset from 'snabbdom/modules/dataset';
+
+const patch = init([
+    // Init patch function with chosen modules
+    sclass.default, // makes it easy to toggle classes
+    sprops.default, // for setting properties on DOM elements
+    sstyle.default, // handles styling on elements with support for animations
+    seventlisteners.default, // attaches event listeners
+    sdataset.default,
+]);
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
+\t\t<div id="calc" class="editor">
 \t\t<div id="calc" class="editor">
 \t\t\t<div class="vertical-group represent-node" data-node_represented="324292001770075100">
 \t\t\t\t<div class="row">
@@ -198,6 +217,25 @@ describe('Cells.Support', () => {
             compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
             compareVNodes(res[1] as VNode, fixedCell(aNode, ','));
             compareVNodes(res[2] as VNode, fixedCell(aNode, 'b'));
+        });
+    });
+
+    describe('should support addInsertHook', () => {
+        it('it should be triggered on insert', (done) => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.$ = require('jquery')(dom.window);
+            // @ts-ignore
+            global.document = doc;
+
+            const aNode = dataToNode(rootData1);
+            let cell = fixedCell(aNode, 'My fixed test');
+            let cellWithHook = addInsertHook(cell, (myNode) => {
+                compareVNodes(myNode, cellWithHook);
+                done();
+            });
+            patch(toVNode(document.querySelector('#calc')), cellWithHook);
         });
     });
 
