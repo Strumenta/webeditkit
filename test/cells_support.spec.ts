@@ -29,6 +29,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
+import {focusOnNode} from "../dist/cells/support";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -238,5 +239,24 @@ describe('Cells.Support', () => {
             patch(toVNode(document.querySelector('#calc')), cellWithHook);
         });
     });
+
+    // describe('should support focusOnNode', () => {
+    //     it('it should be triggered', (done) => {
+    //         const dom = new JSDOM(html1);
+    //         const doc = dom.window.document;
+    //         // @ts-ignore
+    //         global.$ = require('jquery')(dom.window);
+    //         // @ts-ignore
+    //         global.document = doc;
+    //
+    //         const aNode = dataToNode(rootData1);
+    //         let cell = fixedCell(aNode, 'My fixed test');
+    //         let cellWithHook = setDataset(addInsertHook(cell, (myNode) => {
+    //             focusOnNode('my-node-id', 'root-x');
+    //             //done();
+    //         }), {node_represented:'my-node-id'});
+    //         patch(toVNode(document.querySelector('#calc')), cellWithHook);
+    //     });
+    // });
 
 });
