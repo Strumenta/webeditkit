@@ -6,7 +6,7 @@ import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
 import {fixedCell, map, referenceCell, row} from "../src/cells";
-import {addId, flattenArray, setDataset} from "../src/cells/support";
+import {addId, flattenArray, separate, setDataset} from "../src/cells/support";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
@@ -171,6 +171,34 @@ describe('Cells.Support', () => {
             compareVNodes(res[1] as VNode, fixedCell(aNode, 'b'));
             compareVNodes(res[2] as VNode, fixedCell(aNode, 'c'));
         })
+    });
+
+    describe('should support separate', () => {
+        it('it should be rendered in a certain way an empty list with no separator', () => {
+            const aNode = dataToNode(rootData1);
+            const res = separate([]);
+            expect(res.length).to.eql(0);
+        });
+        it('it should be rendered in a certain way an empty list with separator', () => {
+            const aNode = dataToNode(rootData1);
+            const res = separate([], ()=>{ return fixedCell(aNode, ","); });
+            expect(res.length).to.eql(0);
+        });
+        it('it should be rendered in a certain way a non empty list with no separator', () => {
+            const aNode = dataToNode(rootData1);
+            const res = separate([fixedCell(aNode, 'a'), fixedCell(aNode, 'b')]);
+            expect(res.length).to.eql(2);
+            compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
+            compareVNodes(res[1] as VNode, fixedCell(aNode, 'b'));
+        });
+        it('it should be rendered in a certain way a non empty list with separator', () => {
+            const aNode = dataToNode(rootData1);
+            const res = separate([fixedCell(aNode, 'a'), fixedCell(aNode, 'b')],()=>{ return fixedCell(aNode, ","); });
+            expect(res.length).to.eql(3);
+            compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
+            compareVNodes(res[1] as VNode, fixedCell(aNode, ','));
+            compareVNodes(res[2] as VNode, fixedCell(aNode, 'b'));
+        });
     });
 
 });
