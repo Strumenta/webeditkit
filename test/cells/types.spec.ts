@@ -161,7 +161,6 @@ describe('Cells.Types', () => {
     describe('should support row cell', () => {
         it('it should be rendered in a certain way', () => {
             const aNode = dataToNode(rootData1);
-            // @ts-ignore
             const cell = row(fixedCell(aNode, 'a'), fixedCell(aNode, 'b'));
             expect(toHTML(cell)).to.eql('<div class="row"><input class="fixed" value="a"><input class="fixed" value="b"></div>');
         })

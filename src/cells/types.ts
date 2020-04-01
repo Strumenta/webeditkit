@@ -15,8 +15,9 @@ import {
 } from './support';
 import { ModelNode, NodeId, nodeIdToString } from '../datamodel';
 import { renderModelNode } from '../renderer';
+import {VNode} from "snabbdom/vnode";
 
-export function childCell(modelNode: ModelNode, containmentName: string) {
+export function childCell(modelNode: ModelNode, containmentName: string) : VNode  {
   const child = modelNode.childByLinkName(containmentName);
   if (child == null) {
     // @ts-ignore
@@ -30,7 +31,7 @@ export function childCell(modelNode: ModelNode, containmentName: string) {
   return renderModelNode(child);
 }
 
-export function verticalCollectionCell(modelNode: ModelNode, containmentName: string, wrapInRows: boolean = true) {
+export function verticalCollectionCell(modelNode: ModelNode, containmentName: string, wrapInRows: boolean = true) : VNode  {
   const ws = getWsCommunication(modelNode.modelName());
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
@@ -69,7 +70,7 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
   }
 }
 
-export function horizontalCollectionCell(modelNode: ModelNode, containmentName: string, separatorGenerator?: any) {
+export function horizontalCollectionCell(modelNode: ModelNode, containmentName: string, separatorGenerator?: any) : VNode  {
   const ws = getWsCommunication(modelNode.modelName());
   const addInputChild = () => {
     // TODO FIXME
@@ -97,11 +98,11 @@ export function horizontalCollectionCell(modelNode: ModelNode, containmentName: 
   }
 }
 
-export function horizontalGroupCell() {
+export function horizontalGroupCell() : VNode {
   return h('div.horizontal-group', {}, flattenArray(arguments));
 }
 
-export function verticalGroupCell() {
+export function verticalGroupCell(): VNode {
   return h('div.vertical-group', {}, flattenArray(arguments));
 }
 
@@ -110,7 +111,7 @@ export function verticalGroupCell() {
  * @param propertyName
  * @param extraClasses deprecated, use addClass instead
  */
-export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[] = []) {
+export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[] = []) : VNode {
   if (modelNode == null) {
     throw new Error('modelNode should not be null');
   }
@@ -164,7 +165,7 @@ export function fixedCell(
   alternativesProvider?: any,
   deleter?: () => void,
   onEnter?: () => void,
-) {
+) : VNode {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
@@ -234,7 +235,7 @@ export function referenceCell(
   extraClasses?: string[],
   alternativesProvider?: any,
   deleter?: any,
-) {
+) : VNode {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
@@ -278,14 +279,14 @@ export function referenceCell(
   );
 }
 
-export function row() {
+export function row(...elements: any[]) : VNode {
   return h('div.row', {}, flattenArray(arguments));
 }
 
-export function emptyRow() {
+export function emptyRow() : VNode {
   return row();
 }
 
-export function tabCell() {
+export function tabCell() : VNode {
   return h('div.tab', {}, []);
 }
