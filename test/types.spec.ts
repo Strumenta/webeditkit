@@ -1,18 +1,18 @@
-import {dataToNode, ModelNode} from '../../src/datamodel';
+import {dataToNode, ModelNode} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../../src/renderer";
+import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../src/renderer";
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
-import {registerRenderer} from "../../src/renderer";
-import {fixedCell, referenceCell, row} from "../../src/cells";
-import {flattenArray} from "../../src/cells/support";
+import {registerRenderer} from "../src/renderer";
+import {fixedCell, referenceCell, row} from "../src/cells";
+import {flattenArray} from "../src/cells/support";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
 var init = require('snabbdom-to-html/init')
-var modules = require('snabbdom-to-html/modules')
+var modules = require('snabbdom-to-html/modules/index')
 var toHTML = init([
     modules.class,
     modules.props,

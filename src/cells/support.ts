@@ -103,20 +103,23 @@ export function triggerResize(vnode: VNode) : void {
   $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-Object.defineProperty(Array.prototype, 'flat', {
-  value: function(depth = Infinity) {
-    return this.reduce(function (flat, toFlatten) {
-      // @ts-ignore
-      return flat.concat((Array.isArray(toFlatten) && (depth>1)) ? toFlatten.flat(depth-1) : toFlatten);
-    }, []);
-  }
-});
 
 export function flattenArray(value: any) : any[] {
   const originalArray : any[] = Array.from(value);
-  // @ts-ignore
-  return originalArray.flat();
+  return flatten(originalArray);
 }
+
+const flatten = function(arr: any[], result: any[] = []) : any[] {
+  for (let i = 0, length = arr.length; i < length; i++) {
+    const value = arr[i];
+    if (Array.isArray(value)) {
+      flatten(value, result);
+    } else {
+      result.push(value);
+    }
+  }
+  return result;
+};
 
 export function addInsertHook(vnode: VNode, f: (VNode) => void): VNode {
   if (vnode.data === undefined) {
