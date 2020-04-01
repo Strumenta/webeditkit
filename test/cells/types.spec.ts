@@ -150,25 +150,33 @@ describe('Cells.Types', () => {
     });
 
     describe('should support reference cell', () => {
-        it('it should be rendered in a certain way', () => {
+        it('it should be rendered in a certain way when null', () => {
             const rootNode = dataToNode(rootData1);
             const inputNode = rootNode.childrenByLinkName('inputs')[0];
             const cell = referenceCell(inputNode, 'type');
-            expect(toHTML(cell)).to.eql('<input class="reference" value="Loading...">');
+            expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no type&gt;">');
         })
     });
 
-    // describe('should support row cell', () => {
-    //     it('it should be rendered in a certain way', () => {
-    //         const aNode = dataToNode(rootData1);
-    //         // @ts-ignore
-    //         const cell = row(fixedCell(aNode, '1'), fixedCell(aNode, '1'));
-    //         expect(toHTML(cell)).to.eql('<input class="fixed" value="My fixed test">');
-    //     })
-    // });
+    describe('should support row cell', () => {
+        it('it should be rendered in a certain way', () => {
+            const aNode = dataToNode(rootData1);
+            // @ts-ignore
+            const cell = row(fixedCell(aNode, 'a'), fixedCell(aNode, 'b'));
+            expect(toHTML(cell)).to.eql('<div class="row"><input class="fixed" value="a"><input class="fixed" value="b"></div>');
+        })
+    });
 
     describe('should support flattenArray', () => {
-        expect(flattenArray([])).to.eql([]);
-    })
+        it('for empty values', () => {
+            expect(flattenArray([])).to.eql([]);
+        });
+        it('for simple values', () => {
+            expect(flattenArray([1, 2, 3])).to.eql([1, 2, 3]);
+        });
+        it('for complex values', () => {
+            expect(flattenArray([1, 2, [3, [4, 5], 6], 7])).to.eql([1, 2, 3, 4, 5, 6, 7]);
+        });
+    });
 
 });
