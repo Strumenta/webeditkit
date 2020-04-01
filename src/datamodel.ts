@@ -1,14 +1,30 @@
 import { getWsCommunication } from './wscommunication';
 import { baseUrlForModelName } from './webeditkit';
+import base = Mocha.reporters.base;
 
 const datamodelRoots = {};
 const datamodelClasses = {};
+
+let defaultBaseUrl = undefined;
+
+export function setDefaultBaseUrl(value: string) : void {
+  defaultBaseUrl = value;
+}
+
+export function getDefaultBaseUrl() : string | undefined {
+  return defaultBaseUrl;
+}
 
 ///
 /// Node Data
 ///
 
-export type PropertyType = string | boolean | number;
+interface EnumValue {
+  myId: string;
+  myNameHint: string;
+}
+
+export type PropertyType = string | boolean | number | EnumValue;
 
 export interface NodeId {
   regularId: string;
@@ -75,8 +91,14 @@ export class Ref {
   }
 
   loadData(cb) {
-    const baseUrl = baseUrlForModelName(this.data.model.qualifiedName);
-    const url = 'http://' + baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
+    let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
+    if (baseUrl == null) {
+      throw new Error('No base url specified for model ' + this.data.model.qualifiedName + ' and no default base url available');
+    }
+    if (!baseUrl.startsWith('http://')) {
+      baseUrl = 'http://' + baseUrl;
+    }
+    const url = baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
     $.getJSON(url, (data) => {
       if (data == null) {
         throw new Error('Data not received correctly on request to ' + url);
@@ -117,7 +139,10 @@ export class ModelNode {
     return value || undefined;
   }
 
-  ref(referenceName: string): Ref {
+  ref(referenceName: string): Ref | undefined {
+    if (this.data.refs[referenceName] == null) {
+      return undefined;
+    }
     return new Ref(this.data.refs[referenceName]);
   }
 

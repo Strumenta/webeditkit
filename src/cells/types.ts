@@ -110,7 +110,7 @@ export function verticalGroupCell() {
  * @param propertyName
  * @param extraClasses deprecated, use addClass instead
  */
-export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[]) {
+export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[] = []) {
   if (modelNode == null) {
     throw new Error('modelNode should not be null');
   }
@@ -239,6 +239,9 @@ export function referenceCell(
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
     extraClassesStr = '.' + extraClasses.join('.');
+  }
+  if (modelNode.ref(referenceName) == null) {
+    return fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference']);
   }
   return h(
     'input.reference' + extraClassesStr,

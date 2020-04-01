@@ -41,6 +41,7 @@ const uiutils = require('./uiutils');
 export const datamodel = require('./datamodel');
 const wscommunication = require('./wscommunication');
 const autocomplete = require('autocompleter');
+export const cells = require('./cells');
 
 const renderers = require('./renderer');
 export const registerRenderer = renderers.registerRenderer;

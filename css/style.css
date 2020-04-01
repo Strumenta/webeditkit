@@ -93,3 +93,11 @@ input.fixed {
 .empty-collection {
     color: gray;
 }
+
+.vertical-group {
+    display:inline-block;
+}
+
+.row * {
+    vertical-align: top;
+}

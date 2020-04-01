@@ -11,7 +11,7 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from './types';
-import { alternativesProviderForAbstractConcept, addClass, addToDataset } from './support';
+import { alternativesProviderForAbstractConcept, addClass, addToDataset, map } from './support';
 
 export {
   fixedCell,
@@ -26,4 +26,4 @@ export {
   verticalCollectionCell,
   verticalGroupCell,
 };
-export { alternativesProviderForAbstractConcept, addClass, addToDataset };
+export { alternativesProviderForAbstractConcept, addClass, addToDataset, map };
