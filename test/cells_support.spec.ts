@@ -5,7 +5,7 @@ import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
-import {fixedCell, referenceCell, row} from "../src/cells";
+import {fixedCell, map, referenceCell, row} from "../src/cells";
 import {addId, flattenArray, setDataset} from "../src/cells/support";
 
 const jsdom = require("jsdom");
@@ -159,6 +159,17 @@ describe('Cells.Support', () => {
             expect(toHTML(cell)).to.eql('<input class="fixed" value="My fixed test">');
             cell = addId(cell, 'spritz');
             expect(toHTML(cell)).to.eql('<input id="spritz" class="fixed" value="My fixed test">');
+        })
+    });
+
+    describe('should support map', () => {
+        it('it should be rendered in a certain way', () => {
+            const aNode = dataToNode(rootData1);
+            const res = map(['a', 'b', 'c'], (el)=>{return fixedCell(aNode, el)});
+            expect(res.length).to.eql(3);
+            compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
+            compareVNodes(res[1] as VNode, fixedCell(aNode, 'b'));
+            compareVNodes(res[2] as VNode, fixedCell(aNode, 'c'));
         })
     });
 

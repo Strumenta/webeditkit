@@ -166,7 +166,7 @@ export function addId(vnode: VNode, myId: string): VNode {
 }
 
 export function map(originalArray: any, op: any): VNodeChildElement[] {
-  return Array.from($(originalArray).map(op));
+  return originalArray.map(op);
 }
 
 export function separate(original: any[], separatorGenerator?: any): any[] {
