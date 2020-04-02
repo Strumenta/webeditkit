@@ -165,7 +165,7 @@ export function addId(vnode: VNode, myId: string): VNode {
   return vnode;
 }
 
-export function map(originalArray: any, op: any): VNodeChildElement[] {
+export function map(originalArray: any, op: (el:any)=>any): VNodeChildElement[] {
   return originalArray.map(op);
 }
 

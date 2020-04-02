@@ -21,6 +21,9 @@ export function getRegisteredRenderer(conceptName: string) : Renderer | undefine
 }
 
 export function renderModelNode(modelNode) : VNode {
+  if (modelNode == null) {
+    throw new Error('renderModelNode invoked with null modelNode')
+  }
   return setKey(
     addToDataset(
       addClass(getRenderer(modelNode)(modelNode), 'represent-node'),

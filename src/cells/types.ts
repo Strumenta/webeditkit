@@ -58,12 +58,11 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
     return h(
       'div.vertical-collection.represent-collection',
       data,
-      map(modelNode.childrenByLinkName(containmentName), function () {
+      map(modelNode.childrenByLinkName(containmentName), function (el) {
         if (wrapInRows) {
-          // @ts-ignore
-          return row(renderModelNode(this));
+          return row(renderModelNode(el));
         } else {
-          return renderModelNode(this);
+          return renderModelNode(el);
         }
       }),
     );
@@ -88,9 +87,11 @@ export function horizontalCollectionCell(modelNode: ModelNode, containmentName: 
       'div.horizontal-collection',
       {},
       separate(
-        map(modelNode.childrenByLinkName(containmentName), function () {
-          // @ts-ignore
-          return renderModelNode(this);
+        map(modelNode.childrenByLinkName(containmentName), (el: any) => {
+          if (el == null) {
+            throw new Error('null value receiving while mapping on childrenByLinkName(' + containmentName + ')')
+          }
+          return renderModelNode(el);
         }),
         separatorGenerator,
       ),

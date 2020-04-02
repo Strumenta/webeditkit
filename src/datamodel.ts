@@ -126,6 +126,10 @@ export class ModelNode {
     }
   }
 
+  hasChild(linkName) : boolean {
+    return this.childByLinkName(linkName) != null;
+  }
+
   childrenByLinkName(linkName: string): ModelNode[] {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     return filtered.map((el) => dataToNode(el));
