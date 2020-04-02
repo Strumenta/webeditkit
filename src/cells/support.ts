@@ -10,13 +10,15 @@ export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
 }
 
+type SuggestionsReceiverFactory = (suggestionsReceiver: SuggestionsReceiver) => void;
+
 export function alternativesProviderForAddingChild(
   modelNode: ModelNode,
   containmentName: string,
   replacing: boolean = false,
-) {
+) : SuggestionsReceiverFactory {
   // we should get all the alternatives from the server
-  return (alternativesUser: (alternatives: { label: any; execute: () => void }[]) => void) => {
+  return (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
     ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
       const adder = (conceptName: string) => () => {
@@ -31,7 +33,7 @@ export function alternativesProviderForAddingChild(
           return { label: domElement.alias, execute: adder(domElement.conceptName) };
         }),
       );
-      alternativesUser(uiAlternatives);
+      suggestionsReceiver(uiAlternatives);
     });
   };
 }
