@@ -43,7 +43,6 @@ const patch = init([
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
 \t\t<div id="calc" class="editor">
-\t\t<div id="calc" class="editor">
 \t\t\t<div class="vertical-group represent-node" data-node_represented="324292001770075100">
 \t\t\t\t<div class="row">
 \t\t\t\t\t<input class="fixed title" style="width: 120.875px;">
@@ -240,23 +239,26 @@ describe('Cells.Support', () => {
         });
     });
 
-    // describe('should support focusOnNode', () => {
-    //     it('it should be triggered', (done) => {
-    //         const dom = new JSDOM(html1);
-    //         const doc = dom.window.document;
-    //         // @ts-ignore
-    //         global.$ = require('jquery')(dom.window);
-    //         // @ts-ignore
-    //         global.document = doc;
-    //
-    //         const aNode = dataToNode(rootData1);
-    //         let cell = fixedCell(aNode, 'My fixed test');
-    //         let cellWithHook = setDataset(addInsertHook(cell, (myNode) => {
-    //             focusOnNode('my-node-id', 'root-x');
-    //             //done();
-    //         }), {node_represented:'my-node-id'});
-    //         patch(toVNode(document.querySelector('#calc')), cellWithHook);
-    //     });
-    // });
+    describe('should support focusOnNode', () => {
+        it('it should be triggered', (done) => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.$ = require('jquery')(dom.window);
+            // @ts-ignore
+            global.document = doc;
+
+            const aNode = dataToNode(rootData1);
+            let cell = fixedCell(aNode, 'My fixed test');
+            let cellWithHook = setDataset(addInsertHook(cell, (myNode) => {
+                console.log('focus before', doc.activeElement);
+                focusOnNode('1848360241685575206', 'calc');
+                // We need to check who has the focus
+                console.log('focus after', doc.activeElement);
+                //done();
+            }), {node_represented:'my-node-id'});
+            patch(toVNode(document.querySelector('#calc')), cellWithHook);
+        });
+    });
 
 });

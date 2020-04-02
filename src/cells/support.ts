@@ -198,6 +198,7 @@ export function separate(original: any[], separatorGenerator?: any): any[] {
  */
 export function focusOnNode(nodeIdStr: string, rootName: string) {
   const domRoot = $('#' + rootName);
+  console.log('DOM ROOT', domRoot);
   const found = domRoot.find('.represent-node').filter(function () {
     return $(this).data('node_represented') == nodeIdStr;
   });
