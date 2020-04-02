@@ -36,9 +36,16 @@ export function alternativesProviderForAddingChild(
   };
 }
 
+export interface AutocompleteAlternative {
+  label: string;
+  execute: ()=>void;
+}
+
+export type SuggestionsReceiver = (suggestions: AutocompleteAlternative[]) => void;
+
 export function installAutocomplete(
   vnode: any,
-  valuesProvider: (arg0: (suggestions: any) => void) => void,
+  valuesProvider: (suggestionsReceiver: SuggestionsReceiver) => void,
   fixed: boolean,
 ) {
   const input = vnode.elm;
@@ -53,14 +60,14 @@ export function installAutocomplete(
     },
     fetch: (text: string, update: any) => {
       text = text.toLowerCase();
-      valuesProvider((suggestions: any) => {
+      valuesProvider((suggestions: AutocompleteAlternative[]) => {
         if (!fixed) {
           suggestions = suggestions.filter((n: { label: string }) => n.label.toLowerCase().startsWith(text));
         }
         update(suggestions);
       });
     },
-    onSelect: (item: any) => {
+    onSelect: (item: AutocompleteAlternative) => {
       item.execute();
     },
     customize: (_input: any, inputRect: any, container: any, maxHeight: any) => {

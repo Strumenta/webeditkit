@@ -11,7 +11,7 @@ import {
   separate,
   triggerResize,
   map,
-  focusOnNode,
+  focusOnNode, SuggestionsReceiver,
 } from './support';
 import { ModelNode, NodeId, nodeIdToString } from '../datamodel';
 import { renderModelNode } from '../renderer';
@@ -151,7 +151,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
           return false;
         },
         keyup: (e: KeyboardEvent) => {
-          ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val());
+          ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val() as string);
         },
       },
     },
@@ -230,11 +230,13 @@ export function fixedCell(
   );
 }
 
+export type AlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => void;
+
 export function referenceCell(
   modelNode: ModelNode,
   referenceName: string,
   extraClasses?: string[],
-  alternativesProvider?: any,
+  alternativesProvider?: AlternativesProvider,
   deleter?: any,
 ) : VNode {
   extraClasses = extraClasses || [];
@@ -243,7 +245,7 @@ export function referenceCell(
     extraClassesStr = '.' + extraClasses.join('.');
   }
   if (modelNode.ref(referenceName) == null) {
-    return fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference']);
+    return fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider);
   }
   return h(
     'input.reference' + extraClassesStr,
@@ -252,7 +254,7 @@ export function referenceCell(
       hook: {
         insert: (vnode: any) => {
           addAutoresize(vnode);
-          if (alternativesProvider != null && alternativesProvider !== undefined) {
+          if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
           }
           modelNode.ref(referenceName).loadData((refModelNode) => {

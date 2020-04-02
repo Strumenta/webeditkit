@@ -81,7 +81,7 @@ export function dataToNode(data: NodeData): ModelNode {
 ///
 
 export class Ref {
-  private data: ReferenceData;
+  data: ReferenceData;
 
   constructor(data: ReferenceData) {
     if (data == null) {
@@ -126,8 +126,15 @@ export class ModelNode {
     }
   }
 
-  hasChild(linkName) : boolean {
+  hasChild(linkName: string) : boolean {
     return this.childByLinkName(linkName) != null;
+  }
+
+  setChild(linkName: string, child: ModelNode) : void {
+    if (this.hasChild(linkName)) {
+      this.removeChild(linkName, child.data);
+    }
+    this.addChild(linkName, 0, child.data);
   }
 
   childrenByLinkName(linkName: string): ModelNode[] {
@@ -141,6 +148,10 @@ export class ModelNode {
     //   throw new Error('Property ' + propertyName + ' not found');
     // }
     return value || undefined;
+  }
+
+  setRef(referenceName: string, ref: Ref) : void {
+    this.ws().setRef(this, referenceName, ref);
   }
 
   ref(referenceName: string): Ref | undefined {
@@ -226,7 +237,7 @@ export class ModelNode {
     throw new Error('This element was not found among the children of its parent');
   }
 
-  addChild(relationName, index, childData) {
+  addChild(relationName: string, index: number, childData: NodeData) {
     const children = this.data.children;
     let leftToFind = index;
     let i = 0;
@@ -253,7 +264,7 @@ export class ModelNode {
     this.ws().insertNextSibling(this);
   }
 
-  removeChild(relationName, childData) {
+  removeChild(relationName: string, childData: NodeData) {
     for (let i = 0; i < this.data.children.length; i++) {
       const child = this.data.children[i];
       if (child.id.regularId === childData.id.regularId) {

@@ -1,4 +1,13 @@
-import {findNode, getDatamodelRoot, ModelNode, NodeId, PropertyType, dataToNode, nodeIdToString} from './datamodel';
+import {
+  findNode,
+  getDatamodelRoot,
+  ModelNode,
+  NodeId,
+  PropertyType,
+  dataToNode,
+  nodeIdToString,
+  Ref
+} from './datamodel';
 import { renderDataModels } from './webeditkit';
 
 function uuidv4() {
@@ -80,6 +89,9 @@ export class WsCommunication {
       } else if (data.type === 'AnswerDefaultInsertion') {
         const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
         reactorToInsertion(data.addedNodeID);
+      } else if (data.type === 'AnswerForDirectReferences') {
+        const cb = thisWS.callbacks[data.requestId];
+        cb(data.items);
       } else {
         if (!this.silent) {
           console.warn('data', data);
@@ -128,7 +140,7 @@ export class WsCommunication {
     this.addChildAtIndex(container, containmentName, -1, conceptName);
   }
 
-  addChildAtIndex(container, containmentName, index: number, conceptName: string) : void {
+  addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string) : void {
     if (index < -1) {
       throw new Error("Index should -1 to indicate to add at the end, or a value >= 0")
     }
@@ -140,6 +152,19 @@ export class WsCommunication {
       containmentName,
       conceptToInstantiate: conceptName,
     });
+  }
+
+  setRef(container: ModelNode, referenceName: string, ref: Ref) : void {
+    this.sendJSON({
+      type: 'setRef',
+      modelName: container.modelName(),
+      container: container.idString(),
+      referenceName,
+      referenceValue: {
+        model: ref.data.model.qualifiedName,
+        id: ref.data.id.regularId
+      }
+    })
   }
 
   insertNextSibling(sibling: ModelNode) : void {
@@ -178,6 +203,7 @@ export class WsCommunication {
     });
   }
 
+  // Get alternative concepts usable
   askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver: (Alternatives) => void, uuid: string = uuidv4()) : void {
     // we generate a UUID and ask the server to answer us using such UUID
     this.callbacks[uuid] = alternativesReceiver;
@@ -189,11 +215,23 @@ export class WsCommunication {
       containmentName,
     });
   }
+
+  // Get alternatives nodes that can be references
+  askAlternativesForDirectReference(modelNode: ModelNode, referenceName: string, alternativesReceiver: (AlternativesForDirectReference) => void, uuid: string = uuidv4()) : void {
+    this.callbacks[uuid] = alternativesReceiver;
+    this.sendJSON({
+      type: 'requestForDirectReferences',
+      requestId: uuid,
+      modelName: modelNode.modelName(),
+      container: modelNode.idString(),
+      referenceName,
+    });
+  }
 }
 
 const instances = {};
 
-export function getWsCommunication(modelName: string) {
+export function getWsCommunication(modelName: string) : WsCommunication {
   return instances[modelName];
 }
 
