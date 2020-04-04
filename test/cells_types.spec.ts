@@ -227,6 +227,44 @@ const rootData2 = {
     "abstractConcept": false
 };
 
+function pressArrowLeft(element) {
+    // @ts-ignore
+    const w = global.window;
+
+    // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keydown", {code: 'ArrowLeft',
+        key: 'ArrowLeft',
+        charKode: 37,
+        keyCode: 37,})); // x
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keyup", {code: 'ArrowLeft',
+        key: 'ArrowLeft',
+        charKode: 37,
+        keyCode: 37,})); // x
+}
+
+function prepareFakeDom(htmlCode) {
+    const dom = new JSDOM(htmlCode);
+    const doc = dom.window.document;
+    // @ts-ignore
+    global.window = dom.window;
+    // @ts-ignore
+    global.$ = require('jquery');
+    try {
+        $("a");
+    } catch {
+        // @ts-ignore
+        global.$ = require('jquery')(dom.window);
+    }
+    // @ts-ignore
+    global.document = doc;
+    // @ts-ignore
+    global.navigator = {'userAgent': 'fake browser'};
+    installAutoresize();
+    return doc;
+}
+
 describe('Cells.Types', () => {
 
     describe('should support fixed cell', () => {
@@ -518,23 +556,7 @@ describe('Cells.Types', () => {
             patch(toVNode(document.querySelector('#calc')), container);
         });
         it('it should react to ArrowLeft with selection not at start', () => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery');
-            try {
-                $("a");
-            } catch {
-                // @ts-ignore
-                global.$ = require('jquery')(dom.window);
-            }
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             aNode.injectModelName('my.qualified.model', 'calc');
@@ -547,17 +569,7 @@ describe('Cells.Types', () => {
                 myInput.selectionEnd = 1;
                 myInput.focus();
                 expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
-                // https://css-tricks.com/snippets/javascript/javascript-keycodes/
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'ArrowLeft',
-                    key: 'ArrowLeft',
-                    charKode: 37,
-                    keyCode: 37,})); // x
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'ArrowLeft',
-                    key: 'ArrowLeft',
-                    charKode: 37,
-                    keyCode: 37,})); // x
+                pressArrowLeft(myInput);
                 expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
             });
 
