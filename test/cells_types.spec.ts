@@ -6,12 +6,12 @@ import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
 import {
-    childCell,
+    childCell, emptyRow,
     fixedCell,
     horizontalCollectionCell,
     horizontalGroupCell,
     referenceCell,
-    row,
+    row, tabCell,
     verticalCollectionCell, verticalGroupCell
 } from "../src/cells";
 import {flattenArray} from "../src/cells/support";
@@ -244,6 +244,20 @@ describe('Cells.Types', () => {
         it('it should be rendered in a certain way (not empty)', () => {
             const cell = verticalGroupCell(h('span', {}, ['a']), h('span', {}, ['b']));
             expect(toHTML(cell)).to.eql('<div class="vertical-group"><span>a</span><span>b</span></div>');
+        });
+    });
+
+    describe('should support emptyRow', () => {
+        it('it should be rendered in a certain way', () => {
+            const cell = emptyRow();
+            expect(toHTML(cell)).to.eql('<div class="row"></div>');
+        });
+    });
+
+    describe('should support tabCell', () => {
+        it('it should be rendered in a certain way', () => {
+            const cell = tabCell();
+            expect(toHTML(cell)).to.eql('<div class="tab"></div>');
         });
     });
 

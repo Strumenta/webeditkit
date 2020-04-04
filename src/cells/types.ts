@@ -285,7 +285,7 @@ export function referenceCell(
   );
 }
 
-export function row(...elements: any[]) : VNode {
+export function row(...elements: FlattableNode[]) : VNode {
   return h('div.row', {}, flattenArray(arguments));
 }
 
