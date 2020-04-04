@@ -5,7 +5,15 @@ import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
-import {childCell, fixedCell, horizontalCollectionCell, referenceCell, row, verticalCollectionCell} from "../src/cells";
+import {
+    childCell,
+    fixedCell,
+    horizontalCollectionCell,
+    horizontalGroupCell,
+    referenceCell,
+    row,
+    verticalCollectionCell
+} from "../src/cells";
 import {flattenArray} from "../src/cells/support";
 
 const jsdom = require("jsdom");
@@ -214,6 +222,18 @@ describe('Cells.Types', () => {
             const aNode = dataToNode(rootData1);
             const cell = horizontalCollectionCell(aNode, 'unexisting');
             expect(toHTML(cell)).to.eql('<div class="horizontal-collection"><input class="fixed empty-collection" value="&lt;&lt; ... &gt;&gt;"></div>');
+        });
+    });
+
+    describe('should support horizontalGroupCell', () => {
+        it('it should be rendered in a certain way (empty)', () => {
+            const cell = horizontalGroupCell();
+            expect(toHTML(cell)).to.eql('<div class="horizontal-group"></div>');
+        });
+        it('it should be rendered in a certain way (not empty)', () => {
+            // @ts-ignore
+            const cell = horizontalGroupCell(h('span', {}, ['a']), h('span', {}, ['b']));
+            expect(toHTML(cell)).to.eql('<div class="horizontal-group"><span>a</span><span>b</span></div>');
         });
     });
 
