@@ -5,7 +5,7 @@ import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
-import {childCell, fixedCell, referenceCell, row, verticalCollectionCell} from "../src/cells";
+import {childCell, fixedCell, horizontalCollectionCell, referenceCell, row, verticalCollectionCell} from "../src/cells";
 import {flattenArray} from "../src/cells/support";
 
 const jsdom = require("jsdom");
@@ -201,6 +201,19 @@ describe('Cells.Types', () => {
             const aNode = dataToNode(rootData1);
             const cell = verticalCollectionCell(aNode, 'unexisting');
             expect(toHTML(cell)).to.eql('<div class="vertical-collection represent-collection"><input class="fixed empty-collection" value="&lt;&lt; ... &gt;&gt;"></div>');
+        });
+    });
+
+    describe('should support horizontalCollectionCell', () => {
+        it('it should be rendered in a certain way for not empty children', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = horizontalCollectionCell(aNode, 'inputs');
+            expect(toHTML(cell)).to.eql('<div class="horizontal-collection"><input class="fixed default-cell-concrete represent-node" value="[default Input]"><input class="fixed default-cell-concrete represent-node" value="[default Input]"></div>');
+        });
+        it('it should be rendered in a certain way for empty children', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = horizontalCollectionCell(aNode, 'unexisting');
+            expect(toHTML(cell)).to.eql('<div class="horizontal-collection"><input class="fixed empty-collection" value="&lt;&lt; ... &gt;&gt;"></div>');
         });
     });
 

@@ -44,11 +44,8 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
         alternativesProviderForAddingChild(modelNode, containmentName),
         null,
         () => {
-          console.log('on enter');
           ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
-            console.log('reactorToInsertion', addedNodeID);
             const nodeIdStr = nodeIdToString(addedNodeID);
-            console.log('reactorToInsertion', nodeIdStr);
             focusOnNode(nodeIdStr, modelNode.rootName());
           });
         },
@@ -71,15 +68,17 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
 
 export function horizontalCollectionCell(modelNode: ModelNode, containmentName: string, separatorGenerator?: any) : VNode  {
   const ws = getWsCommunication(modelNode.modelName());
-  const addInputChild = () => {
-    // TODO FIXME
-    ws.addChild(modelNode, containmentName, 'com.strumenta.financialcalc.Input');
+  const addChild = () => {
+    ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
+      const nodeIdStr = nodeIdToString(addedNodeID);
+      focusOnNode(nodeIdStr, modelNode.rootName());
+    });
   };
   const children = modelNode.childrenByLinkName(containmentName);
   if (children.length === 0) {
     return h('div.horizontal-collection', {}, [
       fixedCell(modelNode, '<< ... >>', ['empty-collection'], (alternativesUser: any) => {
-        alternativesUser([{ label: 'Input', execute: addInputChild }]);
+        alternativesUser([{ label: 'Input', execute: addChild }]);
       }),
     ]);
   } else {
