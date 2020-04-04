@@ -211,6 +211,8 @@ export function fixedCell(
             if ($('.autocomplete').length == 0) {
               if (onEnter !== undefined) {
                 onEnter();
+                e.preventDefault();
+                return false;
               } else if (alternativesProvider === undefined) {
                 // We should stop this when the autocomplete is displayed
 

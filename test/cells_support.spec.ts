@@ -7,17 +7,16 @@ import {
     addId,
     addInsertHook,
     alternativesProviderForAddingChild, AutocompleteAlternative,
-    flattenArray,
+    flattenArray, installAutocomplete,
     separate,
     setDataset, SuggestionsReceiver
 } from "../src/cells/support";
 
 import { WebSocket, Server } from 'mock-socket';
+import $ from 'jquery-jsdom';
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-
-var sinon = require('sinon');
 
 const wscommunication = require("../src/wscommunication");
 
@@ -425,6 +424,44 @@ describe('Cells.Support', () => {
             expect(() => {alternativesProviderForAbstractConcept(aNode);}).to.throw('The given node has no parent');
             mockServer.close();
             done();
+        });
+    });
+
+    describe('should support installAutocomplete', () => {
+        it('it should handle positive case', (done) => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery')(dom.window);
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            //installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            let cell =  h('input', {}, []);
+            let cellWithHook = addInsertHook(cell, (myNode:VNode) => {
+                installAutocomplete(myNode, (suggestionsReceiver: SuggestionsReceiver) => {
+                    done();
+                },true);
+                // @ts-ignore
+                myNode.elm.focus();
+
+                const pressChar = (ch: string, val: number) => {
+                    // @ts-ignore
+                    doc.activeElement.dispatchEvent(new dom.window.KeyboardEvent("keydown", {key: ch, char: ch, keyCode: val, bubbles: true })); // x
+                    // @ts-ignore
+                    doc.activeElement.dispatchEvent(new dom.window.KeyboardEvent("keyup", {key: ch, char: ch, keyCode: val })); // x
+                };
+                pressChar("x", 88);
+
+            });
+
+            let container = h('div#calc', {}, [cellWithHook]);
+            patch(toVNode(document.querySelector('#calc')), container);
         });
     });
 

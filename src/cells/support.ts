@@ -87,6 +87,7 @@ export function installAutocomplete(
       item.execute();
     },
     customize: (_input: any, inputRect: any, container: any, maxHeight: any) => {
+      // not true in tests
       $(container).css('width', 'auto');
     },
   });
