@@ -2,7 +2,7 @@ import {dataToNode, ModelNode} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
 import {VNode} from "snabbdom/vnode";
-import {fixedCell, map, referenceCell, row} from "../src/cells";
+import {addClass, fixedCell, map, referenceCell, row} from "../src/cells";
 import {addId, addInsertHook, flattenArray, separate, setDataset} from "../src/cells/support";
 
 const jsdom = require("jsdom");
@@ -30,6 +30,7 @@ import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import {focusOnNode} from "../dist/cells/support";
+import {installAutoresize} from "../src/uiutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -54,7 +55,7 @@ const html1 = `<html>
 \t\t\t\t</div>
 \t\t\t\t<div class="row">
 \t\t\t\t\t<div class="tab"></div>
-\t\t\t\t\t<div class="vertical-collection represent-collection"data-relation_represented="inputs">
+\t\t\t\t\t<div class="vertical-collection represent-collection" data-relation_represented="inputs">
 \t\t\t\t\t\t<div class="row">
 \t\t\t\t\t\t\t<div class="horizontal-group represent-node" data-node_represented="1848360241685547698">
 \t\t\t\t\t\t\t\t<input class="editable" placeholder="<no name>" required="" style="width: 10px;">
@@ -244,20 +245,25 @@ describe('Cells.Support', () => {
             const dom = new JSDOM(html1);
             const doc = dom.window.document;
             // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
             global.$ = require('jquery')(dom.window);
             // @ts-ignore
             global.document = doc;
+            installAutoresize();
 
             const aNode = dataToNode(rootData1);
-            let cell = fixedCell(aNode, 'My fixed test');
-            let cellWithHook = setDataset(addInsertHook(cell, (myNode) => {
-                console.log('focus before', doc.activeElement);
-                focusOnNode('1848360241685575206', 'calc');
+            let cell =  fixedCell(aNode, 'My fixed test');
+            let cellWithHook = addClass(setDataset(addInsertHook(cell, (myNode) => {
+                focusOnNode('my-node-id', 'calc');
                 // We need to check who has the focus
-                console.log('focus after', doc.activeElement);
-                //done();
-            }), {node_represented:'my-node-id'});
-            patch(toVNode(document.querySelector('#calc')), cellWithHook);
+                expect(doc.activeElement.tagName).to.equals('INPUT');
+                expect(doc.activeElement.className).to.equals('fixed represent-node');
+                expect(doc.activeElement.dataset.node_represented).to.eql('my-node-id');
+                done();
+            }), {node_represented:'my-node-id'}), 'represent-node');
+            let container = h('div#calc', {}, [cellWithHook]);
+            patch(toVNode(document.querySelector('#calc')), container);
         });
     });
 

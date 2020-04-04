@@ -198,7 +198,9 @@ export function separate(original: any[], separatorGenerator?: any): any[] {
  */
 export function focusOnNode(nodeIdStr: string, rootName: string) {
   const domRoot = $('#' + rootName);
-  console.log('DOM ROOT', domRoot);
+  if (domRoot.length == 0) {
+    throw new Error(`Root with ID ${rootName} not found`);
+  }
   const found = domRoot.find('.represent-node').filter(function () {
     return $(this).data('node_represented') == nodeIdStr;
   });
@@ -209,8 +211,6 @@ export function focusOnNode(nodeIdStr: string, rootName: string) {
     console.warn('more than one representation of node to focus ofound', nodeIdStr);
   }
   const firstNodeFound = found[0];
-  // @ts-ignore
-  window.fnf = firstNodeFound;
   focusOnFirstInputOf(firstNodeFound);
 }
 
