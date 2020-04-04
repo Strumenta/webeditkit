@@ -7,7 +7,7 @@ import {
     addId,
     addInsertHook,
     alternativesProviderForAddingChild, AutocompleteAlternative,
-    flattenArray, installAutocomplete,
+    flattenArray, handleSelfDeletion, installAutocomplete,
     separate,
     setDataset, SuggestionsReceiver
 } from "../src/cells/support";
@@ -467,6 +467,90 @@ describe('Cells.Support', () => {
                 pressChar("x", 88);
 
             });
+
+            let container = h('div#calc', {}, [cellWithHook]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+    });
+
+    describe('should support handleSelfDeletion', () => {
+        it('it should handle marking with deleting class', (done) => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery')(dom.window);
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            //installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            let cell =  fixedCell(aNode, 'myFixedCell');
+            let cellWithHook = addClass(addInsertHook(cell, (myNode:VNode) => {
+                // @ts-ignore
+                expect(myNode.elm.className).to.eql("fixed represent-node");
+                handleSelfDeletion(myNode.elm, aNode);
+                // @ts-ignore
+                expect(myNode.elm.className).to.eql("fixed represent-node deleting");
+                done();
+            }), 'represent-node');
+
+            let container = h('div#calc', {}, [cellWithHook]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+    });
+
+    describe('should support handleSelfDeletion', () => {
+        it('it should handle triggering deleteMe', (done) => {
+            let received = 0;
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"deleteNode","modelName":"my.qualified.model", "node": "324292001770075100"});
+                        mockServer.close();
+                        done();
+                    }  else if (received == 1) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                        // actually the test will be finished at this point...
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery')(dom.window);
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            //installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+            let cell =  fixedCell(aNode, 'myFixedCell');
+            let cellWithHook = addClass(addInsertHook(cell, (myNode:VNode) => {
+                // @ts-ignore
+                expect(myNode.elm.className).to.eql("fixed represent-node");
+                handleSelfDeletion(myNode.elm, aNode);
+                handleSelfDeletion(myNode.elm, aNode);
+                // @ts-ignore
+                expect(myNode.elm.className).to.eql("fixed represent-node deleting");
+                //done();
+            }), 'represent-node');
 
             let container = h('div#calc', {}, [cellWithHook]);
             patch(toVNode(document.querySelector('#calc')), container);
