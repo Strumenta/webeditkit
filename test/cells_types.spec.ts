@@ -300,8 +300,15 @@ describe('Cells.Types', () => {
             const doc = dom.window.document;
             // @ts-ignore
             global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery')(dom.window);
+            try {
+                // @ts-ignore
+                global.$ = require('jquery');
+                // @ts-ignore
+                global.$("a");
+            } catch (e) {
+                // @ts-ignore
+                global.$ = require('jquery')(dom.window);
+            }
             // @ts-ignore
             global.document = doc;
             // @ts-ignore
@@ -411,6 +418,154 @@ describe('Cells.Types', () => {
             const aNode = dataToNode(rootData1);
             const cell = editableCell(aNode, 'name');
             expect(toHTML(cell)).to.eql('<input class="editable" value="My calculations" placeholder="&lt;no name&gt;" required="true">');
+        });
+        it('it should react to ArrowRight', () => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery');
+            try {
+                $("a");
+            } catch {
+                // @ts-ignore
+                global.$ = require('jquery')(dom.window);
+            }
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = editableCell(aNode, 'name');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+                // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'ArrowRight',
+                    key: 'ArrowRight',
+                    charKode: 39,
+                    keyCode: 39,})); // x
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'ArrowRight',
+                    key: 'ArrowRight',
+                    charKode: 39,
+                    keyCode: 39,})); // x
+                expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+        it('it should react to ArrowLeft with selection at start', () => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery');
+            try {
+                $("a");
+            } catch {
+                // @ts-ignore
+                global.$ = require('jquery')(dom.window);
+            }
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = editableCell(aNode, 'name');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 0;
+                myInput.selectionEnd = 0;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+                // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'ArrowLeft',
+                    key: 'ArrowLeft',
+                    charKode: 37,
+                    keyCode: 37,})); // x
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'ArrowLeft',
+                    key: 'ArrowLeft',
+                    charKode: 37,
+                    keyCode: 37,})); // x
+                expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+        it('it should react to ArrowLeft with selection not at start', () => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery');
+            try {
+                $("a");
+            } catch {
+                // @ts-ignore
+                global.$ = require('jquery')(dom.window);
+            }
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = editableCell(aNode, 'name');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 1;
+                myInput.selectionEnd = 1;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+                // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'ArrowLeft',
+                    key: 'ArrowLeft',
+                    charKode: 37,
+                    keyCode: 37,})); // x
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'ArrowLeft',
+                    key: 'ArrowLeft',
+                    charKode: 37,
+                    keyCode: 37,})); // x
+                expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
         });
     });
 

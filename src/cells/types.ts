@@ -155,6 +155,9 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
           return false;
         },
         keyup: (e: KeyboardEvent) => {
+          if (e.key == 'ArrowRight' || e.key == 'ArrowLeft') {
+            return;
+          }
           ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val() as string);
         },
       },
