@@ -5,7 +5,7 @@ import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
-import {fixedCell, referenceCell, row} from "../src/cells";
+import {childCell, fixedCell, referenceCell, row} from "../src/cells";
 import {flattenArray} from "../src/cells/support";
 
 const jsdom = require("jsdom");
@@ -176,6 +176,14 @@ describe('Cells.Types', () => {
         it('for complex values', () => {
             expect(flattenArray([1, 2, [3, [4, 5], 6], 7])).to.eql([1, 2, 3, 4, 5, 6, 7]);
         });
+    });
+
+    describe('should support child cell', () => {
+        it('it should be rendered in a certain way', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = childCell(aNode.childrenByLinkName('inputs')[0], 'type');
+            expect(toHTML(cell)).to.eql('<input class="fixed default-cell-concrete represent-node" value="[default BooleanType]">');
+        })
     });
 
 });
