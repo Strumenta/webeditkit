@@ -11,13 +11,14 @@ import {
   separate,
   triggerResize,
   map,
-  focusOnNode, SuggestionsReceiver,
+  focusOnNode,
+  SuggestionsReceiver,
 } from './support';
 import { ModelNode, NodeId, nodeIdToString } from '../datamodel';
 import { renderModelNode } from '../renderer';
-import {VNode} from "snabbdom/vnode";
+import { VNode } from 'snabbdom/vnode';
 
-export function childCell(modelNode: ModelNode, containmentName: string) : VNode  {
+export function childCell(modelNode: ModelNode, containmentName: string): VNode {
   const child = modelNode.childByLinkName(containmentName);
   if (child == null) {
     // @ts-ignore
@@ -31,7 +32,11 @@ export function childCell(modelNode: ModelNode, containmentName: string) : VNode
   return renderModelNode(child);
 }
 
-export function verticalCollectionCell(modelNode: ModelNode, containmentName: string, wrapInRows: boolean = true) : VNode  {
+export function verticalCollectionCell(
+  modelNode: ModelNode,
+  containmentName: string,
+  wrapInRows: boolean = true,
+): VNode {
   const ws = getWsCommunication(modelNode.modelName());
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
@@ -69,7 +74,11 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
   }
 }
 
-export function horizontalCollectionCell(modelNode: ModelNode, containmentName: string, separatorGenerator?: any) : VNode  {
+export function horizontalCollectionCell(
+  modelNode: ModelNode,
+  containmentName: string,
+  separatorGenerator?: any,
+): VNode {
   const ws = getWsCommunication(modelNode.modelName());
   const addChild = () => {
     ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
@@ -91,7 +100,7 @@ export function horizontalCollectionCell(modelNode: ModelNode, containmentName: 
       separate(
         map(modelNode.childrenByLinkName(containmentName), (el: any) => {
           if (el == null) {
-            throw new Error('null value receiving while mapping on childrenByLinkName(' + containmentName + ')')
+            throw new Error('null value receiving while mapping on childrenByLinkName(' + containmentName + ')');
           }
           return renderModelNode(el);
         }),
@@ -103,7 +112,7 @@ export function horizontalCollectionCell(modelNode: ModelNode, containmentName: 
 
 type FlattableNode = VNode | FlattableNode[];
 
-export function horizontalGroupCell(...elements: FlattableNode[]) : VNode {
+export function horizontalGroupCell(...elements: FlattableNode[]): VNode {
   return h('div.horizontal-group', {}, flattenArray(elements));
 }
 
@@ -116,7 +125,7 @@ export function verticalGroupCell(...elements: FlattableNode[]): VNode {
  * @param propertyName
  * @param extraClasses deprecated, use addClass instead
  */
-export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[] = []) : VNode {
+export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[] = []): VNode {
   if (modelNode == null) {
     throw new Error('modelNode should not be null');
   }
@@ -173,7 +182,7 @@ export function fixedCell(
   alternativesProvider?: any,
   deleter?: () => void,
   onEnter?: () => void,
-) : VNode {
+): VNode {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
@@ -247,7 +256,7 @@ export function referenceCell(
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
   deleter?: any,
-) : VNode {
+): VNode {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
@@ -291,14 +300,14 @@ export function referenceCell(
   );
 }
 
-export function row(...elements: FlattableNode[]) : VNode {
+export function row(...elements: FlattableNode[]): VNode {
   return h('div.row', {}, flattenArray(arguments));
 }
 
-export function emptyRow() : VNode {
+export function emptyRow(): VNode {
   return row();
 }
 
-export function tabCell() : VNode {
+export function tabCell(): VNode {
   return h('div.tab', {}, []);
 }

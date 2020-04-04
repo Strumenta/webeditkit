@@ -59,8 +59,8 @@ export function loadDataModel(baseUrl: string, model: string, nodeId: string, ta
     setDatamodelRoot(target, root);
 
     renderDataModels();
-  }).fail(()=>{
-    throw new Error("Failed to load data model, using URL " + nodeURL);
+  }).fail(() => {
+    throw new Error('Failed to load data model, using URL ' + nodeURL);
   });
 }
 

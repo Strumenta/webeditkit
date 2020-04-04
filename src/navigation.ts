@@ -38,7 +38,7 @@ export function moveUp(t) {
 
 export function moveDown(t) {}
 
-export function moveToNextElement(t) : boolean {
+export function moveToNextElement(t): boolean {
   let next = $(t).next();
   if (next.length === 0) {
     const parent = $(t).parent();
@@ -69,7 +69,7 @@ export function moveToNextElement(t) : boolean {
   } while (true);
 }
 
-export function moveToPrevElement(t) : boolean {
+export function moveToPrevElement(t): boolean {
   let elConsidered = $(t).prev();
 
   do {
@@ -107,14 +107,14 @@ function findPrev(n) {
   }
 }
 
-export function isAtEnd(element: any) : boolean {
+export function isAtEnd(element: any): boolean {
   const cursorPos = element.selectionStart;
   // @ts-ignore
   const length = $(element).val().length;
   return cursorPos === length;
 }
 
-export function isAtStart(element: any) : boolean {
+export function isAtStart(element: any): boolean {
   const cursorPos = element.selectionStart;
   return cursorPos === 0;
 }

@@ -6,7 +6,7 @@ import {
   PropertyType,
   dataToNode,
   nodeIdToString,
-  Ref
+  Ref,
 } from './datamodel';
 import { renderDataModels } from './webeditkit';
 
@@ -109,14 +109,14 @@ export class WsCommunication {
     this.ws.send(JSON.stringify(data));
   }
 
-  private registerForChangesInModel(modelName: string) : void {
+  private registerForChangesInModel(modelName: string): void {
     this.sendJSON({
       type: 'registerForChanges',
       modelName,
     });
   }
 
-  instantiate(conceptName: string, nodeToReplace: ModelNode) : void {
+  instantiate(conceptName: string, nodeToReplace: ModelNode): void {
     this.sendJSON({
       type: 'instantiateConcept',
       modelName: nodeToReplace.modelName(),
@@ -125,7 +125,12 @@ export class WsCommunication {
     });
   }
 
-  triggerDefaultInsertion(container, containmentName, reactorToInsertion: (addedNodeID: NodeId) => void, uuid: string = uuidv4()) : void {
+  triggerDefaultInsertion(
+    container,
+    containmentName,
+    reactorToInsertion: (addedNodeID: NodeId) => void,
+    uuid: string = uuidv4(),
+  ): void {
     this.callbacks[uuid] = reactorToInsertion;
     this.sendJSON({
       type: 'defaultInsertion',
@@ -136,13 +141,13 @@ export class WsCommunication {
     });
   }
 
-  addChild(container: ModelNode, containmentName: string, conceptName: string) : void {
+  addChild(container: ModelNode, containmentName: string, conceptName: string): void {
     this.addChildAtIndex(container, containmentName, -1, conceptName);
   }
 
-  addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string) : void {
+  addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string): void {
     if (index < -1) {
-      throw new Error("Index should -1 to indicate to add at the end, or a value >= 0")
+      throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
     }
     this.sendJSON({
       type: 'addChild',
@@ -154,7 +159,7 @@ export class WsCommunication {
     });
   }
 
-  setRef(container: ModelNode, referenceName: string, ref: Ref) : void {
+  setRef(container: ModelNode, referenceName: string, ref: Ref): void {
     this.sendJSON({
       type: 'setRef',
       modelName: container.modelName(),
@@ -162,12 +167,12 @@ export class WsCommunication {
       referenceName,
       referenceValue: {
         model: ref.data.model.qualifiedName,
-        id: ref.data.id.regularId
-      }
-    })
+        id: ref.data.id.regularId,
+      },
+    });
   }
 
-  insertNextSibling(sibling: ModelNode) : void {
+  insertNextSibling(sibling: ModelNode): void {
     this.sendJSON({
       type: 'insertNextSibling',
       modelName: sibling.modelName(),
@@ -175,7 +180,7 @@ export class WsCommunication {
     });
   }
 
-  setChild(container: ModelNode, containmentName: string, conceptName: string) : void {
+  setChild(container: ModelNode, containmentName: string, conceptName: string): void {
     this.sendJSON({
       type: 'setChild',
       modelName: container.modelName(),
@@ -185,7 +190,7 @@ export class WsCommunication {
     });
   }
 
-  deleteNode(node: ModelNode) : void {
+  deleteNode(node: ModelNode): void {
     this.sendJSON({
       type: 'deleteNode',
       modelName: node.modelName(),
@@ -193,7 +198,7 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyType) : void {
+  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyType): void {
     this.sendJSON({
       type: 'propertyChange',
       nodeId: modelNode.idString(),
@@ -204,7 +209,12 @@ export class WsCommunication {
   }
 
   // Get alternative concepts usable
-  askAlternatives(modelNode: ModelNode, containmentName: string, alternativesReceiver: (Alternatives) => void, uuid: string = uuidv4()) : void {
+  askAlternatives(
+    modelNode: ModelNode,
+    containmentName: string,
+    alternativesReceiver: (Alternatives) => void,
+    uuid: string = uuidv4(),
+  ): void {
     // we generate a UUID and ask the server to answer us using such UUID
     this.callbacks[uuid] = alternativesReceiver;
     this.sendJSON({
@@ -217,7 +227,12 @@ export class WsCommunication {
   }
 
   // Get alternatives nodes that can be references
-  askAlternativesForDirectReference(modelNode: ModelNode, referenceName: string, alternativesReceiver: (AlternativesForDirectReference) => void, uuid: string = uuidv4()) : void {
+  askAlternativesForDirectReference(
+    modelNode: ModelNode,
+    referenceName: string,
+    alternativesReceiver: (AlternativesForDirectReference) => void,
+    uuid: string = uuidv4(),
+  ): void {
     this.callbacks[uuid] = alternativesReceiver;
     this.sendJSON({
       type: 'requestForDirectReferences',
@@ -231,7 +246,7 @@ export class WsCommunication {
 
 const instances = {};
 
-export function getWsCommunication(modelName: string) : WsCommunication {
+export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];
 }
 

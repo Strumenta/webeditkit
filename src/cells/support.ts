@@ -20,7 +20,7 @@ export function alternativesProviderForAddingChild(
   modelNode: ModelNode,
   containmentName: string,
   replacing: boolean = false,
-) : SuggestionsReceiverFactory {
+): SuggestionsReceiverFactory {
   if (modelNode == null) {
     throw new Error('modelNode should not be null');
   }
@@ -54,7 +54,7 @@ export function alternativesProviderForAddingChild(
 
 export interface AutocompleteAlternative {
   label: string;
-  execute: ()=>void;
+  execute: () => void;
 }
 
 export type SuggestionsReceiver = (suggestions: AutocompleteAlternative[]) => void;
@@ -105,7 +105,7 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
   const parents = $(element).parents();
 
   // First find the collection containing this node
-  const collectionIndex = Array.from(parents).findIndex(e => $(e).hasClass('represent-collection'));
+  const collectionIndex = Array.from(parents).findIndex((e) => $(e).hasClass('represent-collection'));
   const parentsToConsider = Array.from(parents).slice(0, collectionIndex);
   const nodesToConsider = $(parentsToConsider).filter(function () {
     return $(this).hasClass('represent-node');
@@ -117,23 +117,22 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
   sibling.insertNextSibling();
 }
 
-export function addAutoresize(vnode: VNode) : void {
+export function addAutoresize(vnode: VNode): void {
   // @ts-ignore
   $(vnode.elm).autoresize(myAutoresizeOptions);
 }
 
-export function triggerResize(vnode: VNode) : void {
+export function triggerResize(vnode: VNode): void {
   // @ts-ignore
   $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
 }
 
-
-export function flattenArray(value: any) : any[] {
-  const originalArray : any[] = Array.from(value);
+export function flattenArray(value: any): any[] {
+  const originalArray: any[] = Array.from(value);
   return flatten(originalArray);
 }
 
-const flatten = function(arr: any[], result: any[] = []) : any[] {
+const flatten = function (arr: any[], result: any[] = []): any[] {
   for (let i = 0, length = arr.length; i < length; i++) {
     const value = arr[i];
     if (Array.isArray(value)) {
@@ -189,7 +188,7 @@ export function addId(vnode: VNode, myId: string): VNode {
   return vnode;
 }
 
-export function map(originalArray: any, op: (el:any)=>any): VNodeChildElement[] {
+export function map(originalArray: any, op: (el: any) => any): VNodeChildElement[] {
   return originalArray.map(op);
 }
 

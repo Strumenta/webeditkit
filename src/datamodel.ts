@@ -7,11 +7,11 @@ const datamodelClasses = {};
 
 let defaultBaseUrl = undefined;
 
-export function setDefaultBaseUrl(value: string) : void {
+export function setDefaultBaseUrl(value: string): void {
   defaultBaseUrl = value;
 }
 
-export function getDefaultBaseUrl() : string | undefined {
+export function getDefaultBaseUrl(): string | undefined {
   return defaultBaseUrl;
 }
 
@@ -93,7 +93,9 @@ export class Ref {
   loadData(cb) {
     let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
     if (baseUrl == null) {
-      throw new Error('No base url specified for model ' + this.data.model.qualifiedName + ' and no default base url available');
+      throw new Error(
+        'No base url specified for model ' + this.data.model.qualifiedName + ' and no default base url available',
+      );
     }
     if (!baseUrl.startsWith('http://')) {
       baseUrl = 'http://' + baseUrl;
@@ -126,11 +128,11 @@ export class ModelNode {
     }
   }
 
-  hasChild(linkName: string) : boolean {
+  hasChild(linkName: string): boolean {
     return this.childByLinkName(linkName) != null;
   }
 
-  setChild(linkName: string, child: ModelNode) : void {
+  setChild(linkName: string, child: ModelNode): void {
     if (this.hasChild(linkName)) {
       this.removeChild(linkName, child.data);
     }
@@ -150,7 +152,7 @@ export class ModelNode {
     return value || undefined;
   }
 
-  setRef(referenceName: string, ref: Ref) : void {
+  setRef(referenceName: string, ref: Ref): void {
     this.ws().setRef(this, referenceName, ref);
   }
 
@@ -298,7 +300,7 @@ export class ModelNode {
     return this.data.containingLink == null;
   }
 
-  setProperty(propertyName: string, propertyValue: PropertyType) : void {
+  setProperty(propertyName: string, propertyValue: PropertyType): void {
     this.data.properties[propertyName] = propertyValue;
   }
 }
@@ -307,11 +309,13 @@ export class ModelNode {
 /// DataModel roots
 ///
 
-export function clearDatamodelRoots() : void {
-  Object.keys(datamodelRoots).forEach(function(key) { delete datamodelRoots[key]; });
+export function clearDatamodelRoots(): void {
+  Object.keys(datamodelRoots).forEach(function (key) {
+    delete datamodelRoots[key];
+  });
 }
 
-export function setDatamodelRoot(name: string, root: ModelNode) : void {
+export function setDatamodelRoot(name: string, root: ModelNode): void {
   datamodelRoots[name] = root;
 }
 
@@ -330,6 +334,6 @@ export function forEachDataModel(op) {
 /// Node navigation
 ///
 
-export function findNode(localModelName, nodeId) : ModelNode | null {
+export function findNode(localModelName, nodeId): ModelNode | null {
   return getDatamodelRoot(localModelName).findNodeById(nodeId);
 }

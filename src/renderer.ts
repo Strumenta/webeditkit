@@ -1,28 +1,30 @@
 import { fixedCell } from './cells';
 import { alternativesProviderForAbstractConcept, addClass, addToDataset } from './cells';
 import { setKey } from './cells/support';
-import {ModelNode} from "./datamodel";
-import {VNode} from "snabbdom/vnode";
+import { ModelNode } from './datamodel';
+import { VNode } from 'snabbdom/vnode';
 
-const renderersByName : {[key:string]: Renderer}= {};
+const renderersByName: { [key: string]: Renderer } = {};
 
-type Renderer = (modelNode:ModelNode) => VNode;
+type Renderer = (modelNode: ModelNode) => VNode;
 
-export function clearRendererRegistry() : void {
-  Object.keys(renderersByName).forEach(function(key) { delete renderersByName[key]; });
+export function clearRendererRegistry(): void {
+  Object.keys(renderersByName).forEach(function (key) {
+    delete renderersByName[key];
+  });
 }
 
 export function registerRenderer(name: string, renderer: Renderer): void {
   renderersByName[name] = renderer;
 }
 
-export function getRegisteredRenderer(conceptName: string) : Renderer | undefined {
+export function getRegisteredRenderer(conceptName: string): Renderer | undefined {
   return renderersByName[conceptName];
 }
 
-export function renderModelNode(modelNode) : VNode {
+export function renderModelNode(modelNode): VNode {
   if (modelNode == null) {
-    throw new Error('renderModelNode invoked with null modelNode')
+    throw new Error('renderModelNode invoked with null modelNode');
   }
   return setKey(
     addToDataset(
@@ -34,7 +36,7 @@ export function renderModelNode(modelNode) : VNode {
   );
 }
 
-function getDefaultRenderer(modelNode) : Renderer {
+function getDefaultRenderer(modelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
   const conceptName = modelNode.simpleConceptName();
   return (dataModel) => {
@@ -46,7 +48,7 @@ function getDefaultRenderer(modelNode) : Renderer {
   };
 }
 
-function getRenderer(modelNode) : Renderer {
+function getRenderer(modelNode): Renderer {
   if (modelNode == null) {
     // it happens during node replacements
     return () => fixedCell(modelNode, 'null');
