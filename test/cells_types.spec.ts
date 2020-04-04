@@ -5,7 +5,7 @@ import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../
 import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
-import {childCell, fixedCell, referenceCell, row} from "../src/cells";
+import {childCell, fixedCell, referenceCell, row, verticalCollectionCell} from "../src/cells";
 import {flattenArray} from "../src/cells/support";
 
 const jsdom = require("jsdom");
@@ -178,12 +178,30 @@ describe('Cells.Types', () => {
         });
     });
 
-    describe('should support child cell', () => {
+    describe('should support childCell', () => {
         it('it should be rendered in a certain way', () => {
             const aNode = dataToNode(rootData1);
             const cell = childCell(aNode.childrenByLinkName('inputs')[0], 'type');
             expect(toHTML(cell)).to.eql('<input class="fixed default-cell-concrete represent-node" value="[default BooleanType]">');
         })
+    });
+
+    describe('should support verticalCollectionCell', () => {
+        it('it should be rendered in a certain way for not empty children wrapping in rows', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = verticalCollectionCell(aNode, 'inputs');
+            expect(toHTML(cell)).to.eql('<div class="vertical-collection represent-collection"><div class="row"><input class="fixed default-cell-concrete represent-node" value="[default Input]"></div><div class="row"><input class="fixed default-cell-concrete represent-node" value="[default Input]"></div></div>');
+        });
+        it('it should be rendered in a certain way for not empty children not wrapping in rows', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = verticalCollectionCell(aNode, 'inputs', false);
+            expect(toHTML(cell)).to.eql('<div class="vertical-collection represent-collection"><input class="fixed default-cell-concrete represent-node" value="[default Input]"><input class="fixed default-cell-concrete represent-node" value="[default Input]"></div>');
+        });
+        it('it should be rendered in a certain way for empty children', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = verticalCollectionCell(aNode, 'unexisting');
+            expect(toHTML(cell)).to.eql('<div class="vertical-collection represent-collection"><input class="fixed empty-collection" value="&lt;&lt; ... &gt;&gt;"></div>');
+        });
     });
 
 });
