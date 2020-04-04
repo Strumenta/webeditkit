@@ -301,7 +301,7 @@ describe('Cells.Types', () => {
             // @ts-ignore
             global.window = dom.window;
             // @ts-ignore
-            global.$ = require('jquery');//(dom.window);
+            global.$ = require('jquery')(dom.window);
             // @ts-ignore
             global.document = doc;
             // @ts-ignore
@@ -324,6 +324,7 @@ describe('Cells.Types', () => {
                         expect(dataj.modelName).to.eql('my.qualified.model');
                     } else if (received == 1) {
                         expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                        mockServer.close();
                         done();
                     } else {
                         throw new Error('Too many messages');
