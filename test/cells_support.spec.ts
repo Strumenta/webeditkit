@@ -282,8 +282,8 @@ describe('Cells.Support', () => {
     });
 
     describe('should support alternativesProviderForAddingChild', () => {
-        let received = 0;
-        it('it should invoke ws correctly', (done) => {
+        it('it should handle positive case', (done) => {
+            let received = 0;
             const fakeURL = 'ws://localhost:8080';
             const mockServer = new Server(fakeURL);
             mockServer.on('connection', socket => {
@@ -330,11 +330,34 @@ describe('Cells.Support', () => {
 
             });
         });
+        it('it should handle case in which modelNode is null', (done) => {
+            let received = 0;
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+            expect(() => {alternativesProviderForAddingChild(null, 'foo');}).to.throw('modelNode should not be null');
+            mockServer.close();
+            done();
+        });
     });
 
     describe('should support alternativesProviderForAbstractConcept', () => {
-        let received = 0;
-        it('it should invoke ws correctly', (done) => {
+        it('it should handle positive case', (done) => {
+            let received = 0;
             const fakeURL = 'ws://localhost:8080';
             const mockServer = new Server(fakeURL);
             mockServer.on('connection', socket => {
@@ -378,8 +401,30 @@ describe('Cells.Support', () => {
                 expect(suggestions[0].label).to.eql('alias1');
                 expect(suggestions[1].label).to.eql('alias2');
                 suggestions[0].execute();
-
             });
+        });
+        it('it should handle case with parent not set', (done) => {
+            let received = 0;
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+            expect(() => {alternativesProviderForAbstractConcept(aNode);}).to.throw('The given node has no parent');
+            mockServer.close();
+            done();
         });
     });
 
