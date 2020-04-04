@@ -98,12 +98,14 @@ export function horizontalCollectionCell(modelNode: ModelNode, containmentName: 
   }
 }
 
-export function horizontalGroupCell() : VNode {
-  return h('div.horizontal-group', {}, flattenArray(arguments));
+type FlattableNode = VNode | FlattableNode[];
+
+export function horizontalGroupCell(...elements: FlattableNode[]) : VNode {
+  return h('div.horizontal-group', {}, flattenArray(elements));
 }
 
-export function verticalGroupCell(): VNode {
-  return h('div.vertical-group', {}, flattenArray(arguments));
+export function verticalGroupCell(...elements: FlattableNode[]): VNode {
+  return h('div.vertical-group', {}, flattenArray(elements));
 }
 
 /**

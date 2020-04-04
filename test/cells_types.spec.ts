@@ -12,7 +12,7 @@ import {
     horizontalGroupCell,
     referenceCell,
     row,
-    verticalCollectionCell
+    verticalCollectionCell, verticalGroupCell
 } from "../src/cells";
 import {flattenArray} from "../src/cells/support";
 
@@ -231,9 +231,19 @@ describe('Cells.Types', () => {
             expect(toHTML(cell)).to.eql('<div class="horizontal-group"></div>');
         });
         it('it should be rendered in a certain way (not empty)', () => {
-            // @ts-ignore
             const cell = horizontalGroupCell(h('span', {}, ['a']), h('span', {}, ['b']));
             expect(toHTML(cell)).to.eql('<div class="horizontal-group"><span>a</span><span>b</span></div>');
+        });
+    });
+
+    describe('should support verticalGroupCell', () => {
+        it('it should be rendered in a certain way (empty)', () => {
+            const cell = verticalGroupCell();
+            expect(toHTML(cell)).to.eql('<div class="vertical-group"></div>');
+        });
+        it('it should be rendered in a certain way (not empty)', () => {
+            const cell = verticalGroupCell(h('span', {}, ['a']), h('span', {}, ['b']));
+            expect(toHTML(cell)).to.eql('<div class="vertical-group"><span>a</span><span>b</span></div>');
         });
     });
 
