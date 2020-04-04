@@ -147,6 +147,62 @@ const rootData1 = {
     "abstractConcept": false
 };
 
+const rootData2 = {
+    "children": [
+        {
+            "containingLink": "inputs",
+            "children": [
+            ],
+            "properties": {
+                "name": "a"
+            },
+            "refs": {},
+            "id": {
+                "regularId": "1848360241685547698"
+            },
+            "name": "a",
+            "concept": "com.strumenta.financialcalc.Input",
+            "abstractConcept": false
+        },
+        {
+            "containingLink": "inputs",
+            "children": [
+                {
+                    "containingLink": "type",
+                    "children": [],
+                    "properties": {},
+                    "refs": {},
+                    "id": {
+                        "regularId": "1848360241685547711"
+                    },
+                    "concept": "com.strumenta.financialcalc.StringType",
+                    "abstractConcept": false
+                }
+            ],
+            "properties": {
+                "name": "b"
+            },
+            "refs": {},
+            "id": {
+                "regularId": "1848360241685547705"
+            },
+            "name": "b",
+            "concept": "com.strumenta.financialcalc.Input",
+            "abstractConcept": false
+        }
+    ],
+    "properties": {
+        "name": "My calculations"
+    },
+    "refs": {},
+    "id": {
+        "regularId": "324292001770075100"
+    },
+    "name": "My calculations",
+    "concept": "com.strumenta.financialcalc.FinancialCalcSheet",
+    "abstractConcept": false
+};
+
 describe('Cells.Types', () => {
 
     describe('should support fixed cell', () => {
@@ -187,11 +243,16 @@ describe('Cells.Types', () => {
     });
 
     describe('should support childCell', () => {
-        it('it should be rendered in a certain way', () => {
+        it('it should be rendered in a certain way (child present)', () => {
             const aNode = dataToNode(rootData1);
             const cell = childCell(aNode.childrenByLinkName('inputs')[0], 'type');
             expect(toHTML(cell)).to.eql('<input class="fixed default-cell-concrete represent-node" value="[default BooleanType]">');
-        })
+        });
+        it('it should be rendered in a certain way (child not present)', () => {
+            const aNode = dataToNode(rootData2);
+            const cell = childCell(aNode.childrenByLinkName('inputs')[0], 'type');
+            expect(toHTML(cell)).to.eql('<input class="fixed missing-element" value="&lt;no type&gt;">');
+        });
     });
 
     describe('should support verticalCollectionCell', () => {
