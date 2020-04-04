@@ -6,7 +6,7 @@ import {VNode} from "snabbdom/vnode";
 import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
 import {
-    childCell, emptyRow,
+    childCell, editableCell, emptyRow,
     fixedCell,
     horizontalCollectionCell,
     horizontalGroupCell,
@@ -258,6 +258,14 @@ describe('Cells.Types', () => {
         it('it should be rendered in a certain way', () => {
             const cell = tabCell();
             expect(toHTML(cell)).to.eql('<div class="tab"></div>');
+        });
+    });
+
+    describe('should support editableCell', () => {
+        it('it should be rendered in a certain way', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = editableCell(aNode, 'name');
+            expect(toHTML(cell)).to.eql('<input class="editable" value="My calculations" placeholder="&lt;no name&gt;" required="true">');
         });
     });
 
