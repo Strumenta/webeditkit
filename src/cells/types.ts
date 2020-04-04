@@ -44,6 +44,9 @@ export function verticalCollectionCell(modelNode: ModelNode, containmentName: st
         alternativesProviderForAddingChild(modelNode, containmentName),
         null,
         () => {
+          if (ws == null) {
+            throw new Error('no communication through web socket available');
+          }
           ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
             const nodeIdStr = nodeIdToString(addedNodeID);
             focusOnNode(nodeIdStr, modelNode.rootName());

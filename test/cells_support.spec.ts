@@ -13,7 +13,6 @@ import {
 } from "../src/cells/support";
 
 import { WebSocket, Server } from 'mock-socket';
-import $ from 'jquery-jsdom';
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;

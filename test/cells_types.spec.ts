@@ -3,7 +3,6 @@ import { expect } from 'chai';
 import 'mocha';
 import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../src/renderer";
 import {VNode} from "snabbdom/vnode";
-import {h} from "snabbdom";
 import {registerRenderer} from "../src/renderer";
 import {
     childCell, editableCell, emptyRow,
@@ -14,19 +13,44 @@ import {
     row, tabCell,
     verticalCollectionCell, verticalGroupCell
 } from "../src/cells";
-import {flattenArray} from "../src/cells/support";
+import {addInsertHook, flattenArray} from "../src/cells/support";
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-var init = require('snabbdom-to-html/init')
+var toHtmlInit = require('snabbdom-to-html/init')
 var modules = require('snabbdom-to-html/modules/index')
-var toHTML = init([
+var toHTML = toHtmlInit([
     modules.class,
     modules.props,
     modules.attributes,
     modules.style
-])
+]);
+
+import { init } from 'snabbdom/snabbdom';
+
+import h from 'snabbdom/h'; // helper function for creating vnodes
+
+import toVNode from 'snabbdom/tovnode';
+
+import * as sclass from 'snabbdom/modules/class';
+import * as sprops from 'snabbdom/modules/props';
+import * as sstyle from 'snabbdom/modules/style';
+import * as seventlisteners from 'snabbdom/modules/eventlisteners';
+import * as sdataset from 'snabbdom/modules/dataset';
+import {focusOnNode} from "../src/cells/support";
+import {installAutoresize} from "../src/uiutils";
+import {createInstance} from "../src/wscommunication";
+import {Server, WebSocket} from "mock-socket";
+
+const patch = init([
+    // Init patch function with chosen modules
+    sclass.default, // makes it easy to toggle classes
+    sprops.default, // for setting properties on DOM elements
+    sstyle.default, // handles styling on elements with support for animations
+    seventlisteners.default, // attaches event listeners
+    sdataset.default,
+]);
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -270,6 +294,65 @@ describe('Cells.Types', () => {
             const aNode = dataToNode(rootData1);
             const cell = verticalCollectionCell(aNode, 'unexisting');
             expect(toHTML(cell)).to.eql('<div class="vertical-collection represent-collection"><input class="fixed empty-collection" value="&lt;&lt; ... &gt;&gt;"></div>');
+        });
+        it('when empty it should react to enter in a certain way', (done) => {
+            const dom = new JSDOM(html1);
+            const doc = dom.window.document;
+            // @ts-ignore
+            global.window = dom.window;
+            // @ts-ignore
+            global.$ = require('jquery');//(dom.window);
+            // @ts-ignore
+            global.document = doc;
+            // @ts-ignore
+            global.navigator = {'userAgent': 'fake browser'};
+            installAutoresize();
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            let received = 0;
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        const dataj = JSON.parse(data as string);
+                        expect(dataj.type).to.eql('defaultInsertion');
+                        expect(dataj.containmentName).to.eql('unexisting');
+                        expect(dataj.container).to.eql('324292001770075100');
+                        expect(dataj.modelName).to.eql('my.qualified.model');
+                    } else if (received == 1) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                        done();
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+
+            const cell = verticalCollectionCell(aNode, 'unexisting');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm.firstChild;
+                expect(myInput.tagName).to.eql('INPUT');
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'Enter',
+                    key: 'Enter',
+                    charKode: 13,
+                    keyCode: 13,})); // x
+                // @ts-ignore
+                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'Enter',
+                    key: 'Enter',
+                    charKode: 13,
+                    keyCode: 13,})); // x
+            });
+
+            let container = h('div#calc', {}, [cellWithHook]);
+            patch(toVNode(document.querySelector('#calc')), container);
         });
     });
 
