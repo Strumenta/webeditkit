@@ -445,6 +445,14 @@ describe('Cells.Support', () => {
             let cell =  h('input', {}, []);
             let cellWithHook = addInsertHook(cell, (myNode:VNode) => {
                 installAutocomplete(myNode, (suggestionsReceiver: SuggestionsReceiver) => {
+                    suggestionsReceiver([
+                        {
+                            label: 'xyz',
+                            execute: () => {
+                                console.log('executing');
+                            }
+                        }
+                    ]);
                     done();
                 },true);
                 // @ts-ignore
