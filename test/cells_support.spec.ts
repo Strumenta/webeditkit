@@ -3,13 +3,26 @@ import { expect } from 'chai';
 import 'mocha';
 import {VNode} from "snabbdom/vnode";
 import {addClass, fixedCell, map, referenceCell, row} from "../src/cells";
-import {addId, addInsertHook, flattenArray, separate, setDataset} from "../src/cells/support";
+import {
+    addId,
+    addInsertHook,
+    alternativesProviderForAddingChild, AutocompleteAlternative,
+    flattenArray,
+    separate,
+    setDataset, SuggestionsReceiver
+} from "../src/cells/support";
+
+import { WebSocket, Server } from 'mock-socket';
 
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-var init2html = require('snabbdom-to-html/init')
-var modules = require('snabbdom-to-html/modules/index')
+var sinon = require('sinon');
+
+const wscommunication = require("../src/wscommunication");
+
+var init2html = require('snabbdom-to-html/init');
+var modules = require('snabbdom-to-html/modules/index');
 var toHTML = init2html([
     modules.class,
     modules.props,
@@ -29,8 +42,9 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import {focusOnNode} from "../dist/cells/support";
+import {focusOnNode} from "../src/cells/support";
 import {installAutoresize} from "../src/uiutils";
+import {createInstance} from "../src/wscommunication";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -264,6 +278,57 @@ describe('Cells.Support', () => {
             }), {node_represented:'my-node-id'}), 'represent-node');
             let container = h('div#calc', {}, [cellWithHook]);
             patch(toVNode(document.querySelector('#calc')), container);
+        });
+    });
+
+    describe('should support alternativesProviderForAddingChild', () => {
+        let received = 0;
+        it('it should invoke ws correctly', (done) => {
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        const dataj = JSON.parse(data as string);
+                        expect(dataj.type).to.eql('askAlternatives');
+                        expect(dataj.containmentName).to.eql('foo');
+                        expect(dataj.nodeId).to.eql('324292001770075100');
+                        expect(dataj.modelName).to.eql('my.qualified.model');
+                        const requestId = dataj.requestId;
+
+                        socket.send(JSON.stringify({
+                            type: 'AnswerAlternatives',
+                            requestId: requestId,
+                            items: [
+                                {alias:'alias1', conceptName:'foo.bar.concept1'},
+                                {alias:'alias2', conceptName:'foo.bar.concept2'}
+                                ]
+                        }));
+                    } else if (received == 1) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                    } else if (received == 2) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"addChild","index":-1,"modelName":"my.qualified.model","container":"324292001770075100","containmentName":"foo","conceptToInstantiate":"foo.bar.concept1"});
+                        mockServer.close();
+                        done();
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+            const suggestionsReceiverFactory = alternativesProviderForAddingChild(aNode, 'foo');
+            suggestionsReceiverFactory((suggestions: AutocompleteAlternative[]) : void => {
+               expect(suggestions.length).to.equals(2);
+                expect(suggestions[0].label).to.eql('alias1');
+                expect(suggestions[1].label).to.eql('alias2');
+                suggestions[0].execute();
+
+            });
         });
     });
 

@@ -19,7 +19,14 @@ export function alternativesProviderForAddingChild(
 ) : SuggestionsReceiverFactory {
   // we should get all the alternatives from the server
   return (suggestionsReceiver: SuggestionsReceiver) => {
-    const ws = getWsCommunication(modelNode.modelName());
+    const modelName = modelNode.modelName();
+    if (modelName == null) {
+      throw new Error('The received node has not model name');
+    }
+    const ws = getWsCommunication(modelName);
+    if (ws == null) {
+      throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
+    }
     ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
       const adder = (conceptName: string) => () => {
         if (replacing) {
