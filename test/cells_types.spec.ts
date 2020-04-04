@@ -1,9 +1,7 @@
-import {dataToNode, ModelNode} from '../src/datamodel';
+import {dataToNode, NodeData} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {clearRendererRegistry, getRegisteredRenderer, renderModelNode} from "../src/renderer";
 import {VNode} from "snabbdom/vnode";
-import {registerRenderer} from "../src/renderer";
 import {
     childCell, editableCell, emptyRow,
     fixedCell,
@@ -18,8 +16,8 @@ import {addInsertHook, flattenArray} from "../src/cells/support";
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-var toHtmlInit = require('snabbdom-to-html/init')
-var modules = require('snabbdom-to-html/modules/index')
+var toHtmlInit = require('snabbdom-to-html/init');
+var modules = require('snabbdom-to-html/modules/index');
 var toHTML = toHtmlInit([
     modules.class,
     modules.props,
@@ -38,7 +36,6 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import {focusOnNode} from "../src/cells/support";
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
 import {Server, WebSocket} from "mock-socket";
@@ -227,6 +224,67 @@ const rootData2 = {
     "abstractConcept": false
 };
 
+const rootData3 : NodeData = {
+    "children": [
+        {
+            "containingLink": "inputs",
+            "children": [
+            ],
+            "properties": {
+                "name": "a"
+            },
+            "refs": {},
+            "id": {
+                "regularId": "1848360241685547698"
+            },
+            //"name": "a",
+            "concept": "com.strumenta.financialcalc.Input",
+            "abstractConcept": false
+        },
+        {
+            "containingLink": "inputs",
+            "children": [
+                {
+                    "containingLink": "type",
+                    "children": [],
+                    "properties": {},
+                    "refs": {'myref':{
+                        model: {
+                            qualifiedName: 'my.qualified.model'
+                        },
+                            id: {
+                                regularId: '123-foo'
+                            }
+                        }},
+                    "id": {
+                        "regularId": "1848360241685547711"
+                    },
+                    "concept": "com.strumenta.financialcalc.StringType",
+                    "abstractConcept": false
+                }
+            ],
+            "properties": {
+                "name": "b"
+            },
+            "refs": {},
+            "id": {
+                "regularId": "1848360241685547705"
+            },
+            "concept": "com.strumenta.financialcalc.Input",
+            "abstractConcept": false
+        }
+    ],
+    "properties": {
+        "name": "My calculations"
+    },
+    "refs": {},
+    "id": {
+        "regularId": "324292001770075100"
+    },
+    "concept": "com.strumenta.financialcalc.FinancialCalcSheet",
+    "abstractConcept": false
+};
+
 function pressArrowLeft(element) {
     // @ts-ignore
     const w = global.window;
@@ -242,6 +300,26 @@ function pressArrowLeft(element) {
         key: 'ArrowLeft',
         charKode: 37,
         keyCode: 37,})); // x
+}
+
+function pressArrowRight(element) {
+    // @ts-ignore
+    const w = global.window;
+    // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keydown", {
+        code: 'ArrowRight',
+        key: 'ArrowRight',
+        charKode: 39,
+        keyCode: 39,
+    })); // x
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keyup", {
+        code: 'ArrowRight',
+        key: 'ArrowRight',
+        charKode: 39,
+        keyCode: 39,
+    })); // x
 }
 
 function prepareFakeDom(htmlCode) {
@@ -272,7 +350,57 @@ describe('Cells.Types', () => {
             const aNode = dataToNode(rootData1);
             const cell = fixedCell(aNode, 'My fixed test');
             expect(toHTML(cell)).to.eql('<input class="fixed" value="My fixed test">');
-        })
+        });
+        it('it should handle left arrow', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = fixedCell(aNode, 'My fixed cell');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 1;
+                myInput.selectionEnd = 1;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="fixed">');
+                pressArrowLeft(myInput);
+                expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
+                done();
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+        it('it should handle right arrow', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = fixedCell(aNode, 'My fixed cell');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 1;
+                myInput.selectionEnd = 1;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="fixed">');
+                pressArrowRight(myInput);
+                expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
+                done();
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
     });
 
     describe('should support reference cell', () => {
@@ -281,7 +409,76 @@ describe('Cells.Types', () => {
             const inputNode = rootNode.childrenByLinkName('inputs')[0];
             const cell = referenceCell(inputNode, 'type');
             expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no type&gt;">');
-        })
+        });
+        it('it should handle left arrow', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const inputNode = aNode.childrenByLinkName('inputs')[0];
+            const cell = referenceCell(inputNode, 'type');
+
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 1;
+                myInput.selectionEnd = 1;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference">');
+                pressArrowLeft(myInput);
+                expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
+                done();
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+        it('it should handle right arrow', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const inputNode = aNode.childrenByLinkName('inputs')[0];
+            const cell = referenceCell(inputNode, 'type');
+
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 1;
+                myInput.selectionEnd = 1;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference">');
+                pressArrowRight(myInput);
+                expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
+                done();
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('input.bef', {}, []),
+                cellWithHook,
+                h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+        // it('it should load value', (done) => {
+        //     const doc = prepareFakeDom(html1);
+        //
+        //     const aNode = dataToNode(rootData3);
+        //     aNode.injectModelName('my.qualified.model', 'calc');
+        //
+        //     const inputNode = aNode.childrenByLinkName('inputs')[1];
+        //     const cell = referenceCell(inputNode, 'myref');
+        //     expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no myref&gt;">');
+        //     let container = h('div#calc.editor', {}, [
+        //         h('input.bef', {}, []),
+        //         cell,
+        //         h('input.aft', {}, [])]);
+        //     patch(toVNode(document.querySelector('#calc')), container);
+        // });
     });
 
     describe('should support row cell', () => {
@@ -485,17 +682,7 @@ describe('Cells.Types', () => {
                 expect(myInput.tagName).to.eql('INPUT');
                 myInput.focus();
                 expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
-                // https://css-tricks.com/snippets/javascript/javascript-keycodes/
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'ArrowRight',
-                    key: 'ArrowRight',
-                    charKode: 39,
-                    keyCode: 39,})); // x
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'ArrowRight',
-                    key: 'ArrowRight',
-                    charKode: 39,
-                    keyCode: 39,})); // x
+                pressArrowRight(myInput);
                 expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
             });
 
