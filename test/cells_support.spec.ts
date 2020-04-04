@@ -2,7 +2,7 @@ import {dataToNode, ModelNode} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
 import {VNode} from "snabbdom/vnode";
-import {addClass, fixedCell, map, referenceCell, row} from "../src/cells";
+import {addClass, alternativesProviderForAbstractConcept, fixedCell, map, referenceCell, row} from "../src/cells";
 import {
     addId,
     addInsertHook,
@@ -324,6 +324,57 @@ describe('Cells.Support', () => {
             const suggestionsReceiverFactory = alternativesProviderForAddingChild(aNode, 'foo');
             suggestionsReceiverFactory((suggestions: AutocompleteAlternative[]) : void => {
                expect(suggestions.length).to.equals(2);
+                expect(suggestions[0].label).to.eql('alias1');
+                expect(suggestions[1].label).to.eql('alias2');
+                suggestions[0].execute();
+
+            });
+        });
+    });
+
+    describe('should support alternativesProviderForAbstractConcept', () => {
+        let received = 0;
+        it('it should invoke ws correctly', (done) => {
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        const dataj = JSON.parse(data as string);
+                        expect(dataj.type).to.eql('askAlternatives');
+                        expect(dataj.containmentName).to.eql('type');
+                        expect(dataj.nodeId).to.eql('1848360241685547698');
+                        expect(dataj.modelName).to.eql('my.qualified.model');
+                        const requestId = dataj.requestId;
+
+                        socket.send(JSON.stringify({
+                            type: 'AnswerAlternatives',
+                            requestId: requestId,
+                            items: [
+                                {alias:'alias1', conceptName:'foo.bar.concept1'},
+                                {alias:'alias2', conceptName:'foo.bar.concept2'}
+                            ]
+                        }));
+                    } else if (received == 1) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                    } else if (received == 2) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"setChild","modelName":"my.qualified.model","container":"1848360241685547698","containmentName":"type","conceptToInstantiate":"foo.bar.concept1"});
+                        mockServer.close();
+                        done();
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+            const suggestionsReceiverFactory = alternativesProviderForAbstractConcept(aNode.childrenByLinkName('inputs')[0].childByLinkName('type'));
+            suggestionsReceiverFactory((suggestions: AutocompleteAlternative[]) : void => {
+                expect(suggestions.length).to.equals(2);
                 expect(suggestions[0].label).to.eql('alias1');
                 expect(suggestions[1].label).to.eql('alias2');
                 suggestions[0].execute();

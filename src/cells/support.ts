@@ -7,7 +7,11 @@ import { VNodeChildElement } from 'snabbdom/h';
 const autocomplete = require('autocompleter');
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
-  return alternativesProviderForAddingChild(modelNode.parent(), modelNode.containmentName(), true);
+  const parent = modelNode.parent();
+  if (parent == null) {
+    throw new Error('The given node has no parent');
+  }
+  return alternativesProviderForAddingChild(parent, modelNode.containmentName(), true);
 }
 
 type SuggestionsReceiverFactory = (suggestionsReceiver: SuggestionsReceiver) => void;
@@ -17,6 +21,9 @@ export function alternativesProviderForAddingChild(
   containmentName: string,
   replacing: boolean = false,
 ) : SuggestionsReceiverFactory {
+  if (modelNode == null) {
+    throw new Error('modelNode should not be null');
+  }
   // we should get all the alternatives from the server
   return (suggestionsReceiver: SuggestionsReceiver) => {
     const modelName = modelNode.modelName();
