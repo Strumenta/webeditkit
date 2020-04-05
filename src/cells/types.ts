@@ -65,7 +65,7 @@ export function verticalCollectionCell(
     return h(
       'div.vertical-collection.represent-collection',
       data,
-      map(modelNode.childrenByLinkName(containmentName), function (el) {
+      map(modelNode.childrenByLinkName(containmentName), (el) => {
         if (wrapInRows) {
           return row(renderModelNode(el));
         } else {
@@ -154,12 +154,12 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
           return false;
         },
         keyup: (e: KeyboardEvent) => {
-          if (e.key == 'ArrowRight' || e.key == 'ArrowLeft') {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
             return;
           }
           const valueInInput = $(e.target).val() as string;
           const valueInModel = modelNode.property(propertyName);
-          if (valueInInput != valueInModel) {
+          if (valueInInput !== valueInModel) {
             const ws = getWsCommunication(modelNode.modelName());
             if (ws == null) {
               throw new Error('No WsCommunication registered for model ' + modelNode.modelName());

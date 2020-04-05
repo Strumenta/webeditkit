@@ -233,8 +233,7 @@ function focusOnFirstInputOf(element): boolean {
     $(element).focus();
     return true;
   }
-  for (let i = 0; i < element.children.length; i++) {
-    const chRes = focusOnFirstInputOf(element.children[i]);
+  for (const chRes of element.children) {
     if (chRes) {
       return chRes;
     }
