@@ -26,21 +26,10 @@ export {
   verticalGroupCell,
 };
 
-var snabbdom = require('snabbdom/snabbdom');
-var patch = snabbdom.init([
-  // Init patch function with chosen modules
-  require('snabbdom/modules/class').default, // makes it easy to toggle classes
-  require('snabbdom/modules/props').default, // for setting properties on DOM elements
-  require('snabbdom/modules/style').default, // handles styling on elements with support for animations
-  require('snabbdom/modules/eventlisteners').default, // attaches event listeners
-  require('snabbdom/modules/dataset').default,
-]);
 export const h = require('snabbdom/h').default; // helper function for creating vnodes
-const toVNode = require('snabbdom/tovnode').default;
 const uiutils = require('./uiutils');
 export const datamodel = require('./datamodel');
 const wscommunication = require('./wscommunication');
-const autocomplete = require('autocompleter');
 export const cells = require('./cells');
 
 const renderers = require('./renderer');

@@ -9,7 +9,7 @@ const renderersByName: { [key: string]: Renderer } = {};
 type Renderer = (modelNode: ModelNode) => VNode;
 
 export function clearRendererRegistry(): void {
-  Object.keys(renderersByName).forEach(function (key) {
+  Object.keys(renderersByName).forEach((key) => {
     delete renderersByName[key];
   });
 }
