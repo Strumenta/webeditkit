@@ -672,6 +672,60 @@ describe('Cells.Types', () => {
             ]);
             patch(toVNode(document.querySelector('#calc')), container);
         });
+        it('it should react to Backspace when not at start', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = editableCell(aNode, 'name');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 1;
+                myInput.selectionEnd = 1;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+                // the backspace does not actually change the value
+                // see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent#Auto-repeat_handling_prior_to_Gecko_5.0
+                myInput.value = 'y calculations';
+                pressBackspace(myInput);
+                // We should not add the "deleting" class
+                expect(myInput.parentElement.outerHTML).to.eql('<div class="represent-node" data-node_represented="324292001770075100"><input class="editable" placeholder="<no name>" required=""></div>');
+                mockServer.close();
+                done();
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('div.represent-node', {dataset:{node_represented:'324292001770075100'}}, [cellWithHook])
+            ]);
+
+            let received = 0;
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        const dataj = JSON.parse(data as string)
+                        expect(dataj.modelName).to.eql("my.qualified.model");
+                        expect(dataj.nodeId).to.eql("324292001770075100");
+                        expect(dataj.propertyName).to.eql("name");
+                        expect(dataj.propertyValue).to.eql("y calculations");
+                        expect(dataj.type).to.eql("propertyChange");
+                    } else if (received == 1) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
     });
 
 });

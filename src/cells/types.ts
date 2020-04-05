@@ -130,7 +130,6 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
   if (extraClasses.length > 0) {
     extraClassesStr = '.' + extraClasses.join('.');
   }
-  const ws = getWsCommunication(modelNode.modelName());
   return h(
     'input.editable' + extraClassesStr,
     {
@@ -165,6 +164,10 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
           const valueInInput = $(e.target).val() as string;
           const valueInModel = modelNode.property(propertyName);
           if (valueInInput != valueInModel) {
+            const ws = getWsCommunication(modelNode.modelName());
+            if (ws == null) {
+              throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
+            }
             ws.triggerChangeOnPropertyNode(modelNode, propertyName, valueInInput);
           }
         },

@@ -5,6 +5,8 @@ import {installAutoresize} from "../src/uiutils";
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
+const keysim = require('keysim');
+
 export function compareVNodes(rendered: VNode, expectedRendered: VNode) : void {
     expect(rendered.sel).to.eql(expectedRendered.sel);
     expect(rendered.data.props).to.eql(expectedRendered.data.props);
@@ -112,6 +114,8 @@ export function pressBackspace(element) {
         charKode: 8,
         keyCode: 8,
     })); // x
+    //const keyboard = keysim.Keyboard.US_ENGLISH;
+    //keyboard.dispatchEventsForAction('backspace', element);
 }
 
 export function prepareFakeDom(htmlCode: string) {
