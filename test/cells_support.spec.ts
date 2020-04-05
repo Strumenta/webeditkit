@@ -17,8 +17,6 @@ import { WebSocket, Server } from 'mock-socket';
 const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
 
-const wscommunication = require("../src/wscommunication");
-
 var init2html = require('snabbdom-to-html/init');
 var modules = require('snabbdom-to-html/modules/index');
 var toHTML = init2html([
