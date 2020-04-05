@@ -1,11 +1,11 @@
 import { getWsCommunication } from './wscommunication';
 import { baseUrlForModelName } from './webeditkit';
-import base = Mocha.reporters.base;
+
 
 const datamodelRoots = {};
 const datamodelClasses = {};
 
-let defaultBaseUrl = undefined;
+let defaultBaseUrl;
 
 export function setDefaultBaseUrl(value: string): void {
   defaultBaseUrl = value;
@@ -310,7 +310,7 @@ export class ModelNode {
 ///
 
 export function clearDatamodelRoots(): void {
-  Object.keys(datamodelRoots).forEach(function (key) {
+  Object.keys(datamodelRoots).forEach((key) => {
     delete datamodelRoots[key];
   });
 }
