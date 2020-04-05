@@ -574,23 +574,7 @@ describe('Cells.Types', () => {
             expect(toHTML(cell)).to.eql('<input class="editable" value="My calculations" placeholder="&lt;no name&gt;" required="true">');
         });
         it('it should react to ArrowRight', () => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery');
-            try {
-                $("a");
-            } catch {
-                // @ts-ignore
-                global.$ = require('jquery')(dom.window);
-            }
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             aNode.injectModelName('my.qualified.model', 'calc');

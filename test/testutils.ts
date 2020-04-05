@@ -18,6 +18,25 @@ export function clone(original) {
     return JSON.parse(JSON.stringify(original));
 }
 
+export function pressChar(element, letter: string, code: number) {
+    // @ts-ignore
+    const w = global.window;
+
+    // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keydown", {char: letter,
+        key: letter,
+        charKode: code,
+        keyCode: code,
+        bubbles: true})); // x
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keyup", {char: letter,
+        key: letter,
+        charKode: code,
+        keyCode: code,
+        bubbles: true})); // x
+}
+
 export function pressArrowLeft(element) {
     // @ts-ignore
     const w = global.window;

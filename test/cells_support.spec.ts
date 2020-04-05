@@ -43,7 +43,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import {focusOnNode} from "../src/cells/support";
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
-import {compareVNodes} from "./testutils";
+import {compareVNodes, prepareFakeDom, pressChar} from "./testutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -246,15 +246,7 @@ describe('Cells.Support', () => {
 
     describe('should support focusOnNode', () => {
         it('it should be triggered', (done) => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery')(dom.window);
-            // @ts-ignore
-            global.document = doc;
-            installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             let cell =  fixedCell(aNode, 'My fixed test');
@@ -420,17 +412,7 @@ describe('Cells.Support', () => {
 
     describe('should support installAutocomplete', () => {
         it('it should handle positive case', (done) => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery')(dom.window);
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            //installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             let cell =  h('input', {}, []);
@@ -449,14 +431,7 @@ describe('Cells.Support', () => {
                 // @ts-ignore
                 myNode.elm.focus();
 
-                const pressChar = (ch: string, val: number) => {
-                    // @ts-ignore
-                    doc.activeElement.dispatchEvent(new dom.window.KeyboardEvent("keydown", {key: ch, char: ch, keyCode: val, bubbles: true })); // x
-                    // @ts-ignore
-                    doc.activeElement.dispatchEvent(new dom.window.KeyboardEvent("keyup", {key: ch, char: ch, keyCode: val })); // x
-                };
-                pressChar("x", 88);
-
+                pressChar(doc.activeElement, "x", 88);
             });
 
             let container = h('div#calc', {}, [cellWithHook]);
