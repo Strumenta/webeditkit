@@ -39,6 +39,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
 import {Server, WebSocket} from "mock-socket";
+import {prepareFakeDom, pressArrowLeft, pressArrowRight} from "./testutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -284,64 +285,6 @@ const rootData3 : NodeData = {
     "concept": "com.strumenta.financialcalc.FinancialCalcSheet",
     "abstractConcept": false
 };
-
-function pressArrowLeft(element) {
-    // @ts-ignore
-    const w = global.window;
-
-    // https://css-tricks.com/snippets/javascript/javascript-keycodes/
-    // @ts-ignore
-    element.dispatchEvent(new w.KeyboardEvent("keydown", {code: 'ArrowLeft',
-        key: 'ArrowLeft',
-        charKode: 37,
-        keyCode: 37,})); // x
-    // @ts-ignore
-    element.dispatchEvent(new w.KeyboardEvent("keyup", {code: 'ArrowLeft',
-        key: 'ArrowLeft',
-        charKode: 37,
-        keyCode: 37,})); // x
-}
-
-function pressArrowRight(element) {
-    // @ts-ignore
-    const w = global.window;
-    // https://css-tricks.com/snippets/javascript/javascript-keycodes/
-    // @ts-ignore
-    element.dispatchEvent(new w.KeyboardEvent("keydown", {
-        code: 'ArrowRight',
-        key: 'ArrowRight',
-        charKode: 39,
-        keyCode: 39,
-    })); // x
-    // @ts-ignore
-    element.dispatchEvent(new w.KeyboardEvent("keyup", {
-        code: 'ArrowRight',
-        key: 'ArrowRight',
-        charKode: 39,
-        keyCode: 39,
-    })); // x
-}
-
-function prepareFakeDom(htmlCode) {
-    const dom = new JSDOM(htmlCode);
-    const doc = dom.window.document;
-    // @ts-ignore
-    global.window = dom.window;
-    // @ts-ignore
-    global.$ = require('jquery');
-    try {
-        $("a");
-    } catch {
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
-    }
-    // @ts-ignore
-    global.document = doc;
-    // @ts-ignore
-    global.navigator = {'userAgent': 'fake browser'};
-    installAutoresize();
-    return doc;
-}
 
 describe('Cells.Types', () => {
 

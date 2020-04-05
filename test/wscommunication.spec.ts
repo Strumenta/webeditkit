@@ -12,6 +12,7 @@ import 'mocha';
 import { WebSocket, Server } from 'mock-socket';
 import { WsCommunication} from "../src/wscommunication";
 import {clearRendererRegistry} from "../src/renderer";
+import {clone} from "./testutils";
 
 const rootData1 = {
     "children": [
@@ -79,10 +80,6 @@ const rootData1 = {
     "concept": "com.strumenta.financialcalc.FinancialCalcSheet",
     "abstractConcept": false
 };
-
-function clone(original) {
-    return JSON.parse(JSON.stringify(original));
-}
 
 describe('WsCommunication', () => {
 

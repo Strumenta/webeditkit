@@ -43,6 +43,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import {focusOnNode} from "../src/cells/support";
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
+import {compareVNodes} from "./testutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -95,15 +96,6 @@ const html1 = `<html>
 \t\t</div>
 \t</body>
 </html>`;
-
-function compareVNodes(rendered: VNode, expectedRendered: VNode) : void {
-    expect(rendered.sel).to.eql(expectedRendered.sel);
-    expect(rendered.data.props).to.eql(expectedRendered.data.props);
-    expect(rendered.data.dataset).to.eql(expectedRendered.data.dataset);
-    expect(rendered.children).deep.equal(expectedRendered.children);
-    expect(rendered.key).to.eql(expectedRendered.key);
-    expect(rendered.text).to.eql(expectedRendered.text);
-}
 
 const rootData1 = {
     "children": [
