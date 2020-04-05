@@ -32,32 +32,36 @@ export function childCell(modelNode: ModelNode, containmentName: string): VNode 
   return renderModelNode(child);
 }
 
+function emptyCollectionCell(modelNode: ModelNode, containmentName: string) : VNode {
+  const ws = getWsCommunication(modelNode.modelName());
+  return fixedCell(
+      modelNode,
+      '<< ... >>',
+      ['empty-collection'],
+      alternativesProviderForAddingChild(modelNode, containmentName),
+      null,
+      () => {
+        if (ws == null) {
+          throw new Error('no communication through web socket available');
+        }
+        ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
+          const nodeIdStr = nodeIdToString(addedNodeID);
+          focusOnNode(nodeIdStr, modelNode.rootName());
+        });
+      },
+  )
+}
+
 export function verticalCollectionCell(
   modelNode: ModelNode,
   containmentName: string,
   wrapInRows: boolean = true,
 ): VNode {
-  const ws = getWsCommunication(modelNode.modelName());
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
   if (children.length === 0) {
     return h('div.vertical-collection.represent-collection', data, [
-      fixedCell(
-        modelNode,
-        '<< ... >>',
-        ['empty-collection'],
-        alternativesProviderForAddingChild(modelNode, containmentName),
-        null,
-        () => {
-          if (ws == null) {
-            throw new Error('no communication through web socket available');
-          }
-          ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
-            const nodeIdStr = nodeIdToString(addedNodeID);
-            focusOnNode(nodeIdStr, modelNode.rootName());
-          });
-        },
-      ),
+      emptyCollectionCell(modelNode, containmentName),
     ]);
   } else {
     return h(
@@ -79,19 +83,10 @@ export function horizontalCollectionCell(
   containmentName: string,
   separatorGenerator?: any,
 ): VNode {
-  const ws = getWsCommunication(modelNode.modelName());
-  const addChild = () => {
-    ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
-      const nodeIdStr = nodeIdToString(addedNodeID);
-      focusOnNode(nodeIdStr, modelNode.rootName());
-    });
-  };
   const children = modelNode.childrenByLinkName(containmentName);
   if (children.length === 0) {
     return h('div.horizontal-collection', {}, [
-      fixedCell(modelNode, '<< ... >>', ['empty-collection'], (alternativesUser: any) => {
-        alternativesUser([{ label: 'Input', execute: addChild }]);
-      }),
+      emptyCollectionCell(modelNode, containmentName),
     ]);
   } else {
     return h(
