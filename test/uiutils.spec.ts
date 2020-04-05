@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
-import {installAutoresize} from "../src/uiutils";
-import {prepareFakeDom} from "./testutils";
+import { installAutoresize } from '../src/uiutils';
+import { prepareFakeDom } from './testutils';
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -47,43 +47,40 @@ const html1 = `<html>
 </html>`;
 
 describe('UIUtils', () => {
+  it('should support installAutoresize', () => {
+    const doc = prepareFakeDom(html1);
 
-    it('should support installAutoresize', () => {
-        const doc = prepareFakeDom(html1);
+    const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
 
-        const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
-
-        // check width
-        expect(editableName_a.style.width).to.eql('');
-        // install autoresize
-        installAutoresize((text:string)=>{
-            if (text == null) {
-                return 0;
-            }
-            return text.length * 8;});
-        expect(editableName_a.style.width).to.eql('');
-        // invoke autoresize
-        // @ts-ignore
-        $(editableName_a).autoresize();
-        // placeholder: '<no name>' -> 9 chars * 8 + 10 for padding -> 82px
-        expect(editableName_a.style.width).to.eql('82px');
-        editableName_a.setAttribute('value', 'x');
-        expect(editableName_a.style.width).to.eql('82px');
-        // @ts-ignore
-        $(editableName_a).autoresize();
-        expect(editableName_a.style.width).to.eql('18px');
-        editableName_a.setAttribute('value', 'xxx');
-        expect(editableName_a.style.width).to.eql('18px');
-        // @ts-ignore
-        $(editableName_a).autoresize();
-        expect(editableName_a.style.width).to.eql('34px');
-        editableName_a.setAttribute('value', '');
-        expect(editableName_a.style.width).to.eql('34px');
-        // @ts-ignore
-        $(editableName_a).autoresize();
-        expect(editableName_a.style.width).to.eql('82px');
+    // check width
+    expect(editableName_a.style.width).to.eql('');
+    // install autoresize
+    installAutoresize((text: string) => {
+      if (text == null) {
+        return 0;
+      }
+      return text.length * 8;
     });
-
-
-
+    expect(editableName_a.style.width).to.eql('');
+    // invoke autoresize
+    // @ts-ignore
+    $(editableName_a).autoresize();
+    // placeholder: '<no name>' -> 9 chars * 8 + 10 for padding -> 82px
+    expect(editableName_a.style.width).to.eql('82px');
+    editableName_a.setAttribute('value', 'x');
+    expect(editableName_a.style.width).to.eql('82px');
+    // @ts-ignore
+    $(editableName_a).autoresize();
+    expect(editableName_a.style.width).to.eql('18px');
+    editableName_a.setAttribute('value', 'xxx');
+    expect(editableName_a.style.width).to.eql('18px');
+    // @ts-ignore
+    $(editableName_a).autoresize();
+    expect(editableName_a.style.width).to.eql('34px');
+    editableName_a.setAttribute('value', '');
+    expect(editableName_a.style.width).to.eql('34px');
+    // @ts-ignore
+    $(editableName_a).autoresize();
+    expect(editableName_a.style.width).to.eql('82px');
+  });
 });

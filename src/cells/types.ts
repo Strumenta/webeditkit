@@ -32,24 +32,24 @@ export function childCell(modelNode: ModelNode, containmentName: string): VNode 
   return renderModelNode(child);
 }
 
-function emptyCollectionCell(modelNode: ModelNode, containmentName: string) : VNode {
+function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNode {
   const ws = getWsCommunication(modelNode.modelName());
   return fixedCell(
-      modelNode,
-      '<< ... >>',
-      ['empty-collection'],
-      alternativesProviderForAddingChild(modelNode, containmentName),
-      null,
-      () => {
-        if (ws == null) {
-          throw new Error('no communication through web socket available');
-        }
-        ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
-          const nodeIdStr = nodeIdToString(addedNodeID);
-          focusOnNode(nodeIdStr, modelNode.rootName());
-        });
-      },
-  )
+    modelNode,
+    '<< ... >>',
+    ['empty-collection'],
+    alternativesProviderForAddingChild(modelNode, containmentName),
+    null,
+    () => {
+      if (ws == null) {
+        throw new Error('no communication through web socket available');
+      }
+      ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
+        const nodeIdStr = nodeIdToString(addedNodeID);
+        focusOnNode(nodeIdStr, modelNode.rootName());
+      });
+    },
+  );
 }
 
 export function verticalCollectionCell(
@@ -60,9 +60,7 @@ export function verticalCollectionCell(
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
   if (children.length === 0) {
-    return h('div.vertical-collection.represent-collection', data, [
-      emptyCollectionCell(modelNode, containmentName),
-    ]);
+    return h('div.vertical-collection.represent-collection', data, [emptyCollectionCell(modelNode, containmentName)]);
   } else {
     return h(
       'div.vertical-collection.represent-collection',
@@ -85,9 +83,7 @@ export function horizontalCollectionCell(
 ): VNode {
   const children = modelNode.childrenByLinkName(containmentName);
   if (children.length === 0) {
-    return h('div.horizontal-collection', {}, [
-      emptyCollectionCell(modelNode, containmentName),
-    ]);
+    return h('div.horizontal-collection', {}, [emptyCollectionCell(modelNode, containmentName)]);
   } else {
     return h(
       'div.horizontal-collection',
