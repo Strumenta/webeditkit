@@ -441,17 +441,7 @@ describe('Cells.Support', () => {
 
     describe('should support handleSelfDeletion', () => {
         it('it should handle marking with deleting class', (done) => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery')(dom.window);
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            //installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             let cell =  fixedCell(aNode, 'myFixedCell');
@@ -493,17 +483,7 @@ describe('Cells.Support', () => {
             global.WebSocket = WebSocket;
             createInstance(fakeURL, 'my.qualified.model', 'calc');
 
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery')(dom.window);
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            //installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             aNode.injectModelName('my.qualified.model', 'calc');
