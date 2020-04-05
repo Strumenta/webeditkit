@@ -1,11 +1,7 @@
-import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
-import {isAtStart, isAtEnd, moveToNextElement, moveToPrevElement} from "../src/navigation";
 import {installAutoresize} from "../src/uiutils";
-
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+import {prepareFakeDom} from "./testutils";
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -53,12 +49,7 @@ const html1 = `<html>
 describe('UIUtils', () => {
 
     it('should support installAutoresize', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
-        // @ts-ignore
-        global.document = doc;
+        const doc = prepareFakeDom(html1);
 
         const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
 
