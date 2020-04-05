@@ -94,6 +94,26 @@ export function pressEnter(element) {
     })); // x
 }
 
+export function pressBackspace(element) {
+    // @ts-ignore
+    const w = global.window;
+    // https://css-tricks.com/snippets/javascript/javascript-keycodes/
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keydown", {
+        code: 'Backspace',
+        key: 'Backspace',
+        charKode: 8,
+        keyCode: 8,
+    })); // x
+    // @ts-ignore
+    element.dispatchEvent(new w.KeyboardEvent("keyup", {
+        code: 'Backspace',
+        key: 'Backspace',
+        charKode: 8,
+        keyCode: 8,
+    })); // x
+}
+
 export function prepareFakeDom(htmlCode: string) {
     const dom = new JSDOM(htmlCode);
     const doc = dom.window.document;

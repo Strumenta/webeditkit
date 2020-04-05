@@ -39,7 +39,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
 import {Server, WebSocket} from "mock-socket";
-import {focusedElement, prepareFakeDom, pressArrowLeft, pressArrowRight, pressEnter} from "./testutils";
+import {focusedElement, prepareFakeDom, pressArrowLeft, pressArrowRight, pressBackspace, pressEnter} from "./testutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -573,6 +573,11 @@ describe('Cells.Types', () => {
             const cell = editableCell(aNode, 'name');
             expect(toHTML(cell)).to.eql('<input class="editable" value="My calculations" placeholder="&lt;no name&gt;" required="true">');
         });
+        it('it should support extra classes', () => {
+            const aNode = dataToNode(rootData1);
+            const cell = editableCell(aNode, 'name', ['a', 'b']);
+            expect(toHTML(cell)).to.eql('<input class="editable a b" value="My calculations" placeholder="&lt;no name&gt;" required="true">');
+        });
         it('it should react to ArrowRight', () => {
             const doc = prepareFakeDom(html1);
 
@@ -641,6 +646,30 @@ describe('Cells.Types', () => {
                 h('input.bef', {}, []),
                 cellWithHook,
                 h('input.aft', {}, [])]);
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
+        it('it should react to Backspace when at start', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData1);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const cell = editableCell(aNode, 'name');
+            const cellWithHook = addInsertHook(cell, (vnode) => {
+                let myInput = vnode.elm;
+                expect(myInput.tagName).to.eql('INPUT');
+                myInput.selectionStart = 0;
+                myInput.selectionEnd = 0;
+                myInput.focus();
+                expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+                pressBackspace(myInput);
+                expect(myInput.parentElement.outerHTML).to.eql('<div class="represent-node deleting" data-node_represented="324292001770075100"><input class="editable" placeholder="<no name>" required=""></div>');
+                done();
+            });
+
+            let container = h('div#calc.editor', {}, [
+                h('div.represent-node', {dataset:{node_represented:'324292001770075100'}}, [cellWithHook])
+            ]);
             patch(toVNode(document.querySelector('#calc')), container);
         });
     });

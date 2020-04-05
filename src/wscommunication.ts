@@ -88,6 +88,9 @@ export class WsCommunication {
         alternativesReceiver(data.items);
       } else if (data.type === 'AnswerDefaultInsertion') {
         const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
+        if (reactorToInsertion == null) {
+          throw new Error('No callback for default insertion');
+        }
         reactorToInsertion(data.addedNodeID);
       } else if (data.type === 'AnswerForDirectReferences') {
         const cb = thisWS.callbacks[data.requestId];

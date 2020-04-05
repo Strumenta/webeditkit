@@ -162,7 +162,11 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
           if (e.key == 'ArrowRight' || e.key == 'ArrowLeft') {
             return;
           }
-          ws.triggerChangeOnPropertyNode(modelNode, propertyName, $(e.target).val() as string);
+          const valueInInput = $(e.target).val() as string;
+          const valueInModel = modelNode.property(propertyName);
+          if (valueInInput != valueInModel) {
+            ws.triggerChangeOnPropertyNode(modelNode, propertyName, valueInInput);
+          }
         },
       },
     },
