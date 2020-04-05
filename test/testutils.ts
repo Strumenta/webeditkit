@@ -95,3 +95,9 @@ export function prepareFakeDom(htmlCode: string) {
     installAutoresize();
     return doc;
 }
+
+export function focusedElement() {
+    // @ts-ignore
+    const doc = global.document;
+    return doc.activeElement;
+}

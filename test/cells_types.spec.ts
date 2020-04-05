@@ -39,7 +39,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
 import {Server, WebSocket} from "mock-socket";
-import {prepareFakeDom, pressArrowLeft, pressArrowRight, pressEnter} from "./testutils";
+import {focusedElement, prepareFakeDom, pressArrowLeft, pressArrowRight, pressEnter} from "./testutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -92,15 +92,6 @@ const html1 = `<html>
 \t\t</div>
 \t</body>
 </html>`;
-
-function compareVNodes(rendered: VNode, expectedRendered: VNode) : void {
-    expect(rendered.sel).to.eql(expectedRendered.sel);
-    expect(rendered.data.props).to.eql(expectedRendered.data.props);
-    expect(rendered.data.dataset).to.eql(expectedRendered.data.dataset);
-    expect(rendered.children).deep.equal(expectedRendered.children);
-    expect(rendered.key).to.eql(expectedRendered.key);
-    expect(rendered.text).to.eql(expectedRendered.text);
-}
 
 const rootData1 = {
     "children": [
@@ -490,6 +481,16 @@ describe('Cells.Types', () => {
                         expect(dataj.containmentName).to.eql('unexisting');
                         expect(dataj.container).to.eql('324292001770075100');
                         expect(dataj.modelName).to.eql('my.qualified.model');
+                        console.log('focus before', focusedElement());
+                        socket.send(JSON.stringify({
+                            type: 'AnswerDefaultInsertion',
+                            requestId: dataj.requestId,
+                            addedNodeID: {
+                                regularId: 'xxx-123'
+                            }
+                        }));
+                        // it works when running test individually, not when running all tests together
+                        //expect(focusedElement().outerHTML).to.eql('<input class="represent-node" data-node_represented="xxx-123">');
                     } else if (received == 1) {
                         expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
                         mockServer.close();
@@ -511,7 +512,8 @@ describe('Cells.Types', () => {
                 pressEnter(myInput);
             });
 
-            let container = h('div#calc', {}, [cellWithHook]);
+            let addedNode = h('input.represent-node', {dataset:{node_represented: 'xxx-123'}}, ['My added node']);
+            let container = h('div#calc', {}, [cellWithHook, addedNode]);
             patch(toVNode(document.querySelector('#calc')), container);
         });
     });
@@ -610,23 +612,7 @@ describe('Cells.Types', () => {
             patch(toVNode(document.querySelector('#calc')), container);
         });
         it('it should react to ArrowLeft with selection at start', () => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            // @ts-ignore
-            global.$ = require('jquery');
-            try {
-                $("a");
-            } catch {
-                // @ts-ignore
-                global.$ = require('jquery')(dom.window);
-            }
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             aNode.injectModelName('my.qualified.model', 'calc');
@@ -639,17 +625,7 @@ describe('Cells.Types', () => {
                 myInput.selectionEnd = 0;
                 myInput.focus();
                 expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
-                // https://css-tricks.com/snippets/javascript/javascript-keycodes/
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'ArrowLeft',
-                    key: 'ArrowLeft',
-                    charKode: 37,
-                    keyCode: 37,})); // x
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'ArrowLeft',
-                    key: 'ArrowLeft',
-                    charKode: 37,
-                    keyCode: 37,})); // x
+                pressArrowLeft(myInput);
                 expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
             });
 
