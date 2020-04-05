@@ -132,7 +132,7 @@ export function flattenArray(value: any): any[] {
   return flatten(originalArray);
 }
 
-const flatten = function (arr: any[], result: any[] = []): any[] {
+const flatten = (arr: any[], result: any[] = []): any[] => {
   for (let i = 0, length = arr.length; i < length; i++) {
     const value = arr[i];
     if (Array.isArray(value)) {
@@ -212,17 +212,17 @@ export function separate(original: any[], separatorGenerator?: any): any[] {
  */
 export function focusOnNode(nodeIdStr: string, rootName: string) {
   const domRoot = $('#' + rootName);
-  if (domRoot.length == 0) {
+  if (domRoot.length === 0) {
     throw new Error(`Root with ID ${rootName} not found`);
   }
   const found = domRoot.find('.represent-node').filter(function () {
-    return $(this).data('node_represented') == nodeIdStr;
+    return $(this).data('node_represented') === nodeIdStr;
   });
-  if (found.length == 0) {
+  if (found.length === 0) {
     console.warn('node to focus on not found', nodeIdStr);
     return;
   } else if (found.length > 1) {
-    console.warn('more than one representation of node to focus ofound', nodeIdStr);
+    console.warn('more than one representation of node to focus found', nodeIdStr);
   }
   const firstNodeFound = found[0];
   focusOnFirstInputOf(firstNodeFound);
