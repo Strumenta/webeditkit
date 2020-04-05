@@ -10,7 +10,7 @@ import { expect } from 'chai';
 import 'mocha';
 import {loadDataModel, renderDataModels} from "../src/webeditkit";
 import {installAutoresize} from "../src/uiutils";
-import {clearRendererRegistry} from "../dist/renderer";
+import {clearRendererRegistry} from "../src/renderer";
 
 var sinon = require('sinon');
 

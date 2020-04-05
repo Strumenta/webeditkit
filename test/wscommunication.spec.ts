@@ -11,7 +11,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { WebSocket, Server } from 'mock-socket';
 import { WsCommunication} from "../src/wscommunication";
-import {clearRendererRegistry} from "../dist/renderer";
+import {clearRendererRegistry} from "../src/renderer";
 
 const rootData1 = {
     "children": [
