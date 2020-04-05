@@ -39,7 +39,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
 import {Server, WebSocket} from "mock-socket";
-import {prepareFakeDom, pressArrowLeft, pressArrowRight} from "./testutils";
+import {prepareFakeDom, pressArrowLeft, pressArrowRight, pressEnter} from "./testutils";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -474,24 +474,7 @@ describe('Cells.Types', () => {
             expect(toHTML(cell)).to.eql('<div class="vertical-collection represent-collection"><input class="fixed empty-collection" value="&lt;&lt; ... &gt;&gt;"></div>');
         });
         it('when empty it should react to enter in a certain way', (done) => {
-            const dom = new JSDOM(html1);
-            const doc = dom.window.document;
-            // @ts-ignore
-            global.window = dom.window;
-            try {
-                // @ts-ignore
-                global.$ = require('jquery');
-                // @ts-ignore
-                global.$("a");
-            } catch (e) {
-                // @ts-ignore
-                global.$ = require('jquery')(dom.window);
-            }
-            // @ts-ignore
-            global.document = doc;
-            // @ts-ignore
-            global.navigator = {'userAgent': 'fake browser'};
-            installAutoresize();
+            const doc = prepareFakeDom(html1);
 
             const aNode = dataToNode(rootData1);
             aNode.injectModelName('my.qualified.model', 'calc');
@@ -525,16 +508,7 @@ describe('Cells.Types', () => {
             const cellWithHook = addInsertHook(cell, (vnode) => {
                 let myInput = vnode.elm.firstChild;
                 expect(myInput.tagName).to.eql('INPUT');
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keydown", {code: 'Enter',
-                    key: 'Enter',
-                    charKode: 13,
-                    keyCode: 13,})); // x
-                // @ts-ignore
-                myInput.dispatchEvent(new dom.window.KeyboardEvent("keyup", {code: 'Enter',
-                    key: 'Enter',
-                    charKode: 13,
-                    keyCode: 13,})); // x
+                pressEnter(myInput);
             });
 
             let container = h('div#calc', {}, [cellWithHook]);
