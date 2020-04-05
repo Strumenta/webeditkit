@@ -1,10 +1,7 @@
-import {registerDataModelClass, dataToNode, ModelNode, NodeData, Ref} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
 import {isAtStart, isAtEnd, moveToNextElement, moveToPrevElement} from "../src/navigation";
-
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
+import {prepareFakeDom} from "./testutils";
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -52,10 +49,7 @@ const html1 = `<html>
 describe('Navigation', () => {
 
     it('should support moveToNextElement - not at end', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
         const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
@@ -81,10 +75,7 @@ describe('Navigation', () => {
     });
 
     it('should support moveToNextElement - through divs with no inputs', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const calculationsLabel = doc.querySelector('div[data-node_represented="324292001770075100"] .fixed');
         const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
@@ -100,10 +91,7 @@ describe('Navigation', () => {
     });
 
     it('should support moveToNextElement - at end', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const type_c = doc.querySelector('div[data-node_represented="1848360241685547705"] .fixed.type');
 
@@ -114,10 +102,7 @@ describe('Navigation', () => {
     });
 
     it('should support moveToPrevElement - not at end', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
         const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
@@ -143,10 +128,7 @@ describe('Navigation', () => {
     });
 
     it('should support moveToPrevElement - at end', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const calculationsLabel = doc.querySelector('div[data-node_represented="324292001770075100"] .fixed');
 
@@ -157,10 +139,7 @@ describe('Navigation', () => {
     });
 
     it('should support moveToPrevElement - through divs with no inputs', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const calculationsLabel = doc.querySelector('div[data-node_represented="324292001770075100"] .fixed');
         const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
@@ -176,10 +155,7 @@ describe('Navigation', () => {
     });
 
     it('should support isAtStart - positive case', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
         expect(editableName_b.value).to.equals('sdsd');
@@ -190,10 +166,7 @@ describe('Navigation', () => {
     });
 
     it('should support isAtStart - negative case', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
         expect(editableName_b.value).to.equals('sdsd');
@@ -210,10 +183,7 @@ describe('Navigation', () => {
     });
 
     it('should support isAtEnd - positive case', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
         expect(editableName_b.value).to.equals('sdsd');
@@ -230,10 +200,7 @@ describe('Navigation', () => {
     });
 
     it('should support isAtEnd - negative case', () => {
-        const dom = new JSDOM(html1);
-        const doc = dom.window.document;
-        // @ts-ignore
-        global.$ = require('jquery')(dom.window);
+        const doc = prepareFakeDom(html1);
 
         const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
         expect(editableName_b.value).to.equals('sdsd');
