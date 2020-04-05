@@ -1,4 +1,4 @@
-import {dataToNode, NodeData} from '../src/datamodel';
+import {clearDatamodelRoots, dataToNode, NodeData} from '../src/datamodel';
 import { expect } from 'chai';
 import 'mocha';
 import {VNode} from "snabbdom/vnode";
@@ -40,6 +40,8 @@ import {installAutoresize} from "../src/uiutils";
 import {createInstance} from "../src/wscommunication";
 import {Server, WebSocket} from "mock-socket";
 import {focusedElement, prepareFakeDom, pressArrowLeft, pressArrowRight, pressBackspace, pressEnter} from "./testutils";
+import {setDefaultBaseUrl} from "../src/datamodel";
+import {clearRendererRegistry} from "../src/renderer";
 
 const patch = init([
     // Init patch function with chosen modules
@@ -49,6 +51,8 @@ const patch = init([
     seventlisteners.default, // attaches event listeners
     sdataset.default,
 ]);
+
+var sinon = require('sinon');
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -240,14 +244,7 @@ const rootData3 : NodeData = {
                     "containingLink": "type",
                     "children": [],
                     "properties": {},
-                    "refs": {'myref':{
-                        model: {
-                            qualifiedName: 'my.qualified.model'
-                        },
-                            id: {
-                                regularId: '123-foo'
-                            }
-                        }},
+                   "refs": {},
                     "id": {
                         "regularId": "1848360241685547711"
                     },
@@ -258,7 +255,14 @@ const rootData3 : NodeData = {
             "properties": {
                 "name": "b"
             },
-            "refs": {},
+            "refs": {'myref':{
+                    model: {
+                        qualifiedName: 'my.referred.model'
+                    },
+                    id: {
+                        regularId: '123-foo'
+                    }
+                }},
             "id": {
                 "regularId": "1848360241685547705"
             },
@@ -278,6 +282,22 @@ const rootData3 : NodeData = {
 };
 
 describe('Cells.Types', () => {
+
+    afterEach( function() {
+        sinon.restore();
+
+        clearDatamodelRoots();
+        clearRendererRegistry();
+
+        // @ts-ignore
+        delete global.$;
+        // @ts-ignore
+        delete global.jQuery;
+        // @ts-ignore
+        delete global.window;
+        // @ts-ignore
+        delete global.document;
+    });
 
     describe('should support fixed cell', () => {
         it('it should be rendered in a certain way', () => {
@@ -344,6 +364,12 @@ describe('Cells.Types', () => {
             const cell = referenceCell(inputNode, 'type');
             expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no type&gt;">');
         });
+        it('it should not use extra classes when null', () => {
+            const rootNode = dataToNode(rootData1);
+            const inputNode = rootNode.childrenByLinkName('inputs')[0];
+            const cell = referenceCell(inputNode, 'type', ['foo', 'bar']);
+            expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no type&gt;">');
+        });
         it('it should handle left arrow', (done) => {
             const doc = prepareFakeDom(html1);
 
@@ -398,21 +424,70 @@ describe('Cells.Types', () => {
                 h('input.aft', {}, [])]);
             patch(toVNode(document.querySelector('#calc')), container);
         });
-        // it('it should load value', (done) => {
-        //     const doc = prepareFakeDom(html1);
-        //
-        //     const aNode = dataToNode(rootData3);
-        //     aNode.injectModelName('my.qualified.model', 'calc');
-        //
-        //     const inputNode = aNode.childrenByLinkName('inputs')[1];
-        //     const cell = referenceCell(inputNode, 'myref');
-        //     expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no myref&gt;">');
-        //     let container = h('div#calc.editor', {}, [
-        //         h('input.bef', {}, []),
-        //         cell,
-        //         h('input.aft', {}, [])]);
-        //     patch(toVNode(document.querySelector('#calc')), container);
-        // });
+        it('it should load value', (done) => {
+            const doc = prepareFakeDom(html1);
+
+            const aNode = dataToNode(rootData3);
+            aNode.injectModelName('my.qualified.model', 'calc');
+
+            const inputNode = aNode.childrenByLinkName('inputs')[1];
+            const cell = referenceCell(inputNode, 'myref');
+            expect(toHTML(cell)).to.equal('<input class="reference" value="Loading...">');
+            let container = h('div#calc.editor', {}, [
+                cell
+            ]);
+
+            let received = 0;
+            const fakeURL = 'ws://localhost:8080';
+            const mockServer = new Server(fakeURL);
+            mockServer.on('connection', socket => {
+                socket.on('message', data => {
+                    if (received == 0) {
+                        expect(JSON.parse(data as string)).to.eql({"type":"registerForChanges","modelName":"my.qualified.model"});
+                    } else {
+                        throw new Error('Too many messages');
+                    }
+                    received += 1;
+                });
+            });
+            // @ts-ignore
+            global.WebSocket = WebSocket;
+            createInstance(fakeURL, 'my.qualified.model', 'calc');
+
+            // we need to emulate also http
+
+            // @ts-ignore
+            const jQuery = global.$;
+            sinon.replace(jQuery, 'ajax', function(params) {
+                expect(params.url).to.equals('http://localhost:8080/models/my.referred.model/123-foo');
+                expect(params.type).to.equals('get');
+                const successCb = params.success;
+                const refNodeData : NodeData = {
+                    concept: "my.referred.Concept",
+                    containingLink: "",
+                    id: {
+                        regularId: '123-foo'
+                    },
+                    modelName: "my.referred.model",
+                    parent: null,
+                    rootName: "myOtherModel",
+                    abstractConcept: false,
+                    properties: {name: 'My referred node'},
+                    children: [],
+                    refs: {}
+                };
+                successCb(refNodeData);
+                // verify the name was updated
+                expect(doc.querySelector('input').value).to.eql('My referred node');
+
+                mockServer.close();
+                done();
+            });
+
+            setDefaultBaseUrl('localhost:8080');
+
+            patch(toVNode(document.querySelector('#calc')), container);
+        });
     });
 
     describe('should support row cell', () => {
