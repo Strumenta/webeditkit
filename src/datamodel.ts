@@ -26,6 +26,8 @@ interface EnumValue {
 
 export type PropertyType = string | boolean | number | EnumValue;
 
+export type PropertiesValues = { [key: string]: PropertyType }
+
 export interface NodeId {
   regularId: string;
 }
@@ -40,7 +42,7 @@ interface ModelId {
 
 export interface NodeData {
   abstractConcept: boolean;
-  properties: { [key: string]: PropertyType };
+  properties: PropertiesValues;
   children: NodeData[];
   concept: string;
   containingLink?: string;

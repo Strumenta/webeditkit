@@ -1,12 +1,11 @@
 import {
-  findNode,
   getDatamodelRoot,
   ModelNode,
   NodeId,
   PropertyType,
   dataToNode,
   nodeIdToString,
-  Ref, NodeInModel,
+  Ref, NodeInModel, PropertiesValues,
 } from './datamodel';
 import { renderDataModels } from './webeditkit';
 
@@ -135,6 +134,14 @@ export class WsCommunication {
 
   setSilent() {
     this.silent = true;
+  }
+
+  createRoot(conceptName: string, propertiesValues: PropertiesValues) : void {
+    this.sendJSON({
+      type: 'createRoot',
+      conceptName,
+      propertiesValues
+    });
   }
 
   private sendJSON(data) {
