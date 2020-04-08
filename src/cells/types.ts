@@ -12,11 +12,12 @@ import {
   triggerResize,
   map,
   focusOnNode,
-  SuggestionsReceiver,
+  SuggestionsReceiver, wrapKeydownHandler,
 } from './support';
-import { ModelNode, NodeId, nodeIdToString } from '../datamodel';
+import { ModelNode, NodeId, nodeIdToString, Ref } from '../datamodel';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
+import {renderDataModels} from "../index";
 
 export function childCell(modelNode: ModelNode, containmentName: string): VNode {
   const child = modelNode.childByLinkName(containmentName);
@@ -248,21 +249,149 @@ export function fixedCell(
 
 export type AlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => void;
 
+/*
+ Here we keep the text that is typed in reference cells and it is not matching some text yet.
+ */
+const resolutionMemory = {};
+
+function editingReferenceCell(
+    modelNode: ModelNode,
+    referenceName: string,
+    alternativesProvider?: AlternativesProvider,
+) : VNode {
+  const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
+  let memory = "";
+  if (resolutionMemoryKey in resolutionMemory) {
+    memory = resolutionMemory[resolutionMemoryKey];
+  }
+  return h('input.unresolved-reference', {
+    props: {
+      value: memory
+    },
+    on: {
+      keydown: (event: KeyboardEvent) => {
+        // @ts-ignore
+        const v = event.target.value;
+        resolutionMemory[resolutionMemoryKey] = v;
+        // @ts-ignore
+        if (v == "") {
+          renderDataModels();
+        }
+      }
+    },
+    hook: {
+      insert: (vnode: any) => {
+        addAutoresize(vnode);
+        if (alternativesProvider != null) {
+          installAutocomplete(vnode, alternativesProvider, false);
+        }
+      },
+      update: triggerResize,
+    }
+  }, []);
+};
+
 export function referenceCell(
   modelNode: ModelNode,
   referenceName: string,
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
-  deleter?: any,
+  deleter?: () => void,
 ): VNode {
+  const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
+    const ws = getWsCommunication(modelNode.modelName());
+    ws.askAlternativesForDirectReference(modelNode, 'parent', (alternativesFromWs: any[]) => {
+      // We want to put on top the alternatives from the same model
+      // We want also to mark them as bold (the render should take care of that)
+      // And sort the two groups by name
+
+      const group1 = alternativesFromWs.filter((el) => el.modelName === modelNode.modelName()).sort((a,b)=>{
+        if (a.label < b.label) return -1;
+        if (a.label > b.label) return 1;
+        return 0;
+      });
+      const group2 = alternativesFromWs.filter((el) => el.modelName !== modelNode.modelName()).sort((a,b)=>{
+        if (a.label < b.label) return -1;
+        if (a.label > b.label) return 1;
+        return 0;
+      });
+
+      const suggestions1 = group1.map((el)=> {
+        return {
+          label: el.label,
+          execute: () => {
+            const ref : Ref = new Ref({model: {qualifiedName: el.modelName}, id: el.nodeId});
+            (modelNode as ModelNode).setRef('parent', ref);
+          },
+          highlighted: true
+        }
+      });
+
+      const suggestions2 = group2.map((el)=> {
+        return {
+          label: el.label,
+          execute: () => {
+            const ref : Ref = new Ref({model: {qualifiedName: el.modelName}, id: el.nodeId});
+            (modelNode as ModelNode).setRef('parent', ref);
+          },
+          highlighted: false
+        }
+      });
+
+      suggestionsReceiver(suggestions1.concat(suggestions2));
+    });
+  };
+
+  alternativesProvider = alternativesProvider || defaultAlternativesProvider;
+
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
     extraClassesStr = '.' + extraClasses.join('.');
   }
+
+  // The cell can be in three state:
+  // 1) Not matching any element, empty
+  // 2) Not matching any element, with text
+  // 3) Matching an element
+  //
+  // Case 1: when we type we move to Case 2
+  // Case 2: if we type something that matches or the user select an entry we got to case 3
+  // Case 3: if we type we move to case 2
+
   if (modelNode.ref(referenceName) == null) {
-    return fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider);
+
+    const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
+    let memory = "";
+    if (resolutionMemoryKey in resolutionMemory) {
+      memory = resolutionMemory[resolutionMemoryKey];
+    }
+    if (memory.length > 0) {
+      //
+      // CASE 2
+      //
+      return editingReferenceCell(modelNode, referenceName, alternativesProvider);
+    } else {
+      //
+      // CASE 1
+      //
+      // TODO, capture any character to switch to an editable cell
+      return wrapKeydownHandler(fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider), (event)=>{
+        // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
+        // this seems to work...
+        let isPrintableKey = event.key.length === 1;
+        if (isPrintableKey) {
+          resolutionMemory[resolutionMemoryKey] = event.key;
+          renderDataModels();
+        }
+        return true;
+      });
+    }
   }
+
+  //
+  // CASE 3
+  //
   return h(
     'input.reference' + extraClassesStr,
     {
@@ -284,14 +413,27 @@ export function referenceCell(
         keydown: (e: KeyboardEvent) => {
           if (e.key === 'ArrowRight') {
             moveToNextElement(e.target);
+          } else if (e.key === 'ArrowLeft') {
+            moveToPrevElement(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter !== undefined) {
               deleter();
+              e.preventDefault();
+              return false;
             }
           }
-          e.preventDefault();
-          return false;
+          // TODO when typing we destroy the reference
+          // and we go to an editable cell
+          //e.preventDefault();
+          //return false;
         },
+        keyup: (e: KeyboardEvent) => {
+          modelNode.setRef(referenceName, null);
+          const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
+          // @ts-ignore
+          resolutionMemory[resolutionMemoryKey] = e.target.value;
+          renderDataModels();
+        }
       },
     },
     [],

@@ -6,7 +6,7 @@ import {
   PropertyType,
   dataToNode,
   nodeIdToString,
-  Ref,
+  Ref, NodeInModel,
 } from './datamodel';
 import { renderDataModels } from './webeditkit';
 
@@ -18,12 +18,25 @@ function uuidv4() {
   });
 }
 
-interface Alternative {
+export interface Alternative {
   conceptName: string;
   alias: string;
 }
 
-type Alternatives = Alternative[];
+export interface AlternativeForDirectReference {
+  label: string;
+  modelName: string;
+  nodeId: NodeId;
+}
+
+export type Alternatives = Alternative[];
+export type AlternativesForDirectReference = AlternativeForDirectReference[];
+
+interface ReferenceChange {
+  node: NodeInModel;
+  referenceName: string;
+  referenceValue: NodeInModel;
+}
 
 export class WsCommunication {
   private ws: WebSocket;
@@ -60,6 +73,22 @@ export class WsCommunication {
         }
         const node = dataToNode(root.data).findNodeById(nodeIdToString(data.nodeId));
         node.setProperty(data.propertyName as string, data.propertyValue as PropertyType);
+        renderDataModels();
+      } else if (data.type === 'ReferenceChange') {
+        const msg = data as ReferenceChange;
+        const root = getDatamodelRoot(localName);
+        if (root == null) {
+          throw new Error('data model with local name ' + localName + ' was not found');
+        }
+        const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
+        if (msg.referenceValue == null) {
+          node.setRefLocally(msg.referenceName, null);
+        } else {
+          node.setRefLocally(msg.referenceName, new Ref({
+            model: {qualifiedName: msg.referenceValue.model},
+            id: msg.referenceValue.id
+          }));
+        }
         renderDataModels();
       } else if (data.type === 'nodeAdded') {
         const root = getDatamodelRoot(localName);
@@ -163,16 +192,25 @@ export class WsCommunication {
   }
 
   setRef(container: ModelNode, referenceName: string, ref: Ref): void {
-    this.sendJSON({
-      type: 'setRef',
-      modelName: container.modelName(),
-      container: container.idString(),
-      referenceName,
-      referenceValue: {
-        model: ref.data.model.qualifiedName,
-        id: ref.data.id.regularId,
-      },
-    });
+    if (ref == null) {
+      this.sendJSON({
+        type: 'setRef',
+        modelName: container.modelName(),
+        container: container.idString(),
+        referenceName,
+      });
+    } else {
+      this.sendJSON({
+        type: 'setRef',
+        modelName: container.modelName(),
+        container: container.idString(),
+        referenceName,
+        referenceValue: {
+          model: ref.data.model.qualifiedName,
+          id: ref.data.id.regularId,
+        },
+      });
+    }
   }
 
   insertNextSibling(sibling: ModelNode): void {
@@ -233,7 +271,7 @@ export class WsCommunication {
   askAlternativesForDirectReference(
     modelNode: ModelNode,
     referenceName: string,
-    alternativesReceiver: (AlternativesForDirectReference) => void,
+    alternativesReceiver: (alternatives: AlternativesForDirectReference) => void,
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = alternativesReceiver;

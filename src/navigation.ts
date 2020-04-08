@@ -53,7 +53,7 @@ export function moveToNextElement(t): boolean {
     if (tag === 'INPUT') {
       moveFocusToStart(next);
       return true;
-    } else if (tag === 'DIV') {
+    } else if (tag === 'DIV' || tag === 'SPAN') {
       if (next.find('input').length === 0) {
         next = findNext(next);
       } else {
@@ -61,8 +61,8 @@ export function moveToNextElement(t): boolean {
         moveFocusToStart(next);
         return true;
       }
-    } else if (tag === 'SPAN') {
-      next = findNext(next);
+    // } else if (tag === 'SPAN') {
+    //   next = findNext(next);
     } else {
       return false;
     }

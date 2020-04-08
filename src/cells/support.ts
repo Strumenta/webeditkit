@@ -1,5 +1,5 @@
 import { getDatamodelRoot, ModelNode } from '../datamodel';
-import { getWsCommunication } from '../wscommunication';
+import {Alternative, getWsCommunication} from '../wscommunication';
 import { myAutoresizeOptions } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
@@ -43,7 +43,7 @@ export function alternativesProviderForAddingChild(
         }
       };
       const uiAlternatives = Array.from(
-        $(alternatives).map((index, domElement) => {
+        $(alternatives).map((index, domElement: Alternative) => {
           return { label: domElement.alias, execute: adder(domElement.conceptName) };
         }),
       );
@@ -70,7 +70,11 @@ export function installAutocomplete(
     minLength: 0,
     render: (item: any, currentValue: any) => {
       const div = document.createElement('div');
-      div.className = 'autocomplete-item';
+      if (item.highlighted) {
+        div.className = 'autocomplete-item highlighted';
+      } else {
+        div.className = 'autocomplete-item';
+      }
       div.textContent = item.label;
       return div;
     },
@@ -152,6 +156,29 @@ export function addInsertHook(vnode: VNode, f: (VNode) => void): VNode {
     vnode.data.hook = {};
   }
   vnode.data.hook.insert = f;
+  return vnode;
+}
+
+export function wrapKeydownHandler(vnode: VNode, keydownHandler: (event) => boolean): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.on === undefined) {
+    vnode.data.on = {};
+  }
+  if (vnode.data.on.keydown === undefined) {
+    vnode.data.on.keydown = keydownHandler;
+  } else {
+    const original = vnode.data.on.keydown;
+    vnode.data.on.keydown = (event) => {
+      const res = keydownHandler(event);
+      if (res) {
+        return original(event);
+      } else {
+        return res;
+      }
+    };
+  }
   return vnode;
 }
 

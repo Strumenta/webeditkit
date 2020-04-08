@@ -51,6 +51,12 @@ export interface NodeData {
   parent?: NodeData;
 }
 
+export interface NodeInModel {
+  model: string;
+  id: NodeId;
+}
+
+// TODO merge with NodeInModel
 interface ReferenceData {
   model: ModelId;
   id: NodeId;
@@ -150,6 +156,14 @@ export class ModelNode {
     //   throw new Error('Property ' + propertyName + ' not found');
     // }
     return value || undefined;
+  }
+
+  setRefLocally(referenceName: string, ref: Ref): void {
+    if (ref == null) {
+      this.data.refs[referenceName] = null;
+    } else {
+      this.data.refs[referenceName] = ref.data;
+    }
   }
 
   setRef(referenceName: string, ref: Ref): void {
