@@ -5,17 +5,47 @@ import {
   PropertyType,
   dataToNode,
   nodeIdToString,
-  Ref, NodeInModel, PropertiesValues,
+  Ref, NodeInModel, PropertiesValues, NodeData,
 } from './datamodel';
 import { renderDataModels } from './webeditkit';
+import {uuidv4} from "./misc";
 
-function uuidv4() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+///
+/// Messages - start
+///
+
+interface Message {
+  type: string;
 }
+
+interface PropertyChange extends Message {
+  propertyName: string;
+  propertyValue: PropertyType;
+  nodeId: NodeId;
+}
+
+interface ReferenceChange extends Message {
+  node: NodeInModel;
+  referenceName: string;
+  referenceValue: NodeInModel;
+}
+
+interface NodeAdded extends Message {
+  parentNodeId: NodeId;
+  relationName: string;
+  index: number;
+  child: NodeData;
+}
+
+interface NodeRemoved extends Message {
+  parentNodeId: NodeId;
+  relationName: string;
+  child: NodeData;
+}
+
+///
+/// Messages - end
+///
 
 export interface Alternative {
   conceptName: string;
@@ -31,12 +61,6 @@ export interface AlternativeForDirectReference {
 export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
 
-interface ReferenceChange {
-  node: NodeInModel;
-  referenceName: string;
-  referenceValue: NodeInModel;
-}
-
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
@@ -49,7 +73,7 @@ export class WsCommunication {
     this.modelName = modelName;
     this.localName = localName;
     this.callbacks = {};
-    this.silent = false;
+    this.silent = true;
 
     const thisWS = this;
 
@@ -66,12 +90,13 @@ export class WsCommunication {
         console.info('  data: ', data);
       }
       if (data.type === 'propertyChange') {
+        const msg = data as PropertyChange;
         const root = getDatamodelRoot(localName);
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
         }
-        const node = dataToNode(root.data).findNodeById(nodeIdToString(data.nodeId));
-        node.setProperty(data.propertyName as string, data.propertyValue as PropertyType);
+        const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.nodeId));
+        node.setProperty(msg.propertyName, msg.propertyValue);
         renderDataModels();
       } else if (data.type === 'ReferenceChange') {
         const msg = data as ReferenceChange;
@@ -90,26 +115,28 @@ export class WsCommunication {
         }
         renderDataModels();
       } else if (data.type === 'nodeAdded') {
+        const msg = data as NodeAdded;
         const root = getDatamodelRoot(localName);
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
         }
-        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(data.parentNodeId));
+        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
         if (parentNode == null) {
-          throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(data.parentNodeId));
+          throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId));
         }
-        parentNode.addChild(data.relationName, data.index, data.child);
+        parentNode.addChild(msg.relationName, msg.index, msg.child);
         renderDataModels();
       } else if (data.type === 'nodeRemoved') {
+        const msg = data as NodeRemoved;
         const root = getDatamodelRoot(localName);
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
         }
-        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(data.parentNodeId));
+        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
         if (parentNode == null) {
           throw new Error('Cannot remove node because parent was not found');
         }
-        parentNode.removeChild(data.relationName, data.child);
+        parentNode.removeChild(msg.relationName, msg.child);
         renderDataModels();
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
@@ -134,6 +161,10 @@ export class WsCommunication {
 
   setSilent() {
     this.silent = true;
+  }
+
+  setVerbose() {
+    this.silent = false;
   }
 
   createRoot(conceptName: string, propertiesValues: PropertiesValues) : void {
