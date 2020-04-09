@@ -6,7 +6,7 @@ import { VNodeChildElement } from 'snabbdom/h';
 
 const autocomplete = require('autocompleter');
 
-var merge = require('lodash.merge');
+import merge = require('lodash.merge');
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();
