@@ -250,7 +250,7 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
     const refNode = inputs.filter((i,el)=>{
       return $(el).data('nodeRepresented') == modelNode.idString() && $(el).data('referenceRepresented') == referenceName;
     });
-    if (refNode.length == 1) {
+    if (refNode.length === 1) {
       refNode.focus();
     }
   }
