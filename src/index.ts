@@ -28,7 +28,7 @@ export {
 
 export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const uiutils = require('./uiutils');
-export const datamodel = require('./datamodel');
+export const datamodel = require('./datamodel/misc');
 const wscommunication = require('./wscommunication');
 export const cells = require('./cells');
 

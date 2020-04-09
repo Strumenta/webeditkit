@@ -1,6 +1,6 @@
 import { renderModelNode } from './renderer';
 
-import { dataToNode, forEachDataModel, setDatamodelRoot } from './datamodel';
+import { dataToNode, forEachDataModel, setDatamodelRoot } from './datamodel/misc';
 
 import { init } from 'snabbdom/snabbdom';
 

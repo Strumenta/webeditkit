@@ -1,14 +1,14 @@
-import { dataToNode, ModelNode } from '../src/datamodel';
+import { dataToNode } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
-import { addClass, alternativesProviderForAbstractConcept, fixedCell, map, referenceCell, row } from '../src/cells';
+import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/cells';
 import {
   addId,
   addInsertHook,
   alternativesProviderForAddingChild,
   AutocompleteAlternative,
-  flattenArray,
+  focusOnNode,
   handleSelfDeletion,
   installAutocomplete,
   separate,
@@ -16,19 +16,10 @@ import {
   SuggestionsReceiver,
 } from '../src/cells/support';
 
-import { WebSocket, Server } from 'mock-socket';
-
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-
-var init2html = require('snabbdom-to-html/init');
-var modules = require('snabbdom-to-html/modules/index');
-var toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
-
+import { Server, WebSocket } from 'mock-socket';
 import { init } from 'snabbdom/snabbdom';
 
 import h from 'snabbdom/h'; // helper function for creating vnodes
-
 import toVNode from 'snabbdom/tovnode';
 
 import * as sclass from 'snabbdom/modules/class';
@@ -36,10 +27,15 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { focusOnNode } from '../src/cells/support';
-import { installAutoresize } from '../src/uiutils';
 import { createInstance } from '../src/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
+
+const jsdom = require('jsdom');
+const { JSDOM } = jsdom;
+
+var init2html = require('snabbdom-to-html/init');
+var modules = require('snabbdom-to-html/modules/index');
+var toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
 
 const patch = init([
   // Init patch function with chosen modules

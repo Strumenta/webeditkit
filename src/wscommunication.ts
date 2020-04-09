@@ -1,14 +1,17 @@
 import {
-  getDatamodelRoot,
-  ModelNode,
-  NodeId,
-  PropertyType,
   dataToNode,
+  getDatamodelRoot,
+  NodeData,
+  NodeId,
   nodeIdToString,
-  Ref, NodeInModel, PropertiesValues, NodeData,
-} from './datamodel';
+  NodeInModel,
+  PropertiesValues,
+  PropertyType,
+} from './datamodel/misc';
 import { renderDataModels } from './webeditkit';
-import {uuidv4} from "./misc";
+import { uuidv4 } from './misc';
+import { ModelNode } from './datamodel/modelNode';
+import { Ref } from './datamodel/ref';
 
 ///
 /// Messages - start

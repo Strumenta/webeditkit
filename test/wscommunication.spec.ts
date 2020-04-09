@@ -1,15 +1,7 @@
-import {
-  registerDataModelClass,
-  dataToNode,
-  ModelNode,
-  NodeData,
-  Ref,
-  setDatamodelRoot,
-  clearDatamodelRoots,
-} from '../src/datamodel';
+import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
-import { WebSocket, Server } from 'mock-socket';
+import { Server, WebSocket } from 'mock-socket';
 import { WsCommunication } from '../src/wscommunication';
 import { clearRendererRegistry } from '../src/renderer';
 import { clone } from './testutils';

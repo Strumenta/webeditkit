@@ -1,4 +1,4 @@
-import { clearDatamodelRoots, dataToNode, NodeData } from '../src/datamodel';
+import { clearDatamodelRoots, dataToNode, NodeData } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
@@ -46,7 +46,7 @@ import {
   pressBackspace,
   pressEnter,
 } from './testutils';
-import { setDefaultBaseUrl } from '../src/datamodel';
+import { setDefaultBaseUrl } from '../src/datamodel/misc';
 import { clearRendererRegistry } from '../src/renderer';
 
 const patch = init([

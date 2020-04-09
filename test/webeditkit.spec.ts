@@ -1,12 +1,4 @@
-import {
-  registerDataModelClass,
-  dataToNode,
-  ModelNode,
-  NodeData,
-  setDatamodelRoot,
-  clearDatamodelRoots,
-  getDatamodelRoot,
-} from '../src/datamodel';
+import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
 import { loadDataModel, renderDataModels } from '../src/webeditkit';

@@ -1,23 +1,28 @@
-import h, { VNodeChildElement } from 'snabbdom/h';
+import h from 'snabbdom/h';
 import { getWsCommunication } from '../wscommunication';
 import { isAtEnd, isAtStart, moveToNextElement, moveToPrevElement } from '../navigation';
 import {
   addAutoresize,
+  addToDatasetObj,
   alternativesProviderForAddingChild,
   flattenArray,
+  focusOnNode,
+  focusOnReference,
   handleAddingElement,
   handleSelfDeletion,
   installAutocomplete,
-  separate,
-  triggerResize,
   map,
-  focusOnNode,
-  SuggestionsReceiver, wrapKeydownHandler, focusOnReference, addToDataset, addToDatasetObj,
+  separate,
+  SuggestionsReceiver,
+  triggerResize,
+  wrapKeydownHandler,
 } from './support';
-import { ModelNode, NodeId, nodeIdToString, Ref } from '../datamodel';
+import { NodeId, nodeIdToString } from '../datamodel/misc';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
-import {renderDataModels} from "../index";
+import { renderDataModels } from '../index';
+import { ModelNode } from '../datamodel/modelNode';
+import { Ref } from '../datamodel/ref';
 
 export function childCell(modelNode: ModelNode, containmentName: string): VNode {
   const child = modelNode.childByLinkName(containmentName);

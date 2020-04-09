@@ -1,11 +1,11 @@
-import { dataToNode, ModelNode } from '../src/datamodel';
+import { dataToNode } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
-import { clearRendererRegistry, getRegisteredRenderer, renderModelNode } from '../src/renderer';
+import { clearRendererRegistry, getRegisteredRenderer, registerRenderer, renderModelNode } from '../src/renderer';
 import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
-import { registerRenderer } from '../src/renderer';
 import { compareVNodes } from './testutils';
+import { ModelNode } from '../src/datamodel/modelNode';
 
 const rootData1 = {
   children: [

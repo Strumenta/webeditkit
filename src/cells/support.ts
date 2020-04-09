@@ -1,8 +1,9 @@
-import { getDatamodelRoot, ModelNode } from '../datamodel';
-import {Alternative, getWsCommunication} from '../wscommunication';
+import { getDatamodelRoot } from '../datamodel/misc';
+import { Alternative, getWsCommunication } from '../wscommunication';
 import { myAutoresizeOptions } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
+import { ModelNode } from '../datamodel/modelNode';
 
 const autocomplete = require('autocompleter');
 
