@@ -1,4 +1,3 @@
-import { dataToNode } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
@@ -29,6 +28,7 @@ import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
+import { dataToNode } from '../src/datamodel/registry';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;

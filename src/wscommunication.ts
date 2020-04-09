@@ -1,6 +1,4 @@
 import {
-  dataToNode,
-  getDatamodelRoot,
   NodeData,
   NodeId,
   nodeIdToString,
@@ -12,6 +10,7 @@ import { renderDataModels } from './webeditkit';
 import { uuidv4 } from './misc';
 import { ModelNode } from './datamodel/modelNode';
 import { Ref } from './datamodel/ref';
+import { dataToNode, getDatamodelRoot } from './datamodel/registry';
 
 ///
 /// Messages - start
