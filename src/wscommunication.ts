@@ -117,26 +117,34 @@ export class WsCommunication {
       } else if (data.type === 'nodeAdded') {
         const msg = data as NodeAdded;
         const root = getDatamodelRoot(localName);
-        if (root == null) {
-          throw new Error('data model with local name ' + localName + ' was not found');
+        if (msg.parentNodeId == null) {
+          // this is a new root
+        } else {
+          if (root == null) {
+            throw new Error('data model with local name ' + localName + ' was not found');
+          }
+          const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
+          if (parentNode == null) {
+            throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId));
+          }
+          parentNode.addChild(msg.relationName, msg.index, msg.child);
         }
-        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
-        if (parentNode == null) {
-          throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId));
-        }
-        parentNode.addChild(msg.relationName, msg.index, msg.child);
         renderDataModels();
       } else if (data.type === 'nodeRemoved') {
         const msg = data as NodeRemoved;
         const root = getDatamodelRoot(localName);
-        if (root == null) {
-          throw new Error('data model with local name ' + localName + ' was not found');
+        if (msg.parentNodeId == null) {
+          // this is a root
+        } else {
+          if (root == null) {
+            throw new Error('data model with local name ' + localName + ' was not found');
+          }
+          const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
+          if (parentNode == null) {
+            throw new Error('Cannot remove node because parent was not found');
+          }
+          parentNode.removeChild(msg.relationName, msg.child);
         }
-        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
-        if (parentNode == null) {
-          throw new Error('Cannot remove node because parent was not found');
-        }
-        parentNode.removeChild(msg.relationName, msg.child);
         renderDataModels();
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
@@ -167,9 +175,10 @@ export class WsCommunication {
     this.silent = false;
   }
 
-  createRoot(conceptName: string, propertiesValues: PropertiesValues) : void {
+  createRoot(modelName: string, conceptName: string, propertiesValues: PropertiesValues) : void {
     this.sendJSON({
       type: 'createRoot',
+      modelName,
       conceptName,
       propertiesValues
     });
@@ -274,6 +283,14 @@ export class WsCommunication {
       type: 'deleteNode',
       modelName: node.modelName(),
       node: node.idString(),
+    });
+  }
+
+  deleteNodeById(modelName: string, nodeId: string): void {
+    this.sendJSON({
+      type: 'deleteNode',
+      modelName,
+      node: nodeId,
     });
   }
 
