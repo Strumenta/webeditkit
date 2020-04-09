@@ -16,10 +16,30 @@ function moveFocusToEnd(next) {
 }
 
 function findNext(n) {
-  if (n.next() === undefined) {
-    return undefined;
+  const candidate = n.next();
+  if (candidate == null || candidate.length == 0) {
+    const p = $(n).parent();
+    if (p == null || $(p).hasClass('editor')) {
+      return null;
+    } else {
+      return findNext(p);
+    }
   } else {
-    return n.next();
+    return candidate;
+  }
+}
+
+function findPrev(n) {
+  const candidate = n.prev();
+  if (candidate == null || candidate.length == 0) {
+    const p = $(n).parent();
+    if (p == null || $(p).hasClass('editor')) {
+      return null;
+    } else {
+      return findPrev(p);
+    }
+  } else {
+    return candidate;
   }
 }
 
@@ -39,48 +59,35 @@ export function moveUp(t) {
 export function moveDown(t) {}
 
 export function moveToNextElement(t): boolean {
-  let next = $(t).next();
-  if (next.length === 0) {
-    const parent = $(t).parent();
-    if (parent.hasClass('editor')) {
-      // cannot move outside the editor;
-      return false;
-    }
-    return moveToNextElement($(t).parent());
-  }
-  do {
-    const tag = next.prop('tagName');
+  let elConsidered = findNext($(t));
+  while (elConsidered != null) {
+    const tag = elConsidered.prop('tagName');
     if (tag === 'INPUT') {
-      moveFocusToStart(next);
+      moveFocusToStart(elConsidered);
       return true;
     } else if (tag === 'DIV' || tag === 'SPAN') {
-      if (next.find('input').length === 0) {
-        next = findNext(next);
+      if (elConsidered.find('input').length === 0) {
+        elConsidered = findNext(elConsidered);
       } else {
-        next = next.find('input').first();
-        moveFocusToStart(next);
+        elConsidered = elConsidered.find('input').first();
+        moveFocusToStart(elConsidered);
         return true;
       }
-    // } else if (tag === 'SPAN') {
-    //   next = findNext(next);
     } else {
+      // Perhaps we could play an error sound
       return false;
     }
-  } while (true);
+  }
 }
 
 export function moveToPrevElement(t): boolean {
-  let elConsidered = $(t).prev();
-
-  do {
-    if (elConsidered.length === 0) {
-      return moveToPrevElement($(t).parent());
-    }
+  let elConsidered = findPrev($(t));
+  while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');
     if (tag === 'INPUT') {
       moveFocusToEnd(elConsidered);
       return true;
-    } else if (tag === 'DIV') {
+    } else if (tag === 'DIV' || tag === 'SPAN') {
       if (elConsidered.find('input').length === 0) {
         elConsidered = findPrev(elConsidered);
       } else {
@@ -88,23 +95,11 @@ export function moveToPrevElement(t): boolean {
         moveFocusToEnd(elConsidered);
         return true;
       }
-    } else if (tag === 'SPAN') {
-      elConsidered = findPrev(elConsidered);
-    } else if (tag === 'BR') {
-      elConsidered = elConsidered.prev();
     } else {
       // Perhaps we could play an error sound
       return false;
     }
-  } while (true);
-}
-
-function findPrev(n) {
-  if (n.prev() === undefined) {
-    return undefined;
-  } else {
-    return n.prev();
-  }
+  };
 }
 
 export function isAtEnd(element: any): boolean {

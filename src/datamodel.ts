@@ -98,7 +98,7 @@ export class Ref {
     this.data = data;
   }
 
-  loadData(cb) {
+  loadData(cb: (modelNode:ModelNode) => void) {
     let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
     if (baseUrl == null) {
       throw new Error(

@@ -297,6 +297,7 @@ export function referenceCell(
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
   deleter?: () => void,
+  opener?: (e:MouseEvent) => boolean
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
@@ -350,7 +351,7 @@ export function referenceCell(
     extraClassesStr = '.' + extraClasses.join('.');
   }
 
-  // The cell can be in three state:
+  // The cell can be in three states:
   // 1) Not matching any element, empty
   // 2) Not matching any element, with text
   // 3) Matching an element
@@ -377,6 +378,9 @@ export function referenceCell(
       //
       // TODO, capture any character to switch to an editable cell
       return wrapKeydownHandler(fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider), (event)=>{
+        // ctrl + space should trigger autocomplete
+
+
         // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
         // this seems to work...
         let isPrintableKey = event.key.length === 1;
@@ -410,13 +414,18 @@ export function referenceCell(
         update: triggerResize,
       },
       on: {
+        click: (e: MouseEvent) => {
+          if (opener != null) {
+            return opener(e);
+          }
+        },
         keydown: (e: KeyboardEvent) => {
           if (e.key === 'ArrowRight') {
             moveToNextElement(e.target);
           } else if (e.key === 'ArrowLeft') {
             moveToPrevElement(e.target);
           } else if (e.key === 'Backspace') {
-            if (deleter !== undefined) {
+            if (deleter != null) {
               deleter();
               e.preventDefault();
               return false;
@@ -428,11 +437,16 @@ export function referenceCell(
           //return false;
         },
         keyup: (e: KeyboardEvent) => {
-          modelNode.setRef(referenceName, null);
-          const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
-          // @ts-ignore
-          resolutionMemory[resolutionMemoryKey] = e.target.value;
-          renderDataModels();
+          modelNode.ref(referenceName).loadData((refNode)=> {
+            // @ts-ignore
+            if (refNode.name() != e.target.value) {
+              modelNode.setRef(referenceName, null);
+              const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
+              // @ts-ignore
+              resolutionMemory[resolutionMemoryKey] = e.target.value;
+              renderDataModels();
+            }
+          });
         }
       },
     },
