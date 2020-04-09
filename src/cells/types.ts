@@ -12,7 +12,7 @@ import {
   triggerResize,
   map,
   focusOnNode,
-  SuggestionsReceiver, wrapKeydownHandler, focusOnReference,
+  SuggestionsReceiver, wrapKeydownHandler, focusOnReference, addToDataset, addToDatasetObj,
 } from './support';
 import { ModelNode, NodeId, nodeIdToString, Ref } from '../datamodel';
 import { renderModelNode } from '../renderer';
@@ -254,6 +254,13 @@ export type AlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) =>
  */
 const resolutionMemory = {};
 
+function datasetForReference(modelNode: ModelNode, referenceName: string) {
+  return {
+    nodeRepresented: modelNode.idString(),
+    referenceRepresented: referenceName
+  };
+}
+
 function editingReferenceCell(
     modelNode: ModelNode,
     referenceName: string,
@@ -268,10 +275,7 @@ function editingReferenceCell(
     props: {
       value: memory
     },
-    dataset: {
-      nodeRepresented: modelNode.idString(),
-      referenceRepresented: referenceName
-    },
+    dataset: datasetForReference(modelNode, referenceName),
     on: {
       keydown: (event: KeyboardEvent) => {
         // @ts-ignore
@@ -327,6 +331,7 @@ export function referenceCell(
           execute: () => {
             const ref : Ref = new Ref({model: {qualifiedName: el.modelName}, id: el.nodeId});
             (modelNode as ModelNode).setRef('parent', ref);
+            focusOnReference(modelNode, referenceName);
           },
           highlighted: true
         }
@@ -338,6 +343,7 @@ export function referenceCell(
           execute: () => {
             const ref : Ref = new Ref({model: {qualifiedName: el.modelName}, id: el.nodeId});
             (modelNode as ModelNode).setRef('parent', ref);
+            focusOnReference(modelNode, referenceName);
           },
           highlighted: false
         }
@@ -381,7 +387,7 @@ export function referenceCell(
       // CASE 1
       //
       // TODO, capture any character to switch to an editable cell
-      return wrapKeydownHandler(fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider), (event)=>{
+      return addToDatasetObj(wrapKeydownHandler(fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider), (event)=>{
         // ctrl + space should trigger autocomplete
 
 
@@ -391,12 +397,11 @@ export function referenceCell(
         if (isPrintableKey) {
           resolutionMemory[resolutionMemoryKey] = event.key;
           renderDataModels(() => {
-            console.log('Rendering done');
             focusOnReference(modelNode, referenceName);
           });
         }
         return true;
-      });
+      }), datasetForReference(modelNode, referenceName));
     }
   }
 
@@ -406,6 +411,7 @@ export function referenceCell(
   return h(
     'input.reference' + extraClassesStr,
     {
+      dataset: datasetForReference(modelNode, referenceName),
       props: { value: 'Loading...' },
       hook: {
         insert: (vnode: any) => {

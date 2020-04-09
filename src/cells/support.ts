@@ -6,6 +6,8 @@ import { VNodeChildElement } from 'snabbdom/h';
 
 const autocomplete = require('autocompleter');
 
+var merge = require('lodash.merge');
+
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();
   if (parent == null) {
@@ -197,6 +199,14 @@ export function addToDataset(vnode: VNode, key: string, value: any): VNode {
     vnode.data.dataset = {};
   }
   vnode.data.dataset[key] = value;
+  return vnode;
+}
+
+export function addToDatasetObj(vnode: VNode, dataObj: object) {
+  if (vnode.data.dataset === undefined) {
+    vnode.data.dataset = {};
+  }
+  vnode.data.dataset = merge(vnode.data.dataset, dataObj);
   return vnode;
 }
 
