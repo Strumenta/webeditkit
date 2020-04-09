@@ -384,7 +384,7 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference">');
+        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference" data-node-represented="1848360241685547698" data-reference-represented="type">');
         pressArrowLeft(myInput);
         expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
         done();
@@ -408,7 +408,7 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference">');
+        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference" data-node-represented="1848360241685547698" data-reference-represented="type">');
         pressArrowRight(myInput);
         expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
         done();

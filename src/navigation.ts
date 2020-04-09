@@ -78,6 +78,7 @@ export function moveToNextElement(t): boolean {
       return false;
     }
   }
+  return false;
 }
 
 export function moveToPrevElement(t): boolean {
@@ -99,7 +100,8 @@ export function moveToPrevElement(t): boolean {
       // Perhaps we could play an error sound
       return false;
     }
-  };
+  }
+  return false;
 }
 
 export function isAtEnd(element: any): boolean {
