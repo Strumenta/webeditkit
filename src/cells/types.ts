@@ -12,7 +12,7 @@ import {
   triggerResize,
   map,
   focusOnNode,
-  SuggestionsReceiver, wrapKeydownHandler,
+  SuggestionsReceiver, wrapKeydownHandler, focusOnReference,
 } from './support';
 import { ModelNode, NodeId, nodeIdToString, Ref } from '../datamodel';
 import { renderModelNode } from '../renderer';
@@ -268,6 +268,10 @@ function editingReferenceCell(
     props: {
       value: memory
     },
+    dataset: {
+      nodeRepresented: modelNode.idString(),
+      referenceRepresented: referenceName
+    },
     on: {
       keydown: (event: KeyboardEvent) => {
         // @ts-ignore
@@ -386,7 +390,10 @@ export function referenceCell(
         let isPrintableKey = event.key.length === 1;
         if (isPrintableKey) {
           resolutionMemory[resolutionMemoryKey] = event.key;
-          renderDataModels();
+          renderDataModels(() => {
+            console.log('Rendering done');
+            focusOnReference(modelNode, referenceName);
+          });
         }
         return true;
       });

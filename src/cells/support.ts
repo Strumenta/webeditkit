@@ -65,7 +65,7 @@ export function installAutocomplete(
   fixed: boolean,
 ) {
   const input = vnode.elm;
-  autocomplete({
+  const ac = autocomplete({
     input,
     minLength: 0,
     render: (item: any, currentValue: any) => {
@@ -233,11 +233,20 @@ export function separate(original: any[], separatorGenerator?: any): any[] {
   return separated;
 }
 
-/**
- *
- * @param nodeIdStr
- */
-export function focusOnNode(nodeIdStr: string, rootName: string) {
+export function focusOnReference(modelNode: ModelNode, referenceName: string) {
+  const firstNodeFound = findDomElement(modelNode.idString(), modelNode.rootName());
+  if (firstNodeFound != null) {
+    const inputs = $(firstNodeFound).find('input');
+    const refNode = inputs.filter((i,el)=>{
+      return $(el).data('nodeRepresented') == modelNode.idString() && $(el).data('referenceRepresented') == referenceName;
+    });
+    if (refNode.length == 1) {
+      refNode.focus();
+    }
+  }
+}
+
+export function findDomElement(nodeIdStr: string, rootName: string) {
   const domRoot = $('#' + rootName);
   if (domRoot.length === 0) {
     throw new Error(`Root with ID ${rootName} not found`);
@@ -246,13 +255,23 @@ export function focusOnNode(nodeIdStr: string, rootName: string) {
     return $(this).data('node_represented') === nodeIdStr;
   });
   if (found.length === 0) {
-    console.warn('node to focus on not found', nodeIdStr);
-    return;
+    return null;
   } else if (found.length > 1) {
     console.warn('more than one representation of node to focus found', nodeIdStr);
+    return null;
   }
-  const firstNodeFound = found[0];
-  focusOnFirstInputOf(firstNodeFound);
+  return found[0];
+}
+
+/**
+ *
+ * @param nodeIdStr
+ */
+export function focusOnNode(nodeIdStr: string, rootName: string) {
+  const firstNodeFound = findDomElement(nodeIdStr, rootName);
+  if (firstNodeFound != null) {
+    focusOnFirstInputOf(firstNodeFound);
+  }
 }
 
 function focusOnFirstInputOf(element): boolean {

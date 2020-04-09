@@ -24,7 +24,9 @@ const patch = init([
 ]);
 const vnodes = {};
 
-export const renderDataModels = () => {
+type BasicCallback = () => void;
+
+export const renderDataModels = (cb?: BasicCallback) => {
   if (typeof window === 'undefined') {
     console.log('skipping renderDataModels in Node.JS');
     return;
@@ -36,6 +38,9 @@ export const renderDataModels = () => {
     }
     vnodes[name] = patch(vnodes[name], vnode);
   });
+  if (cb != null) {
+    cb();
+  }
 };
 
 ///
