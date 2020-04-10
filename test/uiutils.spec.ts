@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { installAutoresize } from '../src/uiutils';
+import { installAutoresize } from '../src/presentation/uiutils';
 import { prepareFakeDom } from './testutils';
 
 const html1 = `<html>

@@ -14,8 +14,8 @@ import {
   tabCell,
   verticalCollectionCell,
   verticalGroupCell,
-} from '../src/cells';
-import { addInsertHook, flattenArray } from '../src/cells/support';
+} from '../src/presentation/cells';
+import { addInsertHook, flattenArray } from '../src/presentation/cells/support';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -35,8 +35,8 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { installAutoresize } from '../src/uiutils';
-import { createInstance } from '../src/wscommunication';
+import { installAutoresize } from '../src/presentation/uiutils';
+import { createInstance } from '../src/communication/wscommunication';
 import { Server, WebSocket } from 'mock-socket';
 import {
   focusedElement,
@@ -46,7 +46,7 @@ import {
   pressBackspace,
   pressEnter,
 } from './testutils';
-import { clearRendererRegistry } from '../src/renderer';
+import { clearRendererRegistry } from '../src/presentation/renderer';
 import {clearDatamodelRoots, dataToNode, setDefaultBaseUrl} from "../src/datamodel/registry";
 
 const patch = init([

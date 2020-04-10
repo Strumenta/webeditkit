@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
-import { loadDataModel, renderDataModels } from '../src/webeditkit';
-import { installAutoresize } from '../src/uiutils';
-import { clearRendererRegistry } from '../src/renderer';
+import { loadDataModel, renderDataModels } from '../src/index';
+import { installAutoresize } from '../src/presentation/uiutils';
+import { clearRendererRegistry } from '../src/presentation/renderer';
 import {clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot} from "../src/datamodel/registry";
 
 var sinon = require('sinon');

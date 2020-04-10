@@ -1,6 +1,6 @@
 import { VNode } from 'snabbdom/vnode';
 import { expect } from 'chai';
-import { installAutoresize } from '../src/uiutils';
+import { installAutoresize } from '../src/presentation/uiutils';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;

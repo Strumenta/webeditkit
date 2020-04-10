@@ -1,5 +1,5 @@
 import h from 'snabbdom/h';
-import { getWsCommunication } from '../wscommunication';
+import { getWsCommunication } from '../../communication/wscommunication';
 import { isAtEnd, isAtStart, moveToNextElement, moveToPrevElement } from '../navigation';
 import {
   addAutoresize,
@@ -17,12 +17,12 @@ import {
   triggerResize,
   wrapKeydownHandler,
 } from './support';
-import { NodeId, nodeIdToString } from '../datamodel/misc';
+import { NodeId, nodeIdToString } from '../../datamodel/misc';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
-import { renderDataModels } from '../index';
-import { ModelNode } from '../datamodel/modelNode';
-import { Ref } from '../datamodel/ref';
+import { renderDataModels } from '../../index';
+import { ModelNode } from '../../datamodel/modelNode';
+import { Ref } from '../../datamodel/ref';
 
 export function childCell(modelNode: ModelNode, containmentName: string): VNode {
   const child = modelNode.childByLinkName(containmentName);

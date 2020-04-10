@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
-import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/cells';
+import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/presentation/cells';
 import {
   addId,
   addInsertHook,
@@ -13,7 +13,7 @@ import {
   separate,
   setDataset,
   SuggestionsReceiver,
-} from '../src/cells/support';
+} from '../src/presentation/cells/support';
 
 import { Server, WebSocket } from 'mock-socket';
 import { init } from 'snabbdom/snabbdom';
@@ -26,7 +26,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { createInstance } from '../src/wscommunication';
+import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { dataToNode } from '../src/datamodel/registry';
 

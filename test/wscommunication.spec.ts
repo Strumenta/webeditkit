@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Server, WebSocket } from 'mock-socket';
-import { WsCommunication } from '../src/wscommunication';
-import { clearRendererRegistry } from '../src/renderer';
+import { WsCommunication } from '../src/communication/wscommunication';
+import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
 import {clearDatamodelRoots, dataToNode, setDatamodelRoot} from '../src/datamodel/registry';
 

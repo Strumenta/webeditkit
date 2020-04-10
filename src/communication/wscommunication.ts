@@ -5,12 +5,12 @@ import {
   NodeInModel,
   PropertiesValues,
   PropertyType,
-} from './datamodel/misc';
-import { renderDataModels } from './webeditkit';
-import { uuidv4 } from './misc';
-import { ModelNode } from './datamodel/modelNode';
-import { Ref } from './datamodel/ref';
-import { dataToNode, getDatamodelRoot } from './datamodel/registry';
+} from '../datamodel/misc';
+import { uuidv4 } from '../utils/misc';
+import { ModelNode } from '../datamodel/modelNode';
+import { Ref } from '../datamodel/ref';
+import { dataToNode, getDatamodelRoot } from '../datamodel/registry';
+import {renderDataModels} from "../index";
 
 ///
 /// Messages - start

@@ -1,5 +1,5 @@
 import { ModelNode } from './modelNode';
-import { baseUrlForModelName } from '../webeditkit';
+import { baseUrlForModelName } from '../index';
 import { dataToNode, getDefaultBaseUrl } from './registry';
 import { ReferenceData } from './misc';
 

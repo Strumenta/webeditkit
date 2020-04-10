@@ -1,5 +1,5 @@
 import { dataToNode } from './registry';
-import { getWsCommunication } from '../wscommunication';
+import { getWsCommunication } from '../communication/wscommunication';
 import { NodeData, PropertyType } from './misc';
 import { Ref } from './ref';
 

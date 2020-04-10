@@ -1,6 +1,6 @@
 import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCell } from './cells';
 import { setKey } from './cells/support';
-import { ModelNode } from './datamodel/modelNode';
+import { ModelNode } from '../datamodel/modelNode';
 import { VNode } from 'snabbdom/vnode';
 
 const renderersByName: { [key: string]: Renderer } = {};

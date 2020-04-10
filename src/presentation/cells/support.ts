@@ -1,13 +1,13 @@
-import { Alternative, getWsCommunication } from '../wscommunication';
+import { Alternative, getWsCommunication } from '../../communication/wscommunication';
 import { myAutoresizeOptions } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
-import { ModelNode } from '../datamodel/modelNode';
+import { ModelNode } from '../../datamodel/modelNode';
 
 const autocomplete = require('autocompleter');
 
 import merge = require('lodash.merge');
-import {getDatamodelRoot} from "../datamodel/registry";
+import {getDatamodelRoot} from "../../datamodel/registry";
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();
