@@ -1,4 +1,3 @@
-import { getDatamodelRoot } from '../datamodel/misc';
 import { Alternative, getWsCommunication } from '../wscommunication';
 import { myAutoresizeOptions } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
@@ -8,6 +7,7 @@ import { ModelNode } from '../datamodel/modelNode';
 const autocomplete = require('autocompleter');
 
 import merge = require('lodash.merge');
+import {getDatamodelRoot} from "../datamodel/registry";
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();

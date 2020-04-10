@@ -1,6 +1,6 @@
 import { renderModelNode } from './renderer';
 
-import { dataToNode, forEachDataModel, setDatamodelRoot } from './datamodel/misc';
+//import { dataToNode, forEachDataModel, setDatamodelRoot } from './datamodel/misc';
 
 import { init } from 'snabbdom/snabbdom';
 
@@ -13,6 +13,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
+import {dataToNode, forEachDataModel, setDatamodelRoot} from "./datamodel/registry";
 
 const patch = init([
   // Init patch function with chosen modules

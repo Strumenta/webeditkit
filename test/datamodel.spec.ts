@@ -1,8 +1,9 @@
-import { dataToNode, NodeData, registerDataModelClass } from '../src/datamodel/misc';
+import { NodeData } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
 import { ModelNode } from '../src/datamodel/modelNode';
 import { Ref } from '../src/datamodel/ref';
+import {dataToNode, registerDataModelClass} from "../src/datamodel/registry";
 
 class MyDummyModelNode extends ModelNode {
   constructor(data: NodeData) {

@@ -1,19 +1,9 @@
 import { getDatamodelRoot } from './registry';
 import { ModelNode } from './modelNode';
 
-
 ///
-/// Node Data
+/// Nodes
 ///
-
-interface EnumValue {
-  myId: string;
-  myNameHint: string;
-}
-
-export type PropertyType = string | boolean | number | EnumValue;
-
-export type PropertiesValues = { [key: string]: PropertyType }
 
 export interface NodeId {
   regularId: string;
@@ -21,10 +11,6 @@ export interface NodeId {
 
 export function nodeIdToString(nodeId: NodeId): string {
   return nodeId.regularId;
-}
-
-interface ModelId {
-  qualifiedName: string;
 }
 
 export interface NodeData {
@@ -45,12 +31,36 @@ export interface NodeInModel {
   id: NodeId;
 }
 
+///
+/// References
+///
+
 // TODO merge with NodeInModel
 export interface ReferenceData {
   model: ModelId;
   id: NodeId;
 }
 
+///
+/// Models
+///
+
+interface ModelId {
+  qualifiedName: string;
+}
+
+///
+/// Properties
+///
+
+interface EnumValue {
+  myId: string;
+  myNameHint: string;
+}
+
+export type PropertyType = string | boolean | number | EnumValue;
+
+export type PropertiesValues = { [key: string]: PropertyType }
 
 ///
 /// Node navigation

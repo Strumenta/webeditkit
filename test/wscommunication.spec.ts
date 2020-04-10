@@ -4,7 +4,7 @@ import { Server, WebSocket } from 'mock-socket';
 import { WsCommunication } from '../src/wscommunication';
 import { clearRendererRegistry } from '../src/renderer';
 import { clone } from './testutils';
-import { dataToNode } from '../src/datamodel/registry';
+import {clearDatamodelRoots, dataToNode, setDatamodelRoot} from '../src/datamodel/registry';
 
 const rootData1 = {
   children: [
