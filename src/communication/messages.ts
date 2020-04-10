@@ -1,7 +1,3 @@
-//
-/// Messages - start
-///
-
 import {NodeData, NodeId, NodeInModel, PropertyType} from "../datamodel/misc";
 
 export interface Message {
@@ -32,7 +28,3 @@ export interface NodeRemoved extends Message {
     relationName: string;
     child: NodeData;
 }
-
-///
-/// Messages - end
-///
