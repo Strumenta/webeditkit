@@ -230,7 +230,7 @@ export function map(originalArray: any, op: (el: any) => any): VNodeChildElement
   return originalArray.map(op);
 }
 
-export function separate(original: any[], separatorGenerator?: any): any[] {
+export function separate(original: any[], separatorGenerator?: ()=>VNode): any[] {
   if (separatorGenerator === undefined) {
     return original;
   }

@@ -85,7 +85,7 @@ export function verticalCollectionCell(
 export function horizontalCollectionCell(
   modelNode: ModelNode,
   containmentName: string,
-  separatorGenerator?: any,
+  separatorGenerator?: () => VNode,
 ): VNode {
   const children = modelNode.childrenByLinkName(containmentName);
   if (children.length === 0) {

@@ -34,6 +34,11 @@ input:invalid {
     background-color: #b123ff;
 }
 
+.deleting {
+    background-color: #FFBDB3;
+    border: 1px red solid;
+}
+
 div.row {
     min-height: 1em;
     margin-bottom: 0.5em;
@@ -73,6 +78,14 @@ input.fixed {
     border-color: #aaa;
 }
 
+input.empty-collection:focus {
+    background-color: rgb(222, 219, 255);
+}
+
+input.keyword {
+    background: transparent;
+}
+
 .autocomplete {
     -webkit-box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.75);
     -moz-box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.75);
@@ -85,9 +98,17 @@ input.fixed {
     padding: 2px;
 }
 
+.autocomplete-item.highlighted {
+    font-weight: bold;
+}
+
 .autocomplete-item.selected {
     background-color: #475D9D;
     color: white;
+}
+
+.unresolved-reference {
+    color: red;
 }
 
 .empty-collection {
@@ -100,4 +121,23 @@ input.fixed {
 
 .row * {
     vertical-align: top;
+}
+
+.horizontal-collection {
+    display: inline-block;
+}
+
+input {
+    font-family: monospace;
+}
+
+.reference {
+    font-style: italic;
+    color: darkmagenta;
+}
+
+.reference:hover {
+    color: white;
+    background-color: #475D9D;
+    text-decoration: underline;
 }

@@ -12,6 +12,10 @@ import {
   verticalGroupCell,
 } from './presentation/cells';
 
+import {
+  registerRenderer
+} from "./presentation/renderer";
+
 export {
   fixedCell,
   referenceCell,
@@ -33,7 +37,11 @@ const wscommunication = require('./communication/wscommunication');
 export const cells = require('./presentation/cells');
 
 const renderers = require('./presentation/renderer');
-export const registerRenderer = renderers.registerRenderer;
+
+export {
+  registerRenderer
+}
+
 export const registerDataModelClass = datamodel.registerDataModelClass;
 
 export const findNode = datamodel.findNode;
@@ -86,7 +94,12 @@ export const renderDataModels = (cb?: BasicCallback) => {
   forEachDataModel((name, root) => {
     const vnode = h('div#' + name + '.editor', {}, [renderModelNode(root)]);
     if (vnodes[name] === undefined) {
-      vnodes[name] = toVNode($('div#' + name)[0]);
+      const domNode = $('div#' + name)[0];
+      if (domNode == null) {
+        console.warn(`cannot render model on div#${name}`);
+        return;
+      }
+      vnodes[name] = toVNode(domNode);
     }
     vnodes[name] = patch(vnodes[name], vnode);
   });
