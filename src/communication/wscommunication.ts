@@ -12,42 +12,7 @@ import { Ref } from '../datamodel/ref';
 import { dataToNode, getDatamodelRoot } from '../datamodel/registry';
 import {renderDataModels} from "../index";
 
-///
-/// Messages - start
-///
-
-interface Message {
-  type: string;
-}
-
-interface PropertyChange extends Message {
-  propertyName: string;
-  propertyValue: PropertyType;
-  nodeId: NodeId;
-}
-
-interface ReferenceChange extends Message {
-  node: NodeInModel;
-  referenceName: string;
-  referenceValue: NodeInModel;
-}
-
-interface NodeAdded extends Message {
-  parentNodeId: NodeId;
-  relationName: string;
-  index: number;
-  child: NodeData;
-}
-
-interface NodeRemoved extends Message {
-  parentNodeId: NodeId;
-  relationName: string;
-  child: NodeData;
-}
-
-///
-/// Messages - end
-///
+import {NodeAdded, NodeRemoved, PropertyChange, ReferenceChange} from './messages';
 
 export interface Alternative {
   conceptName: string;
