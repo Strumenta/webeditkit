@@ -58,9 +58,9 @@ interface EnumValue {
   myNameHint: string;
 }
 
-export type PropertyType = string | boolean | number | EnumValue;
+export type PropertyValue = string | boolean | number | EnumValue;
 
-export type PropertiesValues = { [key: string]: PropertyType }
+export type PropertiesValues = { [key: string]: PropertyValue }
 
 ///
 /// Node navigation

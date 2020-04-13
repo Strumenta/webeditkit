@@ -1,6 +1,6 @@
 import { dataToNode } from './registry';
 import { getWsCommunication } from '../communication/wscommunication';
-import { NodeData, PropertyType } from './misc';
+import { NodeData, PropertyValue } from './misc';
 import { Ref } from './ref';
 
 export class ModelNode {
@@ -37,7 +37,7 @@ export class ModelNode {
     return filtered.map((el) => dataToNode(el));
   }
 
-  property(propertyName: string): PropertyType | undefined {
+  property(propertyName: string): PropertyValue | undefined {
     const value = this.data.properties[propertyName];
     // if (value == null) {
     //   throw new Error('Property ' + propertyName + ' not found');
@@ -201,7 +201,7 @@ export class ModelNode {
     return this.data.containingLink == null;
   }
 
-  setProperty(propertyName: string, propertyValue: PropertyType): void {
+  setProperty(propertyName: string, propertyValue: PropertyValue): void {
     this.data.properties[propertyName] = propertyValue;
   }
 }

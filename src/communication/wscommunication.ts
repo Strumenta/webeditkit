@@ -4,7 +4,7 @@ import {
   nodeIdToString,
   NodeInModel,
   PropertiesValues,
-  PropertyType,
+  PropertyValue,
 } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
 import { ModelNode } from '../datamodel/modelNode';
@@ -56,13 +56,13 @@ export class WsCommunication {
       if (!this.silent) {
         console.info('  data: ', data);
       }
-      if (data.type === 'propertyChange') {
+      if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
         const msg = data as PropertyChange;
         const root = getDatamodelRoot(localName);
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
         }
-        const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.nodeId));
+        const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
         node.setProperty(msg.propertyName, msg.propertyValue);
         renderDataModels();
       } else if (data.type === 'ReferenceChange') {
@@ -261,14 +261,18 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyType): void {
+  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue): void {
     this.sendJSON({
       type: 'propertyChange',
-      nodeId: modelNode.idString(),
-      modelName: modelNode.modelName(),
+      node: {
+        model: modelNode.modelName(),
+        id: {
+          regularId: modelNode.idString()
+        }
+      },
       propertyName,
       propertyValue,
-    });
+    } as PropertyChange);
   }
 
   // Get alternative concepts usable

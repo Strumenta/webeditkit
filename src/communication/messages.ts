@@ -1,13 +1,18 @@
-import {NodeData, NodeId, NodeInModel, PropertyType} from "../datamodel/misc";
+import {NodeData, NodeId, NodeInModel, PropertyValue} from "../datamodel/misc";
 
 export interface Message {
     type: string;
 }
 
+export interface NodeIDInModel {
+    model: string;
+    id: NodeId;
+}
+
 export interface PropertyChange extends Message {
+    node: NodeIDInModel;
     propertyName: string;
-    propertyValue: PropertyType;
-    nodeId: NodeId;
+    propertyValue: PropertyValue;
 }
 
 export interface ReferenceChange extends Message {
