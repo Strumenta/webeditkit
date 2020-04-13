@@ -33,3 +33,14 @@ export interface NodeRemoved extends Message {
     relationName: string;
     child: NodeData;
 }
+
+export interface IssueDescription {
+    message: string;
+    severity: string;
+    node: NodeId;
+}
+
+export interface ErrorsForModelReport extends Message {
+    model: string;
+    issues: IssueDescription[];
+}

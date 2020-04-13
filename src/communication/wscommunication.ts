@@ -12,7 +12,14 @@ import { Ref } from '../datamodel/ref';
 import { dataToNode, getDatamodelRoot } from '../datamodel/registry';
 import {renderDataModels} from "../index";
 
-import {NodeAdded, NodeRemoved, PropertyChange, ReferenceChange} from './messages';
+import {
+  ErrorsForModelReport,
+  IssueDescription,
+  NodeAdded,
+  NodeRemoved,
+  PropertyChange,
+  ReferenceChange
+} from './messages';
 
 export interface Alternative {
   conceptName: string;
@@ -27,6 +34,31 @@ export interface AlternativeForDirectReference {
 
 export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
+
+export class IssuesMap {
+  private map: {[key: string]: IssueDescription[]} = {};
+  constructor(issues: IssueDescription[]) {
+    for (const i of issues) {
+      if (this.map[i.node.regularId] == null) {
+        this.map[i.node.regularId] = [];
+      }
+      this.map[i.node.regularId].push(i);
+    }
+  }
+  getIssuesForNode(nodeId: string) : IssueDescription[] {
+    return this.map[nodeId] || [];
+  }
+}
+
+const issuesMap = {};
+
+function registerIssuesForModel(model: string, issues: IssueDescription[]) {
+  issuesMap[model] = new IssuesMap(issues);
+}
+
+export function getIssuesForModel(model: string) : IssuesMap {
+  return issuesMap[model] || new IssuesMap([]);
+}
 
 export class WsCommunication {
   private ws: WebSocket;
@@ -56,7 +88,11 @@ export class WsCommunication {
       if (!this.silent) {
         console.info('  data: ', data);
       }
-      if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
+      if (data.type === 'ErrorsForModelReport') {
+        const msg = data as ErrorsForModelReport;
+        registerIssuesForModel(msg.model, msg.issues);
+        renderDataModels();
+      } else if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
         const msg = data as PropertyChange;
         const root = getDatamodelRoot(localName);
         if (root == null) {

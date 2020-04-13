@@ -314,7 +314,7 @@ export function referenceCell(
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
-    ws.askAlternativesForDirectReference(modelNode, 'parent', (alternativesFromWs: any[]) => {
+    ws.askAlternativesForDirectReference(modelNode, referenceName, (alternativesFromWs: any[]) => {
       // We want to put on top the alternatives from the same model
       // We want also to mark them as bold (the render should take care of that)
       // And sort the two groups by name
@@ -335,7 +335,7 @@ export function referenceCell(
           label: el.label,
           execute: () => {
             const ref : Ref = new Ref({model: {qualifiedName: el.modelName}, id: el.nodeId});
-            (modelNode as ModelNode).setRef('parent', ref);
+            (modelNode as ModelNode).setRef(referenceName, ref);
             focusOnReference(modelNode, referenceName);
           },
           highlighted: true
@@ -347,7 +347,7 @@ export function referenceCell(
           label: el.label,
           execute: () => {
             const ref : Ref = new Ref({model: {qualifiedName: el.modelName}, id: el.nodeId});
-            (modelNode as ModelNode).setRef('parent', ref);
+            (modelNode as ModelNode).setRef(referenceName, ref);
             focusOnReference(modelNode, referenceName);
           },
           highlighted: false

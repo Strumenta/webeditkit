@@ -52,7 +52,7 @@ export function getDatamodelRoot(name: string): ModelNode {
   return datamodelRoots[name];
 }
 
-export function forEachDataModel(op) {
+export function forEachDataModel(op: (localName: string, root: ModelNode) => void) {
   const keys = Object.keys(datamodelRoots);
   for (const key of keys) {
     op(key, getDatamodelRoot(key));

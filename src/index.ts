@@ -73,6 +73,10 @@ import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import {dataToNode, forEachDataModel, setDatamodelRoot} from "./datamodel/registry";
+import {VNode} from "snabbdom/vnode";
+import {getIssuesForModel, IssuesMap} from "./communication/wscommunication";
+import {ModelNode} from "./datamodel/modelNode";
+import {IssueDescription} from "./communication/messages";
 
 const patch = init([
   // Init patch function with chosen modules
@@ -86,13 +90,34 @@ const vnodes = {};
 
 type BasicCallback = () => void;
 
+function injectErrors(vnode: VNode, issues: IssuesMap) : VNode {
+  //console.log("ISSUES ", issues, vnode);
+  if (vnode.data.dataset != null && vnode.data.dataset.node_represented != null) {
+    const myNodeId = vnode.data.dataset.node_represented;
+    console.log("My node id", myNodeId);
+    const errors = issues.getIssuesForNode(myNodeId);
+    if (errors.length != 0) {
+      console.log("should inject errors", errors, vnode);
+      vnode.sel = vnode.sel + ".hasErrors";
+    }
+  }
+  for (let i=0;i<vnode.children.length;i++) {
+    if (<VNode>(vnode.children[i]) != null) {
+      vnode.children[i] = injectErrors(<VNode>(vnode.children[i]), issues);
+    }
+  }
+  return vnode
+}
+
 export const renderDataModels = (cb?: BasicCallback) => {
   if (typeof window === 'undefined') {
     console.log('skipping renderDataModels in Node.JS');
     return;
   }
-  forEachDataModel((name, root) => {
-    const vnode = h('div#' + name + '.editor', {}, [renderModelNode(root)]);
+  forEachDataModel((name, root: ModelNode) => {
+    const issues = getIssuesForModel(root.modelName());
+    console.log("issues", issues);
+    const vnode = h('div#' + name + '.editor', {}, [injectErrors(renderModelNode(root), issues)]);
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];
       if (domNode == null) {

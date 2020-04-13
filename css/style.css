@@ -141,3 +141,8 @@ input {
     background-color: #475D9D;
     text-decoration: underline;
 }
+
+.hasErrors {
+    /*border-bottom: red 1px wave;*/
+    background-color: red;
+}
