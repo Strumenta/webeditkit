@@ -43,20 +43,97 @@ function findPrev(n) {
   }
 }
 
-export function moveUp(t) {
+function selectFirstElementInRow(row, focusOnEnd) {
+  console.log("selectFirstElementInRow", row);
   // @ts-ignore
-  const l = $(t).closest('.line');
+  window.sf = row;
+  if ($(row).children('input').length > 0) {
+    $($(row).children('input')[0]).focus();
+  } else {
+    const children = $(row).children();
+    if (focusOnEnd) {
+      for (let i = children.length - 1; i >= 0; i--) {
+        if ($(children[i]).find('input').length > 0) {
+          // there is an input somewhere here, we should dive into this
+          return selectFirstElementInRow(children[i], focusOnEnd);
+        }
+
+      }
+    } else {
+      for (let i = 0; i < children.length; i++) {
+        if ($(children[i]).find('input').length > 0) {
+          // there is an input somewhere here, we should dive into this
+          return selectFirstElementInRow(children[i], focusOnEnd);
+        }
+      }
+    }
+    throw new Error("This should not happen");
+  }
+}
+
+export function moveUp(t) {
+  if ($(t).hasClass('editor')) {
+    return;
+  }
+  console.log("move up");
+  // @ts-ignore
+  window.mu = t;
+  // @ts-ignore
+  const l = $(t).closest('.row');
   if (l.length === 0) {
     console.warn('no line found');
   } else if (l.length > 1) {
     console.warn('too many lines found');
   } else {
     console.log('element found');
+    const currentLine = l;
+    let nextLine = currentLine;
+    do {
+      console.log(" before", nextLine);
+      nextLine = $(nextLine).prev(".row");
+      console.log(" after", nextLine);
+    } while (nextLine.length == 1 && $(nextLine).find("input").length == 0);
+    if (nextLine.length == 1) {
+      selectFirstElementInRow(nextLine[0], true);
+    } else {
+      moveUp(t.parentElement);
+    }
     // We must find the previous line and pick the first element there
   }
 }
 
-export function moveDown(t) {}
+export function moveDown(t) {
+  if ($(t).hasClass('editor')) {
+    return;
+  }
+  console.log("move down", t);
+  // @ts-ignore
+  window.mu = t;
+  // @ts-ignore
+  const l = $(t).closest('.row');
+  if (l.length === 0) {
+    console.warn('no line found');
+  } else if (l.length > 1) {
+    console.warn('too many lines found');
+  } else {
+    console.log('element found');
+    const currentLine = l;
+    let nextLine = currentLine;
+    do {
+      console.log(" before", nextLine);
+      nextLine = $(nextLine).next(".row");
+      console.log(" after", nextLine);
+    } while (nextLine.length == 1 && $(nextLine).find("input").length == 0);
+    if (nextLine.length == 1) {
+      selectFirstElementInRow(nextLine[0], false);
+      //const firstInput = $(nextLine).find("input");
+      //$(firstInput).focus();
+    } else {
+      moveDown(t.parentElement);
+    }
+    // We must find the previous line and pick the first element there
+  }
+}
 
 export function moveToNextElement(t): boolean {
   let elConsidered = findNext($(t));

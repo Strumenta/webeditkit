@@ -1,6 +1,6 @@
 import h from 'snabbdom/h';
 import { getWsCommunication } from '../../communication/wscommunication';
-import { isAtEnd, isAtStart, moveToNextElement, moveToPrevElement } from '../navigation';
+import {isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp} from '../navigation';
 import {
   addAutoresize,
   addToDatasetObj,
@@ -153,6 +153,14 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
             e.preventDefault();
             return true;
           }
+          if (e.key === 'ArrowUp') {
+            moveUp(e.target);
+            return true;
+          }
+          if (e.key === 'ArrowDown') {
+            moveDown(e.target);
+            return true;
+          }
           if (isAtStart(e.target) && e.key === 'Backspace') {
             handleSelfDeletion(e.target, modelNode);
             return false;
@@ -219,6 +227,10 @@ export function fixedCell(
             moveToNextElement(e.target);
           } else if (e.key === 'ArrowLeft') {
             moveToPrevElement(e.target);
+          } else if (e.key === 'ArrowUp') {
+            moveUp(e.target);
+          } else if (e.key === 'ArrowDown') {
+            moveDown(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter !== undefined) {
               deleter();
@@ -442,6 +454,10 @@ export function referenceCell(
             moveToNextElement(e.target);
           } else if (e.key === 'ArrowLeft') {
             moveToPrevElement(e.target);
+          } else if (e.key === 'ArrowUp') {
+            moveUp(e.target);
+          } else if (e.key === 'ArrowDown') {
+            moveDown(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
               deleter();

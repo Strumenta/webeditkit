@@ -91,13 +91,10 @@ const vnodes = {};
 type BasicCallback = () => void;
 
 function injectErrors(vnode: VNode, issues: IssuesMap) : VNode {
-  //console.log("ISSUES ", issues, vnode);
   if (vnode.data.dataset != null && vnode.data.dataset.node_represented != null) {
     const myNodeId = vnode.data.dataset.node_represented;
-    console.log("My node id", myNodeId);
     const errors = issues.getIssuesForNode(myNodeId);
     if (errors.length != 0) {
-      console.log("should inject errors", errors, vnode);
       vnode.sel = vnode.sel + ".hasErrors";
     }
   }
@@ -116,7 +113,6 @@ export const renderDataModels = (cb?: BasicCallback) => {
   }
   forEachDataModel((name, root: ModelNode) => {
     const issues = getIssuesForModel(root.modelName());
-    console.log("issues", issues);
     const vnode = h('div#' + name + '.editor', {}, [injectErrors(renderModelNode(root), issues)]);
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];
