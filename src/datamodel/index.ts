@@ -1,4 +1,7 @@
-import {setDefaultBaseUrl} from "./registry";
+import {setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass} from "./registry";
+import {findNode} from "./misc";
 import {ModelNode} from "./modelNode";
+import {Ref} from "./ref";
+import {dataToNode} from "./registry";
 
-export {setDefaultBaseUrl, ModelNode}
+export {setDefaultBaseUrl, ModelNode, getDefaultBaseUrl, registerDataModelClass, findNode, Ref, dataToNode}

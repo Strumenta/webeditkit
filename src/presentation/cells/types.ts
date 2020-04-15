@@ -24,15 +24,14 @@ import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
 
-export function childCell(modelNode: ModelNode, containmentName: string): VNode {
-  const child = modelNode.childByLinkName(containmentName);
+export function childCell(node: ModelNode, containmentName: string, emptyCell: () => VNode | undefined): VNode {
+  const child = node.childByLinkName(containmentName);
   if (child == null) {
-    // @ts-ignore
-    return fixedCell(
-      modelNode,
-      '<no ' + containmentName + '>',
-      ['missing-element'],
-      alternativesProviderForAddingChild(modelNode, containmentName),
+    if (emptyCell != null) {
+      return emptyCell();
+    }
+    return fixedCell(node, '<no ' + containmentName + '>', ['missing-element'],
+      alternativesProviderForAddingChild(node, containmentName),
     );
   }
   return renderModelNode(child);

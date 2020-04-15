@@ -4,14 +4,16 @@ import { ModelNode } from './modelNode';
 const datamodelRoots = {};
 const datamodelClasses = {};
 
-let defaultBaseUrl;
+class Registry {
+  static defaultBaseUrl : string | undefined = undefined;
+}
 
-export function setDefaultBaseUrl(value: string): void {
-  defaultBaseUrl = value;
+export function setDefaultBaseUrl(value: string | undefined): void {
+  Registry.defaultBaseUrl = value;
 }
 
 export function getDefaultBaseUrl(): string | undefined {
-  return defaultBaseUrl;
+  return Registry.defaultBaseUrl;
 }
 
 ///

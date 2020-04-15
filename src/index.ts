@@ -32,7 +32,10 @@ export {
 
 //export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const uiutils = require('./presentation/uiutils');
-export const datamodel = require('./datamodel');
+
+import {getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode} from "./datamodel";
+export {getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode}
+
 const wscommunication = require('./communication/wscommunication');
 export const cells = require('./presentation/cells');
 
@@ -41,10 +44,6 @@ const renderers = require('./presentation/renderer');
 export {
   registerRenderer
 }
-
-export const registerDataModelClass = datamodel.registerDataModelClass;
-
-export const findNode = datamodel.findNode;
 
 export function setup() {
   uiutils.installAutoresize();
@@ -55,11 +54,8 @@ export function addModel(baseUrl: string, modelName: string, nodeId, target: str
   loadDataModel('http://' + baseUrl, modelName, nodeId, target);
 }
 
-// TODO move to index
-
 import { renderModelNode } from './presentation/renderer';
-
-//import { dataToNode, forEachDataModel, setDatamodelRoot } from './datamodel/misc';
+export { renderModelNode }
 
 import { init } from 'snabbdom/snabbdom';
 
@@ -74,10 +70,11 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import {dataToNode, forEachDataModel, setDatamodelRoot} from "./datamodel/registry";
+import {forEachDataModel, setDatamodelRoot} from "./datamodel/registry";
+import {dataToNode} from "./datamodel";
+export {dataToNode}
 import {VNode} from "snabbdom/vnode";
 import {getIssuesForModel, IssuesMap} from "./communication/wscommunication";
-import {ModelNode} from "./datamodel/modelNode";
 import {IssueDescription} from "./communication/messages";
 
 const patch = init([
@@ -93,6 +90,15 @@ const vnodes = {};
 type BasicCallback = () => void;
 
 function injectErrors(vnode: VNode, issues: IssuesMap) : VNode {
+  if (vnode == null) {
+    return vnode;
+  }
+  if (vnode.data == null || vnode.children == null) {
+    //console.warn('node with issues', vnode);
+    // throw new Error('This does not seem a valid node');
+    // this is a piece of text
+    return vnode;
+  }
   if (vnode.data.dataset != null && vnode.data.dataset.node_represented != null) {
     const myNodeId = vnode.data.dataset.node_represented;
     const errors = issues.getIssuesForNode(myNodeId);
