@@ -11,6 +11,7 @@ import { ModelNode } from '../datamodel/modelNode';
 import { Ref } from '../datamodel/ref';
 import { dataToNode, getDatamodelRoot } from '../datamodel/registry';
 import {renderDataModels} from "../index";
+var deepEqual = require('deep-equal')
 
 import {
   ErrorsForModelReport,
@@ -52,8 +53,15 @@ export class IssuesMap {
 
 const issuesMap = {};
 
-function registerIssuesForModel(model: string, issues: IssueDescription[]) {
-  issuesMap[model] = new IssuesMap(issues);
+function registerIssuesForModel(model: string, issues: IssueDescription[]) : boolean {
+  const newIm = new IssuesMap(issues);
+  if (deepEqual(newIm, issuesMap[model])) {
+    console.log("registerIssuesForModel, false");
+    return false;
+  }
+  console.log("registerIssuesForModel, true", issuesMap[model], newIm);
+  issuesMap[model] = newIm;
+  return true;
 }
 
 export function getIssuesForModel(model: string) : IssuesMap {
@@ -90,8 +98,9 @@ export class WsCommunication {
       }
       if (data.type === 'ErrorsForModelReport') {
         const msg = data as ErrorsForModelReport;
-        registerIssuesForModel(msg.model, msg.issues);
-        renderDataModels();
+        if (registerIssuesForModel(msg.model, msg.issues)) {
+          renderDataModels();
+        }
       } else if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
         const msg = data as PropertyChange;
         const root = getDatamodelRoot(localName);

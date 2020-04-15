@@ -2,7 +2,7 @@ import h from 'snabbdom/h';
 import { getWsCommunication } from '../../communication/wscommunication';
 import {isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp} from '../navigation';
 import {
-  addAutoresize,
+  addAutoresize, addClass,
   addToDatasetObj,
   alternativesProviderForAddingChild,
   flattenArray,
@@ -23,6 +23,7 @@ import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
+import ChangeEvent = JQuery.ChangeEvent;
 
 export function childCell(node: ModelNode, containmentName: string, emptyCell: () => VNode | undefined): VNode {
   const child = node.childByLinkName(containmentName);
@@ -131,15 +132,22 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
   if (extraClasses.length > 0) {
     extraClassesStr = '.' + extraClasses.join('.');
   }
+  const initialValue = modelNode.property(propertyName) || '';
   return h(
     'input.editable' + extraClassesStr,
     {
+      key: `${modelNode.idString()}-prop-${propertyName}`,
       props: {
-        value: modelNode.property(propertyName) || '',
+        value: initialValue,
         placeholder,
         required: true,
       },
-      hook: { insert: addAutoresize, update: triggerResize },
+      hook: { insert: (vNode: VNode) => {
+        if (initialValue == '') {
+          $(vNode.elm).addClass('emptyProperty');
+        }
+        return addAutoresize(vNode);
+      }, update: triggerResize },
       on: {
         keydown: (e: KeyboardEvent) => {
           if (isAtEnd(e.target) && e.key === 'ArrowRight') {
@@ -171,6 +179,11 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
             return;
           }
           const valueInInput = $(e.target).val() as string;
+          if (valueInInput == "") {
+            $(e.target).addClass("emptyProperty");
+          } else {
+            $(e.target).removeClass("emptyProperty");
+          }
           const valueInModel = modelNode.property(propertyName);
           if (valueInInput !== valueInModel) {
             const ws = getWsCommunication(modelNode.modelName());

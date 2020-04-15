@@ -82,10 +82,14 @@ export function installAutocomplete(
       return div;
     },
     fetch: (text: string, update: any) => {
-      text = text.toLowerCase();
+      const ltext = text.toLowerCase();
       valuesProvider((suggestions: AutocompleteAlternative[]) => {
         if (!fixed) {
-          suggestions = suggestions.filter((n: { label: string }) => n.label.toLowerCase().startsWith(text));
+          suggestions = suggestions.filter((n: { label: string }) => n.label.toLowerCase().includes(ltext));
+          console.log("suggestions", suggestions, text);
+          if (suggestions.length == 1 && suggestions[0].label == text) {
+            suggestions[0].execute();
+          }
         }
         update(suggestions);
       });
