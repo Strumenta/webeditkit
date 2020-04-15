@@ -23,9 +23,8 @@ import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
-import ChangeEvent = JQuery.ChangeEvent;
 
-export function childCell(node: ModelNode, containmentName: string, emptyCell: () => VNode | undefined): VNode {
+export function childCell(node: ModelNode, containmentName: string, emptyCell: () => VNode | undefined = undefined): VNode {
   const child = node.childByLinkName(containmentName);
   if (child == null) {
     if (emptyCell != null) {

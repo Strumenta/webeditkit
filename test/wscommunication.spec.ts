@@ -5,6 +5,7 @@ import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
 import {clearDatamodelRoots, dataToNode, setDatamodelRoot} from '../src/datamodel/registry';
+import { PropertyChange} from "../src/communication/messages";
 
 const rootData1 = {
   children: [
@@ -74,9 +75,19 @@ const rootData1 = {
 };
 
 describe('WsCommunication', () => {
+
+  let mockServer : Server | undefined = undefined;
+
+  afterEach(() => {
+    if (mockServer != null) {
+      mockServer.close();
+      mockServer = undefined;
+    }
+  });
+
   it('should register for changes on start', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
@@ -91,7 +102,7 @@ describe('WsCommunication', () => {
 
   it('should throw error for unknown messages', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
@@ -110,7 +121,7 @@ describe('WsCommunication', () => {
 
   it('should support instantiate', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -144,7 +155,7 @@ describe('WsCommunication', () => {
 
   it('should support addChild', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -180,7 +191,7 @@ describe('WsCommunication', () => {
 
   it('should support addChildAtIndex', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -216,7 +227,7 @@ describe('WsCommunication', () => {
 
   it('should support setChild', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -251,7 +262,7 @@ describe('WsCommunication', () => {
 
   it('should support deleteNode', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -284,7 +295,7 @@ describe('WsCommunication', () => {
 
   it('should support insertNextSibling', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -317,7 +328,7 @@ describe('WsCommunication', () => {
 
   it('should support triggerChangeOnPropertyNode', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -327,11 +338,15 @@ describe('WsCommunication', () => {
         if (messagesReceivedByServer.length == 2) {
           expect(messagesReceivedByServer[0]).to.eql({
             type: 'propertyChange',
-            modelName: 'my.qualified.ModelName',
-            nodeId: '1848360241685547698',
+            node: {
+              model: 'my.qualified.ModelName',
+              id: {
+                regularId: '1848360241685547698'
+              }
+            },
             propertyName: 'name',
             propertyValue: 'my new name',
-          });
+          } as PropertyChange);
           expect(messagesReceivedByServer[1]).to.eql({
             type: 'registerForChanges',
             modelName: 'my.qualified.ModelName',
@@ -352,7 +367,7 @@ describe('WsCommunication', () => {
 
   it('should support triggerDefaultInsertion', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -406,7 +421,7 @@ describe('WsCommunication', () => {
 
   it('should support askAlternatives', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
 
@@ -466,7 +481,7 @@ describe('WsCommunication', () => {
 
   it('should react to property change by updating the property - on root', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     clearDatamodelRoots();
     clearRendererRegistry();
@@ -485,10 +500,13 @@ describe('WsCommunication', () => {
         socket.send(
           JSON.stringify({
             type: 'propertyChange',
-            nodeId: { regularId: '324292001770075100' },
+            node: {
+              model: 'myModelName',
+              id: { regularId: '324292001770075100' }
+            },
             propertyName: 'name',
             propertyValue: 'My Shiny New Name',
-          }),
+          } as PropertyChange),
         );
         expect(root.name()).to.equals('My Shiny New Name');
         mockServer.close();
@@ -509,7 +527,7 @@ describe('WsCommunication', () => {
 
   it('should react to node added - to unexisting parent', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
@@ -548,7 +566,7 @@ describe('WsCommunication', () => {
 
   it('should react to node added - to existing parent', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     mockServer.on('connection', (socket) => {
       try {
@@ -593,7 +611,7 @@ describe('WsCommunication', () => {
 
   it('should react to node removed - to existing parent', (done) => {
     const fakeURL = 'ws://localhost:8080';
-    const mockServer = new Server(fakeURL);
+    mockServer = new Server(fakeURL);
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
