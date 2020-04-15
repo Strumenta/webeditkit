@@ -79,7 +79,7 @@ export function moveUp(t) {
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
-  const l = $(t).closest('.row');
+  const l = $(t).closest('.row,.vertical-collection');
   if (l.length === 0) {
     console.warn('no line found');
   } else if (l.length > 1) {
@@ -90,7 +90,7 @@ export function moveUp(t) {
     let nextLine = currentLine;
     do {
       console.log(" before", nextLine);
-      nextLine = $(nextLine).prev(".row");
+      nextLine = $(nextLine).prev(".row,.vertical-collection");
       console.log(" after", nextLine);
     } while (nextLine.length == 1 && $(nextLine).find("input").length == 0);
     if (nextLine.length == 1) {
@@ -110,7 +110,7 @@ export function moveDown(t) {
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
-  const l = $(t).closest('.row');
+  const l = $(t).closest('.row,.vertical-collection');
   if (l.length === 0) {
     console.warn('no line found');
   } else if (l.length > 1) {
@@ -121,7 +121,7 @@ export function moveDown(t) {
     let nextLine = currentLine;
     do {
       console.log(" before", nextLine);
-      nextLine = $(nextLine).next(".row");
+      nextLine = $(nextLine).next(".row,.vertical-collection");
       console.log(" after", nextLine);
     } while (nextLine.length == 1 && $(nextLine).find("input").length == 0);
     if (nextLine.length == 1) {
