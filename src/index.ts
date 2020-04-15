@@ -32,7 +32,7 @@ export {
 
 //export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const uiutils = require('./presentation/uiutils');
-export const datamodel = require('./datamodel/misc');
+export const datamodel = require('./datamodel');
 const wscommunication = require('./communication/wscommunication');
 export const cells = require('./presentation/cells');
 
@@ -64,6 +64,8 @@ import { renderModelNode } from './presentation/renderer';
 import { init } from 'snabbdom/snabbdom';
 
 import h from 'snabbdom/h'; // helper function for creating vnodes
+
+export { h }
 
 import toVNode from 'snabbdom/tovnode';
 
@@ -168,4 +170,3 @@ export function baseUrlForModelName(model: string): string {
   return null;
 }
 
-module.exports.h = h;
