@@ -4,6 +4,7 @@ import { loadDataModel, renderDataModels } from '../src/index';
 import { installAutoresize } from '../src/presentation/uiutils';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import {clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot} from "../src/datamodel/registry";
+import {prepareFakeDom} from "./testutils";
 
 var sinon = require('sinon');
 
@@ -87,16 +88,7 @@ describe('WebEditKit', () => {
   let doc = null;
 
   beforeEach(function () {
-    const dom = new JSDOM(html_empty);
-    doc = dom.window.document;
-    // @ts-ignore
-    global.$ = require('jquery')(dom.window);
-    // @ts-ignore
-    global.jQuery = global.$;
-    // @ts-ignore
-    global.window = dom.window;
-    // @ts-ignore
-    global.document = doc;
+    doc = prepareFakeDom(html_empty);
 
     clearDatamodelRoots();
     clearRendererRegistry();
@@ -134,7 +126,8 @@ describe('WebEditKit', () => {
 
     let successCb = undefined;
     let failCb = undefined;
-    sinon.replace(jQuery, 'ajax', function (params) {
+    // @ts-ignore
+    sinon.replace(global.$, 'ajax', function (params) {
       expect(params.url).to.equals('http://localhost:2904/models/my.qualified.model/123456');
       expect(params.type).to.equals('get');
       successCb = params.success;

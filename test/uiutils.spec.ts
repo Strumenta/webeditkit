@@ -2,6 +2,8 @@ import { expect } from 'chai';
 import 'mocha';
 import { installAutoresize } from '../src/presentation/uiutils';
 import { prepareFakeDom } from './testutils';
+import {clearDatamodelRoots} from "../src/datamodel/registry";
+import {clearRendererRegistry} from "../src/presentation/renderer";
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -47,12 +49,32 @@ const html1 = `<html>
 </html>`;
 
 describe('UIUtils', () => {
-  it('should support installAutoresize', () => {
-    const doc = prepareFakeDom(html1);
 
+  let doc : Document | undefined = undefined;
+
+  beforeEach(() => {
+    doc = prepareFakeDom(html1);
+  });
+
+  afterEach(() => {
+    clearDatamodelRoots();
+    clearRendererRegistry();
+
+    // @ts-ignore
+    delete global.$;
+    // @ts-ignore
+    delete global.jQuery;
+    // @ts-ignore
+    delete global.window;
+    // @ts-ignore
+    delete global.document;
+  });
+
+  it('should support installAutoresize', () => {
     const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
 
     // check width
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('');
     // install autoresize
     installAutoresize((text: string) => {
@@ -61,26 +83,34 @@ describe('UIUtils', () => {
       }
       return text.length * 8;
     });
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('');
     // invoke autoresize
     // @ts-ignore
     $(editableName_a).autoresize();
     // placeholder: '<no name>' -> 9 chars * 8 + 10 for padding -> 82px
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('82px');
     editableName_a.setAttribute('value', 'x');
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('82px');
     // @ts-ignore
     $(editableName_a).autoresize();
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('18px');
     editableName_a.setAttribute('value', 'xxx');
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('18px');
     // @ts-ignore
     $(editableName_a).autoresize();
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('34px');
     editableName_a.setAttribute('value', '');
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('34px');
     // @ts-ignore
     $(editableName_a).autoresize();
+    // @ts-ignore
     expect(editableName_a.style.width).to.eql('82px');
   });
 });

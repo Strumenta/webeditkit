@@ -75,7 +75,6 @@ import {dataToNode} from "./datamodel";
 export {dataToNode}
 import {VNode} from "snabbdom/vnode";
 import {getIssuesForModel, IssuesMap} from "./communication/wscommunication";
-import {IssueDescription} from "./communication/messages";
 
 const patch = init([
   // Init patch function with chosen modules

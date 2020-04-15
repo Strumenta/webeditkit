@@ -254,7 +254,8 @@ describe('Cells.Support', () => {
             // We need to check who has the focus
             expect(doc.activeElement.tagName).to.equals('INPUT');
             expect(doc.activeElement.className).to.equals('fixed represent-node');
-            expect(doc.activeElement.dataset.node_represented).to.eql('my-node-id');
+            // @ts-ignore
+              expect(doc.activeElement.dataset.node_represented).to.eql('my-node-id');
             done();
           }),
           { node_represented: 'my-node-id' },

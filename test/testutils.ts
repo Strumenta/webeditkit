@@ -124,7 +124,7 @@ export function pressBackspace(element) {
   //keyboard.dispatchEventsForAction('backspace', element);
 }
 
-export function prepareFakeDom(htmlCode: string) {
+export function prepareFakeDom(htmlCode: string) : Document {
   const dom = new JSDOM(htmlCode);
   const doc = dom.window.document;
   // @ts-ignore
