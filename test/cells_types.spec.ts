@@ -320,7 +320,7 @@ describe('Cells.Types', () => {
 
       const cell = fixedCell(aNode, 'My fixed cell');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -342,7 +342,7 @@ describe('Cells.Types', () => {
 
       const cell = fixedCell(aNode, 'My fixed cell');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -381,7 +381,7 @@ describe('Cells.Types', () => {
       const cell = referenceCell(inputNode, 'type');
 
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -405,7 +405,7 @@ describe('Cells.Types', () => {
       const cell = referenceCell(inputNode, 'type');
 
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -587,7 +587,7 @@ describe('Cells.Types', () => {
 
       const cell = verticalCollectionCell(aNode, 'unexisting');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm.firstChild;
+        let myInput = vnode.elm.firstChild as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         pressEnter(myInput);
       });
@@ -674,7 +674,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.focus();
         expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
@@ -693,7 +693,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
@@ -714,7 +714,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -735,7 +735,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
@@ -761,7 +761,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm;
+        let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
