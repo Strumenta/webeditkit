@@ -61,14 +61,16 @@ export function verticalCollectionCell(
   modelNode: ModelNode,
   containmentName: string,
   wrapInRows: boolean = true,
+  extraClasses: string[] = []
 ): VNode {
+  const extraClassesStr = extraClassesToSuffix(extraClasses);
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
   if (children.length === 0) {
-    return h('div.vertical-collection.represent-collection', data, [emptyCollectionCell(modelNode, containmentName)]);
+    return h('div.vertical-collection.represent-collection' + extraClassesStr, data, [emptyCollectionCell(modelNode, containmentName)]);
   } else {
     return h(
-      'div.vertical-collection.represent-collection',
+      'div.vertical-collection.represent-collection' + extraClassesStr,
       data,
       map(modelNode.childrenByLinkName(containmentName), (el) => {
         if (wrapInRows) {
@@ -116,6 +118,15 @@ export function verticalGroupCell(...elements: FlattableNode[]): VNode {
   return h('div.vertical-group', {}, flattenArray(elements));
 }
 
+function extraClassesToSuffix(extraClasses: string[]) : string {
+  extraClasses = extraClasses || [];
+  let extraClassesStr = '';
+  if (extraClasses.length > 0) {
+    extraClassesStr = '.' + extraClasses.join('.');
+  }
+  return extraClassesStr
+}
+
 /**
  * @param modelNode
  * @param propertyName
@@ -126,11 +137,7 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
     throw new Error('modelNode should not be null');
   }
   const placeholder = '<no ' + propertyName + '>';
-  extraClasses = extraClasses || [];
-  let extraClassesStr = '';
-  if (extraClasses.length > 0) {
-    extraClassesStr = '.' + extraClasses.join('.');
-  }
+  const extraClassesStr = extraClassesToSuffix(extraClasses);
   const initialValue = modelNode.property(propertyName) || '';
   return h(
     'input.editable' + extraClassesStr,

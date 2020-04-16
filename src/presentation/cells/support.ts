@@ -8,6 +8,7 @@ const autocomplete = require('autocompleter');
 
 import merge = require('lodash.merge');
 import {getDatamodelRoot} from "../../datamodel/registry";
+import {InsertHook} from "snabbdom/hooks";
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();
@@ -155,14 +156,14 @@ const flatten = (arr: any[], result: any[] = []): any[] => {
   return result;
 };
 
-export function addInsertHook(vnode: VNode, f: (VNode) => void): VNode {
+export function addInsertHook(vnode: VNode, hook: InsertHook): VNode {
   if (vnode.data === undefined) {
     vnode.data = {};
   }
   if (vnode.data.hook === undefined) {
     vnode.data.hook = {};
   }
-  vnode.data.hook.insert = f;
+  vnode.data.hook.insert = hook;
   return vnode;
 }
 
