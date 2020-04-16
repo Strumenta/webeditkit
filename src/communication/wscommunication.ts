@@ -7,7 +7,7 @@ import {
   PropertyValue,
 } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
-import { ModelNode } from '../datamodel/modelNode';
+import {ModelNode, reactToAReferenceChange} from '../datamodel/modelNode';
 import { Ref } from '../datamodel/ref';
 import { dataToNode, getDatamodelRoot } from '../datamodel/registry';
 import {renderDataModels} from "../index";
@@ -68,6 +68,30 @@ export function getIssuesForModel(model: string) : IssuesMap {
   return issuesMap[model] || new IssuesMap([]);
 }
 
+export function modelNodeToNodeInModel(node: ModelNode | null) : NodeInModel | null {
+  if (node == null) {
+    return null
+  }
+  return {
+    model: node.modelName(),
+    id: {
+      regularId: node.idString()
+    }
+  }
+}
+
+export function refToNodeInModel(ref: Ref | null) : NodeInModel | null {
+  if (ref == null) {
+    return null
+  }
+  return {
+    model: ref.data.model.qualifiedName,
+    id: {
+      regularId: ref.data.id.regularId
+    }
+  }
+}
+
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
@@ -116,16 +140,7 @@ export class WsCommunication {
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
         }
-        const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
-        if (msg.referenceValue == null) {
-          node.setRefLocally(msg.referenceName, null);
-        } else {
-          node.setRefLocally(msg.referenceName, new Ref({
-            model: {qualifiedName: msg.referenceValue.model},
-            id: msg.referenceValue.id
-          }));
-        }
-        renderDataModels();
+        reactToAReferenceChange(msg, root);
       } else if (data.type === 'nodeAdded') {
         const msg = data as NodeAdded;
         const root = getDatamodelRoot(localName);
@@ -250,25 +265,23 @@ export class WsCommunication {
     });
   }
 
-  setRef(container: ModelNode, referenceName: string, ref: Ref): void {
+  communicateReferenceChange(container: ModelNode, referenceName: string, ref: Ref): void {
+    // TODO communicateReferenceChange should become a Reference Change: we are saying
+    // to the server that a reference changed
     if (ref == null) {
       this.sendJSON({
-        type: 'setRef',
-        modelName: container.modelName(),
-        container: container.idString(),
+        type: 'ReferenceChange',
+        node: modelNodeToNodeInModel(container),
         referenceName,
-      });
+        referenceValue: null
+      } as ReferenceChange);
     } else {
       this.sendJSON({
-        type: 'setRef',
-        modelName: container.modelName(),
-        container: container.idString(),
+        type: 'ReferenceChange',
+        node: modelNodeToNodeInModel(container),
         referenceName,
-        referenceValue: {
-          model: ref.data.model.qualifiedName,
-          id: ref.data.id.regularId,
-        },
-      });
+        referenceValue: refToNodeInModel(ref),
+      } as ReferenceChange);
     }
   }
 

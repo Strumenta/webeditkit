@@ -289,6 +289,20 @@ function datasetForReference(modelNode: ModelNode, referenceName: string) {
   };
 }
 
+function moveLeftRightWhenAtEnd(e: KeyboardEvent) {
+  if (isAtEnd(e.target) && e.key === 'ArrowRight') {
+    moveToNextElement(e.target);
+    e.preventDefault();
+    return true;
+  }
+  if (isAtStart(e.target) && e.key === 'ArrowLeft') {
+    moveToPrevElement(e.target);
+    e.preventDefault();
+    return true;
+  }
+  return false;
+}
+
 function editingReferenceCell(
     modelNode: ModelNode,
     referenceName: string,
@@ -305,13 +319,18 @@ function editingReferenceCell(
     },
     dataset: datasetForReference(modelNode, referenceName),
     on: {
-      keydown: (event: KeyboardEvent) => {
+      keydown: (e: KeyboardEvent) => {
+        if (moveLeftRightWhenAtEnd(e)) {
+          return true;
+        }
         // @ts-ignore
-        const v = event.target.value;
+        const v = e.target.value;
         resolutionMemory[resolutionMemoryKey] = v;
         // @ts-ignore
         if (v == "") {
-          renderDataModels();
+          renderDataModels(() => {
+            focusOnReference(modelNode, referenceName);
+          });
         }
       }
     },
@@ -417,8 +436,6 @@ export function referenceCell(
       // TODO, capture any character to switch to an editable cell
       return addToDatasetObj(wrapKeydownHandler(fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider), (event)=>{
         // ctrl + space should trigger autocomplete
-
-
         // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
         // this seems to work...
         let isPrintableKey = event.key.length === 1;
@@ -461,11 +478,10 @@ export function referenceCell(
           }
         },
         keydown: (e: KeyboardEvent) => {
-          if (e.key === 'ArrowRight') {
-            moveToNextElement(e.target);
-          } else if (e.key === 'ArrowLeft') {
-            moveToPrevElement(e.target);
-          } else if (e.key === 'ArrowUp') {
+          if (moveLeftRightWhenAtEnd(e)) {
+            return true;
+          }
+          if (e.key === 'ArrowUp') {
             moveUp(e.target);
           } else if (e.key === 'ArrowDown') {
             moveDown(e.target);
@@ -489,7 +505,9 @@ export function referenceCell(
               const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
               // @ts-ignore
               resolutionMemory[resolutionMemoryKey] = e.target.value;
-              renderDataModels();
+              renderDataModels(() => {
+                focusOnReference(modelNode, referenceName);
+              });
             }
           });
         }
