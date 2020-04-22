@@ -4,6 +4,10 @@ export interface Message {
     type: string;
 }
 
+export interface RequestAnswer extends Message {
+    requestId: string;
+}
+
 export interface NodeIDInModel {
     model: string;
     id: NodeId;
@@ -50,6 +54,10 @@ export interface ErrorsForNodeReport extends Message {
     issues: IssueDescription[];
 }
 
-export interface AskErrorsForNode extends Message{
+export interface AskErrorsForNode extends Message {
     rootNode: NodeInModel;
+}
+
+export interface AddChildAnswer extends RequestAnswer {
+    nodeCreated: NodeInModel;
 }

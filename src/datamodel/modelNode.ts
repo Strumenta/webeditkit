@@ -4,6 +4,7 @@ import {NodeData, nodeIdToString, PropertyValue} from './misc';
 import { Ref } from './ref';
 import {ReferenceChange} from "../communication/messages";
 import {renderDataModels} from "../index";
+import {uuidv4} from "../utils/misc";
 
 export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode) {
   const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
@@ -17,6 +18,9 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode) {
   }
   renderDataModels();
 }
+
+type NodeProcessor = (node: ModelNode) => void;
+export type OptionalNodeProcessor = NodeProcessor | undefined;
 
 export class ModelNode {
   readonly data: NodeData;
@@ -118,7 +122,7 @@ export class ModelNode {
     return this.data.concept;
   }
 
-  findNodeById(nodeIdStr): ModelNode | null {
+  findNodeById(nodeIdStr: string): ModelNode | null {
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
@@ -194,8 +198,12 @@ export class ModelNode {
     dataToNode(childData).injectModelName(this.data.modelName, this.data.rootName);
   }
 
-  createChild(containmentName: string, index: number, childConcept: string) {
-    this.ws().addChildAtIndex(this, containmentName, index, childConcept);
+  createChild(containmentName: string, index: number, childConcept: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()) {
+    this.ws().addChildAtIndex(this, containmentName, index, childConcept, initializer, uuid);
+  }
+
+  createSingleChild(containmentName: string, childConcept: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()) {
+    this.ws().setChild(this, containmentName, childConcept, initializer, uuid);
   }
 
   insertNextSibling(): void {

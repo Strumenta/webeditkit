@@ -8,7 +8,7 @@ const autocomplete = require('autocompleter');
 
 import merge = require('lodash.merge');
 import {getDatamodelRoot} from "../../datamodel/registry";
-import {InsertHook} from "snabbdom/hooks";
+import {InsertHook, UpdateHook} from "snabbdom/hooks";
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();
@@ -164,6 +164,44 @@ export function addInsertHook(vnode: VNode, hook: InsertHook): VNode {
     vnode.data.hook = {};
   }
   vnode.data.hook.insert = hook;
+  return vnode;
+}
+
+export function wrapInsertHook(vnode: VNode, hook: InsertHook): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.hook === undefined) {
+    vnode.data.hook = {};
+  }
+  if (vnode.data.hook.insert == null) {
+    vnode.data.hook.insert = hook;
+  } else {
+    const oldHook = vnode.data.hook.insert;
+    vnode.data.hook.insert = (vNode: VNode) : any => {
+      hook(vNode);
+      return oldHook(vNode);
+    }
+  }
+  return vnode;
+}
+
+export function wrapUpdateHook(vnode: VNode, hook: UpdateHook): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.hook === undefined) {
+    vnode.data.hook = {};
+  }
+  if (vnode.data.hook.update == null) {
+    vnode.data.hook.update = hook;
+  } else {
+    const oldHook = vnode.data.hook.update;
+    vnode.data.hook.update = (oldVNode: VNode, vNode: VNode) : any => {
+      hook(oldVNode, vNode);
+      return oldHook(oldVNode, vNode);
+    }
+  }
   return vnode;
 }
 

@@ -7,13 +7,14 @@ import {
   PropertyValue,
 } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
-import {ModelNode, reactToAReferenceChange} from '../datamodel/modelNode';
+import {ModelNode, OptionalNodeProcessor, reactToAReferenceChange} from '../datamodel/modelNode';
 import { Ref } from '../datamodel/ref';
-import { dataToNode, getDatamodelRoot } from '../datamodel/registry';
-import {renderDataModels} from "../index";
+import {dataToNode, getDatamodelRoot, getNodeFromLocalRepo} from '../datamodel/registry';
+import {editorController, renderDataModels} from "../index";
 var deepEqual = require('deep-equal')
 
 import {
+  AddChildAnswer,
   AskErrorsForNode,
   ErrorsForModelReport, ErrorsForNodeReport,
   IssueDescription,
@@ -74,6 +75,7 @@ function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]) : 
   }
   console.log("registerIssuesForNode, true", issuesMap[node.model], newIm);
   issuesMap[node.model] = newIm;
+  editorController().notifyErrorsForNode(node, issues);
   return true;
 }
 
@@ -198,6 +200,17 @@ export class WsCommunication {
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
         alternativesReceiver(data.items);
+      } else if (data.type.toLowerCase() == 'AddChildAnswer'.toLowerCase()) {
+        const msg = data as AddChildAnswer;
+        const callback = thisWS.callbacks[data.requestId];
+        if (callback != null) {
+          const createdNode : ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
+          if (createdNode == null) {
+            console.warn('cannot handle AddChildAnswer as we cannot find the created node in the local repo', msg.nodeCreated);
+          } else {
+            callback(createdNode);
+          }
+        }
       } else if (data.type === 'AnswerDefaultInsertion') {
         const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
         if (reactorToInsertion == null) {
@@ -278,12 +291,14 @@ export class WsCommunication {
     this.sendJSON(msg)
   }
 
-  addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string): void {
+  addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()): void {
     if (index < -1) {
       throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
     }
+    this.callbacks[uuid] = initializer;
     this.sendJSON({
       type: 'addChild',
+      requestId: uuid,
       index,
       modelName: container.modelName(),
       container: container.idString(),
@@ -320,9 +335,11 @@ export class WsCommunication {
     });
   }
 
-  setChild(container: ModelNode, containmentName: string, conceptName: string): void {
+  setChild(container: ModelNode, containmentName: string, conceptName: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()): void {
+    this.callbacks[uuid] = initializer;
     this.sendJSON({
       type: 'setChild',
+      requestId: uuid,
       modelName: container.modelName(),
       container: container.idString(),
       containmentName,

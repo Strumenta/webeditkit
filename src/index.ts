@@ -42,6 +42,9 @@ export {editorController, EditorController, Observer}
 import {getIssuesForNode} from "./communication";
 export {getIssuesForNode}
 
+import {getNodeFromLocalRepo} from "./datamodel"
+export {getNodeFromLocalRepo}
+
 const wscommunication = require('./communication/wscommunication');
 export const cells = require('./presentation/cells');
 
@@ -83,6 +86,7 @@ import {dataToNode} from "./datamodel";
 export {dataToNode}
 import {VNode} from "snabbdom/vnode";
 import {getIssuesForModel, IssuesMap} from "./communication/wscommunication";
+import {addInsertHook, wrapInsertHook, wrapUpdateHook} from "./presentation/cells/support";
 
 const patch = init([
   // Init patch function with chosen modules
@@ -110,7 +114,19 @@ function injectErrors(vnode: VNode, issues: IssuesMap) : VNode {
     const myNodeId = vnode.data.dataset.node_represented;
     const errors = issues.getIssuesForNode(myNodeId);
     if (errors.length != 0) {
-      vnode.sel = vnode.sel + ".hasErrors";
+      vnode = wrapInsertHook(vnode, (vNode:VNode): any => {
+        $(vNode.elm).addClass("hasErrors");
+      });
+      vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode:VNode): any => {
+        $(vNode.elm).addClass("hasErrors");
+      });
+    } else {
+      vnode = wrapInsertHook(vnode, (vNode:VNode): any => {
+        $(vNode.elm).removeClass("hasErrors");
+      });
+      vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode:VNode): any => {
+        $(vNode.elm).removeClass("hasErrors");
+      });
     }
   }
   for (let i=0;i<vnode.children.length;i++) {

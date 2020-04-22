@@ -1,7 +1,7 @@
-import { NodeData } from './misc';
+import {NodeData, NodeInModel} from './misc';
 import { ModelNode } from './modelNode';
 
-const datamodelRoots = {};
+const datamodelRoots : {[key:string]: ModelNode}= {};
 const datamodelClasses = {};
 
 class Registry {
@@ -59,4 +59,17 @@ export function forEachDataModel(op: (localName: string, root: ModelNode) => voi
   for (const key of keys) {
     op(key, getDatamodelRoot(key));
   }
+}
+
+export function getNodeFromLocalRepo(nodeId:NodeInModel) : ModelNode | null {
+  for (const key in datamodelRoots){
+    const entry : ModelNode = datamodelRoots[key];
+    if (entry.modelName() == nodeId.model) {
+      const res = entry.findNodeById(nodeId.id.regularId);
+      if (res != null) {
+        return res;
+      }
+    }
+  }
+  return null;
 }
