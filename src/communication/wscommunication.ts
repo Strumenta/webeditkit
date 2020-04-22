@@ -14,7 +14,8 @@ import {renderDataModels} from "../index";
 var deepEqual = require('deep-equal')
 
 import {
-  ErrorsForModelReport,
+  AskErrorsForNode,
+  ErrorsForModelReport, ErrorsForNodeReport,
   IssueDescription,
   NodeAdded,
   NodeRemoved,
@@ -51,7 +52,7 @@ export class IssuesMap {
   }
 }
 
-const issuesMap = {};
+const issuesMap : {[key:string]:IssuesMap}= {};
 
 function registerIssuesForModel(model: string, issues: IssueDescription[]) : boolean {
   const newIm = new IssuesMap(issues);
@@ -64,8 +65,24 @@ function registerIssuesForModel(model: string, issues: IssueDescription[]) : boo
   return true;
 }
 
+function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]) : boolean {
+  // This is not correct because we are overriding the issues for the whole model with the issues for a certain root
+  const newIm = new IssuesMap(issues);
+  if (deepEqual(newIm, issuesMap[node.model])) {
+    console.log("registerIssuesForNode, false");
+    return false;
+  }
+  console.log("registerIssuesForNode, true", issuesMap[node.model], newIm);
+  issuesMap[node.model] = newIm;
+  return true;
+}
+
 export function getIssuesForModel(model: string) : IssuesMap {
   return issuesMap[model] || new IssuesMap([]);
+}
+
+export function getIssuesForNode(node: NodeInModel) : IssueDescription[] {
+  return getIssuesForModel(node.model).getIssuesForNode(node.id.regularId);
 }
 
 export function modelNodeToNodeInModel(node: ModelNode | null) : NodeInModel | null {
@@ -123,6 +140,11 @@ export class WsCommunication {
       if (data.type === 'ErrorsForModelReport') {
         const msg = data as ErrorsForModelReport;
         if (registerIssuesForModel(msg.model, msg.issues)) {
+          renderDataModels();
+        }
+      } else if (data.type.toLowerCase() === 'ErrorsForNodeReport'.toLowerCase()) {
+        const msg = data as ErrorsForNodeReport;
+        if (registerIssuesForNode(msg.rootNode, msg.issues)) {
           renderDataModels();
         }
       } else if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
@@ -251,6 +273,11 @@ export class WsCommunication {
     this.addChildAtIndex(container, containmentName, -1, conceptName);
   }
 
+  askForErrorsInNode(modelName: string, nodeID: string): void {
+    const msg : AskErrorsForNode = {rootNode: {id: { regularId: nodeID}, model: modelName}, type: "AskErrorsForNode"};
+    this.sendJSON(msg)
+  }
+
   addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string): void {
     if (index < -1) {
       throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
@@ -375,7 +402,8 @@ export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];
 }
 
-export function createInstance(url: string, modelName: string, localName: string) {
+export function createInstance(url: string, modelName: string, localName: string) : WsCommunication{
   const instance = new WsCommunication(url, modelName, localName);
   instances[modelName] = instance;
+  return instance;
 }

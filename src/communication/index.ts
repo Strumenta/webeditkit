@@ -1,2 +1,2 @@
-import {getWsCommunication, WsCommunication, createInstance} from "./wscommunication";
-export {getWsCommunication, WsCommunication, createInstance}
+import {getWsCommunication, WsCommunication, createInstance, getIssuesForNode} from "./wscommunication";
+export {getWsCommunication, WsCommunication, createInstance, getIssuesForNode}

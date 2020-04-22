@@ -190,6 +190,52 @@ export function wrapKeydownHandler(vnode: VNode, keydownHandler: (event) => bool
   return vnode;
 }
 
+export function wrapMouseOverHandler(vnode: VNode, hoverHandler: (event: MouseEvent) => boolean): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.on === undefined) {
+    vnode.data.on = {};
+  }
+  if (vnode.data.on.mouseover === undefined) {
+    vnode.data.on.mouseover = hoverHandler;
+  } else {
+    const original = vnode.data.on.mouseover;
+    vnode.data.on.mouseover = (event: MouseEvent) => {
+      const res = hoverHandler(event);
+      if (res) {
+        return original(event);
+      } else {
+        return res;
+      }
+    };
+  }
+  return vnode;
+}
+
+export function wrapMouseOutHandler(vnode: VNode, hoverHandler: (event: MouseEvent) => boolean): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.on === undefined) {
+    vnode.data.on = {};
+  }
+  if (vnode.data.on.mouseout === undefined) {
+    vnode.data.on.mouseout = hoverHandler;
+  } else {
+    const original = vnode.data.on.mouseout;
+    vnode.data.on.mouseout = (event: MouseEvent) => {
+      const res = hoverHandler(event);
+      if (res) {
+        return original(event);
+      } else {
+        return res;
+      }
+    };
+  }
+  return vnode;
+}
+
 export function addClass(vnode: VNode, className: string): VNode {
   vnode.sel += '.' + className;
   return vnode;

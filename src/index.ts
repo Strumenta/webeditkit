@@ -36,6 +36,12 @@ const uiutils = require('./presentation/uiutils');
 import {getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode} from "./datamodel";
 export {getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode}
 
+import {editorController, EditorController, Observer} from "./presentation";
+export {editorController, EditorController, Observer}
+
+import {getIssuesForNode} from "./communication";
+export {getIssuesForNode}
+
 const wscommunication = require('./communication/wscommunication');
 export const cells = require('./presentation/cells');
 
@@ -49,9 +55,11 @@ export function setup() {
   uiutils.installAutoresize();
 }
 
-export function addModel(baseUrl: string, modelName: string, nodeId, target: string) {
-  wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
+export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string) {
+  const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
   loadDataModel('http://' + baseUrl, modelName, nodeId, target);
+  // avoid to send message while still in connecting
+  setTimeout(() => {ws.askForErrorsInNode(modelName, nodeId);}, 200);
 }
 
 import { renderModelNode } from './presentation/renderer';

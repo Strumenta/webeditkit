@@ -44,3 +44,12 @@ export interface ErrorsForModelReport extends Message {
     model: string;
     issues: IssueDescription[];
 }
+
+export interface ErrorsForNodeReport extends Message {
+    rootNode: NodeInModel;
+    issues: IssueDescription[];
+}
+
+export interface AskErrorsForNode extends Message{
+    rootNode: NodeInModel;
+}
