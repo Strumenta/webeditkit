@@ -1,5 +1,5 @@
 import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCell } from './cells';
-import {setKey, wrapMouseOutHandler, wrapMouseOverHandler} from './cells/support';
+import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from './cells';
 import { ModelNode } from '../datamodel/modelNode';
 import { VNode } from 'snabbdom/vnode';
 import {editorController} from "./EditorController";

@@ -86,7 +86,7 @@ import {dataToNode} from "./datamodel";
 export {dataToNode}
 import {VNode} from "snabbdom/vnode";
 import {getIssuesForModel, IssuesMap} from "./communication/wscommunication";
-import {addInsertHook, wrapInsertHook, wrapUpdateHook} from "./presentation/cells/support";
+import {addInsertHook, wrapInsertHook, wrapUpdateHook} from "./presentation";
 
 const patch = init([
   // Init patch function with chosen modules
@@ -145,7 +145,7 @@ export const renderDataModels = (cb?: BasicCallback) => {
   forEachDataModel((name, root: ModelNode) => {
     const issues = getIssuesForModel(root.modelName());
     const vnode = h('div#' + name + '.editor', {
-      dataset: { modelLocalName: name }
+      dataset: { model_local_name: name }
     }, [injectErrors(renderModelNode(root), issues)]);
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];

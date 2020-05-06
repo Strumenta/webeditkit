@@ -11,7 +11,9 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from './types';
-import { alternativesProviderForAbstractConcept, addClass, addToDataset, map } from './support';
+import { map } from './support';
+import { addClass, addToDataset, addInsertHook, wrapInsertHook, wrapUpdateHook, setKey, wrapMouseOutHandler, wrapMouseOverHandler } from './vnodemanipulation';
+import { alternativesProviderForAbstractConcept, SuggestionsReceiver } from './autocompletion';
 
 export {
   fixedCell,
@@ -25,5 +27,7 @@ export {
   tabCell,
   verticalCollectionCell,
   verticalGroupCell,
+  SuggestionsReceiver,
+  addInsertHook, wrapInsertHook, wrapUpdateHook
 };
-export { alternativesProviderForAbstractConcept, addClass, addToDataset, map };
+export { alternativesProviderForAbstractConcept, addClass, addToDataset, map, setKey, wrapMouseOutHandler, wrapMouseOverHandler };

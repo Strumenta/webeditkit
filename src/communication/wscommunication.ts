@@ -11,7 +11,7 @@ import {ModelNode, OptionalNodeProcessor, reactToAReferenceChange} from '../data
 import { Ref } from '../datamodel/ref';
 import {dataToNode, getDatamodelRoot, getNodeFromLocalRepo} from '../datamodel/registry';
 import {editorController, renderDataModels} from "../index";
-var deepEqual = require('deep-equal')
+var deepEqual = require('deep-equal');
 
 import {
   AddChildAnswer,

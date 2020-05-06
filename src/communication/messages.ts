@@ -1,3 +1,7 @@
+/*
+ * This file contains all the messages which are exchanged with the MPS Server
+ */
+
 import {NodeData, NodeId, NodeInModel, PropertyValue} from "../datamodel/misc";
 
 export interface Message {

@@ -2,21 +2,28 @@ import h from 'snabbdom/h';
 import { getWsCommunication } from '../../communication/wscommunication';
 import {isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp} from '../navigation';
 import {
-  addAutoresize, addClass,
-  addToDatasetObj,
-  alternativesProviderForAddingChild, domElementToModelNode,
+  addAutoresize,
+  domElementToModelNode,
   flattenArray,
   focusOnNode,
   focusOnReference,
   handleAddingElement,
   handleSelfDeletion,
-  installAutocomplete, isAutocompleteVisible,
   map,
   separate,
-  SuggestionsReceiver,
   triggerResize,
-  wrapKeydownHandler,
 } from './support';
+import {
+  addClass,
+  addToDatasetObj,
+  wrapKeydownHandler,
+ } from './vnodemanipulation';
+import {
+  alternativesProviderForAddingChild,
+  installAutocomplete,
+  isAutocompleteVisible,
+  SuggestionsReceiver,
+} from './autocompletion';
 import { NodeId, nodeIdToString } from '../../datamodel/misc';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
