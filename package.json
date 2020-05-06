@@ -47,7 +47,7 @@
     "url": "git+https://github.com/Strumenta/webeditkit.git"
   },
   "author": "Federico Tomassetti",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/Strumenta/webeditkit/issues"
   },
