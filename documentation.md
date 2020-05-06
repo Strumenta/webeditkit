@@ -14,8 +14,16 @@ That div:
 
 ## Node element
 
-Certain HTML elements will represent MPS nodes. These elements:
+Certain HTML elements will represent MPS nodes. 
 
-* Must have in the associated data set the key `represented_node`
+Those elements:
+
+* Must have in the associated data set the key `represented_node` indicating the `node id string`
 
 ## Reference element
+
+Certain HTML elements will represent MPS nodes. 
+
+Those elements:
+
+* Must have in the associated data set the key `represented_reference` indicating the name of the reference
