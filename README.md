@@ -17,3 +17,7 @@ It contains also some basic instructions on how to use MPSServer and WebEditKit.
 ## Development
 
 We suggest using nvm to specify the exact version of node we use.
+
+## License
+
+This framework is released under the Apache License V2.0.
