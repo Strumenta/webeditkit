@@ -28,7 +28,8 @@ import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
-import { dataToNode } from '../src/datamodel/registry';
+import {clearDatamodelRoots, dataToNode} from '../src/datamodel/registry';
+import {clearRendererRegistry} from "../src/presentation/renderer";
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -158,11 +159,41 @@ const rootData1 = {
 
 describe('Presentation.Cells.Autocompletion', () => {
 
+  let doc = null;
+
+  beforeEach(function () {
+    doc = prepareFakeDom(html1);
+
+    clearDatamodelRoots();
+    clearRendererRegistry();
+  });
+
+  let mockServer : Server | undefined = undefined;
+
+  afterEach(function () {
+    if (mockServer != null) {
+      mockServer.close();
+      mockServer = undefined;
+    }
+
+    clearDatamodelRoots();
+    clearRendererRegistry();
+
+    // @ts-ignore
+    delete global.$;
+    // @ts-ignore
+    delete global.jQuery;
+    // @ts-ignore
+    delete global.window;
+    // @ts-ignore
+    delete global.document;
+  });
+
   describe('should support alternativesProviderForAddingChild', () => {
     it('it should handle positive case', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
-      const mockServer = new Server(fakeURL);
+      mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received == 0) {
@@ -218,7 +249,7 @@ describe('Presentation.Cells.Autocompletion', () => {
     it('it should handle case in which modelNode is null', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
-      const mockServer = new Server(fakeURL);
+      mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received == 0) {
@@ -246,7 +277,7 @@ describe('Presentation.Cells.Autocompletion', () => {
     it('it should handle positive case', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
-      const mockServer = new Server(fakeURL);
+      mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received == 0) {
@@ -303,7 +334,7 @@ describe('Presentation.Cells.Autocompletion', () => {
     it('it should handle case with parent not set', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
-      const mockServer = new Server(fakeURL);
+      mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received == 0) {
@@ -329,7 +360,7 @@ describe('Presentation.Cells.Autocompletion', () => {
 
   describe('should support installAutocomplete', () => {
     it('it should handle positive case', (done) => {
-      const doc = prepareFakeDom(html1);
+      //const doc = prepareFakeDom(html1);
 
       const aNode = dataToNode(rootData1);
       let cell = h('input', {}, []);
