@@ -23,6 +23,7 @@ import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
+import {printFocus} from "../uiutils";
 
 export function childCell(node: ModelNode, containmentName: string, emptyCell: () => VNode | undefined = undefined): VNode {
   const child = node.childByLinkName(containmentName);
@@ -441,19 +442,27 @@ export function referenceCell(
       // CASE 1
       //
       // TODO, capture any character to switch to an editable cell
-      return addToDatasetObj(wrapKeydownHandler(fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider), (event)=>{
-        // ctrl + space should trigger autocomplete
-        // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
-        // this seems to work...
-        let isPrintableKey = event.key.length === 1;
-        if (isPrintableKey) {
-          resolutionMemory[resolutionMemoryKey] = event.key;
-          renderDataModels(() => {
-            focusOnReference(modelNode, referenceName);
-          });
-        }
-        return true;
-      }), datasetForReference(modelNode, referenceName));
+      return addToDatasetObj(
+          wrapKeydownHandler(
+              fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider),
+              (event:KeyboardEvent)=>{
+                if (event.ctrlKey) {
+                  console.log('should trigger autocompletion');
+                } else {
+                  // ctrl + space should trigger autocomplete
+                  // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
+                  // this seems to work...
+                  let isPrintableKey = event.key.length === 1;
+                  if (isPrintableKey) {
+                    resolutionMemory[resolutionMemoryKey] = event.key;
+                    renderDataModels(() => {
+                      focusOnReference(modelNode, referenceName);
+                    });
+                  }
+                }
+                return true;
+              }),
+          datasetForReference(modelNode, referenceName));
     }
   }
 
@@ -494,7 +503,9 @@ export function referenceCell(
             moveDown(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
+              printFocus("before deleter");
               deleter();
+              printFocus("after deleter");
               e.preventDefault();
               return false;
             }
@@ -508,13 +519,17 @@ export function referenceCell(
           modelNode.ref(referenceName).loadData((refNode)=> {
             // @ts-ignore
             if (refNode.name() != e.target.value) {
+              printFocus("keyup, before setting ref");
               modelNode.setRef(referenceName, null);
+              printFocus("keyup, after setting ref");
               const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
               // @ts-ignore
               resolutionMemory[resolutionMemoryKey] = e.target.value;
+              printFocus("keyup, before renderDataModels");
               renderDataModels(() => {
                 focusOnReference(modelNode, referenceName);
               });
+              printFocus("keyup, after renderDataModels");
             }
           });
         }
