@@ -156,139 +156,46 @@ const rootData1 = {
   abstractConcept: false,
 };
 
-describe('Presentation.Cells.Support', () => {
+describe('Presentation.Cells.Autocompletion', () => {
 
-  describe('should support map', () => {
-    it('it should be rendered in a certain way', () => {
-      const aNode = dataToNode(rootData1);
-      const res = map(['a', 'b', 'c'], (el) => {
-        return fixedCell(aNode, el);
-      });
-      expect(res.length).to.eql(3);
-      compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
-      compareVNodes(res[1] as VNode, fixedCell(aNode, 'b'));
-      compareVNodes(res[2] as VNode, fixedCell(aNode, 'c'));
-    });
-  });
-
-  describe('should support separate', () => {
-    it('it should be rendered in a certain way an empty list with no separator', () => {
-      const aNode = dataToNode(rootData1);
-      const res = separate([]);
-      expect(res.length).to.eql(0);
-    });
-    it('it should be rendered in a certain way an empty list with separator', () => {
-      const aNode = dataToNode(rootData1);
-      const res = separate([], () => {
-        return fixedCell(aNode, ',');
-      });
-      expect(res.length).to.eql(0);
-    });
-    it('it should be rendered in a certain way a non empty list with no separator', () => {
-      const aNode = dataToNode(rootData1);
-      const res = separate([fixedCell(aNode, 'a'), fixedCell(aNode, 'b')]);
-      expect(res.length).to.eql(2);
-      compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
-      compareVNodes(res[1] as VNode, fixedCell(aNode, 'b'));
-    });
-    it('it should be rendered in a certain way a non empty list with separator', () => {
-      const aNode = dataToNode(rootData1);
-      const res = separate([fixedCell(aNode, 'a'), fixedCell(aNode, 'b')], () => {
-        return fixedCell(aNode, ',');
-      });
-      expect(res.length).to.eql(3);
-      compareVNodes(res[0] as VNode, fixedCell(aNode, 'a'));
-      compareVNodes(res[1] as VNode, fixedCell(aNode, ','));
-      compareVNodes(res[2] as VNode, fixedCell(aNode, 'b'));
-    });
-  });
-
-  describe('should support addInsertHook', () => {
-    it('it should be triggered on insert', (done) => {
-      const dom = new JSDOM(html1);
-      const doc = dom.window.document;
-      // @ts-ignore
-      global.$ = require('jquery')(dom.window);
-      // @ts-ignore
-      global.document = doc;
-
-      const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'My fixed test');
-      let cellWithHook = addInsertHook(cell, (myNode) => {
-        compareVNodes(myNode, cellWithHook);
-        done();
-      });
-      patch(toVNode(document.querySelector('#calc')), cellWithHook);
-    });
-  });
-
-  describe('should support focusOnNode', () => {
-    it('it should be triggered', (done) => {
-      const doc = prepareFakeDom(html1);
-
-      const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'My fixed test');
-      let cellWithHook = addClass(
-        setDataset(
-          addInsertHook(cell, (myNode) => {
-            focusOnNode('my-node-id', 'calc');
-            // We need to check who has the focus
-            expect(doc.activeElement.tagName).to.equals('INPUT');
-            expect(doc.activeElement.className).to.equals('fixed represent-node');
-            // @ts-ignore
-              expect(doc.activeElement.dataset.node_represented).to.eql('my-node-id');
-            done();
-          }),
-          { node_represented: 'my-node-id' },
-        ),
-        'represent-node',
-      );
-      let container = h('div#calc', {}, [cellWithHook]);
-      patch(toVNode(document.querySelector('#calc')), container);
-    });
-  });
-
-  describe('should support handleSelfDeletion', () => {
-    it('it should handle marking with deleting class', (done) => {
-      const doc = prepareFakeDom(html1);
-
-      const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'myFixedCell');
-      let cellWithHook = addClass(
-        addInsertHook(cell, (myNode: VNode) => {
-          // @ts-ignore
-          expect(myNode.elm.className).to.eql('fixed represent-node');
-          handleSelfDeletion(myNode.elm, aNode);
-          // @ts-ignore
-          expect(myNode.elm.className).to.eql('fixed represent-node deleting');
-          done();
-        }),
-        'represent-node',
-      );
-
-      let container = h('div#calc', {}, [cellWithHook]);
-      patch(toVNode(document.querySelector('#calc')), container);
-    });
-  });
-
-  describe('should support handleSelfDeletion', () => {
-    it('it should handle triggering deleteMe', (done) => {
+  describe('should support alternativesProviderForAddingChild', () => {
+    it('it should handle positive case', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
       const mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received == 0) {
+            const dataj = JSON.parse(data as string);
+            expect(dataj.type).to.eql('askAlternatives');
+            expect(dataj.containmentName).to.eql('foo');
+            expect(dataj.nodeId).to.eql('324292001770075100');
+            expect(dataj.modelName).to.eql('my.qualified.model');
+            const requestId = dataj.requestId;
+
+            socket.send(
+              JSON.stringify({
+                type: 'AnswerAlternatives',
+                requestId: requestId,
+                items: [
+                  { alias: 'alias1', conceptName: 'foo.bar.concept1' },
+                  { alias: 'alias2', conceptName: 'foo.bar.concept2' },
+                ],
+              }),
+            );
+          } else if (received == 1) {
+            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+          } else if (received == 2) {
             expect(JSON.parse(data as string)).to.eql({
-              type: 'deleteNode',
+              type: 'addChild',
+              index: -1,
               modelName: 'my.qualified.model',
-              node: '324292001770075100',
+              container: '324292001770075100',
+              containmentName: 'foo',
+              conceptToInstantiate: 'foo.bar.concept1',
             });
             mockServer.close();
             done();
-          } else if (received == 1) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-            // actually the test will be finished at this point...
           } else {
             throw new Error('Too many messages');
           }
@@ -298,27 +205,159 @@ describe('Presentation.Cells.Support', () => {
       // @ts-ignore
       global.WebSocket = WebSocket;
       createInstance(fakeURL, 'my.qualified.model', 'calc');
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+      const suggestionsReceiverFactory = alternativesProviderForAddingChild(aNode, 'foo');
+      suggestionsReceiverFactory((suggestions: AutocompleteAlternative[]): void => {
+        expect(suggestions.length).to.equals(2);
+        expect(suggestions[0].label).to.eql('alias1');
+        expect(suggestions[1].label).to.eql('alias2');
+        suggestions[0].execute();
+      });
+    });
+    it('it should handle case in which modelNode is null', (done) => {
+      let received = 0;
+      const fakeURL = 'ws://localhost:8080';
+      const mockServer = new Server(fakeURL);
+      mockServer.on('connection', (socket) => {
+        socket.on('message', (data) => {
+          if (received == 0) {
+            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+          } else {
+            throw new Error('Too many messages');
+          }
+          received += 1;
+        });
+      });
+      // @ts-ignore
+      global.WebSocket = WebSocket;
+      createInstance(fakeURL, 'my.qualified.model', 'calc');
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+      expect(() => {
+        alternativesProviderForAddingChild(null, 'foo');
+      }).to.throw('modelNode should not be null');
+      mockServer.close();
+      done();
+    });
+  });
 
+  describe('should support alternativesProviderForAbstractConcept', () => {
+    it('it should handle positive case', (done) => {
+      let received = 0;
+      const fakeURL = 'ws://localhost:8080';
+      const mockServer = new Server(fakeURL);
+      mockServer.on('connection', (socket) => {
+        socket.on('message', (data) => {
+          if (received == 0) {
+            const dataj = JSON.parse(data as string);
+            expect(dataj.type).to.eql('askAlternatives');
+            expect(dataj.containmentName).to.eql('type');
+            expect(dataj.nodeId).to.eql('1848360241685547698');
+            expect(dataj.modelName).to.eql('my.qualified.model');
+            const requestId = dataj.requestId;
+
+            socket.send(
+              JSON.stringify({
+                type: 'AnswerAlternatives',
+                requestId: requestId,
+                items: [
+                  { alias: 'alias1', conceptName: 'foo.bar.concept1' },
+                  { alias: 'alias2', conceptName: 'foo.bar.concept2' },
+                ],
+              }),
+            );
+          } else if (received == 1) {
+            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+          } else if (received == 2) {
+            expect(JSON.parse(data as string)).to.eql({
+              type: 'setChild',
+              modelName: 'my.qualified.model',
+              container: '1848360241685547698',
+              containmentName: 'type',
+              conceptToInstantiate: 'foo.bar.concept1',
+            });
+            mockServer.close();
+            done();
+          } else {
+            throw new Error('Too many messages');
+          }
+          received += 1;
+        });
+      });
+      // @ts-ignore
+      global.WebSocket = WebSocket;
+      createInstance(fakeURL, 'my.qualified.model', 'calc');
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+      const suggestionsReceiverFactory = alternativesProviderForAbstractConcept(
+        aNode.childrenByLinkName('inputs')[0].childByLinkName('type'),
+      );
+      suggestionsReceiverFactory((suggestions: AutocompleteAlternative[]): void => {
+        expect(suggestions.length).to.equals(2);
+        expect(suggestions[0].label).to.eql('alias1');
+        expect(suggestions[1].label).to.eql('alias2');
+        suggestions[0].execute();
+      });
+    });
+    it('it should handle case with parent not set', (done) => {
+      let received = 0;
+      const fakeURL = 'ws://localhost:8080';
+      const mockServer = new Server(fakeURL);
+      mockServer.on('connection', (socket) => {
+        socket.on('message', (data) => {
+          if (received == 0) {
+            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+          } else {
+            throw new Error('Too many messages');
+          }
+          received += 1;
+        });
+      });
+      // @ts-ignore
+      global.WebSocket = WebSocket;
+      createInstance(fakeURL, 'my.qualified.model', 'calc');
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+      expect(() => {
+        alternativesProviderForAbstractConcept(aNode);
+      }).to.throw('The given node has no parent');
+      mockServer.close();
+      done();
+    });
+  });
+
+  describe('should support installAutocomplete', () => {
+    it('it should handle positive case', (done) => {
       const doc = prepareFakeDom(html1);
 
       const aNode = dataToNode(rootData1);
-      aNode.injectModelName('my.qualified.model', 'calc');
-      let cell = fixedCell(aNode, 'myFixedCell');
-      let cellWithHook = addClass(
-        addInsertHook(cell, (myNode: VNode) => {
-          // @ts-ignore
-          expect(myNode.elm.className).to.eql('fixed represent-node');
-          handleSelfDeletion(myNode.elm, aNode);
-          handleSelfDeletion(myNode.elm, aNode);
-          // @ts-ignore
-          expect(myNode.elm.className).to.eql('fixed represent-node deleting');
-          //done();
-        }),
-        'represent-node',
-      );
+      let cell = h('input', {}, []);
+      let cellWithHook = addInsertHook(cell, (myNode: VNode) => {
+        installAutocomplete(
+          myNode,
+          (suggestionsReceiver: SuggestionsReceiver) => {
+            suggestionsReceiver([
+              {
+                label: 'xyz',
+                execute: () => {
+                  console.log('executing');
+                },
+              },
+            ]);
+            done();
+          },
+          true,
+        );
+        // @ts-ignore
+        myNode.elm.focus();
+
+        pressChar(doc.activeElement, 'x', 88);
+      });
 
       let container = h('div#calc', {}, [cellWithHook]);
       patch(toVNode(document.querySelector('#calc')), container);
     });
   });
+
 });
