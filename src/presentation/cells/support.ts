@@ -102,6 +102,7 @@ export function installAutocomplete(
       // not true in tests
       $(container).css('width', 'auto');
     },
+    preventSubmit: true
   });
 }
 
@@ -114,6 +115,7 @@ export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
 }
 
 export function handleAddingElement(element: any, modelNode: ModelNode): void {
+  console.log("adding element", element, modelNode);
   const parents = $(element).parents();
 
   // First find the collection containing this node
@@ -402,4 +404,33 @@ function focusOnFirstInputOf(element): boolean {
     }
   }
   return false;
+}
+
+export function isAutocompleteVisible() {
+  const res = $(".autocomplete").parent().length > 0;
+  console.log("isAutocompleteVisible", res);
+  return res;
+}
+
+export function isEditorElement(element: HTMLElement) : boolean {
+  return $(element).hasClass('editor');
+}
+
+export function domElementToModelNode(element: HTMLElement) : ModelNode | undefined {
+  if (isEditorElement(element)) {
+    return undefined;
+  }
+  console.log("domElementToModelNode", element);
+  console.log("  data", $(element).data("node_represented"));
+  const nodeId = $(element).data("node_represented");
+  if (nodeId != null && nodeId != "") {
+    const modelLocalName = $(element).closest(".editor").data('modelLocalName');
+    console.log("  model local name", modelLocalName);
+    const dataModelRoot = getDatamodelRoot(modelLocalName);
+    return dataModelRoot.findNodeById(nodeId);
+  } else if (element.parentElement != null) {
+    return domElementToModelNode(element.parentElement);
+  } else {
+    return undefined;
+  }
 }

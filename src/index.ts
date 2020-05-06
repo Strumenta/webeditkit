@@ -144,7 +144,9 @@ export const renderDataModels = (cb?: BasicCallback) => {
   }
   forEachDataModel((name, root: ModelNode) => {
     const issues = getIssuesForModel(root.modelName());
-    const vnode = h('div#' + name + '.editor', {}, [injectErrors(renderModelNode(root), issues)]);
+    const vnode = h('div#' + name + '.editor', {
+      dataset: { modelLocalName: name }
+    }, [injectErrors(renderModelNode(root), issues)]);
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];
       if (domNode == null) {

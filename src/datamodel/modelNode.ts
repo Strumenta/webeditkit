@@ -1,5 +1,10 @@
 import { dataToNode } from './registry';
-import {getWsCommunication, modelNodeToNodeInModel, refToNodeInModel} from '../communication/wscommunication';
+import {
+  getWsCommunication,
+  modelNodeToNodeInModel,
+  refToNodeInModel,
+  WsCommunication
+} from '../communication/wscommunication';
 import {NodeData, nodeIdToString, PropertyValue} from './misc';
 import { Ref } from './ref';
 import {ReferenceChange} from "../communication/messages";
@@ -247,4 +252,5 @@ export class ModelNode {
   setProperty(propertyName: string, propertyValue: PropertyValue): void {
     this.data.properties[propertyName] = propertyValue;
   }
+
 }

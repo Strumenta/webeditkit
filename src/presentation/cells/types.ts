@@ -4,13 +4,13 @@ import {isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, move
 import {
   addAutoresize, addClass,
   addToDatasetObj,
-  alternativesProviderForAddingChild,
+  alternativesProviderForAddingChild, domElementToModelNode,
   flattenArray,
   focusOnNode,
   focusOnReference,
   handleAddingElement,
   handleSelfDeletion,
-  installAutocomplete,
+  installAutocomplete, isAutocompleteVisible,
   map,
   separate,
   SuggestionsReceiver,
@@ -67,10 +67,11 @@ export function verticalCollectionCell(
   const extraClassesStr = extraClassesToSuffix(extraClasses);
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
+  let baseNode;
   if (children.length === 0) {
-    return h('div.vertical-collection.represent-collection' + extraClassesStr, data, [emptyCollectionCell(modelNode, containmentName)]);
+    baseNode = h('div.vertical-collection.represent-collection' + extraClassesStr, data, [emptyCollectionCell(modelNode, containmentName)]);
   } else {
-    return h(
+    baseNode = h(
       'div.vertical-collection.represent-collection' + extraClassesStr,
       data,
       map(modelNode.childrenByLinkName(containmentName), (el) => {
@@ -82,6 +83,30 @@ export function verticalCollectionCell(
       }),
     );
   }
+  return wrapKeydownHandler(baseNode, (event: KeyboardEvent) : boolean => {
+    if (event.key == 'Enter'){
+      // it should ignore it if the autocomplete is displayed
+      if (!isAutocompleteVisible()) {
+        // if (!event.defaultPrevented) {
+        //   console.log("got enter", event);
+        // } else {
+        //   console.log("got enter avoided because default prevented", event);
+        // }
+        // @ts-ignore
+        if (event.duringAutocomplete == true) {
+          console.log("got enter during autocomplete, skipping");
+        } else {
+          console.log("got enter -> triggering adding element", event.target);
+          const targetNode = domElementToModelNode(event.target as HTMLElement);
+          console.log("  adding after", targetNode, "container is", modelNode);
+          targetNode.insertNextSibling();
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+);
 }
 
 export function horizontalCollectionCell(
@@ -167,11 +192,11 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
             e.preventDefault();
             return true;
           }
-          if (e.key === 'ArrowUp') {
+          if (!isAutocompleteVisible() && e.key === 'ArrowUp') {
             moveUp(e.target);
             return true;
           }
-          if (e.key === 'ArrowDown') {
+          if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
             moveDown(e.target);
             return true;
           }
@@ -246,9 +271,9 @@ export function fixedCell(
             moveToNextElement(e.target);
           } else if (e.key === 'ArrowLeft') {
             moveToPrevElement(e.target);
-          } else if (e.key === 'ArrowUp') {
+          } else if (!isAutocompleteVisible() && e.key === 'ArrowUp') {
             moveUp(e.target);
-          } else if (e.key === 'ArrowDown') {
+          } else if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
             moveDown(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter !== undefined) {
@@ -261,10 +286,12 @@ export function fixedCell(
           } else if (e.key === 'Enter') {
             if ($('.autocomplete').length == 0) {
               if (onEnter !== undefined) {
+                console.log("prevent enter on fixed (A)");
                 onEnter();
                 e.preventDefault();
                 return false;
               } else if (alternativesProvider === undefined) {
+                console.log("prevent enter on fixed (B)");
                 // We should stop this when the autocomplete is displayed
 
                 // We do not want to do this for cells with autocompletion
@@ -274,6 +301,7 @@ export function fixedCell(
               }
             }
           }
+          console.log("prevent key on fixed (C)");
           e.preventDefault();
           return false;
         },
@@ -469,13 +497,23 @@ export function referenceCell(
   //
   // CASE 3
   //
+  const kdCaptureListener = (event: KeyboardEvent) : boolean => {
+    // TODO move this into the body
+    console.log("capture phase in reference, keydown. Is Autocomplete visible?", isAutocompleteVisible());
+    if (isAutocompleteVisible()) {
+      // @ts-ignore
+      event.duringAutocomplete = true;
+    }
+    return true;
+  };
   return h(
     'input.reference' + extraClassesStr,
     {
       dataset: datasetForReference(modelNode, referenceName),
       props: { value: 'Loading...' },
       hook: {
-        insert: (vnode: any) => {
+        insert: (vnode: VNode) => {
+          vnode.elm.addEventListener('keydown', kdCaptureListener, true);
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
@@ -485,7 +523,10 @@ export function referenceCell(
             triggerResize(vnode);
           });
         },
-        update: triggerResize,
+        update: (vnode:VNode) =>{
+          vnode.elm.addEventListener('keydown', kdCaptureListener, true);
+          triggerResize(vnode);
+        },
       },
       on: {
         click: (e: MouseEvent) => {
@@ -497,9 +538,9 @@ export function referenceCell(
           if (moveLeftRightWhenAtEnd(e)) {
             return true;
           }
-          if (e.key === 'ArrowUp') {
+          if (!isAutocompleteVisible() && e.key === 'ArrowUp') {
             moveUp(e.target);
-          } else if (e.key === 'ArrowDown') {
+          } else if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
             moveDown(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
@@ -509,6 +550,11 @@ export function referenceCell(
               e.preventDefault();
               return false;
             }
+          }
+          if (e.key == 'Enter') {
+            console.log('enter on reference cell', e);
+            // @ts-ignore
+            e.insertionEnter = true;
           }
           // TODO when typing we destroy the reference
           // and we go to an editable cell
