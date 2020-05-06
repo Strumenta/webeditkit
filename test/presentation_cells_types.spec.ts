@@ -15,7 +15,7 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from '../src/presentation/cells';
-import { addInsertHook, flattenArray } from '../src/presentation/cells/support';
+import { addInsertHook, flattenArray } from '../src/presentation';
 
 import { PropertyChange } from "../src/communication/messages";
 

@@ -13,7 +13,7 @@ import {
   separate,
   setDataset,
   SuggestionsReceiver,
-} from '../src/presentation/cells/support';
+} from '../src/presentation/cells';
 
 import { Server, WebSocket } from 'mock-socket';
 import { init } from 'snabbdom/snabbdom';
@@ -156,26 +156,7 @@ const rootData1 = {
   abstractConcept: false,
 };
 
-describe('Cells.Support', () => {
-  describe('should support setDataset', () => {
-    it('it should be rendered in a certain way', () => {
-      const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'My fixed test');
-      expect(toHTML(cell)).to.eql('<input class="fixed" value="My fixed test">');
-      cell = setDataset(cell, { a: 123 });
-      expect(toHTML(cell)).to.eql('<input class="fixed" value="My fixed test" data-a="123">');
-    });
-  });
-
-  describe('should support addId', () => {
-    it('it should be rendered in a certain way', () => {
-      const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'My fixed test');
-      expect(toHTML(cell)).to.eql('<input class="fixed" value="My fixed test">');
-      cell = addId(cell, 'spritz');
-      expect(toHTML(cell)).to.eql('<input id="spritz" class="fixed" value="My fixed test">');
-    });
-  });
+describe('Presentation.Cells.Support', () => {
 
   describe('should support map', () => {
     it('it should be rendered in a certain way', () => {

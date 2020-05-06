@@ -11,9 +11,13 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from './types';
-import { map } from './support';
-import { addClass, addToDataset, addInsertHook, wrapInsertHook, wrapUpdateHook, setKey, wrapMouseOutHandler, wrapMouseOverHandler } from './vnodemanipulation';
-import { alternativesProviderForAbstractConcept, SuggestionsReceiver } from './autocompletion';
+import { map, focusOnNode, handleSelfDeletion, separate } from './support';
+import { addClass, addToDataset, addInsertHook, wrapInsertHook, wrapUpdateHook, setKey, wrapMouseOutHandler, wrapMouseOverHandler,
+  addId,
+  setDataset} from './vnodemanipulation';
+import { alternativesProviderForAbstractConcept, SuggestionsReceiver, alternativesProviderForAddingChild,
+  AutocompleteAlternative,
+  installAutocomplete} from './autocompletion';
 
 export {
   fixedCell,
@@ -28,6 +32,14 @@ export {
   verticalCollectionCell,
   verticalGroupCell,
   SuggestionsReceiver,
-  addInsertHook, wrapInsertHook, wrapUpdateHook
+  addInsertHook, wrapInsertHook, wrapUpdateHook,
+    addId
 };
 export { alternativesProviderForAbstractConcept, addClass, addToDataset, map, setKey, wrapMouseOutHandler, wrapMouseOverHandler };
+export {  alternativesProviderForAddingChild,
+  AutocompleteAlternative,
+  focusOnNode,
+  handleSelfDeletion,
+  installAutocomplete,
+  separate,
+  setDataset}
