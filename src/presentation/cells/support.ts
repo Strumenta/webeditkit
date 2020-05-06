@@ -334,24 +334,31 @@ export function separate(original: any[], separatorGenerator?: ()=>VNode): any[]
 }
 
 export function focusOnReference(modelNode: ModelNode, referenceName: string) {
-  console.log("should focus on reference", modelNode, referenceName);
+  //console.log("should focus on reference", modelNode, referenceName);
   printFocus("before focusOnReference");
   const firstNodeFound = findDomElement(modelNode.idString(), modelNode.rootName());
   if (firstNodeFound != null) {
-    console.log("  focusOnReference, node found");
+    //console.log("  focusOnReference, node found", firstNodeFound);
     const inputs = $(firstNodeFound).find('input');
-    const refNode = inputs.filter((i,el)=>{
-      return $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName;
-    });
+    // check if the node itself represent the reference
+    let refNode;
+    if ($(firstNodeFound).data('node_represented') == modelNode.idString() && $(firstNodeFound).data('reference_represented') == referenceName) {
+      refNode = $(firstNodeFound);
+    } else {
+      refNode = inputs.filter((i, el) => {
+        //console.log("  focusOnReference, considering input", el, i);
+        return $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName;
+      });
+    }
     if (refNode.length === 1) {
       printFocus("before focusing");
       refNode.focus();
       printFocus("after focusing");
     } else {
-      console.log("  focusOnReference not one matching refNode found", refNode);
+      //console.log("  focusOnReference not one matching refNode found", refNode);
     }
   } else {
-    console.log("  focusOnReference, node not found");
+    //console.log("  focusOnReference, node not found");
   }
   printFocus("after focusOnReference");
 }

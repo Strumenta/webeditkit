@@ -292,8 +292,8 @@ const resolutionMemory = {};
 
 function datasetForReference(modelNode: ModelNode, referenceName: string) {
   return {
-    nodeRepresented: modelNode.idString(),
-    referenceRepresented: referenceName
+    node_represented: modelNode.idString(),
+    reference_represented: referenceName
   };
 }
 

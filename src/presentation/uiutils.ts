@@ -2,9 +2,9 @@ export const myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
 
 export function printFocus(context: string | undefined = undefined) {
   if (context == null) {
-    console.log("current focus", document.activeElement);
+    //console.log("current focus", document.activeElement);
   } else {
-    console.log(context + ", current focus", document.activeElement);
+    //console.log(context + ", current focus", document.activeElement);
   }
 }
 
