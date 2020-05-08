@@ -163,6 +163,7 @@ describe('WsCommunication', () => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
         if (messagesReceivedByServer.length == 2) {
+          delete messagesReceivedByServer[0]['requestId'];
           expect(messagesReceivedByServer[0]).to.eql({
             type: 'addChild',
             modelName: 'my.qualified.ModelName',
@@ -199,6 +200,7 @@ describe('WsCommunication', () => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
         if (messagesReceivedByServer.length == 2) {
+          delete messagesReceivedByServer[0]['requestId'];
           expect(messagesReceivedByServer[0]).to.eql({
             type: 'addChild',
             modelName: 'my.qualified.ModelName',
@@ -235,6 +237,7 @@ describe('WsCommunication', () => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
         if (messagesReceivedByServer.length == 2) {
+          delete messagesReceivedByServer[0]['requestId'];
           expect(messagesReceivedByServer[0]).to.eql({
             type: 'setChild',
             modelName: 'my.qualified.ModelName',
