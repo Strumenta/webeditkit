@@ -1,6 +1,6 @@
 import {ModelNode} from "../../datamodel";
-import {getWsCommunication} from "../../communication";
-import {Alternative} from "../../communication/wscommunication";
+//import {getWsCommunication} from "../../communication/index";
+import {Alternative, getWsCommunication} from "../../communication/wscommunication";
 
 const autocomplete = require('autocompleter');
 

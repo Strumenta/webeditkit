@@ -217,7 +217,9 @@ describe('Presentation.Cells.Autocompletion', () => {
           } else if (received == 1) {
             expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
           } else if (received == 2) {
-            expect(JSON.parse(data as string)).to.eql({
+            const obj = JSON.parse(data as string);
+            delete obj['requestId'];
+            expect(obj).to.eql({
               type: 'addChild',
               index: -1,
               modelName: 'my.qualified.model',
@@ -301,7 +303,9 @@ describe('Presentation.Cells.Autocompletion', () => {
           } else if (received == 1) {
             expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
           } else if (received == 2) {
-            expect(JSON.parse(data as string)).to.eql({
+            const obj = JSON.parse(data as string);
+            delete obj['requestId'];
+            expect(obj).to.eql({
               type: 'setChild',
               modelName: 'my.qualified.model',
               container: '1848360241685547698',
