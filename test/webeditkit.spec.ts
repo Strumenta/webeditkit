@@ -117,7 +117,7 @@ describe('WebEditKit', () => {
     setDatamodelRoot('root-x', dataToNode(rootData1));
     renderDataModels();
     expect(doc.querySelector('div.editor').outerHTML).to.eql(
-      '<div id="root-x" class="editor"><input class="fixed default-cell-concrete represent-node" data-node_represented="324292001770075100" style="width: 10px;"></div>',
+      '<div id="root-x" class="editor" data-model_local_name="root-x"><input class="fixed default-cell-concrete represent-node" data-node_represented="324292001770075100" style="width: 10px;"></div>',
     );
   });
 
