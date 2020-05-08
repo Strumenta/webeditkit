@@ -15,7 +15,8 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from '../src/presentation/cells';
-import { addInsertHook, flattenArray } from '../src/presentation';
+import { flattenArray } from '../src/presentation';
+import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
 
 import { PropertyChange } from "../src/communication/messages";
 
@@ -386,7 +387,7 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference" data-node-represented="1848360241685547698" data-reference-represented="type">');
+        expect(doc.activeElement.outerHTML).to.equal('<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">');
         pressArrowLeft(myInput);
         expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
         done();
@@ -410,7 +411,7 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference" data-node-represented="1848360241685547698" data-reference-represented="type">');
+        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">');
         pressArrowRight(myInput);
         expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
         done();
