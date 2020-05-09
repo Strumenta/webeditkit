@@ -26,7 +26,7 @@ plugins {
 ext.mpsVersion = '2019.3.1'
 ext.mbeddrPlatformVersion = '2019.3.22230.6f9f955'
 ext.iets3opensourceVersion = '2019.3.4458.852c81c'
-ext.mpsserverVersion = '1.0.1-alpha9'
+ext.mpsserverVersion = '1.0.1-alpha10'
 
 configurations {
 	mps
@@ -40,6 +40,8 @@ dependencies {
 	ant_lib "org.apache.ant:ant-junit:1.10.1"
 	mps "com.jetbrains:mps:$mpsVersion"
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-core:$mpsserverVersion"
+	mpsArtifacts "com.strumenta.mpsserver:mpsserver-examples:$mpsserverVersion"
+	mpsArtifacts "com.strumenta.mpsserver:mpsserver-launcher:$mpsserverVersion"
 }
 
 repositories {
@@ -81,9 +83,24 @@ ext.buildScriptClasspath = project.configurations.ant_lib.fileCollection({
 ext.antScriptArgs =  [
 	"-Dmps.home=${mpsDir.getAbsolutePath()}",
 	"-Dartifacts.root=${artifactsDir.getAbsolutePath()}",
+	"-Dartifacts.MpsServer-examples=${new File(artifactsDir, 'MpsServer-examples').getAbsolutePath()}",
+	"-Dartifacts.MpsServer-core=${new File(artifactsDir, 'MpsServer-core').getAbsolutePath()}",
+	"-Dartifacts.MpsServer-launcher=${new File(artifactsDir, 'MpsServer-launcher').getAbsolutePath()}",
 	"-Dmps.macro.mpsserver.home=${new File(artifactsDir, 'MpsServer-server').getAbsolutePath()}",
 	"-Dmpsserver.home=${new File(artifactsDir, 'MpsServer-server').getAbsolutePath()}"
 ]
+
+task resolveMps(type: Copy) {
+	if (!project.hasProperty('mpsPath')) {
+		println "Downloading MPS in ${mpsDir.getAbsolutePath()}"
+		from {
+			configurations.mps.resolve().collect { zipTree(it) }
+		}
+		into mpsDir
+	} else {
+		println "MPS already installed in ${mpsDir.getAbsolutePath()}"
+	}
+}
 
 task resolveMpsArtifacts(type: Copy) {
 	from {
@@ -103,4 +120,11 @@ task cloneMpsServer() {
     doLast {
         Grgit.clone(dir: file('mpsserver-clone'), uri: 'https://github.com/Strumenta/MPSServer.git')
     }
+}
+
+task justRunLauncher(type: RunAntScript, dependsOn: []) {
+	targets = ['run.com.strumenta.mpsserver.launcher']
+	scriptArgs = antScriptArgs
+	scriptClasspath = buildScriptClasspath
+	script new File('build-launcher.xml')
 }

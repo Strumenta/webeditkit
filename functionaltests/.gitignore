@@ -1,3 +1,5 @@
 .gradle
 artifacts
 mpsserver-clone
+build
+.DS_Store
