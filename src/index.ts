@@ -12,9 +12,7 @@ import {
   verticalGroupCell,
 } from './presentation/cells';
 
-import {
-  registerRenderer
-} from "./presentation/renderer";
+import { registerRenderer } from './presentation/renderer';
 
 export {
   fixedCell,
@@ -33,26 +31,24 @@ export {
 //export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const uiutils = require('./presentation/uiutils');
 
-import {getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode} from "./datamodel";
-export {getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode}
+import { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode } from './datamodel';
+export { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode };
 
-import {editorController, EditorController, Observer} from "./presentation";
-export {editorController, EditorController, Observer}
+import { editorController, EditorController, Observer } from './presentation';
+export { editorController, EditorController, Observer };
 
-import {getIssuesForNode} from "./communication";
-export {getIssuesForNode}
+import { getIssuesForNode } from './communication';
+export { getIssuesForNode };
 
-import {getNodeFromLocalRepo} from "./datamodel"
-export {getNodeFromLocalRepo}
+import { getNodeFromLocalRepo } from './datamodel';
+export { getNodeFromLocalRepo };
 
 const wscommunication = require('./communication/wscommunication');
 export const cells = require('./presentation/cells');
 
 const renderers = require('./presentation/renderer');
 
-export {
-  registerRenderer
-}
+export { registerRenderer };
 
 export function setup() {
   uiutils.installAutoresize();
@@ -62,17 +58,19 @@ export function addModel(baseUrl: string, modelName: string, nodeId: string, tar
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
   loadDataModel('http://' + baseUrl, modelName, nodeId, target);
   // avoid to send message while still in connecting
-  setTimeout(() => {ws.askForErrorsInNode(modelName, nodeId);}, 200);
+  setTimeout(() => {
+    ws.askForErrorsInNode(modelName, nodeId);
+  }, 200);
 }
 
 import { renderModelNode } from './presentation/renderer';
-export { renderModelNode }
+export { renderModelNode };
 
 import { init } from 'snabbdom/snabbdom';
 
 import h from 'snabbdom/h'; // helper function for creating vnodes
 
-export { h }
+export { h };
 
 import toVNode from 'snabbdom/tovnode';
 
@@ -81,12 +79,12 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import {forEachDataModel, setDatamodelRoot} from "./datamodel/registry";
-import {dataToNode} from "./datamodel";
-export {dataToNode}
-import {VNode} from "snabbdom/vnode";
-import {getIssuesForModel, IssuesMap} from "./communication/wscommunication";
-import {addInsertHook, wrapInsertHook, wrapUpdateHook} from "./presentation";
+import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
+import { dataToNode } from './datamodel';
+export { dataToNode };
+import { VNode } from 'snabbdom/vnode';
+import { getIssuesForModel, IssuesMap } from './communication/wscommunication';
+import { addInsertHook, wrapInsertHook, wrapUpdateHook } from './presentation';
 
 const patch = init([
   // Init patch function with chosen modules
@@ -100,7 +98,7 @@ const vnodes = {};
 
 type BasicCallback = () => void;
 
-function injectErrors(vnode: VNode, issues: IssuesMap) : VNode {
+function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
   if (vnode == null) {
     return vnode;
   }
@@ -114,27 +112,27 @@ function injectErrors(vnode: VNode, issues: IssuesMap) : VNode {
     const myNodeId = vnode.data.dataset.node_represented;
     const errors = issues.getIssuesForNode(myNodeId);
     if (errors.length != 0) {
-      vnode = wrapInsertHook(vnode, (vNode:VNode): any => {
-        $(vNode.elm).addClass("hasErrors");
+      vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
+        $(vNode.elm).addClass('hasErrors');
       });
-      vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode:VNode): any => {
-        $(vNode.elm).addClass("hasErrors");
+      vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
+        $(vNode.elm).addClass('hasErrors');
       });
     } else {
-      vnode = wrapInsertHook(vnode, (vNode:VNode): any => {
-        $(vNode.elm).removeClass("hasErrors");
+      vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
+        $(vNode.elm).removeClass('hasErrors');
       });
-      vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode:VNode): any => {
-        $(vNode.elm).removeClass("hasErrors");
+      vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
+        $(vNode.elm).removeClass('hasErrors');
       });
     }
   }
-  for (let i=0;i<vnode.children.length;i++) {
-    if (<VNode>(vnode.children[i]) != null) {
-      vnode.children[i] = injectErrors(<VNode>(vnode.children[i]), issues);
+  for (let i = 0; i < vnode.children.length; i++) {
+    if (<VNode>vnode.children[i] != null) {
+      vnode.children[i] = injectErrors(<VNode>vnode.children[i], issues);
     }
   }
-  return vnode
+  return vnode;
 }
 
 export const renderDataModels = (cb?: BasicCallback) => {
@@ -144,9 +142,13 @@ export const renderDataModels = (cb?: BasicCallback) => {
   }
   forEachDataModel((name, root: ModelNode) => {
     const issues = getIssuesForModel(root.modelName());
-    const vnode = h('div#' + name + '.editor', {
-      dataset: { model_local_name: name }
-    }, [injectErrors(renderModelNode(root), issues)]);
+    const vnode = h(
+      'div#' + name + '.editor',
+      {
+        dataset: { model_local_name: name },
+      },
+      [injectErrors(renderModelNode(root), issues)],
+    );
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];
       if (domNode == null) {
@@ -200,4 +202,3 @@ export function baseUrlForModelName(model: string): string {
   }
   return null;
 }
-

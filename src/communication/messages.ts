@@ -2,66 +2,66 @@
  * This file contains all the messages which are exchanged with the MPS Server
  */
 
-import {NodeData, NodeId, NodeInModel, PropertyValue} from "../datamodel/misc";
+import { NodeData, NodeId, NodeInModel, PropertyValue } from '../datamodel/misc';
 
 export interface Message {
-    type: string;
+  type: string;
 }
 
 export interface RequestAnswer extends Message {
-    requestId: string;
+  requestId: string;
 }
 
 export interface NodeIDInModel {
-    model: string;
-    id: NodeId;
+  model: string;
+  id: NodeId;
 }
 
 export interface PropertyChange extends Message {
-    node: NodeIDInModel;
-    propertyName: string;
-    propertyValue: PropertyValue;
+  node: NodeIDInModel;
+  propertyName: string;
+  propertyValue: PropertyValue;
 }
 
 export interface ReferenceChange extends Message {
-    node: NodeInModel;
-    referenceName: string;
-    referenceValue: NodeInModel;
+  node: NodeInModel;
+  referenceName: string;
+  referenceValue: NodeInModel;
 }
 
 export interface NodeAdded extends Message {
-    parentNodeId: NodeId;
-    relationName: string;
-    index: number;
-    child: NodeData;
+  parentNodeId: NodeId;
+  relationName: string;
+  index: number;
+  child: NodeData;
 }
 
 export interface NodeRemoved extends Message {
-    parentNodeId: NodeId;
-    relationName: string;
-    child: NodeData;
+  parentNodeId: NodeId;
+  relationName: string;
+  child: NodeData;
 }
 
 export interface IssueDescription {
-    message: string;
-    severity: string;
-    node: NodeId;
+  message: string;
+  severity: string;
+  node: NodeId;
 }
 
 export interface ErrorsForModelReport extends Message {
-    model: string;
-    issues: IssueDescription[];
+  model: string;
+  issues: IssueDescription[];
 }
 
 export interface ErrorsForNodeReport extends Message {
-    rootNode: NodeInModel;
-    issues: IssueDescription[];
+  rootNode: NodeInModel;
+  issues: IssueDescription[];
 }
 
 export interface AskErrorsForNode extends Message {
-    rootNode: NodeInModel;
+  rootNode: NodeInModel;
 }
 
 export interface AddChildAnswer extends RequestAnswer {
-    nodeCreated: NodeInModel;
+  nodeCreated: NodeInModel;
 }

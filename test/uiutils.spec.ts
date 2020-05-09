@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import 'mocha';
 import { installAutoresize } from '../src/presentation/uiutils';
 import { prepareFakeDom } from './testutils';
-import {clearDatamodelRoots} from "../src/datamodel/registry";
-import {clearRendererRegistry} from "../src/presentation/renderer";
+import { clearDatamodelRoots } from '../src/datamodel/registry';
+import { clearRendererRegistry } from '../src/presentation/renderer';
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -49,8 +49,7 @@ const html1 = `<html>
 </html>`;
 
 describe('UIUtils', () => {
-
-  let doc : Document | undefined = undefined;
+  let doc: Document | undefined = undefined;
 
   beforeEach(() => {
     doc = prepareFakeDom(html1);

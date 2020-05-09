@@ -3,8 +3,8 @@ import 'mocha';
 import { loadDataModel, renderDataModels } from '../src/index';
 import { installAutoresize } from '../src/presentation/uiutils';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import {clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot} from "../src/datamodel/registry";
-import {prepareFakeDom} from "./testutils";
+import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/datamodel/registry';
+import { prepareFakeDom } from './testutils';
 
 var sinon = require('sinon');
 

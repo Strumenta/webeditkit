@@ -1,27 +1,21 @@
-import {
-  NodeData,
-  NodeId,
-  nodeIdToString,
-  NodeInModel,
-  PropertiesValues,
-  PropertyValue,
-} from '../datamodel/misc';
+import { NodeData, NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
-import {ModelNode, OptionalNodeProcessor, reactToAReferenceChange} from '../datamodel/modelNode';
+import { ModelNode, OptionalNodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
 import { Ref } from '../datamodel/ref';
-import {dataToNode, getDatamodelRoot, getNodeFromLocalRepo} from '../datamodel/registry';
-import {editorController, renderDataModels} from "../index";
+import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
+import { editorController, renderDataModels } from '../index';
 var deepEqual = require('deep-equal');
 
 import {
   AddChildAnswer,
   AskErrorsForNode,
-  ErrorsForModelReport, ErrorsForNodeReport,
+  ErrorsForModelReport,
+  ErrorsForNodeReport,
   IssueDescription,
   NodeAdded,
   NodeRemoved,
   PropertyChange,
-  ReferenceChange
+  ReferenceChange,
 } from './messages';
 
 export interface Alternative {
@@ -39,7 +33,7 @@ export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
 
 export class IssuesMap {
-  private map: {[key: string]: IssueDescription[]} = {};
+  private map: { [key: string]: IssueDescription[] } = {};
   constructor(issues: IssueDescription[]) {
     for (const i of issues) {
       if (this.map[i.node.regularId] == null) {
@@ -48,67 +42,67 @@ export class IssuesMap {
       this.map[i.node.regularId].push(i);
     }
   }
-  getIssuesForNode(nodeId: string) : IssueDescription[] {
+  getIssuesForNode(nodeId: string): IssueDescription[] {
     return this.map[nodeId] || [];
   }
 }
 
-const issuesMap : {[key:string]:IssuesMap}= {};
+const issuesMap: { [key: string]: IssuesMap } = {};
 
-function registerIssuesForModel(model: string, issues: IssueDescription[]) : boolean {
+function registerIssuesForModel(model: string, issues: IssueDescription[]): boolean {
   const newIm = new IssuesMap(issues);
   if (deepEqual(newIm, issuesMap[model])) {
-    console.log("registerIssuesForModel, false");
+    console.log('registerIssuesForModel, false');
     return false;
   }
-  console.log("registerIssuesForModel, true", issuesMap[model], newIm);
+  console.log('registerIssuesForModel, true', issuesMap[model], newIm);
   issuesMap[model] = newIm;
   return true;
 }
 
-function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]) : boolean {
+function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): boolean {
   // This is not correct because we are overriding the issues for the whole model with the issues for a certain root
   const newIm = new IssuesMap(issues);
   if (deepEqual(newIm, issuesMap[node.model])) {
-    console.log("registerIssuesForNode, false");
+    console.log('registerIssuesForNode, false');
     return false;
   }
-  console.log("registerIssuesForNode, true", issuesMap[node.model], newIm);
+  console.log('registerIssuesForNode, true', issuesMap[node.model], newIm);
   issuesMap[node.model] = newIm;
   editorController().notifyErrorsForNode(node, issues);
   return true;
 }
 
-export function getIssuesForModel(model: string) : IssuesMap {
+export function getIssuesForModel(model: string): IssuesMap {
   return issuesMap[model] || new IssuesMap([]);
 }
 
-export function getIssuesForNode(node: NodeInModel) : IssueDescription[] {
+export function getIssuesForNode(node: NodeInModel): IssueDescription[] {
   return getIssuesForModel(node.model).getIssuesForNode(node.id.regularId);
 }
 
-export function modelNodeToNodeInModel(node: ModelNode | null) : NodeInModel | null {
+export function modelNodeToNodeInModel(node: ModelNode | null): NodeInModel | null {
   if (node == null) {
-    return null
+    return null;
   }
   return {
     model: node.modelName(),
     id: {
-      regularId: node.idString()
-    }
-  }
+      regularId: node.idString(),
+    },
+  };
 }
 
-export function refToNodeInModel(ref: Ref | null) : NodeInModel | null {
+export function refToNodeInModel(ref: Ref | null): NodeInModel | null {
   if (ref == null) {
-    return null
+    return null;
   }
   return {
     model: ref.data.model.qualifiedName,
     id: {
-      regularId: ref.data.id.regularId
-    }
-  }
+      regularId: ref.data.id.regularId,
+    },
+  };
 }
 
 export class WsCommunication {
@@ -176,7 +170,9 @@ export class WsCommunication {
           }
           const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
           if (parentNode == null) {
-            throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId));
+            throw new Error(
+              'Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId),
+            );
           }
           parentNode.addChild(msg.relationName, msg.index, msg.child);
         }
@@ -204,9 +200,12 @@ export class WsCommunication {
         const msg = data as AddChildAnswer;
         const callback = thisWS.callbacks[data.requestId];
         if (callback != null) {
-          const createdNode : ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
+          const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
           if (createdNode == null) {
-            console.warn('cannot handle AddChildAnswer as we cannot find the created node in the local repo', msg.nodeCreated);
+            console.warn(
+              'cannot handle AddChildAnswer as we cannot find the created node in the local repo',
+              msg.nodeCreated,
+            );
           } else {
             callback(createdNode);
           }
@@ -237,12 +236,12 @@ export class WsCommunication {
     this.silent = false;
   }
 
-  createRoot(modelName: string, conceptName: string, propertiesValues: PropertiesValues) : void {
+  createRoot(modelName: string, conceptName: string, propertiesValues: PropertiesValues): void {
     this.sendJSON({
       type: 'createRoot',
       modelName,
       conceptName,
-      propertiesValues
+      propertiesValues,
     });
   }
 
@@ -287,11 +286,21 @@ export class WsCommunication {
   }
 
   askForErrorsInNode(modelName: string, nodeID: string): void {
-    const msg : AskErrorsForNode = {rootNode: {id: { regularId: nodeID}, model: modelName}, type: "AskErrorsForNode"};
-    this.sendJSON(msg)
+    const msg: AskErrorsForNode = {
+      rootNode: { id: { regularId: nodeID }, model: modelName },
+      type: 'AskErrorsForNode',
+    };
+    this.sendJSON(msg);
   }
 
-  addChildAtIndex(container: ModelNode, containmentName: string, index: number, conceptName: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()): void {
+  addChildAtIndex(
+    container: ModelNode,
+    containmentName: string,
+    index: number,
+    conceptName: string,
+    initializer: OptionalNodeProcessor = undefined,
+    uuid: string = uuidv4(),
+  ): void {
     if (index < -1) {
       throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
     }
@@ -315,7 +324,7 @@ export class WsCommunication {
         type: 'ReferenceChange',
         node: modelNodeToNodeInModel(container),
         referenceName,
-        referenceValue: null
+        referenceValue: null,
       } as ReferenceChange);
     } else {
       this.sendJSON({
@@ -335,7 +344,13 @@ export class WsCommunication {
     });
   }
 
-  setChild(container: ModelNode, containmentName: string, conceptName: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()): void {
+  setChild(
+    container: ModelNode,
+    containmentName: string,
+    conceptName: string,
+    initializer: OptionalNodeProcessor = undefined,
+    uuid: string = uuidv4(),
+  ): void {
     this.callbacks[uuid] = initializer;
     this.sendJSON({
       type: 'setChild',
@@ -369,8 +384,8 @@ export class WsCommunication {
       node: {
         model: modelNode.modelName(),
         id: {
-          regularId: modelNode.idString()
-        }
+          regularId: modelNode.idString(),
+        },
       },
       propertyName,
       propertyValue,
@@ -419,7 +434,7 @@ export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];
 }
 
-export function createInstance(url: string, modelName: string, localName: string) : WsCommunication{
+export function createInstance(url: string, modelName: string, localName: string): WsCommunication {
   const instance = new WsCommunication(url, modelName, localName);
   instances[modelName] = instance;
   return instance;

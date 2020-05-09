@@ -1,11 +1,11 @@
-import {NodeData, NodeInModel} from './misc';
+import { NodeData, NodeInModel } from './misc';
 import { ModelNode } from './modelNode';
 
-const datamodelRoots : {[key:string]: ModelNode}= {};
+const datamodelRoots: { [key: string]: ModelNode } = {};
 const datamodelClasses = {};
 
 class Registry {
-  static defaultBaseUrl : string | undefined = undefined;
+  static defaultBaseUrl: string | undefined = undefined;
 }
 
 export function setDefaultBaseUrl(value: string | undefined): void {
@@ -61,9 +61,9 @@ export function forEachDataModel(op: (localName: string, root: ModelNode) => voi
   }
 }
 
-export function getNodeFromLocalRepo(nodeId:NodeInModel) : ModelNode | null {
-  for (const key in datamodelRoots){
-    const entry : ModelNode = datamodelRoots[key];
+export function getNodeFromLocalRepo(nodeId: NodeInModel): ModelNode | null {
+  for (const key in datamodelRoots) {
+    const entry: ModelNode = datamodelRoots[key];
     if (entry.modelName() == nodeId.model) {
       const res = entry.findNodeById(nodeId.id.regularId);
       if (res != null) {

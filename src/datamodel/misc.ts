@@ -60,7 +60,7 @@ interface EnumValue {
 
 export type PropertyValue = string | boolean | number | EnumValue;
 
-export type PropertiesValues = { [key: string]: PropertyValue }
+export type PropertiesValues = { [key: string]: PropertyValue };
 
 ///
 /// Node navigation

@@ -18,7 +18,7 @@ import {
 import { flattenArray } from '../src/presentation';
 import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
 
-import { PropertyChange } from "../src/communication/messages";
+import { PropertyChange } from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -50,7 +50,7 @@ import {
   pressEnter,
 } from './testutils';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import {clearDatamodelRoots, dataToNode, setDefaultBaseUrl} from "../src/datamodel/registry";
+import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
 
 const patch = init([
   // Init patch function with chosen modules
@@ -387,7 +387,9 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.equal('<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">');
+        expect(doc.activeElement.outerHTML).to.equal(
+          '<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">',
+        );
         pressArrowLeft(myInput);
         expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
         done();
@@ -411,7 +413,9 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">');
+        expect(doc.activeElement.outerHTML).to.eql(
+          '<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">',
+        );
         pressArrowRight(myInput);
         expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
         done();

@@ -4,8 +4,8 @@ import { Server, WebSocket } from 'mock-socket';
 import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
-import {clearDatamodelRoots, dataToNode, setDatamodelRoot} from '../src/datamodel/registry';
-import { PropertyChange} from "../src/communication/messages";
+import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
+import { PropertyChange } from '../src/communication/messages';
 
 const rootData1 = {
   children: [
@@ -75,8 +75,7 @@ const rootData1 = {
 };
 
 describe('WsCommunication', () => {
-
-  let mockServer : Server | undefined = undefined;
+  let mockServer: Server | undefined = undefined;
 
   afterEach(() => {
     if (mockServer != null) {
@@ -344,8 +343,8 @@ describe('WsCommunication', () => {
             node: {
               model: 'my.qualified.ModelName',
               id: {
-                regularId: '1848360241685547698'
-              }
+                regularId: '1848360241685547698',
+              },
             },
             propertyName: 'name',
             propertyValue: 'my new name',
@@ -505,7 +504,7 @@ describe('WsCommunication', () => {
             type: 'propertyChange',
             node: {
               model: 'myModelName',
-              id: { regularId: '324292001770075100' }
+              id: { regularId: '324292001770075100' },
             },
             propertyName: 'name',
             propertyValue: 'My Shiny New Name',

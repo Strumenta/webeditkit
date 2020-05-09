@@ -2,7 +2,7 @@ import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCe
 import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from './cells';
 import { ModelNode } from '../datamodel/modelNode';
 import { VNode } from 'snabbdom/vnode';
-import {editorController} from "./EditorController";
+import { editorController } from './EditorController';
 
 const renderersByName: { [key: string]: Renderer } = {};
 
@@ -27,27 +27,29 @@ export function renderModelNode(modelNode): VNode {
     throw new Error('renderModelNode invoked with null modelNode');
   }
   let res = setKey(
-      addToDataset(
-          addClass(getRenderer(modelNode)(modelNode), 'represent-node'),
-          'node_represented',
-          modelNode.idString(),
-      ),
+    addToDataset(
+      addClass(getRenderer(modelNode)(modelNode), 'represent-node'),
+      'node_represented',
       modelNode.idString(),
+    ),
+    modelNode.idString(),
   );
-  res = wrapMouseOverHandler(res, (event: MouseEvent) : boolean => {
+  res = wrapMouseOverHandler(res, (event: MouseEvent): boolean => {
     // @ts-ignore
-    const nodeId : string = event.target.dataset.node_represented;
+    const nodeId: string = event.target.dataset.node_represented;
     if (nodeId != null) {
-      editorController().setHoverNode({regularId: nodeId});
+      editorController().setHoverNode({ regularId: nodeId });
     }
-    return true; });
-  res = wrapMouseOutHandler(res, (event: MouseEvent) : boolean => {
+    return true;
+  });
+  res = wrapMouseOutHandler(res, (event: MouseEvent): boolean => {
     // @ts-ignore
-    const nodeId : string = event.target.dataset.node_represented;
+    const nodeId: string = event.target.dataset.node_represented;
     if (nodeId != null) {
       editorController().setHoverNode(undefined);
     }
-    return true; });
+    return true;
+  });
   return res;
 }
 

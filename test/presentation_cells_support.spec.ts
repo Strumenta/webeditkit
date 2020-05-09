@@ -157,7 +157,6 @@ const rootData1 = {
 };
 
 describe('Presentation.Cells.Support', () => {
-
   describe('should support map', () => {
     it('it should be rendered in a certain way', () => {
       const aNode = dataToNode(rootData1);
@@ -236,7 +235,7 @@ describe('Presentation.Cells.Support', () => {
             expect(doc.activeElement.tagName).to.equals('INPUT');
             expect(doc.activeElement.className).to.equals('fixed represent-node');
             // @ts-ignore
-              expect(doc.activeElement.dataset.node_represented).to.eql('my-node-id');
+            expect(doc.activeElement.dataset.node_represented).to.eql('my-node-id');
             done();
           }),
           { node_represented: 'my-node-id' },

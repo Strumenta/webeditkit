@@ -176,5 +176,4 @@ describe('Presentation.Cells.Vnodemanipulation', () => {
       expect(toHTML(cell)).to.eql('<input id="spritz" class="fixed" value="My fixed test">');
     });
   });
-
 });

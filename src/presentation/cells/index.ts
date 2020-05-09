@@ -12,12 +12,25 @@ import {
   verticalGroupCell,
 } from './types';
 import { map, focusOnNode, handleSelfDeletion, separate } from './support';
-import { addClass, addToDataset, addInsertHook, wrapInsertHook, wrapUpdateHook, setKey, wrapMouseOutHandler, wrapMouseOverHandler,
+import {
+  addClass,
+  addToDataset,
+  addInsertHook,
+  wrapInsertHook,
+  wrapUpdateHook,
+  setKey,
+  wrapMouseOutHandler,
+  wrapMouseOverHandler,
   addId,
-  setDataset} from './vnodemanipulation';
-import { alternativesProviderForAbstractConcept, SuggestionsReceiver, alternativesProviderForAddingChild,
+  setDataset,
+} from './vnodemanipulation';
+import {
+  alternativesProviderForAbstractConcept,
+  SuggestionsReceiver,
+  alternativesProviderForAddingChild,
   AutocompleteAlternative,
-  installAutocomplete} from './autocompletion';
+  installAutocomplete,
+} from './autocompletion';
 
 export {
   fixedCell,
@@ -32,14 +45,26 @@ export {
   verticalCollectionCell,
   verticalGroupCell,
   SuggestionsReceiver,
-  addInsertHook, wrapInsertHook, wrapUpdateHook,
-    addId
+  addInsertHook,
+  wrapInsertHook,
+  wrapUpdateHook,
+  addId,
 };
-export { alternativesProviderForAbstractConcept, addClass, addToDataset, map, setKey, wrapMouseOutHandler, wrapMouseOverHandler };
-export {  alternativesProviderForAddingChild,
+export {
+  alternativesProviderForAbstractConcept,
+  addClass,
+  addToDataset,
+  map,
+  setKey,
+  wrapMouseOutHandler,
+  wrapMouseOverHandler,
+};
+export {
+  alternativesProviderForAddingChild,
   AutocompleteAlternative,
   focusOnNode,
   handleSelfDeletion,
   installAutocomplete,
   separate,
-  setDataset}
+  setDataset,
+};

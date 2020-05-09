@@ -3,23 +3,26 @@ import {
   getWsCommunication,
   modelNodeToNodeInModel,
   refToNodeInModel,
-  WsCommunication
+  WsCommunication,
 } from '../communication/wscommunication';
-import {NodeData, nodeIdToString, PropertyValue} from './misc';
+import { NodeData, nodeIdToString, PropertyValue } from './misc';
 import { Ref } from './ref';
-import {ReferenceChange} from "../communication/messages";
-import {renderDataModels} from "../index";
-import {uuidv4} from "../utils/misc";
+import { ReferenceChange } from '../communication/messages';
+import { renderDataModels } from '../index';
+import { uuidv4 } from '../utils/misc';
 
 export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode) {
   const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
   if (msg.referenceValue == null) {
     node.setRefLocally(msg.referenceName, null);
   } else {
-    node.setRefLocally(msg.referenceName, new Ref({
-      model: {qualifiedName: msg.referenceValue.model},
-      id: msg.referenceValue.id
-    }));
+    node.setRefLocally(
+      msg.referenceName,
+      new Ref({
+        model: { qualifiedName: msg.referenceValue.model },
+        id: msg.referenceValue.id,
+      }),
+    );
   }
   renderDataModels();
 }
@@ -77,7 +80,7 @@ export class ModelNode {
     }
   }
 
-  root() : ModelNode | null {
+  root(): ModelNode | null {
     if (this.isRoot()) {
       return this;
     }
@@ -92,12 +95,15 @@ export class ModelNode {
     if (root == null) {
       throw new Error('Root not found');
     }
-    reactToAReferenceChange({
-      type: 'ReferenceChange',
-      node: modelNodeToNodeInModel(this),
-      referenceName,
-      referenceValue: refToNodeInModel(ref)
-    } as ReferenceChange, root);
+    reactToAReferenceChange(
+      {
+        type: 'ReferenceChange',
+        node: modelNodeToNodeInModel(this),
+        referenceName,
+        referenceValue: refToNodeInModel(ref),
+      } as ReferenceChange,
+      root,
+    );
     this.ws().communicateReferenceChange(this, referenceName, ref);
   }
 
@@ -203,11 +209,22 @@ export class ModelNode {
     dataToNode(childData).injectModelName(this.data.modelName, this.data.rootName);
   }
 
-  createChild(containmentName: string, index: number, childConcept: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()) {
+  createChild(
+    containmentName: string,
+    index: number,
+    childConcept: string,
+    initializer: OptionalNodeProcessor = undefined,
+    uuid: string = uuidv4(),
+  ) {
     this.ws().addChildAtIndex(this, containmentName, index, childConcept, initializer, uuid);
   }
 
-  createSingleChild(containmentName: string, childConcept: string, initializer: OptionalNodeProcessor = undefined, uuid: string = uuidv4()) {
+  createSingleChild(
+    containmentName: string,
+    childConcept: string,
+    initializer: OptionalNodeProcessor = undefined,
+    uuid: string = uuidv4(),
+  ) {
     this.ws().setChild(this, containmentName, childConcept, initializer, uuid);
   }
 
@@ -252,5 +269,4 @@ export class ModelNode {
   setProperty(propertyName: string, propertyValue: PropertyValue): void {
     this.data.properties[propertyName] = propertyValue;
   }
-
 }

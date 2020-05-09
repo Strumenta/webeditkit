@@ -28,8 +28,8 @@ import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
-import {clearDatamodelRoots, dataToNode} from '../src/datamodel/registry';
-import {clearRendererRegistry} from "../src/presentation/renderer";
+import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
+import { clearRendererRegistry } from '../src/presentation/renderer';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -158,7 +158,6 @@ const rootData1 = {
 };
 
 describe('Presentation.Cells.Autocompletion', () => {
-
   let doc = null;
 
   beforeEach(function () {
@@ -168,7 +167,7 @@ describe('Presentation.Cells.Autocompletion', () => {
     clearRendererRegistry();
   });
 
-  let mockServer : Server | undefined = undefined;
+  let mockServer: Server | undefined = undefined;
 
   afterEach(function () {
     if (mockServer != null) {
@@ -394,5 +393,4 @@ describe('Presentation.Cells.Autocompletion', () => {
       patch(toVNode(document.querySelector('#calc')), container);
     });
   });
-
 });

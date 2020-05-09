@@ -44,7 +44,7 @@ function findPrev(n) {
 }
 
 function selectFirstElementInRow(row, focusOnEnd) {
-  console.log("selectFirstElementInRow", row);
+  console.log('selectFirstElementInRow', row);
   // @ts-ignore
   window.sf = row;
   if ($(row).children('input').length > 0) {
@@ -57,7 +57,6 @@ function selectFirstElementInRow(row, focusOnEnd) {
           // there is an input somewhere here, we should dive into this
           return selectFirstElementInRow(children[i], focusOnEnd);
         }
-
       }
     } else {
       for (let i = 0; i < children.length; i++) {
@@ -67,7 +66,7 @@ function selectFirstElementInRow(row, focusOnEnd) {
         }
       }
     }
-    throw new Error("This should not happen");
+    throw new Error('This should not happen');
   }
 }
 
@@ -75,7 +74,7 @@ export function moveUp(t) {
   if ($(t).hasClass('editor')) {
     return;
   }
-  console.log("move up");
+  console.log('move up');
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
@@ -89,10 +88,10 @@ export function moveUp(t) {
     const currentLine = l;
     let nextLine = currentLine;
     do {
-      console.log(" before", nextLine);
-      nextLine = $(nextLine).prev(".row,.vertical-collection");
-      console.log(" after", nextLine);
-    } while (nextLine.length == 1 && $(nextLine).find("input").length == 0);
+      console.log(' before', nextLine);
+      nextLine = $(nextLine).prev('.row,.vertical-collection');
+      console.log(' after', nextLine);
+    } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
     if (nextLine.length == 1) {
       selectFirstElementInRow(nextLine[0], true);
     } else {
@@ -106,7 +105,7 @@ export function moveDown(t) {
   if ($(t).hasClass('editor')) {
     return;
   }
-  console.log("move down", t);
+  console.log('move down', t);
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
@@ -120,10 +119,10 @@ export function moveDown(t) {
     const currentLine = l;
     let nextLine = currentLine;
     do {
-      console.log(" before", nextLine);
-      nextLine = $(nextLine).next(".row,.vertical-collection");
-      console.log(" after", nextLine);
-    } while (nextLine.length == 1 && $(nextLine).find("input").length == 0);
+      console.log(' before', nextLine);
+      nextLine = $(nextLine).next('.row,.vertical-collection');
+      console.log(' after', nextLine);
+    } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
     if (nextLine.length == 1) {
       selectFirstElementInRow(nextLine[0], false);
       //const firstInput = $(nextLine).find("input");

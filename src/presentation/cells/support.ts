@@ -1,11 +1,11 @@
 import { Alternative, getWsCommunication } from '../../communication/wscommunication';
-import {myAutoresizeOptions, printFocus} from '../uiutils';
+import { myAutoresizeOptions, printFocus } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
 import { ModelNode } from '../../datamodel/modelNode';
 
-import {getDatamodelRoot} from "../../datamodel/registry";
-import {InsertHook, UpdateHook} from "snabbdom/hooks";
+import { getDatamodelRoot } from '../../datamodel/registry';
+import { InsertHook, UpdateHook } from 'snabbdom/hooks';
 
 export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
   if ($(element).closest('.represent-node').hasClass('deleting')) {
@@ -16,7 +16,7 @@ export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
 }
 
 export function handleAddingElement(element: any, modelNode: ModelNode): void {
-  console.log("adding element", element, modelNode);
+  console.log('adding element', element, modelNode);
   const parents = $(element).parents();
 
   // First find the collection containing this node
@@ -63,7 +63,7 @@ export function map(originalArray: any, op: (el: any) => any): VNodeChildElement
   return originalArray.map(op);
 }
 
-export function separate(original: any[], separatorGenerator?: ()=>VNode): any[] {
+export function separate(original: any[], separatorGenerator?: () => VNode): any[] {
   if (separatorGenerator === undefined) {
     return original;
   }
@@ -79,32 +79,37 @@ export function separate(original: any[], separatorGenerator?: ()=>VNode): any[]
 
 export function focusOnReference(modelNode: ModelNode, referenceName: string) {
   //console.log("should focus on reference", modelNode, referenceName);
-  printFocus("before focusOnReference");
+  printFocus('before focusOnReference');
   const firstNodeFound = findDomElement(modelNode.idString(), modelNode.rootName());
   if (firstNodeFound != null) {
     //console.log("  focusOnReference, node found", firstNodeFound);
     const inputs = $(firstNodeFound).find('input');
     // check if the node itself represent the reference
     let refNode;
-    if ($(firstNodeFound).data('node_represented') == modelNode.idString() && $(firstNodeFound).data('reference_represented') == referenceName) {
+    if (
+      $(firstNodeFound).data('node_represented') == modelNode.idString() &&
+      $(firstNodeFound).data('reference_represented') == referenceName
+    ) {
       refNode = $(firstNodeFound);
     } else {
       refNode = inputs.filter((i, el) => {
         //console.log("  focusOnReference, considering input", el, i);
-        return $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName;
+        return (
+          $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName
+        );
       });
     }
     if (refNode.length === 1) {
-      printFocus("before focusing");
+      printFocus('before focusing');
       refNode.focus();
-      printFocus("after focusing");
+      printFocus('after focusing');
     } else {
       //console.log("  focusOnReference not one matching refNode found", refNode);
     }
   } else {
     //console.log("  focusOnReference, node not found");
   }
-  printFocus("after focusOnReference");
+  printFocus('after focusOnReference');
 }
 
 export function findDomElement(nodeIdStr: string, rootName: string) {
@@ -148,20 +153,20 @@ function focusOnFirstInputOf(element): boolean {
   return false;
 }
 
-export function isEditorElement(element: HTMLElement) : boolean {
+export function isEditorElement(element: HTMLElement): boolean {
   return $(element).hasClass('editor');
 }
 
-export function domElementToModelNode(element: HTMLElement) : ModelNode | undefined {
+export function domElementToModelNode(element: HTMLElement): ModelNode | undefined {
   if (isEditorElement(element)) {
     return undefined;
   }
-  console.log("domElementToModelNode", element);
-  console.log("  data", $(element).data("node_represented"));
-  const nodeId = $(element).data("node_represented");
-  if (nodeId != null && nodeId != "") {
-    const modelLocalName = $(element).closest(".editor").data('model_local_name');
-    console.log("  model local name", modelLocalName);
+  console.log('domElementToModelNode', element);
+  console.log('  data', $(element).data('node_represented'));
+  const nodeId = $(element).data('node_represented');
+  if (nodeId != null && nodeId != '') {
+    const modelLocalName = $(element).closest('.editor').data('model_local_name');
+    console.log('  model local name', modelLocalName);
     const dataModelRoot = getDatamodelRoot(modelLocalName);
     return dataModelRoot.findNodeById(nodeId);
   } else if (element.parentElement != null) {
