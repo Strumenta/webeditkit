@@ -1,0 +1,57 @@
+import de.itemis.mps.gradle.BuildLanguages
+import de.itemis.mps.gradle.TestLanguages
+import de.itemis.mps.gradle.GenerateLibrariesXml
+import de.itemis.mps.gradle.RunAntScript
+import groovy.json.JsonSlurper
+
+buildscript {
+    repositories {
+        maven { url 'https://projects.itemis.de/nexus/content/repositories/mbeddr' }
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'de.itemis.mps:mps-gradle-plugin:1.0.85.03fbeda'
+        classpath 'com.bmuschko:gradle-izpack-plugin:3.0'
+    }
+}
+
+ext.mpsVersion = '2019.3.1'
+ext.mbeddrPlatformVersion = '2019.3.22230.6f9f955'
+ext.iets3opensourceVersion = '2019.3.4458.852c81c'
+ext.mpsserverVersion = '1.0.1-alpha9'
+
+configurations {
+	mps
+	mpsArtifacts
+	ant_lib
+	libs
+	distribution
+}
+
+dependencies {
+	ant_lib "org.apache.ant:ant-junit:1.10.1"
+	mps "com.jetbrains:mps:$mpsVersion"
+	mpsArtifacts "com.strumenta.mpsserver:mpsserver-core:$mpsserverVersion"
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		url 'https://projects.itemis.de/nexus/content/groups/OS/'
+	}
+	maven {
+		url 'https://dl.bintray.com/strumenta/strumenta-oss-maven'
+	}
+}
+
+
+ext.artifactsDir = new File(rootDir, 'artifacts')
+
+task resolveMpsArtifacts(type: Copy) {
+	from {
+		configurations.mpsArtifacts.resolve().collect { zipTree(it) }
+	}
+	into artifactsDir
+}
