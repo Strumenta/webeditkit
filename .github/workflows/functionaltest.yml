@@ -14,5 +14,4 @@ jobs:
         with:
           node-version: '10.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: cd functionaltests
-      - run: sh execute_functional_tests.sh
+      - run: cd functionaltests && sh execute_functional_tests.sh
