@@ -46,7 +46,7 @@ function tryToConnect(done, attemptLeft=100) {
 describe('WebEditKit integration', () => {
 
     before(function (done) {
-        this.timeout(50000);
+        this.timeout(500000);
         console.log("waiting for server to be up");
 
         tryToConnect(done);
