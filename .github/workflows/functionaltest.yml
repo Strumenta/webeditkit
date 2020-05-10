@@ -15,3 +15,4 @@ jobs:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
       - run: npm install && cd functionaltests && sh execute_functional_tests.sh
+      - run: ls
