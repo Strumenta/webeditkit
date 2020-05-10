@@ -19,4 +19,5 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
+      - run: sudo apt-get update && apt-get install -y libgbm-dev    
       - run: npm install && cd functionaltests && sh execute_functional_tests.sh
