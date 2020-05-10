@@ -7,7 +7,7 @@ import {XMLHttpRequest} from "xmlhttprequest";
 const puppeteer = require('puppeteer');
 const request = require('request');
 
-function tryToConnect(done, attemptLeft=30) {
+function tryToConnect(done, attemptLeft=100) {
 
     function considerRetrying(attempts) {
         if (attempts > 0) {
