@@ -7,15 +7,15 @@ import {XMLHttpRequest} from "xmlhttprequest";
 const puppeteer = require('puppeteer');
 const request = require('request');
 
-function tryToConnect(done, attemptLeft=10) {
+function tryToConnect(done, attemptLeft=20) {
 
     function considerRetrying(attempts) {
         if (attempts > 0) {
-            console.log("sleeping");
+            console.log(`sleeping. Attempts left ${attempts - 1}`);
             const delay = require('delay');
             setTimeout(() => {
                 tryToConnect(done, attempts - 1);
-            }, 5000);
+            }, 10000);
         } else {
             console.log("no more attempt left, failing");
             throw new Error("MPS Server not ready");
