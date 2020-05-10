@@ -1,4 +1,4 @@
-name: Pack
+name: FunctionalTests
 
 on: [push]
 
