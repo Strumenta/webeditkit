@@ -2,11 +2,50 @@
 
 import {expect} from "chai";
 import 'mocha';
+import {XMLHttpRequest} from "xmlhttprequest";
 
 const puppeteer = require('puppeteer');
+const request = require('request');
 
+function tryToConnect(done, attemptLeft=10) {
+    try {
+        request('http://localhost:2904/', { json: true }, (err, res, body) => {
+            if (err) {
+                console.log(err);
+                throw new Error("Problem");
+            }
+            if (res.statusCode === 200) {
+                done();
+            } else {
+                console.log("status code", res.statusCode);
+                throw new Error("Problem");
+            }
+        });
+    } catch (e) {
+        console.log("FAILED to connect", e);
+        if (attemptLeft > 0) {
+            console.log("sleeping");
+            const delay = require('delay');
+            setTimeout(() => {
+                tryToConnect(done, attemptLeft - 1);
+            }, 5000);
+        } else {
+            console.log("no more attempt left, failing");
+            throw new Error("MPS Server not ready");
+        }
+    }
+}
 
 describe('WebEditKit integration', () => {
+
+    before((done) => {
+        console.log("waiting for server to be up");
+
+        tryToConnect(done);
+
+        //done();
+    });
+
     it('mpsserver is accessible', (done) => {
         (async () => {
             const browser = await puppeteer.launch();
@@ -51,15 +90,15 @@ describe('WebEditKit integration', () => {
                 const modules = JSON.parse(bodyHTML);
                 let found = false;
                 for (const m of modules) {
-                    if (m['name'] == 'com.strumenta.financialcalc.sandbox') {
-                        expect(m['uuid']).to.equal('f56d08a3-65f8-447b-bdb0-6e1a85c1e08d');
+                    if (m['name'] == 'com.strumenta.businessorg.sandbox') {
+                        expect(m['uuid']).to.equal('304d28bd-2c3c-4fbd-b987-dbce2813a938');
                         found = true;
                     }
                 }
                 expect(found).to.equal(true);
                 //expect(bodyHTML).to.equal("MPS Server up and running.");
-                console.log(bodyHTML);
-                console.log(modules);
+                //console.log(bodyHTML);
+                //console.log(modules);
             } catch (e) {
                 console.log("exception captured", e);
                 process.exit(1);

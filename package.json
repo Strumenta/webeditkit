@@ -22,19 +22,21 @@
     "@types/mocha": "^7.0.2",
     "browserify": "^16.5.1",
     "chai": "^4.2.0",
+    "delay": "^4.3.0",
     "keysim": "^2.1.0",
     "mocha": "^7.1.1",
     "mock-socket": "^9.0.3",
     "nyc": "^15.0.0",
     "prettier": "^2.0.2",
     "puppeteer": "^3.0.4",
-    "request": "^2.83.0",
+    "request": "^2.81.0",
     "sinon": "^9.0.1",
     "snabbdom-to-html": "^5.1.1",
     "ts-node": "^8.8.1",
     "ts-sinon": "^1.0.25",
     "tslint": "^6.1.0",
-    "tslint-config-prettier": "^1.18.0"
+    "tslint-config-prettier": "^1.18.0",
+    "xmlhttprequest": "^1.8.0"
   },
   "scripts": {
     "test": "sh tester.sh",
