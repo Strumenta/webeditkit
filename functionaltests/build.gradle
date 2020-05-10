@@ -118,16 +118,3 @@ task justRunMpsServerLauncher(type: RunAntScript, dependsOn: []) {
 	scriptClasspath = buildScriptClasspath
 	script new File('build-launcher-mod.xml')
 }
-
-/*task cloneMpsServer() {
-    doLast {
-        Grgit.clone(dir: file('mpsserver-clone'), uri: 'https://github.com/Strumenta/MPSServer.git')
-    }
-}*/
-
-task justRunLauncher(type: RunAntScript, dependsOn: []) {
-	targets = ['run.com.strumenta.mpsserver.launcher']
-	scriptArgs = antScriptArgs
-	scriptClasspath = buildScriptClasspath
-	script new File('build-launcher.xml')
-}
