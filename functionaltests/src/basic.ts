@@ -7,7 +7,7 @@ const puppeteer = require('puppeteer');
 
 
 describe('WebEditKit integration', () => {
-    it('mpsserver is accessible', () => {
+    it('mpsserver is accessible', (done) => {
         (async () => {
             const browser = await puppeteer.launch();
             try {
@@ -29,10 +29,11 @@ describe('WebEditKit integration', () => {
             } finally {
                 console.log("[Closing browser]");
                 await browser.close();
+                done();
             }
         })();
     });
-    it('modules are listed', () => {
+    it('modules are listed', (done) => {
         (async () => {
             const browser = await puppeteer.launch();
             try {
@@ -65,6 +66,7 @@ describe('WebEditKit integration', () => {
             } finally {
                 console.log("[Closing browser]");
                 await browser.close();
+                done();
             }
         })();
     });
