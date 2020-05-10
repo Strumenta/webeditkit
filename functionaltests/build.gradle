@@ -82,26 +82,15 @@ ext.buildScriptClasspath = project.configurations.ant_lib.fileCollection({
 }) + project.files("$project.jdk_home/lib/tools.jar")
 ext.antScriptArgs =  [
 	"-Dmps.home=${mpsDir.getAbsolutePath()}",
-	// "-Dartifacts.root=${artifactsDir.getAbsolutePath()}",
-	// "-Dartifacts.MpsServer-examples=${new File(artifactsDir, 'MpsServer-examples').getAbsolutePath()}",
-	// "-Dartifacts.MpsServer-core=${new File(artifactsDir, 'MpsServer-core').getAbsolutePath()}",
-	// "-Dartifacts.MpsServer-launcher=${new File(artifactsDir, 'MpsServer-launcher').getAbsolutePath()}",
-	// "-Dmps.macro.mpsserver.home=${new File(artifactsDir, 'MpsServer-server').getAbsolutePath()}",
-	// "-Dmpsserver.home=${new File(artifactsDir, 'MpsServer-server').getAbsolutePath()}"
-	//"-Dmps.home=/Users/federico/repos/webeditkit/functionaltests/artifacts/mps",
-	//"-Dproject.home=${mpscode.getAbsolutePath()}",
-	//"-Dmpsserver.home=${mpscode.getAbsolutePath()}",
-    "-Dartifacts.MpsServer-core=/Users/federico/repos/webeditkit/functionaltests/artifacts/MpsServer-core",
-    "-Dartifacts.MpsServer-examples=/Users/federico/repos/webeditkit/functionaltests/artifacts/MpsServer-examples",
-    "-Dbuild.layout=/Users/federico/repos/webeditkit/functionaltests/artifacts/MpsServer-launcher",
-    "-Dproject.home=/Users/federico/repos/webeditkit/functionaltests",
-    "-Dartifacts.mps=/Users/federico/repos/webeditkit/functionaltests/artifacts/mps",
-	//"-Dmps.macro.mpsserver.home=${mpscode.getAbsolutePath()}",
-	//"-Dmpsserver.version=${project.version}",
-	"-Dartifacts.root=/Users/federico/repos/webeditkit/functionaltests/artifacts",
-    "-Dbuild.mps.system.path=/Users/federico/repos/webeditkit/functionaltests/build/system",
-    "-Dbuild.mps.config.path=/Users/federico/repos/webeditkit/functionaltests/build/config",
-	//"-Djava.awt.headless=true"	
+	"-Dartifacts.mps=${mpsDir.getAbsolutePath()}",
+	"-Dartifacts.root=${artifactsDir.getAbsolutePath()}",
+	"-Dartifacts.MpsServer-core=${artifactsDir.getAbsolutePath()}/MpsServer-core",
+    "-Dartifacts.MpsServer-examples=${artifactsDir.getAbsolutePath()}/MpsServer-examples",
+    "-Dbuild.layout=${artifactsDir.getAbsolutePath()}/MpsServer-launcher",
+    "-Dproject.home=${rootDir.getAbsolutePath()}",
+   
+    // "-Dbuild.mps.system.path=/Users/federico/repos/webeditkit/functionaltests/build/system",
+    // "-Dbuild.mps.config.path=/Users/federico/repos/webeditkit/functionaltests/build/config",
 ]
 
 task resolveMps(type: Copy) {
