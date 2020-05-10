@@ -2,5 +2,5 @@
 MPS_SERVER_PID=$!
 sh run_functional_tests.sh
 RESULT=$?
-kill $MPS_SERVER_PID
+kill -9 $MPS_SERVER_PID
 exit $RESULT

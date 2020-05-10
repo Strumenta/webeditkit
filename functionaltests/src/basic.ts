@@ -8,37 +8,45 @@ const puppeteer = require('puppeteer');
 const request = require('request');
 
 function tryToConnect(done, attemptLeft=10) {
-    try {
-        request('http://localhost:2904/', { json: true }, (err, res, body) => {
-            if (err) {
-                console.log(err);
-                throw new Error("Problem");
-            }
-            if (res.statusCode === 200) {
-                done();
-            } else {
-                console.log("status code", res.statusCode);
-                throw new Error("Problem");
-            }
-        });
-    } catch (e) {
-        console.log("FAILED to connect", e);
-        if (attemptLeft > 0) {
+
+    function considerRetrying(attempts) {
+        if (attempts > 0) {
             console.log("sleeping");
             const delay = require('delay');
             setTimeout(() => {
-                tryToConnect(done, attemptLeft - 1);
+                tryToConnect(done, attempts - 1);
             }, 5000);
         } else {
             console.log("no more attempt left, failing");
             throw new Error("MPS Server not ready");
         }
     }
+
+    try {
+        request('http://localhost:2904/', { json: true }, (err, res, body) => {
+            if (err) {
+                console.log("Error returned, cannot yet connect");
+                considerRetrying(attemptLeft);
+            } else {
+                if (res.statusCode === 200) {
+                    console.log("connected to MPS Server. Can start testing");
+                    done();
+                } else {
+                    console.log("status code", res.statusCode);
+                    considerRetrying(attemptLeft);
+                }
+            }
+        });
+    } catch (e) {
+        console.log("FAILED to connect", e);
+        considerRetrying(attemptLeft);
+    }
 }
 
 describe('WebEditKit integration', () => {
 
-    before((done) => {
+    before(function (done) {
+        this.timeout(50000);
         console.log("waiting for server to be up");
 
         tryToConnect(done);
