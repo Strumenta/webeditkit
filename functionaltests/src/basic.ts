@@ -67,7 +67,7 @@ describe('WebEditKit integration', () => {
                 await page.on('console', message =>
                     console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`));
                 await page.goto('http://localhost:2904/');
-                await page.screenshot({path: `s1.png`});
+                await page.screenshot({path: `screenshots/s1.png`});
                 let bodyHTML = await page.evaluate(() => document.body.innerHTML);
                 expect(bodyHTML).to.equal("MPS Server up and running.");
             } catch (e) {
@@ -93,7 +93,7 @@ describe('WebEditKit integration', () => {
                 await page.on('console', message =>
                     console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`));
                 await page.goto('http://localhost:2904/modules');
-                await page.screenshot({path: `s2.png`});
+                await page.screenshot({path: `screenshots/s2.png`});
                 let bodyHTML = await page.evaluate(() => document.body.innerHTML);
                 const modules = JSON.parse(bodyHTML);
                 let found = false;
