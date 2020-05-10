@@ -12,7 +12,7 @@ jobs:
       - name: Setup Node.js for use with actions
         uses: actions/setup-node@v1.1.0
         with:
-          node-version: '12.x'
+          node-version: '10.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install
-      - run: npm pack
+      - run: cd functionaltests
+      - run: sh execute_functional_tests.sh
