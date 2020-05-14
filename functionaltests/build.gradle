@@ -116,12 +116,12 @@ task justRunMpsServerLauncher(type: RunAntScript, dependsOn: []) {
 	targets = ['run.com.strumenta.mpsserver.launcher']
 	scriptArgs = antScriptArgs
 	scriptClasspath = buildScriptClasspath
-	script new File('build-launcher-mod.xml')
+	script new File('build-launcher.xml')
 }
 
 task runMpsServerLauncher(type: RunAntScript, dependsOn: [resolveMps, resolveMpsArtifacts]) {
 	targets = ['run.com.strumenta.mpsserver.launcher']
 	scriptArgs = antScriptArgs
 	scriptClasspath = buildScriptClasspath
-	script new File('build-launcher-mod.xml')
+	script new File('build-launcher.xml')
 }
