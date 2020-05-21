@@ -25,7 +25,7 @@ function tryToConnect(done, attemptLeft=100) {
     try {
         request('http://localhost:2904/', { json: true }, (err, res, body) => {
             if (err) {
-                console.log("Error returned, cannot yet connect");
+                console.log("  error returned, cannot yet connect");
                 considerRetrying(attemptLeft);
             } else {
                 if (res.statusCode === 200) {
