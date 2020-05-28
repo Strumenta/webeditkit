@@ -53,7 +53,6 @@ export interface AnswerPropertyChange extends RequestAnswer {
  */
 export interface PropertyChangeNotification extends Message {
   type: 'PropertyChange';
-  requestId: string;
   node: NodeIDInModel;
   propertyName: string;
   propertyValue: PropertyValue;
