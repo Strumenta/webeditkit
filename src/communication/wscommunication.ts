@@ -15,8 +15,9 @@ import {
   IssueDescription,
   NodeAdded,
   NodeRemoved,
-  PropertyChange,
+  PropertyChangeNotification,
   ReferenceChange,
+  RequestPropertyChange,
 } from './messages';
 
 export interface Alternative {
@@ -145,7 +146,7 @@ export class WsCommunication {
           renderDataModels();
         }
       } else if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
-        const msg = data as PropertyChange;
+        const msg = data as PropertyChangeNotification;
         const root = getDatamodelRoot(localName);
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
@@ -379,7 +380,7 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue): void {
+  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue, requestId: string = uuidv4()): void {
     this.sendJSON({
       type: 'propertyChange',
       node: {
@@ -390,7 +391,8 @@ export class WsCommunication {
       },
       propertyName,
       propertyValue,
-    } as PropertyChange);
+      requestId
+    } as RequestPropertyChange);
   }
 
   // Get alternative concepts usable

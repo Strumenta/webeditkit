@@ -30,7 +30,30 @@ export interface AddChild extends RequestMessage {
   conceptToInstantiate: string;
 }
 
-export interface PropertyChange extends Message {
+/**
+ * Property change request (property changed by ourselves)
+ */
+export interface RequestPropertyChange extends Message {
+  type: 'propertyChange';
+  requestId: string;
+  node: NodeIDInModel;
+  propertyName: string;
+  propertyValue: PropertyValue;
+}
+
+/**
+ * Confirms that property change was processed
+ */
+export interface AnswerPropertyChange extends RequestAnswer {
+  type: 'AnswerPropertyChange';
+}
+
+/**
+ * Property change notification (property was changed by ourselves or another client)
+ */
+export interface PropertyChangeNotification extends Message {
+  type: 'PropertyChange';
+  requestId: string;
   node: NodeIDInModel;
   propertyName: string;
   propertyValue: PropertyValue;
