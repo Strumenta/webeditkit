@@ -20,13 +20,25 @@ buildscript {
 
 plugins {
   id 'org.ajoberstar.grgit' version '4.0.2'
+  id 'com.strumenta.mpsserver' version "0.1.0"
 }
 
+repositories {
+	mavenCentral()
+	maven {
+		url 'https://dl.bintray.com/strumenta/strumenta-oss-maven'
+	}
+	maven {
+		url 'https://projects.itemis.de/nexus/content/groups/OS/'
+	}
+	mavenLocal()
+}
 
+ext.artifactsDir = new File(rootDir, 'artifacts')
 ext.mpsVersion = '2019.3.1'
 ext.mbeddrPlatformVersion = '2019.3.22230.6f9f955'
 ext.iets3opensourceVersion = '2019.3.4458.852c81c'
-ext.mpsserverVersion = '1.0.1-alpha10'
+ext.mpsserverVersion = '1.1.4-snapshot'
 
 configurations {
 	mps
@@ -42,86 +54,4 @@ dependencies {
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-core:$mpsserverVersion"
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-examples:$mpsserverVersion"
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-launcher:$mpsserverVersion"
-}
-
-repositories {
-	mavenCentral()
-	maven {
-		url 'https://projects.itemis.de/nexus/content/groups/OS/'
-	}
-	maven {
-		url 'https://dl.bintray.com/strumenta/strumenta-oss-maven'
-	}
-}
-
-
-
-if (!hasProperty("jdk_home")) {
-	def java_home = System.properties['java.home']
-	def jdk_home = java_home
-
-	// In JDK >=11 we look for javac
-	if (!file("$jdk_home/bin/javac").isFile() && !file("$jdk_home/bin/javac.exe").isFile()) {
-		// In JDK <11 we look for the tools.jar
-		if (!file("$jdk_home/lib/tools.jar").isFile()) {
-			jdk_home = jdk_home + "/.."
-		}
-		if (!file("$jdk_home/lib/tools.jar").isFile()) {
-			throw new GradleException("Not finding the JDK...")
-		}
-	}
-
-	ext.jdk_home = jdk_home
-}
-
-ext.artifactsDir = new File(rootDir, 'artifacts')
-ext.mpsDir = project.hasProperty('mpsPath') ? new File("${mpsPath}") : new File(artifactsDir, 'mps')
-ext.distributionDependenciesDir = new File(buildDir, 'distribution-dependencies')
-ext.buildScriptClasspath = project.configurations.ant_lib.fileCollection({
-	true
-}) + project.files("$project.jdk_home/lib/tools.jar")
-ext.antScriptArgs =  [
-	"-Dmps.home=${mpsDir.getAbsolutePath()}",
-	"-Dartifacts.mps=${mpsDir.getAbsolutePath()}",
-	"-Dartifacts.root=${artifactsDir.getAbsolutePath()}",
-	"-Dartifacts.MpsServer-core=${artifactsDir.getAbsolutePath()}/MpsServer-core",
-    "-Dartifacts.MpsServer-examples=${artifactsDir.getAbsolutePath()}/MpsServer-examples",
-    "-Dbuild.layout=${artifactsDir.getAbsolutePath()}/MpsServer-launcher",
-    "-Dproject.home=${rootDir.getAbsolutePath()}",
-   
-    // "-Dbuild.mps.system.path=/Users/federico/repos/webeditkit/functionaltests/build/system",
-    // "-Dbuild.mps.config.path=/Users/federico/repos/webeditkit/functionaltests/build/config",
-]
-
-task resolveMps(type: Copy) {
-	if (!project.hasProperty('mpsPath')) {
-		println "Downloading MPS in ${mpsDir.getAbsolutePath()}"
-		from {
-			configurations.mps.resolve().collect { zipTree(it) }
-		}
-		into mpsDir
-	} else {
-		println "MPS already installed in ${mpsDir.getAbsolutePath()}"
-	}
-}
-
-task resolveMpsArtifacts(type: Copy) {
-	from {
-		configurations.mpsArtifacts.resolve().collect { zipTree(it) }
-	}
-	into artifactsDir
-}
-
-task justRunMpsServerLauncher(type: RunAntScript, dependsOn: []) {
-	targets = ['run.com.strumenta.mpsserver.launcher']
-	scriptArgs = antScriptArgs
-	scriptClasspath = buildScriptClasspath
-	script new File('build-launcher.xml')
-}
-
-task runMpsServerLauncher(type: RunAntScript, dependsOn: [resolveMps, resolveMpsArtifacts]) {
-	targets = ['run.com.strumenta.mpsserver.launcher']
-	scriptArgs = antScriptArgs
-	scriptClasspath = buildScriptClasspath
-	script new File('build-launcher.xml')
 }

@@ -1,4 +1,4 @@
-./gradlew runMpsServerLauncher & #> server_log_out.txt 2>server_log_err.txt &
+MPSSERVER_AUTOSAVE="false" ./gradlew launchMpsServer &
 MPS_SERVER_PID=$!
 sleep 4m # we need time to install the stuff
 sh run_functional_tests.sh
