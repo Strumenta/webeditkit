@@ -5,7 +5,7 @@ import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
-import { RequestPropertyChange} from '../src/communication/messages';
+import {PropertyChangeNotification, RequestPropertyChange} from '../src/communication/messages';
 
 const rootData1 = {
   children: [
@@ -502,14 +502,14 @@ describe('WsCommunication', () => {
       try {
         socket.send(
           JSON.stringify({
-            type: 'propertyChange',
+            type: 'PropertyChange',
             node: {
               model: 'myModelName',
               id: { regularId: '324292001770075100' },
             },
             propertyName: 'name',
             propertyValue: 'My Shiny New Name',
-          } as PropertyChange),
+          } as PropertyChangeNotification),
         );
         expect(root.name()).to.equals('My Shiny New Name');
         mockServer.close();
