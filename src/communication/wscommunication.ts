@@ -7,6 +7,7 @@ import { editorController, renderDataModels } from '../index';
 import deepEqual = require('deep-equal');
 
 import {
+  AddChild,
   AddChildAnswer,
   AskErrorsForNode,
   ErrorsForModelReport,
@@ -313,7 +314,7 @@ export class WsCommunication {
       container: container.idString(),
       containmentName,
       conceptToInstantiate: conceptName,
-    });
+    } as AddChild);
   }
 
   communicateReferenceChange(container: ModelNode, referenceName: string, ref: Ref): void {

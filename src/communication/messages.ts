@@ -12,9 +12,22 @@ export interface RequestAnswer extends Message {
   requestId: string;
 }
 
+export interface RequestMessage extends Message {
+  requestId: string;
+}
+
 export interface NodeIDInModel {
   model: string;
   id: NodeId;
+}
+
+export interface AddChild extends RequestMessage {
+  type: 'addChild';
+  index: number;
+  modelName: string;
+  container: string;
+  containmentName: string;
+  conceptToInstantiate: string;
 }
 
 export interface PropertyChange extends Message {
