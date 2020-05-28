@@ -1,10 +1,10 @@
-import { NodeData, NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
+import { NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
-import { ModelNode, OptionalNodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
-import { Ref } from '../datamodel/ref';
+import {ModelNode, NodeProcessor, reactToAReferenceChange} from '../datamodel/modelNode';
+import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { editorController, renderDataModels } from '../index';
-var deepEqual = require('deep-equal');
+import deepEqual = require('deep-equal');
 
 import {
   AddChildAnswer,
@@ -196,7 +196,7 @@ export class WsCommunication {
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
         alternativesReceiver(data.items);
-      } else if (data.type.toLowerCase() == 'AddChildAnswer'.toLowerCase()) {
+      } else if (data.type.toLowerCase() === 'AddChildAnswer'.toLowerCase()) {
         const msg = data as AddChildAnswer;
         const callback = thisWS.callbacks[data.requestId];
         if (callback != null) {
@@ -298,7 +298,7 @@ export class WsCommunication {
     containmentName: string,
     index: number,
     conceptName: string,
-    initializer: OptionalNodeProcessor = undefined,
+    initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
     if (index < -1) {
@@ -348,7 +348,7 @@ export class WsCommunication {
     container: ModelNode,
     containmentName: string,
     conceptName: string,
-    initializer: OptionalNodeProcessor = undefined,
+    initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = initializer;
