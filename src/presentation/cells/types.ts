@@ -196,6 +196,17 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
       },
       on: {
         keydown: (e: KeyboardEvent) => {
+          const isTabNext = e.key === 'Tab' && !e.shiftKey;
+          const isTabPrev = e.key === 'Tab' && e.shiftKey;
+          if (isTabNext) {
+            moveToNextElement(e.target, true);
+            e.preventDefault();
+            return true;
+          } else if (isTabPrev) {
+            moveToPrevElement(e.target, true);
+            e.preventDefault();
+            return true;
+          }
           if (isAtEnd(e.target) && e.key === 'ArrowRight') {
             moveToNextElement(e.target);
             e.preventDefault();
@@ -281,7 +292,13 @@ export function fixedCell(
           e.target.setSelectionRange(0, 0);
         },
         keydown: (e: KeyboardEvent) => {
-          if (e.key === 'ArrowRight') {
+          const isTabNext = e.key === 'Tab' && !e.shiftKey;
+          const isTabPrev = e.key === 'Tab' && e.shiftKey;
+          if (isTabNext) {
+            moveToNextElement(e.target, true);
+          } else if (isTabPrev) {
+            moveToPrevElement(e.target, true);
+          } else if (e.key === 'ArrowRight') {
             moveToNextElement(e.target);
           } else if (e.key === 'ArrowLeft') {
             moveToPrevElement(e.target);

@@ -134,20 +134,43 @@ export function moveDown(t) {
   }
 }
 
-export function moveToNextElement(t): boolean {
+function canBeAccepted(elConsidered, onlyEditable: boolean) : boolean {
+  if (onlyEditable) {
+    if (elConsidered.hasClass('fixed')) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    return true;
+  }
+}
+
+/**
+ * Return true if we manage to find a next element
+ */
+export function moveToNextElement(t, onlyEditable: boolean = false): boolean {
   let elConsidered = findNext($(t));
   while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');
     if (tag === 'INPUT') {
-      moveFocusToStart(elConsidered);
-      return true;
+      if (canBeAccepted(elConsidered, onlyEditable)) {
+        moveFocusToStart(elConsidered);
+        return true;
+      } else {
+        elConsidered = findNext(elConsidered);
+      }
     } else if (tag === 'DIV' || tag === 'SPAN') {
       if (elConsidered.find('input').length === 0) {
         elConsidered = findNext(elConsidered);
       } else {
         elConsidered = elConsidered.find('input').first();
-        moveFocusToStart(elConsidered);
-        return true;
+        if (canBeAccepted(elConsidered, onlyEditable)) {
+          moveFocusToStart(elConsidered);
+          return true;
+        } else {
+          elConsidered = findNext(elConsidered);
+        }
       }
     } else {
       // Perhaps we could play an error sound
@@ -157,20 +180,28 @@ export function moveToNextElement(t): boolean {
   return false;
 }
 
-export function moveToPrevElement(t): boolean {
+export function moveToPrevElement(t, onlyEditable: boolean = false): boolean {
   let elConsidered = findPrev($(t));
   while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');
     if (tag === 'INPUT') {
-      moveFocusToEnd(elConsidered);
-      return true;
+      if (canBeAccepted(elConsidered, onlyEditable)) {
+        moveFocusToEnd(elConsidered);
+        return true;
+      } else {
+        elConsidered = findPrev(elConsidered);
+      }
     } else if (tag === 'DIV' || tag === 'SPAN') {
       if (elConsidered.find('input').length === 0) {
         elConsidered = findPrev(elConsidered);
       } else {
         elConsidered = elConsidered.find('input').last();
-        moveFocusToEnd(elConsidered);
-        return true;
+        if (canBeAccepted(elConsidered, onlyEditable)) {
+          moveFocusToEnd(elConsidered);
+          return true;
+        } else {
+          elConsidered = findPrev(elConsidered);
+        }
       }
     } else {
       // Perhaps we could play an error sound
