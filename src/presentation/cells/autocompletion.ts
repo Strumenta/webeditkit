@@ -81,7 +81,7 @@ export function installAutocomplete(
       valuesProvider((suggestions: AutocompleteAlternative[]) => {
         if (!fixed) {
           suggestions = suggestions.filter((n: { label: string }) => n.label.toLowerCase().includes(ltext));
-          console.log('suggestions', suggestions, text);
+          //console.log('suggestions', suggestions, text);
           if (suggestions.length == 1 && suggestions[0].label == text) {
             suggestions[0].execute();
           }
@@ -102,6 +102,6 @@ export function installAutocomplete(
 
 export function isAutocompleteVisible() {
   const res = $('.autocomplete').parent().length > 0;
-  console.log('isAutocompleteVisible', res);
+  //console.log('isAutocompleteVisible', res);
   return res;
 }

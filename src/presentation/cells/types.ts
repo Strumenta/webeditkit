@@ -522,7 +522,7 @@ export function referenceCell(
   //
   const kdCaptureListener = (event: KeyboardEvent): boolean => {
     // TODO move this into the body
-    console.log('capture phase in reference, keydown. Is Autocomplete visible?', isAutocompleteVisible());
+    //console.log('capture phase in reference, keydown. Is Autocomplete visible?', isAutocompleteVisible());
     if (isAutocompleteVisible()) {
       // @ts-ignore
       event.duringAutocomplete = true;
