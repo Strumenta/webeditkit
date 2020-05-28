@@ -15,7 +15,8 @@
     "lodash.merge": "^4.6.2",
     "snabbdom": "^0.7.4",
     "tsify": "^4.0.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "hoek": ">=4.2.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
