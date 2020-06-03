@@ -27,7 +27,7 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode) {
   renderDataModels();
 }
 
-type NodeProcessor = (node: ModelNode) => void;
+export type NodeProcessor = (node: ModelNode) => void;
 export type OptionalNodeProcessor = NodeProcessor | undefined;
 
 export class ModelNode {

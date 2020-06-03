@@ -18,7 +18,7 @@ import {
 import { flattenArray } from '../src/presentation';
 import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
 
-import { PropertyChange } from '../src/communication/messages';
+import { PropertyChangeNotification} from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -794,7 +794,7 @@ describe('Cells.Types', () => {
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received == 0) {
-            const dataj = JSON.parse(data as string) as PropertyChange;
+            const dataj = JSON.parse(data as string) as PropertyChangeNotification;
             expect(dataj.node.model).to.eql('my.qualified.model');
             expect(dataj.node.id.regularId).to.eql('324292001770075100');
             expect(dataj.propertyName).to.eql('name');

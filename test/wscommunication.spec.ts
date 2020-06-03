@@ -5,7 +5,7 @@ import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
-import { PropertyChange } from '../src/communication/messages';
+import {PropertyChangeNotification, RequestPropertyChange} from '../src/communication/messages';
 
 const rootData1 = {
   children: [
@@ -348,7 +348,8 @@ describe('WsCommunication', () => {
             },
             propertyName: 'name',
             propertyValue: 'my new name',
-          } as PropertyChange);
+            requestId: 'request ID'
+          } as RequestPropertyChange);
           expect(messagesReceivedByServer[1]).to.eql({
             type: 'registerForChanges',
             modelName: 'my.qualified.ModelName',
@@ -364,7 +365,7 @@ describe('WsCommunication', () => {
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
     const n_a = root.findNodeById('1848360241685547698');
-    ws.triggerChangeOnPropertyNode(n_a, 'name', 'my new name');
+    ws.triggerChangeOnPropertyNode(n_a, 'name', 'my new name', 'request ID');
   });
 
   it('should support triggerDefaultInsertion', (done) => {
@@ -501,14 +502,14 @@ describe('WsCommunication', () => {
       try {
         socket.send(
           JSON.stringify({
-            type: 'propertyChange',
+            type: 'PropertyChange',
             node: {
               model: 'myModelName',
               id: { regularId: '324292001770075100' },
             },
             propertyName: 'name',
             propertyValue: 'My Shiny New Name',
-          } as PropertyChange),
+          } as PropertyChangeNotification),
         );
         expect(root.name()).to.equals('My Shiny New Name');
         mockServer.close();

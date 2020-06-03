@@ -1,12 +1,13 @@
-import { NodeData, NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
+import { NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
-import { ModelNode, OptionalNodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
-import { Ref } from '../datamodel/ref';
+import {ModelNode, NodeProcessor, reactToAReferenceChange} from '../datamodel/modelNode';
+import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { editorController, renderDataModels } from '../index';
-var deepEqual = require('deep-equal');
+import deepEqual = require('deep-equal');
 
 import {
+  AddChild,
   AddChildAnswer,
   AskErrorsForNode,
   ErrorsForModelReport,
@@ -14,8 +15,9 @@ import {
   IssueDescription,
   NodeAdded,
   NodeRemoved,
-  PropertyChange,
+  PropertyChangeNotification,
   ReferenceChange,
+  RequestPropertyChange,
 } from './messages';
 
 export interface Alternative {
@@ -144,7 +146,7 @@ export class WsCommunication {
           renderDataModels();
         }
       } else if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
-        const msg = data as PropertyChange;
+        const msg = data as PropertyChangeNotification;
         const root = getDatamodelRoot(localName);
         if (root == null) {
           throw new Error('data model with local name ' + localName + ' was not found');
@@ -196,7 +198,7 @@ export class WsCommunication {
       } else if (data.type === 'AnswerAlternatives') {
         const alternativesReceiver = thisWS.callbacks[data.requestId];
         alternativesReceiver(data.items);
-      } else if (data.type.toLowerCase() == 'AddChildAnswer'.toLowerCase()) {
+      } else if (data.type.toLowerCase() === 'AddChildAnswer'.toLowerCase()) {
         const msg = data as AddChildAnswer;
         const callback = thisWS.callbacks[data.requestId];
         if (callback != null) {
@@ -298,7 +300,7 @@ export class WsCommunication {
     containmentName: string,
     index: number,
     conceptName: string,
-    initializer: OptionalNodeProcessor = undefined,
+    initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
     if (index < -1) {
@@ -313,7 +315,7 @@ export class WsCommunication {
       container: container.idString(),
       containmentName,
       conceptToInstantiate: conceptName,
-    });
+    } as AddChild);
   }
 
   communicateReferenceChange(container: ModelNode, referenceName: string, ref: Ref): void {
@@ -348,7 +350,7 @@ export class WsCommunication {
     container: ModelNode,
     containmentName: string,
     conceptName: string,
-    initializer: OptionalNodeProcessor = undefined,
+    initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = initializer;
@@ -378,7 +380,7 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue): void {
+  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue, requestId: string = uuidv4()): void {
     this.sendJSON({
       type: 'propertyChange',
       node: {
@@ -389,7 +391,8 @@ export class WsCommunication {
       },
       propertyName,
       propertyValue,
-    } as PropertyChange);
+      requestId
+    } as RequestPropertyChange);
   }
 
   // Get alternative concepts usable
