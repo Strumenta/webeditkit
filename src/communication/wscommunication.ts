@@ -1,5 +1,5 @@
 import { NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
-import { uuidv4 } from '../utils/misc';
+import { log, uuidv4 } from '../utils/misc';
 import {ModelNode, NodeProcessor, reactToAReferenceChange} from '../datamodel/modelNode';
 import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
@@ -54,10 +54,10 @@ const issuesMap: { [key: string]: IssuesMap } = {};
 function registerIssuesForModel(model: string, issues: IssueDescription[]): boolean {
   const newIm = new IssuesMap(issues);
   if (deepEqual(newIm, issuesMap[model])) {
-    console.log('registerIssuesForModel, false');
+    log('registerIssuesForModel, false');
     return false;
   }
-  console.log('registerIssuesForModel, true', issuesMap[model], newIm);
+  log('registerIssuesForModel, true', issuesMap[model], newIm);
   issuesMap[model] = newIm;
   return true;
 }
@@ -66,10 +66,10 @@ function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): b
   // This is not correct because we are overriding the issues for the whole model with the issues for a certain root
   const newIm = new IssuesMap(issues);
   if (deepEqual(newIm, issuesMap[node.model])) {
-    console.log('registerIssuesForNode, false');
+    log('registerIssuesForNode, false');
     return false;
   }
-  console.log('registerIssuesForNode, true', issuesMap[node.model], newIm);
+  log('registerIssuesForNode, true', issuesMap[node.model], newIm);
   issuesMap[node.model] = newIm;
   editorController().notifyErrorsForNode(node, issues);
   return true;

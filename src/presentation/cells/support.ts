@@ -6,6 +6,7 @@ import { ModelNode } from '../../datamodel/modelNode';
 
 import { getDatamodelRoot } from '../../datamodel/registry';
 import { InsertHook, UpdateHook } from 'snabbdom/hooks';
+import { log } from '../../utils/misc';
 
 export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
   if ($(element).closest('.represent-node').hasClass('deleting')) {
@@ -16,7 +17,7 @@ export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
 }
 
 export function handleAddingElement(element: any, modelNode: ModelNode): void {
-  console.log('adding element', element, modelNode);
+  log('adding element', element, modelNode);
   const parents = $(element).parents();
 
   // First find the collection containing this node
@@ -78,11 +79,11 @@ export function separate(original: any[], separatorGenerator?: () => VNode): any
 }
 
 export function focusOnReference(modelNode: ModelNode, referenceName: string) {
-  //console.log("should focus on reference", modelNode, referenceName);
+  // log("should focus on reference", modelNode, referenceName);
   printFocus('before focusOnReference');
   const firstNodeFound = findDomElement(modelNode.idString(), modelNode.rootName());
   if (firstNodeFound != null) {
-    //console.log("  focusOnReference, node found", firstNodeFound);
+    // log("  focusOnReference, node found", firstNodeFound);
     const inputs = $(firstNodeFound).find('input');
     // check if the node itself represent the reference
     let refNode;
@@ -93,7 +94,7 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
       refNode = $(firstNodeFound);
     } else {
       refNode = inputs.filter((i, el) => {
-        //console.log("  focusOnReference, considering input", el, i);
+        //log("  focusOnReference, considering input", el, i);
         return (
           $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName
         );
@@ -104,10 +105,10 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
       refNode.focus();
       printFocus('after focusing');
     } else {
-      //console.log("  focusOnReference not one matching refNode found", refNode);
+      //log("  focusOnReference not one matching refNode found", refNode);
     }
   } else {
-    //console.log("  focusOnReference, node not found");
+    //log("  focusOnReference, node not found");
   }
   printFocus('after focusOnReference');
 }
@@ -161,12 +162,12 @@ export function domElementToModelNode(element: HTMLElement): ModelNode | undefin
   if (isEditorElement(element)) {
     return undefined;
   }
-  console.log('domElementToModelNode', element);
-  console.log('  data', $(element).data('node_represented'));
+  log('domElementToModelNode', element);
+  log('  data', $(element).data('node_represented'));
   const nodeId = $(element).data('node_represented');
   if (nodeId != null && nodeId != '') {
     const modelLocalName = $(element).closest('.editor').data('model_local_name');
-    console.log('  model local name', modelLocalName);
+    log('  model local name', modelLocalName);
     const dataModelRoot = getDatamodelRoot(modelLocalName);
     return dataModelRoot.findNodeById(nodeId);
   } else if (element.parentElement != null) {

@@ -27,6 +27,7 @@ import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
 import { printFocus } from '../uiutils';
+import { log } from '../../utils/misc';
 
 export function childCell(
   node: ModelNode,
@@ -317,12 +318,12 @@ export function fixedCell(
           } else if (e.key === 'Enter') {
             if ($('.autocomplete').length == 0) {
               if (onEnter !== undefined) {
-                console.log('prevent enter on fixed (A)');
+                log('prevent enter on fixed (A)');
                 onEnter();
                 e.preventDefault();
                 return false;
               } else if (alternativesProvider === undefined) {
-                console.log('prevent enter on fixed (B)');
+                log('prevent enter on fixed (B)');
                 // We should stop this when the autocomplete is displayed
 
                 // We do not want to do this for cells with autocompletion
@@ -332,7 +333,7 @@ export function fixedCell(
               }
             }
           }
-          console.log('prevent key on fixed (C)');
+          log('prevent key on fixed (C)');
           e.preventDefault();
           return false;
         },
@@ -513,7 +514,7 @@ export function referenceCell(
           fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider),
           (event: KeyboardEvent) => {
             if (event.ctrlKey) {
-              console.log('should trigger autocompletion');
+              log('should trigger autocompletion');
             } else {
               // ctrl + space should trigger autocomplete
               // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
@@ -539,7 +540,7 @@ export function referenceCell(
   //
   const kdCaptureListener = (event: KeyboardEvent): boolean => {
     // TODO move this into the body
-    //console.log('capture phase in reference, keydown. Is Autocomplete visible?', isAutocompleteVisible());
+    //log('capture phase in reference, keydown. Is Autocomplete visible?', isAutocompleteVisible());
     if (isAutocompleteVisible()) {
       // @ts-ignore
       event.duringAutocomplete = true;
@@ -592,7 +593,7 @@ export function referenceCell(
             }
           }
           if (e.key == 'Enter') {
-            console.log('enter on reference cell', e);
+            log('enter on reference cell', e);
             // @ts-ignore
             e.insertionEnter = true;
           }

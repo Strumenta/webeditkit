@@ -1,3 +1,5 @@
+import { log } from '../utils/misc';
+
 function moveFocusToStart(next) {
   next.focus();
   const el = next[0];
@@ -44,7 +46,7 @@ function findPrev(n) {
 }
 
 function selectFirstElementInRow(row, focusOnEnd) {
-  console.log('selectFirstElementInRow', row);
+  log('selectFirstElementInRow', row);
   // @ts-ignore
   window.sf = row;
   if ($(row).children('input').length > 0) {
@@ -74,7 +76,7 @@ export function moveUp(t) {
   if ($(t).hasClass('editor')) {
     return;
   }
-  console.log('move up');
+  log('move up');
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
@@ -84,13 +86,13 @@ export function moveUp(t) {
   } else if (l.length > 1) {
     console.warn('too many lines found');
   } else {
-    console.log('element found');
+    log('element found');
     const currentLine = l;
     let nextLine = currentLine;
     do {
-      console.log(' before', nextLine);
+      log(' before', nextLine);
       nextLine = $(nextLine).prev('.row,.vertical-collection');
-      console.log(' after', nextLine);
+      log(' after', nextLine);
     } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
     if (nextLine.length == 1) {
       selectFirstElementInRow(nextLine[0], true);
@@ -105,7 +107,7 @@ export function moveDown(t) {
   if ($(t).hasClass('editor')) {
     return;
   }
-  console.log('move down', t);
+  log('move down', t);
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
@@ -115,13 +117,13 @@ export function moveDown(t) {
   } else if (l.length > 1) {
     console.warn('too many lines found');
   } else {
-    console.log('element found');
+    log('element found');
     const currentLine = l;
     let nextLine = currentLine;
     do {
-      console.log(' before', nextLine);
+      log(' before', nextLine);
       nextLine = $(nextLine).next('.row,.vertical-collection');
-      console.log(' after', nextLine);
+      log(' after', nextLine);
     } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
     if (nextLine.length == 1) {
       selectFirstElementInRow(nextLine[0], false);
