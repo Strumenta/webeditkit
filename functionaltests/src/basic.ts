@@ -92,14 +92,14 @@ describe('WebEditKit integration', () => {
                 });
                 await page.on('console', message =>
                     console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`));
-                await page.goto('http://localhost:2904/modules');
+                await page.goto('http://localhost:2904/modules?includeReadOnly=true&includePackaged=true');
                 await page.screenshot({path: `screenshots/s2.png`});
                 let bodyHTML = await page.evaluate(() => document.body.innerHTML);
                 const modules = JSON.parse(bodyHTML);
                 let found = false;
                 for (const m of modules) {
-                    if (m['name'] == 'com.strumenta.businessorg.sandbox') {
-                        expect(m['uuid']).to.equal('304d28bd-2c3c-4fbd-b987-dbce2813a938');
+                    if (m['name'] == 'com.strumenta.mpsserver.server') {
+                        expect(m['uuid']).to.equal('bf983e15-b4da-4ef2-8e0a-5041eab7ff32');
                         found = true;
                     }
                 }
