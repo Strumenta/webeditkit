@@ -196,11 +196,10 @@ export class WsCommunication {
         }
         renderDataModels();
       } else if (data.type === 'AnswerAlternatives') {
-        const alternativesReceiver = thisWS.callbacks[data.requestId];
-        alternativesReceiver(data.items);
+        this.invokeCallback(data.requestId, data.items);
       } else if (data.type.toLowerCase() === 'AddChildAnswer'.toLowerCase()) {
         const msg = data as AddChildAnswer;
-        const callback = thisWS.callbacks[data.requestId];
+        const callback = this.getAndDeleteCallback(data.requestId);
         if (callback != null) {
           const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
           if (createdNode == null) {
@@ -213,14 +212,11 @@ export class WsCommunication {
           }
         }
       } else if (data.type === 'AnswerDefaultInsertion') {
-        const reactorToInsertion = thisWS.callbacks[data.requestId] as (addedNodeID: NodeId) => void;
-        if (reactorToInsertion == null) {
-          throw new Error('No callback for default insertion');
-        }
-        reactorToInsertion(data.addedNodeID);
+        this.invokeRequiredCallback(data.requestId, 'default insertion', data.addedNodeID);
       } else if (data.type === 'AnswerForDirectReferences') {
-        const cb = thisWS.callbacks[data.requestId];
-        cb(data.items);
+        this.invokeCallback(data.requestId, data.items);
+      } else if (data.type === 'AnswerPropertyChange') {
+        this.invokeCallback(data.requestId);
       } else {
         if (!this.silent) {
           console.warn('data', data);
@@ -228,6 +224,27 @@ export class WsCommunication {
         throw new Error('Unknown message type: ' + data.type);
       }
     };
+  }
+
+  invokeRequiredCallback(requestId: string, description: string, ...args: any[]) {
+    const cb = this.getAndDeleteCallback(requestId);
+    if (cb == null) {
+      throw new Error(`No callback for request ${requestId} (${description})`);
+    }
+    cb(...args);
+  }
+
+  invokeCallback(requestId: string, ...args: any[]) {
+    const cb = this.getAndDeleteCallback(requestId);
+    if (cb != null) {
+      cb(...args);
+    }
+  }
+
+  private getAndDeleteCallback(requestId: string) {
+    const cb = this.callbacks[requestId];
+    delete this.callbacks[requestId];
+    return cb;
   }
 
   setSilent() {
@@ -380,7 +397,11 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue, requestId: string = uuidv4()): void {
+  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue,
+                              callback?: () => void, requestId: string = uuidv4()): void {
+    if (callback != null) {
+      this.callbacks[requestId] = callback;
+    }
     this.sendJSON({
       type: 'propertyChange',
       node: {

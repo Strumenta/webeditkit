@@ -5,7 +5,7 @@ import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
-import {PropertyChangeNotification, RequestPropertyChange} from '../src/communication/messages';
+import {AnswerPropertyChange, PropertyChangeNotification, RequestPropertyChange} from '../src/communication/messages';
 
 const rootData1 = {
   children: [
@@ -328,44 +328,68 @@ describe('WsCommunication', () => {
     ws.insertNextSibling(n_a);
   });
 
-  it('should support triggerChangeOnPropertyNode', (done) => {
-    const fakeURL = 'ws://localhost:8080';
-    mockServer = new Server(fakeURL);
+  describe('#triggerChangeOnPropertyNode', () => {
+    it('should send messages to server', (done) => {
+      const fakeURL = 'ws://localhost:8080';
+      mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+      const messagesReceivedByServer = [];
 
-    mockServer.on('connection', (socket) => {
-      socket.on('message', (data) => {
-        messagesReceivedByServer.push(JSON.parse(data as string));
-        if (messagesReceivedByServer.length == 2) {
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'propertyChange',
-            node: {
-              model: 'my.qualified.ModelName',
-              id: {
-                regularId: '1848360241685547698',
+      mockServer.on('connection', (socket) => {
+        socket.on('message', (data) => {
+
+          messagesReceivedByServer.push(JSON.parse(data as string));
+          if (messagesReceivedByServer.length == 2) {
+            expect(messagesReceivedByServer[0]).to.eql({
+              type: 'propertyChange',
+              node: {
+                model: 'my.qualified.ModelName',
+                id: {
+                  regularId: '1848360241685547698',
+                },
               },
-            },
-            propertyName: 'name',
-            propertyValue: 'my new name',
-            requestId: 'request ID'
-          } as RequestPropertyChange);
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
-          mockServer.close();
-          done();
-        }
+              propertyName: 'name',
+              propertyValue: 'my new name',
+              requestId: 'request ID'
+            } as RequestPropertyChange);
+            expect(messagesReceivedByServer[1]).to.eql({
+              type: 'registerForChanges',
+              modelName: 'my.qualified.ModelName',
+            });
+            mockServer.close();
+            done();
+          }
+        });
       });
+
+      const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+      ws.setSilent();
+      const root = dataToNode(clone(rootData1));
+      root.injectModelName('my.qualified.ModelName', 'myRoot');
+      const n_a = root.findNodeById('1848360241685547698');
+      ws.triggerChangeOnPropertyNode(n_a, 'name', 'my new name', undefined, 'request ID');
     });
 
-    const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
-    ws.setSilent();
-    const root = dataToNode(clone(rootData1));
-    root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
-    ws.triggerChangeOnPropertyNode(n_a, 'name', 'my new name', 'request ID');
+    it('should invoke callback on reply', (done) => {
+      const fakeURL = 'ws://localhost:8080';
+      mockServer = new Server(fakeURL);
+
+      const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+      ws.setSilent();
+
+      const root = dataToNode(clone(rootData1));
+      root.injectModelName('my.qualified.ModelName', 'myRoot');
+      const node = root.findNodeById('1848360241685547698');
+      ws.triggerChangeOnPropertyNode(node, 'name', 'my new name', () => {
+          done();
+        }, 'request ID');
+
+      mockServer.on('connection', (socket) => {
+        socket.on('message', (data) => {
+          socket.send(JSON.stringify({type: 'AnswerPropertyChange', requestId: 'request ID'} as AnswerPropertyChange))
+        });
+      });
+    });
   });
 
   it('should support triggerDefaultInsertion', (done) => {
