@@ -18,7 +18,7 @@ import {
 import { flattenArray } from '../src/presentation';
 import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
 
-import { PropertyChangeNotification} from '../src/communication/messages';
+import { PropertyChangeNotification } from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;

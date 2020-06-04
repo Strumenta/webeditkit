@@ -5,7 +5,7 @@ import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
-import {AnswerPropertyChange, PropertyChangeNotification, RequestPropertyChange} from '../src/communication/messages';
+import { AnswerPropertyChange, PropertyChangeNotification, RequestPropertyChange } from '../src/communication/messages';
 
 const rootData1 = {
   children: [
@@ -337,7 +337,6 @@ describe('WsCommunication', () => {
 
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
-
           messagesReceivedByServer.push(JSON.parse(data as string));
           if (messagesReceivedByServer.length == 2) {
             expect(messagesReceivedByServer[0]).to.eql({
@@ -350,7 +349,7 @@ describe('WsCommunication', () => {
               },
               propertyName: 'name',
               propertyValue: 'my new name',
-              requestId: 'request ID'
+              requestId: 'request ID',
             } as RequestPropertyChange);
             expect(messagesReceivedByServer[1]).to.eql({
               type: 'registerForChanges',
@@ -380,13 +379,21 @@ describe('WsCommunication', () => {
       const root = dataToNode(clone(rootData1));
       root.injectModelName('my.qualified.ModelName', 'myRoot');
       const node = root.findNodeById('1848360241685547698');
-      ws.triggerChangeOnPropertyNode(node, 'name', 'my new name', () => {
+      ws.triggerChangeOnPropertyNode(
+        node,
+        'name',
+        'my new name',
+        () => {
           done();
-        }, 'request ID');
+        },
+        'request ID',
+      );
 
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
-          socket.send(JSON.stringify({type: 'AnswerPropertyChange', requestId: 'request ID'} as AnswerPropertyChange))
+          socket.send(
+            JSON.stringify({ type: 'AnswerPropertyChange', requestId: 'request ID' } as AnswerPropertyChange),
+          );
         });
       });
     });

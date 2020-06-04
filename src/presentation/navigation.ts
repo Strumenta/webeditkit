@@ -136,7 +136,7 @@ export function moveDown(t) {
   }
 }
 
-function canBeAccepted(elConsidered, onlyEditable: boolean) : boolean {
+function canBeAccepted(elConsidered, onlyEditable: boolean): boolean {
   if (onlyEditable) {
     if (elConsidered.hasClass('fixed')) {
       return false;

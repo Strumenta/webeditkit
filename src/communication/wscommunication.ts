@@ -1,6 +1,6 @@
 import { NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 import { log, uuidv4 } from '../utils/misc';
-import {ModelNode, NodeProcessor, reactToAReferenceChange} from '../datamodel/modelNode';
+import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
 import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { editorController, renderDataModels } from '../index';
@@ -397,8 +397,13 @@ export class WsCommunication {
     });
   }
 
-  triggerChangeOnPropertyNode(modelNode: ModelNode, propertyName: string, propertyValue: PropertyValue,
-                              callback?: () => void, requestId: string = uuidv4()): void {
+  triggerChangeOnPropertyNode(
+    modelNode: ModelNode,
+    propertyName: string,
+    propertyValue: PropertyValue,
+    callback?: () => void,
+    requestId: string = uuidv4(),
+  ): void {
     if (callback != null) {
       this.callbacks[requestId] = callback;
     }
@@ -412,7 +417,7 @@ export class WsCommunication {
       },
       propertyName,
       propertyValue,
-      requestId
+      requestId,
     } as RequestPropertyChange);
   }
 
