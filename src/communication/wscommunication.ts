@@ -11,7 +11,7 @@ import {
   AddChildAnswer, AskAlternatives,
   AskErrorsForNode, CreateRoot, DefaultInsertion, DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport, InsertNextSibling, InstantiateConcept, Message,
+  ErrorsForNodeReport, InsertNextSibling, InstantiateConcept, IssueDescription, Message,
   NodeAdded,
   NodeRemoved,
   PropertyChangeNotification,
