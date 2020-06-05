@@ -25,6 +25,7 @@ import {
   ReferenceChange, RegisterForChanges, RequestForDirectReferences,
   RequestPropertyChange, SetChild,
 } from './messages';
+import { IssuesMap } from '../datamodel/issues';
 
 export interface Alternative {
   conceptName: string;
@@ -39,21 +40,6 @@ export interface AlternativeForDirectReference {
 
 export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
-
-export class IssuesMap {
-  private map: { [key: string]: IssueDescription[] } = {};
-  constructor(issues: IssueDescription[]) {
-    for (const i of issues) {
-      if (this.map[i.node.regularId] == null) {
-        this.map[i.node.regularId] = [];
-      }
-      this.map[i.node.regularId].push(i);
-    }
-  }
-  getIssuesForNode(nodeId: string): IssueDescription[] {
-    return this.map[nodeId] || [];
-  }
-}
 
 const issuesMap: { [key: string]: IssuesMap } = {};
 

@@ -78,8 +78,9 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
 import { dataToNode } from './datamodel';
 export { dataToNode };
+import { IssuesMap } from './datamodel/issues'
 import { VNode } from 'snabbdom/vnode';
-import { getIssuesForModel, IssuesMap } from './communication/wscommunication';
+import { getIssuesForModel } from './communication/wscommunication';
 import { addInsertHook, wrapInsertHook, wrapUpdateHook } from './presentation';
 
 const patch = init([
