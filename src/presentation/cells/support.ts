@@ -5,7 +5,6 @@ import { VNodeChildElement } from 'snabbdom/h';
 import { ModelNode } from '../../datamodel/modelNode';
 
 import { getDatamodelRoot } from '../../datamodel/registry';
-import { InsertHook, UpdateHook } from 'snabbdom/hooks';
 import { log } from '../../utils/misc';
 
 export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
@@ -94,7 +93,6 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
       refNode = $(firstNodeFound);
     } else {
       refNode = inputs.filter((i, el) => {
-        //log("  focusOnReference, considering input", el, i);
         return (
           $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName
         );
@@ -104,11 +102,7 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
       printFocus('before focusing');
       refNode.focus();
       printFocus('after focusing');
-    } else {
-      //log("  focusOnReference not one matching refNode found", refNode);
     }
-  } else {
-    //log("  focusOnReference, node not found");
   }
   printFocus('after focusOnReference');
 }

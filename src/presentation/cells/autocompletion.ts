@@ -1,5 +1,4 @@
 import { ModelNode } from '../../datamodel';
-//import {getWsCommunication} from "../../communication/index";
 import { Alternative, getWsCommunication } from '../../communication/wscommunication';
 
 const autocomplete = require('autocompleter');
@@ -81,7 +80,6 @@ export function installAutocomplete(
       valuesProvider((suggestions: AutocompleteAlternative[]) => {
         if (!fixed) {
           suggestions = suggestions.filter((n: { label: string }) => n.label.toLowerCase().includes(ltext));
-          //console.log('suggestions', suggestions, text);
           if (suggestions.length == 1 && suggestions[0].label == text) {
             suggestions[0].execute();
           }
@@ -102,6 +100,5 @@ export function installAutocomplete(
 
 export function isAutocompleteVisible() {
   const res = $('.autocomplete').parent().length > 0;
-  //console.log('isAutocompleteVisible', res);
   return res;
 }
