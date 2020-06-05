@@ -28,7 +28,6 @@ export {
   verticalGroupCell,
 };
 
-//export const h = require('snabbdom/h').default; // helper function for creating vnodes
 const uiutils = require('./presentation/uiutils');
 
 import { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode } from './datamodel';
@@ -103,7 +102,6 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
     return vnode;
   }
   if (vnode.data == null || vnode.children == null) {
-    //console.warn('node with issues', vnode);
     // throw new Error('This does not seem a valid node');
     // this is a piece of text
     return vnode;
