@@ -28,7 +28,7 @@ export {
   verticalGroupCell,
 };
 
-const uiutils = require('./presentation/uiutils');
+import uiutils = require('./presentation/uiutils');
 
 import { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode } from './datamodel';
 export { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode };
@@ -42,10 +42,7 @@ export { getIssuesForNode };
 import { getNodeFromLocalRepo } from './datamodel';
 export { getNodeFromLocalRepo };
 
-const wscommunication = require('./communication/wscommunication');
-export const cells = require('./presentation/cells');
-
-const renderers = require('./presentation/renderer');
+import wscommunication = require('./communication/wscommunication');
 
 export { registerRenderer };
 
@@ -109,7 +106,7 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
   if (vnode.data.dataset != null && vnode.data.dataset.node_represented != null) {
     const myNodeId = vnode.data.dataset.node_represented;
     const errors = issues.getIssuesForNode(myNodeId);
-    if (errors.length != 0) {
+    if (errors.length !== 0) {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
         $(vNode.elm).addClass('hasErrors');
       });
@@ -126,7 +123,7 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
     }
   }
   for (let i = 0; i < vnode.children.length; i++) {
-    if (<VNode>vnode.children[i] != null) {
+    if ((vnode as VNode).children[i] != null) {
       vnode.children[i] = injectErrors(<VNode>vnode.children[i], issues);
     }
   }
