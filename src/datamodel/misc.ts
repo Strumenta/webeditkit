@@ -1,5 +1,6 @@
 import { getDatamodelRoot } from './registry';
 import { ModelNode } from './modelNode';
+import { Ref } from './ref';
 
 ///
 /// Nodes
@@ -68,4 +69,32 @@ export type PropertiesValues = { [key: string]: PropertyValue };
 
 export function findNode(localModelName, nodeId): ModelNode | null {
   return getDatamodelRoot(localModelName).findNodeById(nodeId);
+}
+
+///
+/// Conversion utilities
+///
+
+export function modelNodeToNodeInModel(node: ModelNode | null): NodeInModel | null {
+  if (node == null) {
+    return null;
+  }
+  return {
+    model: node.modelName(),
+    id: {
+      regularId: node.idString(),
+    },
+  };
+}
+
+export function refToNodeInModel(ref: Ref | null): NodeInModel | null {
+  if (ref == null) {
+    return null;
+  }
+  return {
+    model: ref.data.model.qualifiedName,
+    id: {
+      regularId: ref.data.id.regularId,
+    },
+  };
 }

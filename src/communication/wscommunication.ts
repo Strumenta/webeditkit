@@ -1,4 +1,11 @@
-import { NodeId, nodeIdToString, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
+import {
+  modelNodeToNodeInModel,
+  NodeId,
+  nodeIdToString,
+  NodeInModel,
+  PropertiesValues,
+  PropertyValue, refToNodeInModel,
+} from '../datamodel/misc';
 import { log, uuidv4 } from '../utils/misc';
 import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
 import { Ref } from '../datamodel';
@@ -80,30 +87,6 @@ export function getIssuesForModel(model: string): IssuesMap {
 
 export function getIssuesForNode(node: NodeInModel): IssueDescription[] {
   return getIssuesForModel(node.model).getIssuesForNode(node.id.regularId);
-}
-
-export function modelNodeToNodeInModel(node: ModelNode | null): NodeInModel | null {
-  if (node == null) {
-    return null;
-  }
-  return {
-    model: node.modelName(),
-    id: {
-      regularId: node.idString(),
-    },
-  };
-}
-
-export function refToNodeInModel(ref: Ref | null): NodeInModel | null {
-  if (ref == null) {
-    return null;
-  }
-  return {
-    model: ref.data.model.qualifiedName,
-    id: {
-      regularId: ref.data.id.regularId,
-    },
-  };
 }
 
 export class WsCommunication {

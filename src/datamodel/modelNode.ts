@@ -1,11 +1,9 @@
 import { dataToNode } from './registry';
 import {
   getWsCommunication,
-  modelNodeToNodeInModel,
-  refToNodeInModel,
   WsCommunication,
 } from '../communication/wscommunication';
-import { NodeData, nodeIdToString, PropertyValue } from './misc';
+import { modelNodeToNodeInModel, NodeData, nodeIdToString, PropertyValue, refToNodeInModel } from './misc';
 import { Ref } from './ref';
 import { ReferenceChange } from '../communication/messages';
 import { renderDataModels } from '../index';
