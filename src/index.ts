@@ -81,7 +81,7 @@ export { dataToNode };
 import { IssuesMap } from './datamodel/issues'
 import { VNode } from 'snabbdom/vnode';
 import { getIssuesForModel } from './communication/wscommunication';
-import { addInsertHook, wrapInsertHook, wrapUpdateHook } from './presentation';
+import { wrapInsertHook, wrapUpdateHook } from './presentation/cells/vnodemanipulation';
 
 const patch = init([
   // Init patch function with chosen modules

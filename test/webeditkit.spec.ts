@@ -5,6 +5,7 @@ import { installAutoresize } from '../src/presentation/uiutils';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/datamodel/registry';
 import { prepareFakeDom } from './testutils';
+import { clearIssueMap } from '../src/communication/issues';
 
 var sinon = require('sinon');
 
@@ -92,6 +93,7 @@ describe('WebEditKit', () => {
 
     clearDatamodelRoots();
     clearRendererRegistry();
+    clearIssueMap();
   });
 
   afterEach(function () {
@@ -99,6 +101,7 @@ describe('WebEditKit', () => {
 
     clearDatamodelRoots();
     clearRendererRegistry();
+    clearIssueMap();
 
     // @ts-ignore
     delete global.$;

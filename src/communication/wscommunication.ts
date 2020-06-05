@@ -2,16 +2,16 @@ import {
   modelNodeToNodeInModel,
   NodeId,
   nodeIdToString,
-  NodeInModel,
   PropertiesValues,
   PropertyValue, refToNodeInModel,
 } from '../datamodel/misc';
-import { log, uuidv4 } from '../utils/misc';
+import { uuidv4 } from '../utils/misc';
 import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
 import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
-import { editorController, renderDataModels } from '../index';
-import deepEqual = require('deep-equal');
+import { renderDataModels } from '../index';
+import { getIssuesForModel, getIssuesForNode } from './issues'
+export { getIssuesForModel, getIssuesForNode }
 
 import {
   AddChild,
@@ -25,7 +25,7 @@ import {
   ReferenceChange, RegisterForChanges, RequestForDirectReferences,
   RequestPropertyChange, SetChild,
 } from './messages';
-import { IssuesMap } from '../datamodel/issues';
+import { registerIssuesForModel, registerIssuesForNode } from './issues';
 
 export interface Alternative {
   conceptName: string;
@@ -40,40 +40,6 @@ export interface AlternativeForDirectReference {
 
 export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
-
-const issuesMap: { [key: string]: IssuesMap } = {};
-
-function registerIssuesForModel(model: string, issues: IssueDescription[]): boolean {
-  const newIm = new IssuesMap(issues);
-  if (deepEqual(newIm, issuesMap[model])) {
-    log('registerIssuesForModel, false');
-    return false;
-  }
-  log('registerIssuesForModel, true', issuesMap[model], newIm);
-  issuesMap[model] = newIm;
-  return true;
-}
-
-function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): boolean {
-  // This is not correct because we are overriding the issues for the whole model with the issues for a certain root
-  const newIm = new IssuesMap(issues);
-  if (deepEqual(newIm, issuesMap[node.model])) {
-    log('registerIssuesForNode, false');
-    return false;
-  }
-  log('registerIssuesForNode, true', issuesMap[node.model], newIm);
-  issuesMap[node.model] = newIm;
-  editorController().notifyErrorsForNode(node, issues);
-  return true;
-}
-
-export function getIssuesForModel(model: string): IssuesMap {
-  return issuesMap[model] || new IssuesMap([]);
-}
-
-export function getIssuesForNode(node: NodeInModel): IssueDescription[] {
-  return getIssuesForModel(node.model).getIssuesForNode(node.id.regularId);
-}
 
 export class WsCommunication {
   private ws: WebSocket;
