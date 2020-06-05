@@ -26,7 +26,6 @@ import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
-import { printFocus } from '../uiutils';
 import { log } from '../../utils/misc';
 
 export function childCell(
@@ -585,9 +584,7 @@ export function referenceCell(
             moveDown(e.target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
-              printFocus('before deleter');
               deleter();
-              printFocus('after deleter');
               e.preventDefault();
               return false;
             }
@@ -606,17 +603,13 @@ export function referenceCell(
           modelNode.ref(referenceName).loadData((refNode) => {
             // @ts-ignore
             if (refNode.name() != e.target.value) {
-              printFocus('keyup, before setting ref');
               modelNode.setRef(referenceName, null);
-              printFocus('keyup, after setting ref');
               const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
               // @ts-ignore
               resolutionMemory[resolutionMemoryKey] = e.target.value;
-              printFocus('keyup, before renderDataModels');
               renderDataModels(() => {
                 focusOnReference(modelNode, referenceName);
               });
-              printFocus('keyup, after renderDataModels');
             }
           });
         },

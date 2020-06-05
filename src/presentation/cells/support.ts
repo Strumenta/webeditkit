@@ -1,5 +1,4 @@
-import { Alternative, getWsCommunication } from '../../communication/wscommunication';
-import { myAutoresizeOptions, printFocus } from '../uiutils';
+import { myAutoresizeOptions } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
 import { ModelNode } from '../../datamodel/modelNode';
@@ -78,8 +77,6 @@ export function separate(original: any[], separatorGenerator?: () => VNode): any
 }
 
 export function focusOnReference(modelNode: ModelNode, referenceName: string) {
-  // log("should focus on reference", modelNode, referenceName);
-  printFocus('before focusOnReference');
   const firstNodeFound = findDomElement(modelNode.idString(), modelNode.rootName());
   if (firstNodeFound != null) {
     // log("  focusOnReference, node found", firstNodeFound);
@@ -99,12 +96,9 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
       });
     }
     if (refNode.length === 1) {
-      printFocus('before focusing');
       refNode.focus();
-      printFocus('after focusing');
     }
   }
-  printFocus('after focusOnReference');
 }
 
 export function findDomElement(nodeIdStr: string, rootName: string) {

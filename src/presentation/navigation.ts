@@ -127,8 +127,6 @@ export function moveDown(t) {
     } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
     if (nextLine.length == 1) {
       selectFirstElementInRow(nextLine[0], false);
-      //const firstInput = $(nextLine).find("input");
-      //$(firstInput).focus();
     } else {
       moveDown(t.parentElement);
     }
