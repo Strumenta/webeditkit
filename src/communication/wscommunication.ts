@@ -8,16 +8,15 @@ import deepEqual = require('deep-equal');
 
 import {
   AddChild,
-  AddChildAnswer,
-  AskErrorsForNode,
+  AddChildAnswer, AskAlternatives,
+  AskErrorsForNode, CreateRoot, DefaultInsertion, DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport,
-  IssueDescription,
+  ErrorsForNodeReport, InsertNextSibling, InstantiateConcept, Message,
   NodeAdded,
   NodeRemoved,
   PropertyChangeNotification,
-  ReferenceChange,
-  RequestPropertyChange,
+  ReferenceChange, RegisterForChanges, RequestForDirectReferences,
+  RequestPropertyChange, SetChild,
 } from './messages';
 
 export interface Alternative {
@@ -256,32 +255,32 @@ export class WsCommunication {
   }
 
   createRoot(modelName: string, conceptName: string, propertiesValues: PropertiesValues): void {
-    this.sendJSON({
+    this.sendMessage({
       type: 'createRoot',
       modelName,
       conceptName,
       propertiesValues,
-    });
+    } as CreateRoot);
   }
 
-  private sendJSON(data) {
-    this.ws.send(JSON.stringify(data));
+  private sendMessage(message: Message) {
+    this.ws.send(JSON.stringify(message));
   }
 
   private registerForChangesInModel(modelName: string): void {
-    this.sendJSON({
+    this.sendMessage({
       type: 'registerForChanges',
       modelName,
-    });
+    } as RegisterForChanges);
   }
 
   instantiate(conceptName: string, nodeToReplace: ModelNode): void {
-    this.sendJSON({
+    this.sendMessage({
       type: 'instantiateConcept',
       modelName: nodeToReplace.modelName(),
       conceptToInstantiate: conceptName,
       nodeToReplace: nodeToReplace.idString(),
-    });
+    } as InstantiateConcept);
   }
 
   triggerDefaultInsertion(
@@ -291,13 +290,13 @@ export class WsCommunication {
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = reactorToInsertion;
-    this.sendJSON({
+    this.sendMessage({
       type: 'defaultInsertion',
       modelName: container.modelName(),
       container: container.idString(),
       requestId: uuid,
       containmentName,
-    });
+    } as DefaultInsertion);
   }
 
   addChild(container: ModelNode, containmentName: string, conceptName: string): void {
@@ -309,7 +308,7 @@ export class WsCommunication {
       rootNode: { id: { regularId: nodeID }, model: modelName },
       type: 'AskErrorsForNode',
     };
-    this.sendJSON(msg);
+    this.sendMessage(msg);
   }
 
   addChildAtIndex(
@@ -324,7 +323,7 @@ export class WsCommunication {
       throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
     }
     this.callbacks[uuid] = initializer;
-    this.sendJSON({
+    this.sendMessage({
       type: 'addChild',
       requestId: uuid,
       index,
@@ -339,14 +338,14 @@ export class WsCommunication {
     // TODO communicateReferenceChange should become a Reference Change: we are saying
     // to the server that a reference changed
     if (ref == null) {
-      this.sendJSON({
+      this.sendMessage({
         type: 'ReferenceChange',
         node: modelNodeToNodeInModel(container),
         referenceName,
         referenceValue: null,
       } as ReferenceChange);
     } else {
-      this.sendJSON({
+      this.sendMessage({
         type: 'ReferenceChange',
         node: modelNodeToNodeInModel(container),
         referenceName,
@@ -356,11 +355,11 @@ export class WsCommunication {
   }
 
   insertNextSibling(sibling: ModelNode): void {
-    this.sendJSON({
+    this.sendMessage({
       type: 'insertNextSibling',
       modelName: sibling.modelName(),
       sibling: sibling.idString(),
-    });
+    } as InsertNextSibling);
   }
 
   setChild(
@@ -371,30 +370,30 @@ export class WsCommunication {
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = initializer;
-    this.sendJSON({
+    this.sendMessage({
       type: 'setChild',
       requestId: uuid,
       modelName: container.modelName(),
       container: container.idString(),
       containmentName,
       conceptToInstantiate: conceptName,
-    });
+    } as SetChild);
   }
 
   deleteNode(node: ModelNode): void {
-    this.sendJSON({
+    this.sendMessage({
       type: 'deleteNode',
       modelName: node.modelName(),
       node: node.idString(),
-    });
+    } as DeleteNode);
   }
 
   deleteNodeById(modelName: string, nodeId: string): void {
-    this.sendJSON({
+    this.sendMessage({
       type: 'deleteNode',
       modelName,
       node: nodeId,
-    });
+    } as DeleteNode);
   }
 
   triggerChangeOnPropertyNode(
@@ -407,7 +406,7 @@ export class WsCommunication {
     if (callback != null) {
       this.callbacks[requestId] = callback;
     }
-    this.sendJSON({
+    this.sendMessage({
       type: 'propertyChange',
       node: {
         model: modelNode.modelName(),
@@ -430,13 +429,13 @@ export class WsCommunication {
   ): void {
     // we generate a UUID and ask the server to answer us using such UUID
     this.callbacks[uuid] = alternativesReceiver;
-    this.sendJSON({
+    this.sendMessage({
       type: 'askAlternatives',
       requestId: uuid,
       modelName: modelNode.modelName(),
       nodeId: modelNode.idString(),
       containmentName,
-    });
+    } as AskAlternatives);
   }
 
   // Get alternatives nodes that can be references
@@ -447,13 +446,13 @@ export class WsCommunication {
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = alternativesReceiver;
-    this.sendJSON({
+    this.sendMessage({
       type: 'requestForDirectReferences',
       requestId: uuid,
       modelName: modelNode.modelName(),
       container: modelNode.idString(),
       referenceName,
-    });
+    } as RequestForDirectReferences);
   }
 }
 

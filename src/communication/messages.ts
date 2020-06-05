@@ -2,7 +2,7 @@
  * This file contains all the messages which are exchanged with the MPS Server
  */
 
-import { NodeData, NodeId, NodeInModel, PropertyValue } from '../datamodel/misc';
+import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 
 //
 // Support structures
@@ -50,6 +50,26 @@ export interface NodeRemoved extends Message {
   parentNodeId: NodeId;
   relationName: string;
   child: NodeData;
+}
+
+export interface DeleteNode extends Message {
+  type: 'deleteNode',
+  modelName: string,
+  node: string
+}
+
+export interface InstantiateConcept extends Message {
+  type: 'instantiateConcept',
+  modelName: string,
+  conceptToInstantiate: string,
+  nodeToReplace: string
+}
+
+export interface CreateRoot extends Message {
+  type: 'createRoot',
+  modelName: string,
+  conceptName: string,
+  propertiesValues: PropertiesValues
 }
 
 //
@@ -100,6 +120,26 @@ export interface AddChildAnswer extends RequestAnswer {
   nodeCreated: NodeInModel;
 }
 
+export interface SetChild extends RequestMessage {
+  type: 'setChild',
+  modelName: string,
+  container: string,
+  containmentName: string
+  conceptToInstantiate: string
+}
+
+export interface InsertNextSibling extends Message {
+  type: 'insertNextSibling',
+  modelName: string,
+  sibling: string
+}
+
+export interface DefaultInsertion extends RequestMessage {
+  type: 'defaultInsertion',
+  modelName: string,
+  container: string,
+  containmentName: string
+}
 
 //
 // Messages regarding References
@@ -109,6 +149,13 @@ export interface ReferenceChange extends Message {
   node: NodeInModel;
   referenceName: string;
   referenceValue: NodeInModel;
+}
+
+export interface RequestForDirectReferences extends RequestMessage {
+  type: 'requestForDirectReferences',
+  modelName: string,
+  container: string,
+  referenceName: string
 }
 
 //
@@ -127,4 +174,24 @@ export interface ErrorsForNodeReport extends Message {
 
 export interface AskErrorsForNode extends Message {
   rootNode: NodeInModel;
+}
+
+//
+// Messages regarding suggestions
+//
+
+export interface AskAlternatives extends RequestMessage {
+  type: 'askAlternatives',
+  modelName: string
+  nodeId: string
+  containmentName: string
+}
+
+//
+// Other messages
+//
+
+export interface RegisterForChanges extends Message {
+  type: 'registerForChanges',
+  modelName: string
 }
