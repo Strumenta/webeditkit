@@ -208,7 +208,7 @@ export class WsCommunication {
     };
   }
 
-  invokeRequiredCallback(requestId: string, description: string, ...args: any[]) {
+  private invokeRequiredCallback(requestId: string, description: string, ...args: any[]) {
     const cb = this.getAndDeleteCallback(requestId);
     if (cb == null) {
       throw new Error(`No callback for request ${requestId} (${description})`);
@@ -216,7 +216,7 @@ export class WsCommunication {
     cb(...args);
   }
 
-  invokeCallback(requestId: string, ...args: any[]) {
+  private invokeCallback(requestId: string, ...args: any[]) {
     const cb = this.getAndDeleteCallback(requestId);
     if (cb != null) {
       cb(...args);
