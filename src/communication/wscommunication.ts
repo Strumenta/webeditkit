@@ -10,7 +10,7 @@ import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/
 import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { renderDataModels } from '../index';
-import { getIssuesForModel, getIssuesForNode } from './issues'
+import { getIssuesForModel} from './issues'
 export { getIssuesForModel }
 
 import {
@@ -69,93 +69,106 @@ export class WsCommunication {
       if (!this.silent) {
         console.info('  data: ', data);
       }
-      if (data.type === 'ErrorsForModelReport') {
-        const msg = data as ErrorsForModelReport;
-        if (registerIssuesForModel(msg.model, msg.issues)) {
-          renderDataModels();
+      switch (data.type.toLowerCase()) {
+        case 'ErrorsForModelReport'.toLowerCase(): {
+          const msg = data as ErrorsForModelReport;
+          if (registerIssuesForModel(msg.model, msg.issues)) {
+            renderDataModels();
+          }
         }
-      } else if (data.type.toLowerCase() === 'ErrorsForNodeReport'.toLowerCase()) {
-        const msg = data as ErrorsForNodeReport;
-        if (registerIssuesForNode(msg.rootNode, msg.issues)) {
-          renderDataModels();
+        case 'ErrorsForNodeReport'.toLowerCase(): {
+          const msg = data as ErrorsForNodeReport;
+          if (registerIssuesForNode(msg.rootNode, msg.issues)) {
+            renderDataModels();
+          }
         }
-      } else if (data.type.toLowerCase() === 'propertyChange'.toLowerCase()) {
-        const msg = data as PropertyChangeNotification;
-        const root = getDatamodelRoot(localName);
-        if (root == null) {
-          throw new Error('data model with local name ' + localName + ' was not found');
-        }
-        const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
-        node.setProperty(msg.propertyName, msg.propertyValue);
-        renderDataModels();
-      } else if (data.type === 'ReferenceChange') {
-        const msg = data as ReferenceChange;
-        const root = getDatamodelRoot(localName);
-        if (root == null) {
-          throw new Error('data model with local name ' + localName + ' was not found');
-        }
-        reactToAReferenceChange(msg, root);
-      } else if (data.type === 'nodeAdded') {
-        const msg = data as NodeAdded;
-        const root = getDatamodelRoot(localName);
-        if (msg.parentNodeId == null) {
-          // this is a new root
-        } else {
+        case 'propertyChange'.toLowerCase() : {
+          const msg = data as PropertyChangeNotification;
+          const root = getDatamodelRoot(localName);
           if (root == null) {
             throw new Error('data model with local name ' + localName + ' was not found');
           }
-          const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
-          if (parentNode == null) {
-            throw new Error(
-              'Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId),
-            );
-          }
-          parentNode.addChild(msg.relationName, msg.index, msg.child);
+          const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
+          node.setProperty(msg.propertyName, msg.propertyValue);
+          renderDataModels();
         }
-        renderDataModels();
-      } else if (data.type === 'nodeRemoved') {
-        const msg = data as NodeRemoved;
-        const root = getDatamodelRoot(localName);
-        if (msg.parentNodeId == null) {
-          // this is a root
-        } else {
+        case 'ReferenceChange'.toLowerCase() : {
+          const msg = data as ReferenceChange;
+          const root = getDatamodelRoot(localName);
           if (root == null) {
             throw new Error('data model with local name ' + localName + ' was not found');
           }
-          const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
-          if (parentNode == null) {
-            throw new Error('Cannot remove node because parent was not found');
-          }
-          parentNode.removeChild(msg.relationName, msg.child);
+          reactToAReferenceChange(msg, root);
         }
-        renderDataModels();
-      } else if (data.type === 'AnswerAlternatives') {
-        this.invokeCallback(data.requestId, data.items);
-      } else if (data.type.toLowerCase() === 'AddChildAnswer'.toLowerCase()) {
-        const msg = data as AddChildAnswer;
-        const callback = this.getAndDeleteCallback(data.requestId);
-        if (callback != null) {
-          const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
-          if (createdNode == null) {
-            console.warn(
-              'cannot handle AddChildAnswer as we cannot find the created node in the local repo',
-              msg.nodeCreated,
-            );
+        case 'nodeAdded'.toLowerCase() : {
+          const msg = data as NodeAdded;
+          const root = getDatamodelRoot(localName);
+          if (msg.parentNodeId == null) {
+            // this is a new root
           } else {
-            callback(createdNode);
+            if (root == null) {
+              throw new Error('data model with local name ' + localName + ' was not found');
+            }
+            const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
+            if (parentNode == null) {
+              throw new Error(
+                'Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId),
+              );
+            }
+            parentNode.addChild(msg.relationName, msg.index, msg.child);
+          }
+          renderDataModels();
+        }
+        case 'nodeRemoved'.toLowerCase() : {
+          const msg = data as NodeRemoved;
+          const root = getDatamodelRoot(localName);
+          if (msg.parentNodeId == null) {
+            // this is a root
+          } else {
+            if (root == null) {
+              throw new Error('data model with local name ' + localName + ' was not found');
+            }
+            const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
+            if (parentNode == null) {
+              throw new Error('Cannot remove node because parent was not found');
+            }
+            parentNode.removeChild(msg.relationName, msg.child);
+          }
+          renderDataModels();
+        }
+        case 'AnswerAlternatives'.toLowerCase() : {
+          this.invokeCallback(data.requestId, data.items);
+        }
+        case 'AddChildAnswer'.toLowerCase() : {
+          const msg = data as AddChildAnswer;
+          const callback = this.getAndDeleteCallback(data.requestId);
+          if (callback != null) {
+            const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
+            if (createdNode == null) {
+              console.warn(
+                'cannot handle AddChildAnswer as we cannot find the created node in the local repo',
+                msg.nodeCreated,
+              );
+            } else {
+              callback(createdNode);
+            }
           }
         }
-      } else if (data.type === 'AnswerDefaultInsertion') {
-        this.invokeRequiredCallback(data.requestId, 'default insertion', data.addedNodeID);
-      } else if (data.type === 'AnswerForDirectReferences') {
-        this.invokeCallback(data.requestId, data.items);
-      } else if (data.type === 'AnswerPropertyChange') {
-        this.invokeCallback(data.requestId);
-      } else {
-        if (!this.silent) {
-          console.warn('data', data);
+        case'AnswerDefaultInsertion'.toLowerCase() : {
+          this.invokeRequiredCallback(data.requestId, 'default insertion', data.addedNodeID);
         }
-        throw new Error('Unknown message type: ' + data.type);
+        case 'AnswerForDirectReferences'.toLowerCase() : {
+          this.invokeCallback(data.requestId, data.items);
+        }
+        case 'AnswerPropertyChange'.toLowerCase() : {
+          this.invokeCallback(data.requestId);
+        }
+        default: {
+          if (!this.silent) {
+            console.warn('data', data);
+          }
+          throw new Error('Unknown message type: ' + data.type);
+        }
       }
     };
   }
