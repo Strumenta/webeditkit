@@ -3,15 +3,16 @@ import {
   NodeId,
   nodeIdToString,
   PropertiesValues,
-  PropertyValue, refToNodeInModel,
+  PropertyValue,
+  refToNodeInModel,
 } from '../datamodel/misc';
 import { uuidv4 } from '../utils/misc';
 import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
 import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { renderDataModels } from '../index';
-import { getIssuesForModel} from './issues'
-export { getIssuesForModel }
+import { getIssuesForModel } from './issues';
+export { getIssuesForModel };
 
 import {
   AddChild,
@@ -63,7 +64,7 @@ export class WsCommunication {
   private modelName: string; // This is the qualified model name
   private localName: string; // This is the local model name or target
   private silent: boolean;
-  private handlers : { [type: string] : MessageHandler<Message>};
+  private handlers: { [type: string]: MessageHandler<Message> };
   private readonly callbacks: {};
 
   private registerHandlersForErrorMessages() {
@@ -109,9 +110,7 @@ export class WsCommunication {
         }
         const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
         if (parentNode == null) {
-          throw new Error(
-            'Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId),
-          );
+          throw new Error('Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId));
         }
         parentNode.addChild(msg.relationName, msg.index, msg.child);
       }
@@ -202,7 +201,7 @@ export class WsCommunication {
         }
         throw new Error('Unknown message type: ' + data.type);
       } else {
-        handler((data));
+        handler(data);
         return;
       }
     };

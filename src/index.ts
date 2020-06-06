@@ -78,7 +78,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
 import { dataToNode } from './datamodel';
 export { dataToNode };
-import { IssuesMap } from './datamodel/issues'
+import { IssuesMap } from './datamodel/issues';
 import { VNode } from 'snabbdom/vnode';
 import { getIssuesForModel } from './communication/wscommunication';
 import { wrapInsertHook, wrapUpdateHook } from './presentation/cells/vnodemanipulation';

@@ -1,8 +1,5 @@
 import { dataToNode } from './registry';
-import {
-  getWsCommunication,
-  WsCommunication,
-} from '../communication/wscommunication';
+import { getWsCommunication, WsCommunication } from '../communication/wscommunication';
 import { modelNodeToNodeInModel, NodeData, nodeIdToString, PropertyValue, refToNodeInModel } from './misc';
 import { Ref } from './ref';
 import { ReferenceChange } from '../communication/messages';

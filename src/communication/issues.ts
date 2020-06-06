@@ -25,7 +25,11 @@ export function registerIssuesForModel(model: string, issues: IssueDescription[]
 export function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): boolean {
   for (const i of issues) {
     if (!deepEqual(i.node, node.id)) {
-      throw new Error(`These issues cannot be attributed to this node: node target is ${JSON.stringify(node)}, node in issue is ${JSON.stringify(i.node)}`);
+      throw new Error(
+        `These issues cannot be attributed to this node: node target is ${JSON.stringify(
+          node,
+        )}, node in issue is ${JSON.stringify(i.node)}`,
+      );
     }
   }
 

@@ -60,23 +60,23 @@ export interface NodeRemoved extends Message {
 }
 
 export interface DeleteNode extends Message {
-  type: 'deleteNode',
-  modelName: string,
-  node: string
+  type: 'deleteNode';
+  modelName: string;
+  node: string;
 }
 
 export interface InstantiateConcept extends Message {
-  type: 'instantiateConcept',
-  modelName: string,
-  conceptToInstantiate: string,
-  nodeToReplace: string
+  type: 'instantiateConcept';
+  modelName: string;
+  conceptToInstantiate: string;
+  nodeToReplace: string;
 }
 
 export interface CreateRoot extends Message {
-  type: 'createRoot',
-  modelName: string,
-  conceptName: string,
-  propertiesValues: PropertiesValues
+  type: 'createRoot';
+  modelName: string;
+  conceptName: string;
+  propertiesValues: PropertiesValues;
 }
 
 //
@@ -128,24 +128,24 @@ export interface AddChildAnswer extends RequestAnswer {
 }
 
 export interface SetChild extends RequestMessage {
-  type: 'setChild',
-  modelName: string,
-  container: string,
-  containmentName: string
-  conceptToInstantiate: string
+  type: 'setChild';
+  modelName: string;
+  container: string;
+  containmentName: string;
+  conceptToInstantiate: string;
 }
 
 export interface InsertNextSibling extends Message {
-  type: 'insertNextSibling',
-  modelName: string,
-  sibling: string
+  type: 'insertNextSibling';
+  modelName: string;
+  sibling: string;
 }
 
 export interface DefaultInsertion extends RequestMessage {
-  type: 'defaultInsertion',
-  modelName: string,
-  container: string,
-  containmentName: string
+  type: 'defaultInsertion';
+  modelName: string;
+  container: string;
+  containmentName: string;
 }
 
 //
@@ -159,10 +159,10 @@ export interface ReferenceChange extends Message {
 }
 
 export interface RequestForDirectReferences extends RequestMessage {
-  type: 'requestForDirectReferences',
-  modelName: string,
-  container: string,
-  referenceName: string
+  type: 'requestForDirectReferences';
+  modelName: string;
+  container: string;
+  referenceName: string;
 }
 
 //
@@ -214,6 +214,6 @@ export interface AnswerForDirectReferences extends RequestAnswer {
 //
 
 export interface RegisterForChanges extends Message {
-  type: 'registerForChanges',
-  modelName: string
+  type: 'registerForChanges';
+  modelName: string;
 }
