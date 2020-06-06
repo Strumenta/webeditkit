@@ -319,21 +319,12 @@ export class WsCommunication {
   communicateReferenceChange(container: ModelNode, referenceName: string, ref: Ref): void {
     // TODO communicateReferenceChange should become a Reference Change: we are saying
     // to the server that a reference changed
-    if (ref == null) {
-      this.sendMessage({
-        type: 'ReferenceChange',
-        node: modelNodeToNodeInModel(container),
-        referenceName,
-        referenceValue: null,
-      } as ReferenceChange);
-    } else {
-      this.sendMessage({
-        type: 'ReferenceChange',
-        node: modelNodeToNodeInModel(container),
-        referenceName,
-        referenceValue: refToNodeInModel(ref),
-      } as ReferenceChange);
-    }
+    this.sendMessage({
+      type: 'ReferenceChange',
+      node: modelNodeToNodeInModel(container),
+      referenceName,
+      referenceValue: ref == null? null : refToNodeInModel(ref),
+    } as ReferenceChange);
   }
 
   insertNextSibling(sibling: ModelNode): void {
