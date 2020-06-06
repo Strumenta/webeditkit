@@ -15,15 +15,30 @@ export { getIssuesForModel }
 
 import {
   AddChild,
-  AddChildAnswer, AskAlternatives,
-  AskErrorsForNode, CreateRoot, DefaultInsertion, DeleteNode,
+  AddChildAnswer,
+  AnswerAlternatives,
+  AnswerDefaultInsertion,
+  AnswerForDirectReferences,
+  AnswerPropertyChange,
+  AskAlternatives,
+  AskErrorsForNode,
+  CreateRoot,
+  DefaultInsertion,
+  DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport, InsertNextSibling, InstantiateConcept, IssueDescription, Message,
+  ErrorsForNodeReport,
+  InsertNextSibling,
+  InstantiateConcept,
+  IssueDescription,
+  Message,
   NodeAdded,
   NodeRemoved,
   PropertyChangeNotification,
-  ReferenceChange, RegisterForChanges, RequestForDirectReferences,
-  RequestPropertyChange, SetChild,
+  ReferenceChange,
+  RegisterForChanges,
+  RequestForDirectReferences,
+  RequestPropertyChange,
+  SetChild,
 } from './messages';
 import { registerIssuesForModel, registerIssuesForNode } from './issues';
 
@@ -41,12 +56,117 @@ export interface AlternativeForDirectReference {
 export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
 
+type MessageHandler<M extends Message> = (msg: M) => void;
+
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
   private localName: string; // This is the local model name or target
   private silent: boolean;
+  private handlers : { [type: string] : MessageHandler<Message>};
   private readonly callbacks: {};
+
+  private registerHandlersForErrorMessages() {
+    this.registerHandler('ErrorsForModelReport', (msg: ErrorsForModelReport) => {
+      if (registerIssuesForModel(msg.model, msg.issues)) {
+        renderDataModels();
+      }
+    });
+    this.registerHandler('ErrorsForNodeReport', (msg: ErrorsForNodeReport) => {
+      if (registerIssuesForNode(msg.rootNode, msg.issues)) {
+        renderDataModels();
+      }
+    });
+  }
+
+  private registerHandlersForNodeChanges() {
+    this.registerHandler('propertyChange', (msg: PropertyChangeNotification) => {
+      const root = getDatamodelRoot(this.localName);
+      if (root == null) {
+        throw new Error('data model with local name ' + this.localName + ' was not found');
+      }
+      const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
+      node.setProperty(msg.propertyName, msg.propertyValue);
+      renderDataModels();
+    });
+    this.registerHandler('ReferenceChange', (msg: ReferenceChange) => {
+      const root = getDatamodelRoot(this.localName);
+      if (root == null) {
+        throw new Error('data model with local name ' + this.localName + ' was not found');
+      }
+      reactToAReferenceChange(msg, root);
+    });
+  }
+
+  private registerHandlersForNodesLifecycle() {
+    this.registerHandler('nodeAdded', (msg: NodeAdded) => {
+      const root = getDatamodelRoot(this.localName);
+      if (msg.parentNodeId == null) {
+        // this is a new root
+      } else {
+        if (root == null) {
+          throw new Error('data model with local name ' + this.localName + ' was not found');
+        }
+        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
+        if (parentNode == null) {
+          throw new Error(
+            'Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId),
+          );
+        }
+        parentNode.addChild(msg.relationName, msg.index, msg.child);
+      }
+      renderDataModels();
+    });
+    this.registerHandler('nodeRemoved', (msg: NodeRemoved) => {
+      const root = getDatamodelRoot(this.localName);
+      if (msg.parentNodeId == null) {
+        // this is a root
+      } else {
+        if (root == null) {
+          throw new Error('data model with local name ' + this.localName + ' was not found');
+        }
+        const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
+        if (parentNode == null) {
+          throw new Error('Cannot remove node because parent was not found');
+        }
+        parentNode.removeChild(msg.relationName, msg.child);
+      }
+      renderDataModels();
+    });
+    this.registerHandler('AddChildAnswer', (msg: AddChildAnswer) => {
+      const callback = this.getAndDeleteCallback(msg.requestId);
+      if (callback != null) {
+        const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
+        if (createdNode == null) {
+          console.warn(
+            'cannot handle AddChildAnswer as we cannot find the created node in the local repo',
+            msg.nodeCreated,
+          );
+        } else {
+          callback(createdNode);
+        }
+      }
+    });
+  }
+
+  private registerHandlersForCallbacks() {
+    this.registerHandler('AnswerAlternatives', (msg: AnswerAlternatives) => {
+      this.invokeCallback(msg.requestId, msg.items);
+    });
+    this.registerHandler('AnswerDefaultInsertion', (msg: AnswerDefaultInsertion) => {
+      this.invokeRequiredCallback(msg.requestId, 'default insertion', msg.addedNodeID);
+    });
+    this.registerHandler('AnswerForDirectReferences', (msg: AnswerForDirectReferences) => {
+      this.invokeCallback(msg.requestId, msg.items);
+    });
+    this.registerHandler('AnswerPropertyChange', (msg: AnswerPropertyChange) => {
+      this.invokeCallback(msg.requestId);
+    });
+  }
+
+  private registerHandler(type: string, handler: MessageHandler<Message>) {
+    this.handlers[type.toLowerCase()] = handler;
+  }
 
   constructor(url: string, modelName: string, localName: string, ws?: WebSocket) {
     this.ws = ws || new WebSocket(url);
@@ -56,6 +176,12 @@ export class WsCommunication {
     this.silent = true;
 
     const thisWS = this;
+
+    this.handlers = {};
+    this.registerHandlersForErrorMessages();
+    this.registerHandlersForNodeChanges();
+    this.registerHandlersForNodesLifecycle();
+    this.registerHandlersForCallbacks();
 
     this.ws.onopen = (event) => {
       thisWS.registerForChangesInModel(modelName);
@@ -69,106 +195,15 @@ export class WsCommunication {
       if (!this.silent) {
         console.info('  data: ', data);
       }
-      switch (data.type.toLowerCase()) {
-        case 'ErrorsForModelReport'.toLowerCase(): {
-          const msg = data as ErrorsForModelReport;
-          if (registerIssuesForModel(msg.model, msg.issues)) {
-            renderDataModels();
-          }
+      const handler = this.handlers[data.type.toLowerCase()];
+      if (handler == null) {
+        if (!this.silent) {
+          console.warn('data', data);
         }
-        case 'ErrorsForNodeReport'.toLowerCase(): {
-          const msg = data as ErrorsForNodeReport;
-          if (registerIssuesForNode(msg.rootNode, msg.issues)) {
-            renderDataModels();
-          }
-        }
-        case 'propertyChange'.toLowerCase() : {
-          const msg = data as PropertyChangeNotification;
-          const root = getDatamodelRoot(localName);
-          if (root == null) {
-            throw new Error('data model with local name ' + localName + ' was not found');
-          }
-          const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
-          node.setProperty(msg.propertyName, msg.propertyValue);
-          renderDataModels();
-        }
-        case 'ReferenceChange'.toLowerCase() : {
-          const msg = data as ReferenceChange;
-          const root = getDatamodelRoot(localName);
-          if (root == null) {
-            throw new Error('data model with local name ' + localName + ' was not found');
-          }
-          reactToAReferenceChange(msg, root);
-        }
-        case 'nodeAdded'.toLowerCase() : {
-          const msg = data as NodeAdded;
-          const root = getDatamodelRoot(localName);
-          if (msg.parentNodeId == null) {
-            // this is a new root
-          } else {
-            if (root == null) {
-              throw new Error('data model with local name ' + localName + ' was not found');
-            }
-            const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
-            if (parentNode == null) {
-              throw new Error(
-                'Cannot add node because parent was not found. ID was: ' + JSON.stringify(msg.parentNodeId),
-              );
-            }
-            parentNode.addChild(msg.relationName, msg.index, msg.child);
-          }
-          renderDataModels();
-        }
-        case 'nodeRemoved'.toLowerCase() : {
-          const msg = data as NodeRemoved;
-          const root = getDatamodelRoot(localName);
-          if (msg.parentNodeId == null) {
-            // this is a root
-          } else {
-            if (root == null) {
-              throw new Error('data model with local name ' + localName + ' was not found');
-            }
-            const parentNode = dataToNode(root.data).findNodeById(nodeIdToString(msg.parentNodeId));
-            if (parentNode == null) {
-              throw new Error('Cannot remove node because parent was not found');
-            }
-            parentNode.removeChild(msg.relationName, msg.child);
-          }
-          renderDataModels();
-        }
-        case 'AnswerAlternatives'.toLowerCase() : {
-          this.invokeCallback(data.requestId, data.items);
-        }
-        case 'AddChildAnswer'.toLowerCase() : {
-          const msg = data as AddChildAnswer;
-          const callback = this.getAndDeleteCallback(data.requestId);
-          if (callback != null) {
-            const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
-            if (createdNode == null) {
-              console.warn(
-                'cannot handle AddChildAnswer as we cannot find the created node in the local repo',
-                msg.nodeCreated,
-              );
-            } else {
-              callback(createdNode);
-            }
-          }
-        }
-        case'AnswerDefaultInsertion'.toLowerCase() : {
-          this.invokeRequiredCallback(data.requestId, 'default insertion', data.addedNodeID);
-        }
-        case 'AnswerForDirectReferences'.toLowerCase() : {
-          this.invokeCallback(data.requestId, data.items);
-        }
-        case 'AnswerPropertyChange'.toLowerCase() : {
-          this.invokeCallback(data.requestId);
-        }
-        default: {
-          if (!this.silent) {
-            console.warn('data', data);
-          }
-          throw new Error('Unknown message type: ' + data.type);
-        }
+        throw new Error('Unknown message type: ' + data.type);
+      } else {
+        handler((data));
+        return;
       }
     };
   }

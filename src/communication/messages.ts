@@ -3,6 +3,7 @@
  */
 
 import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
+import { Alternatives } from './wscommunication';
 
 // Refactoring plan:
 // * Revisit NodeId to be a simple string
@@ -187,10 +188,25 @@ export interface AskErrorsForNode extends Message {
 //
 
 export interface AskAlternatives extends RequestMessage {
-  type: 'askAlternatives',
-  modelName: string
-  nodeId: string
-  containmentName: string
+  type: 'askAlternatives';
+  modelName: string;
+  nodeId: string;
+  containmentName: string;
+}
+
+export interface AnswerAlternatives extends RequestAnswer {
+  type: 'AnswerAlternatives';
+  items: Alternatives;
+}
+
+export interface AnswerDefaultInsertion extends RequestAnswer {
+  type: 'AnswerDefaultInsertion';
+  addedNodeID: NodeId;
+}
+
+export interface AnswerForDirectReferences extends RequestAnswer {
+  type: 'AnswerAlternatives';
+  items: Alternatives;
 }
 
 //
