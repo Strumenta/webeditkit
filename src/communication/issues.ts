@@ -29,7 +29,6 @@ export function registerIssuesForNode(node: NodeInModel, issues: IssueDescriptio
     }
   }
 
-  // This is not correct because we are overriding the issues for the whole model with the issues for a certain root
   const newIm = new IssuesMap(issues);
   if (deepEqual(newIm, getIssuesForNode(node))) {
     log('registerIssuesForNode, false');
