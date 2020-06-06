@@ -6,6 +6,7 @@ import { Ref } from './ref';
 /// Nodes
 ///
 
+// TODO refactor to become a simple string
 export interface NodeId {
   regularId: string;
 }

@@ -4,6 +4,12 @@
 
 import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 
+// Refactoring plan:
+// * Revisit NodeId to be a simple string
+// * Rename NodeIDInModel as QualifiedNodeID
+// * Use QualifiedNodeID in all messages which uses both a model name and an ID
+// * Use NodeID where the an identifier of a node is expected
+
 //
 // Support structures
 //
