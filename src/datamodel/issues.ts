@@ -13,4 +13,7 @@ export class IssuesMap {
   getIssuesForNode(nodeId: string): IssueDescription[] {
     return this.map[nodeId] || [];
   }
+  setIssuesForNode(nodeId: string, issues: IssueDescription[]) {
+    this.map[nodeId] = issues;
+  }
 }

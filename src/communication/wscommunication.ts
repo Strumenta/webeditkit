@@ -11,7 +11,7 @@ import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { renderDataModels } from '../index';
 import { getIssuesForModel, getIssuesForNode } from './issues'
-export { getIssuesForModel, getIssuesForNode }
+export { getIssuesForModel }
 
 import {
   AddChild,

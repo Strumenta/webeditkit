@@ -23,20 +23,32 @@ export function registerIssuesForModel(model: string, issues: IssueDescription[]
 }
 
 export function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): boolean {
+  for (const i of issues) {
+    if (!deepEqual(i.node, node.id)) {
+      throw new Error(`These issues cannot be attributed to this node: node target is ${JSON.stringify(node)}, node in issue is ${JSON.stringify(i.node)}`);
+    }
+  }
+
   // This is not correct because we are overriding the issues for the whole model with the issues for a certain root
   const newIm = new IssuesMap(issues);
-  if (deepEqual(newIm, issuesMap[node.model])) {
+  if (deepEqual(newIm, getIssuesForNode(node))) {
     log('registerIssuesForNode, false');
     return false;
   }
   log('registerIssuesForNode, true', issuesMap[node.model], newIm);
-  issuesMap[node.model] = newIm;
+  getIssuesForModel(node.model).setIssuesForNode(node.id.regularId, issues);
   editorController().notifyErrorsForNode(node, issues);
   return true;
 }
 
 export function getIssuesForModel(model: string): IssuesMap {
-  return issuesMap[model] || new IssuesMap([]);
+  const existing = issuesMap[model];
+  if (existing != null) {
+    return existing;
+  }
+  const newlyCreated = new IssuesMap([]);
+  issuesMap[model] = newlyCreated;
+  return newlyCreated;
 }
 
 export function getIssuesForNode(node: NodeInModel): IssueDescription[] {

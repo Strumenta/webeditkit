@@ -36,7 +36,7 @@ export { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass,
 import { editorController, EditorController, Observer } from './presentation';
 export { editorController, EditorController, Observer };
 
-import { getIssuesForNode } from './communication';
+import { getIssuesForNode } from './communication/issues';
 export { getIssuesForNode };
 
 import { getNodeFromLocalRepo } from './datamodel';

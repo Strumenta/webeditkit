@@ -6,7 +6,7 @@ import {
   registerIssuesForModel,
   registerIssuesForNode,
 } from '../src/communication/issues';
-import { getIssuesForNode } from '../src';
+import { getIssuesForNode } from '../src/communication/issues';
 
 describe('Communication.Issues', () => {
 
@@ -74,7 +74,7 @@ describe('Communication.Issues', () => {
 
   it('registerIssuesForNode, node of issue should match', () => {
     // register issue with different node id: this should explode
-    registerIssuesForNode({model:"my.model", id:{regularId:"123"}}, [{message:"Nothing to bad1", severity:"warning", node:{regularId:"456"}}]);
+    expect(()=>registerIssuesForNode({model:"my.model", id:{regularId:"123"}}, [{message:"Nothing to bad1", severity:"warning", node:{regularId:"456"}}])).throw();
 
     expect(getIssuesForNode({model:"my.model", id:{regularId:"123"}})).to.eql([]);
   });
