@@ -4,6 +4,7 @@ import 'mocha';
 import { VNode } from 'snabbdom/vnode';
 import {
   childCell,
+  Data,
   editableCell,
   emptyRow,
   fixedCell,
@@ -48,9 +49,11 @@ import {
   pressArrowRight,
   pressBackspace,
   pressEnter,
+  triggerInputEvent,
 } from './testutils';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
+import { SinonFakeTimers } from 'sinon';
 
 const patch = init([
   // Init patch function with chosen modules
@@ -290,8 +293,14 @@ const rootData3: NodeData = {
   abstractConcept: false,
 };
 
+let data: Data;
+
 describe('Cells.Types', () => {
-  afterEach(function () {
+  beforeEach(() => {
+    data = new Data();
+  });
+
+  afterEach(() => {
     sinon.restore();
 
     clearDatamodelRoots();
@@ -657,18 +666,27 @@ describe('Cells.Types', () => {
   });
 
   describe('should support editableCell', () => {
+    let clock: SinonFakeTimers;
+    before(() => {
+      clock = sinon.useFakeTimers();
+    });
+    after(() => {
+      clock.restore();
+    });
+    const fakeURL = 'ws://localhost:8080';
+
     it('it should be rendered in a certain way', () => {
       const aNode = dataToNode(rootData1);
-      const cell = editableCell(aNode, 'name');
+      const cell = editableCell(data, aNode, 'name');
       expect(toHTML(cell)).to.eql(
-        '<input class="editable" value="My calculations" placeholder="&lt;no name&gt;" required="true">',
+        '<input class="editable" value="My calculations" placeholder="&lt;no name&gt;" required="required">',
       );
     });
     it('it should support extra classes', () => {
       const aNode = dataToNode(rootData1);
-      const cell = editableCell(aNode, 'name', ['a', 'b']);
+      const cell = editableCell(data, aNode, 'name', ['a', 'b']);
       expect(toHTML(cell)).to.eql(
-        '<input class="editable a b" value="My calculations" placeholder="&lt;no name&gt;" required="true">',
+        '<input class="editable a b" value="My calculations" placeholder="&lt;no name&gt;" required="required">',
       );
     });
     it('it should react to ArrowRight', () => {
@@ -677,7 +695,7 @@ describe('Cells.Types', () => {
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
 
-      const cell = editableCell(aNode, 'name');
+      const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
         let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
@@ -696,7 +714,7 @@ describe('Cells.Types', () => {
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
 
-      const cell = editableCell(aNode, 'name');
+      const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
         let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
@@ -717,7 +735,7 @@ describe('Cells.Types', () => {
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
 
-      const cell = editableCell(aNode, 'name');
+      const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
         let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
@@ -738,7 +756,7 @@ describe('Cells.Types', () => {
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
 
-      const cell = editableCell(aNode, 'name');
+      const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
         let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
@@ -764,7 +782,7 @@ describe('Cells.Types', () => {
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
 
-      const cell = editableCell(aNode, 'name');
+      const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
         let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
@@ -780,7 +798,6 @@ describe('Cells.Types', () => {
         expect(myInput.parentElement.outerHTML).to.eql(
           '<div class="represent-node" data-node_represented="324292001770075100"><input class="editable" placeholder="<no name>" required=""></div>',
         );
-        mockServer.close();
         done();
       });
 
@@ -788,31 +805,44 @@ describe('Cells.Types', () => {
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
 
-      let received = 0;
-      const fakeURL = 'ws://localhost:8080';
+      patch(toVNode(document.querySelector('#calc')), container);
+    });
+
+    // Change property to 'foo' and then to 'foobar'. The only change request that should be received is to set the
+    // value to 'foobar'.
+    it('should consolidate change requets', (done) => {
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+
+      const cell = editableCell(data, aNode, 'name');
+
       const mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
+        let received = 0;
         socket.on('message', (data) => {
-          if (received == 0) {
-            const dataj = JSON.parse(data as string) as PropertyChangeNotification;
-            expect(dataj.node.model).to.eql('my.qualified.model');
-            expect(dataj.node.id.regularId).to.eql('324292001770075100');
-            expect(dataj.propertyName).to.eql('name');
-            expect(dataj.propertyValue).to.eql('y calculations');
-            expect(dataj.type).to.eql('propertyChange');
-          } else if (received == 1) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-          } else {
-            throw new Error('Too many messages');
+          received++;
+          const parsed = JSON.parse(data as string);
+          if (received === 2) {
+            expect(parsed.propertyValue).to.eql('foobar');
+            done();
           }
-          received += 1;
         });
       });
+
       // @ts-ignore
       global.WebSocket = WebSocket;
       createInstance(fakeURL, 'my.qualified.model', 'calc');
 
-      patch(toVNode(document.querySelector('#calc')), container);
+      prepareFakeDom(html1);
+      patch(toVNode(document.body), cell);
+
+      const input = cell.elm as HTMLInputElement;
+      input.value = 'foo';
+      triggerInputEvent(input);
+      input.value = 'foobar';
+      triggerInputEvent(input);
+
+      clock.tick(1000);
     });
   });
 });

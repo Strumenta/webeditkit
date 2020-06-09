@@ -150,3 +150,7 @@ export function focusedElement() {
   const doc = global.document;
   return doc.activeElement;
 }
+
+export function triggerInputEvent(element: HTMLInputElement) {
+  element.dispatchEvent(new window.InputEvent('input', {}));
+}

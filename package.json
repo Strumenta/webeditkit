@@ -60,5 +60,8 @@
   "files": [
     "dist/**/*",
     "css/**/*"
-  ]
+  ],
+  "directories": {
+    "lib": "./dist"
+  }
 }

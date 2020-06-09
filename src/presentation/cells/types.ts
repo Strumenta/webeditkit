@@ -13,20 +13,21 @@ import {
   separate,
   triggerResize,
 } from './support';
-import { addClass, addToDatasetObj, wrapKeydownHandler } from './vnodemanipulation';
+import { addToDatasetObj, wrapKeydownHandler } from './vnodemanipulation';
 import {
   alternativesProviderForAddingChild,
   installAutocomplete,
   isAutocompleteVisible,
   SuggestionsReceiver,
 } from './autocompletion';
-import { NodeId, nodeIdToString } from '../../datamodel/misc';
+import { NodeId, nodeIdToString, PropertyValue } from '../../datamodel/misc';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
-import { log } from '../../utils/misc';
+import { log, uuidv4 } from '../../utils/misc';
+import { EditedValue, IData } from './data';
 
 export function childCell(
   node: ModelNode,
@@ -165,31 +166,77 @@ function extraClassesToSuffix(extraClasses: string[]): string {
 }
 
 /**
+ * @param data data structure to store uncommitted edits
  * @param modelNode
  * @param propertyName
  * @param extraClasses deprecated, use addClass instead
  */
-export function editableCell(modelNode: ModelNode, propertyName: string, extraClasses: string[] = []): VNode {
+export function editableCell(
+  data: IData,
+  modelNode: ModelNode,
+  propertyName: string,
+  extraClasses: string[] = [],
+): VNode {
   if (modelNode == null) {
     throw new Error('modelNode should not be null');
   }
   const placeholder = '<no ' + propertyName + '>';
-  const extraClassesStr = extraClassesToSuffix(extraClasses);
+
   const initialValue = modelNode.property(propertyName) || '';
+  const editedValue = data.editedValues.get(modelNode, propertyName);
+
+  const currentValue = editedValue?.inputFieldValue ?? initialValue;
+
+  function setEditedValue(value: string) {
+    const nodeId: string = modelNode.idString();
+    const ev: EditedValue = data.editedValues.getOrCreate(modelNode, propertyName);
+    ev.inputFieldValue = value;
+
+    window.clearTimeout(ev.inputTimeout);
+    ev.inputTimeout = window.setTimeout(() => {
+      ev.inputTimeout = undefined;
+      const requestId = uuidv4();
+      ev.inFlightRequestId = requestId;
+      ev.inFlightValue = ev.inputFieldValue;
+
+      getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(
+        modelNode,
+        propertyName,
+        ev.inputFieldValue,
+        () => {
+          const currentEV = data.editedValues.get(modelNode, propertyName);
+
+          if (currentEV == null || currentEV?.inFlightRequestId !== requestId) {
+            // Ignore response to an outdated request
+            return;
+          }
+
+          if (currentEV.inFlightValue === currentEV.inputFieldValue) {
+            data.editedValues.delete(modelNode, propertyName);
+          } else {
+            currentEV.inFlightValue = undefined;
+            currentEV.inFlightRequestId = undefined;
+          }
+        },
+      );
+    }, 500);
+  }
+
+  const extraClassesStr = extraClassesToSuffix(extraClasses);
   return h(
     'input.editable' + extraClassesStr,
     {
       key: `${modelNode.idString()}-prop-${propertyName}`,
       props: {
-        value: initialValue,
+        value: currentValue,
         placeholder,
-        required: true,
+        required: 'required',
+      },
+      class: {
+        emptyProperty: initialValue === '',
       },
       hook: {
         insert: (vNode: VNode) => {
-          if (initialValue == '') {
-            $(vNode.elm).addClass('emptyProperty');
-          }
           return addAutoresize(vNode);
         },
         update: triggerResize,
@@ -231,24 +278,8 @@ export function editableCell(modelNode: ModelNode, propertyName: string, extraCl
           }
           return false;
         },
-        keyup: (e: KeyboardEvent) => {
-          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-            return;
-          }
-          const valueInInput = $(e.target).val() as string;
-          if (valueInInput == '') {
-            $(e.target).addClass('emptyProperty');
-          } else {
-            $(e.target).removeClass('emptyProperty');
-          }
-          const valueInModel = modelNode.property(propertyName);
-          if (valueInInput !== valueInModel) {
-            const ws = getWsCommunication(modelNode.modelName());
-            if (ws == null) {
-              throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
-            }
-            ws.triggerChangeOnPropertyNode(modelNode, propertyName, valueInInput);
-          }
+        input: (e: InputEvent) => {
+          setEditedValue((e.target as HTMLInputElement).value);
         },
       },
     },
