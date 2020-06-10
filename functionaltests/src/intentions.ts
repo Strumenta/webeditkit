@@ -5,10 +5,7 @@ import {XMLHttpRequest} from "xmlhttprequest";
 import { MPSSERVER_PORT, tryToConnect } from './utils';
 import { createInstance, getWsCommunication } from '../../src/communication';
 
-const puppeteer = require('puppeteer');
-const request = require('request');
-
-import { WebSocket } from 'mock-socket';
+var W3CWebSocket = require('websocket').w3cwebsocket;
 
 describe('Intentions API', () => {
 
@@ -20,20 +17,23 @@ describe('Intentions API', () => {
 
     });
 
-    it('get intentions', async (done) => {
-        console.log("A");
-        const ws = new WebSocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
-        console.log("A2");
-        const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo',
-          ws);
-        console.log("A3");
-        const intentions = await wsc.getIntentions({
-            model: 'ExampleLanguage.sandbox',
-            id: {
-                regularId: '7467535778008416706'
-            }
-        });
-        console.log(intentions);
-        done()
+    it('get intentions', (done) => {
+        const ws  = new W3CWebSocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
+        // tslint:disable-next-line:only-arrow-functions
+        ws.onopen = function() {
+            const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo',
+              ws);
+            const intentions = wsc.getIntentions({
+                model: 'ExampleLanguage.sandbox',
+                id: {
+                    regularId: '7467535778008416706'
+                }
+            });
+            intentions.then((value) => {
+                expect(value).to.eql([ { index: 0, description: 'Assign Standard ID to All Projects' } ]);
+                done();
+            })
+
+        }
     });
 });

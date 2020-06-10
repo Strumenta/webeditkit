@@ -271,7 +271,8 @@ export class WsCommunication {
       this.callbacks[uuid1] = (blockUUID: UUID) => {
         this.sendMessage({
           type: 'GetIntentionsBlock',
-          requestId: uuid2
+          requestId: uuid2,
+          blockUUID,
         } as GetIntentionsBlock)
       };
       this.callbacks[uuid2] = (intentions: Intention[]) => {

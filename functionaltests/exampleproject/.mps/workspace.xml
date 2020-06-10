@@ -174,26 +174,6 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="76323df9-b746-4f38-a295-fd089a3e40d4(ExampleLanguage)" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="r:a550b9c4-46d2-451c-905a-713398f611ff(ExampleLanguage.intentions) in IdeaFile[path: /Users/federico/repos/webeditkit/functionaltests/exampleproject/languages/ExampleLanguage/models/ExampleLanguage.intentions.mps]" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Project" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Project" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="c9d1fc37-0f86-4774-b4fd-0cdb7807855c" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
@@ -201,8 +181,14 @@
               <option name="myItemId" value="ExampleLanguage" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
+          </PATH>
+          <PATH>
             <PATH_ELEMENT>
-              <option name="myItemId" value="r:9903d408-e161-4729-a60e-f52886dd6762(ExampleLanguage.sandbox) in IdeaFile[path: /Users/federico/repos/webeditkit/functionaltests/exampleproject/languages/ExampleLanguage/sandbox/models/ExampleLanguage.sandbox.mps]" />
+              <option name="myItemId" value="Project" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="76323df9-b746-4f38-a295-fd089a3e40d4(ExampleLanguage)" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
@@ -229,6 +215,10 @@
               <option name="myItemId" value="76323df9-b746-4f38-a295-fd089a3e40d4(ExampleLanguage)" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="r:a550b9c4-46d2-451c-905a-713398f611ff(ExampleLanguage.intentions) in IdeaFile[path: /Users/federico/repos/webeditkit/functionaltests/exampleproject/languages/ExampleLanguage/models/ExampleLanguage.intentions.mps]" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -241,6 +231,16 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ExampleLanguage" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="r:9903d408-e161-4729-a60e-f52886dd6762(ExampleLanguage.sandbox) in IdeaFile[path: /Users/federico/repos/webeditkit/functionaltests/exampleproject/languages/ExampleLanguage/sandbox/models/ExampleLanguage.sandbox.mps]" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Project" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
