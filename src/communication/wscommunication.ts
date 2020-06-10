@@ -22,24 +22,24 @@ import {
   AnswerForDirectReferences,
   AnswerPropertyChange,
   AskAlternatives,
-  AskErrorsForNode,
+  AskErrorsForNode, CreateIntentionsBlock, CreateIntentionsBlockAnswer,
   CreateRoot,
   DefaultInsertion,
   DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport,
+  ErrorsForNodeReport, GetIntentionsBlock, GetIntentionsBlockAnswer,
   InsertNextSibling,
-  InstantiateConcept,
+  InstantiateConcept, Intention,
   IssueDescription,
   Message,
-  NodeAdded,
+  NodeAdded, NodeIDInModel, nodeIDInModelFromNode,
   NodeRemoved,
   PropertyChangeNotification,
   ReferenceChange,
   RegisterForChanges,
   RequestForDirectReferences,
   RequestPropertyChange,
-  SetChild,
+  SetChild, UUID,
 } from './messages';
 import { registerIssuesForModel, registerIssuesForNode } from './issues';
 
@@ -163,6 +163,15 @@ export class WsCommunication {
     });
   }
 
+  private registerHandlersForIntentions() {
+    this.registerHandler('CreateIntentionsBlockAnswer', (msg: CreateIntentionsBlockAnswer) => {
+      this.invokeCallback(msg.requestId, msg.blockUUID);
+    });
+    this.registerHandler('GetIntentionsBlockAnswer', (msg: GetIntentionsBlockAnswer) => {
+      this.invokeCallback(msg.requestId, msg.intentions);
+    });
+  }
+
   private registerHandler(type: string, handler: MessageHandler<Message>) {
     this.handlers[type.toLowerCase()] = handler;
   }
@@ -181,6 +190,7 @@ export class WsCommunication {
     this.registerHandlersForNodeChanges();
     this.registerHandlersForNodesLifecycle();
     this.registerHandlersForCallbacks();
+    this.registerHandlersForIntentions();
 
     this.ws.onopen = (event) => {
       thisWS.registerForChangesInModel(modelName);
@@ -254,6 +264,26 @@ export class WsCommunication {
       type: 'registerForChanges',
       modelName,
     } as RegisterForChanges);
+  }
+
+  async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4(), uuid2: string = uuidv4()) : Promise<Intention[]> {
+    return new Promise<Intention[]>((resolve, reject) => {
+      this.callbacks[uuid1] = (blockUUID: UUID) => {
+        this.sendMessage({
+          type: 'GetIntentionsBlock',
+          requestId: uuid2
+        } as GetIntentionsBlock)
+      };
+      this.callbacks[uuid2] = (intentions: Intention[]) => {
+        return resolve(intentions);
+      };
+      const nodeIDInModel = modelNode instanceof ModelNode ? nodeIDInModelFromNode(modelNode) : modelNode;
+      this.sendMessage({
+        type: 'CreateIntentionsBlock',
+        requestId: uuid1,
+        node: nodeIDInModel
+      } as CreateIntentionsBlock)
+    });
   }
 
   instantiate(conceptName: string, nodeToReplace: ModelNode): void {
@@ -435,8 +465,8 @@ export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];
 }
 
-export function createInstance(url: string, modelName: string, localName: string): WsCommunication {
-  const instance = new WsCommunication(url, modelName, localName);
+export function createInstance(url: string, modelName: string, localName: string, ws?: WebSocket): WsCommunication {
+  const instance = new WsCommunication(url, modelName, localName, ws);
   instances[modelName] = instance;
   return instance;
 }

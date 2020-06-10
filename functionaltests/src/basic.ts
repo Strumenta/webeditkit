@@ -104,9 +104,6 @@ describe('WebEditKit integration', () => {
                     }
                 }
                 expect(found).to.equal(true);
-                //expect(bodyHTML).to.equal("MPS Server up and running.");
-                //console.log(bodyHTML);
-                //console.log(modules);
             } catch (e) {
                 console.log("exception captured", e);
                 process.exit(1);

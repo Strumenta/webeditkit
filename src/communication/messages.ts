@@ -4,12 +4,15 @@
 
 import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
 import { Alternatives } from './wscommunication';
+import { ModelNode } from '../datamodel';
 
 // Refactoring plan:
 // * Revisit NodeId to be a simple string
 // * Rename NodeIDInModel as QualifiedNodeID
 // * Use QualifiedNodeID in all messages which uses both a model name and an ID
 // * Use NodeID where the an identifier of a node is expected
+
+export type UUID = string;
 
 //
 // Support structures
@@ -18,6 +21,15 @@ import { Alternatives } from './wscommunication';
 export interface NodeIDInModel {
   model: string;
   id: NodeId;
+}
+
+export function nodeIDInModelFromNode(node: ModelNode) : NodeIDInModel {
+  return {
+    model: node.modelName(),
+    id: {
+      regularId: node.idString()
+    }
+  };
 }
 
 export interface IssueDescription {
@@ -207,6 +219,46 @@ export interface AnswerDefaultInsertion extends RequestAnswer {
 export interface AnswerForDirectReferences extends RequestAnswer {
   type: 'AnswerAlternatives';
   items: Alternatives;
+}
+
+//
+// Intention messages
+//
+
+export interface CreateIntentionsBlock extends RequestMessage {
+  type: 'CreateIntentionsBlock';
+  node: NodeIDInModel;
+}
+
+export interface CreateIntentionsBlockAnswer extends RequestAnswer {
+  type: 'CreateIntentionsBlockAnswer'
+  blockUUID: UUID;
+}
+
+export interface DeleteIntentionsBlock extends Message {
+  type: 'DeleteIntentionsBlock'
+  blockUUID: UUID;
+}
+
+export interface ExecuteIntention extends Message {
+  type: 'ExecuteIntention'
+  blockUUID: UUID;
+  index: number;
+}
+
+export interface GetIntentionsBlock extends RequestMessage {
+  type: 'GetIntentionsBlock';
+  blockUUID: UUID;
+}
+
+export interface Intention {
+  index: number;
+  description: string;
+}
+
+export interface GetIntentionsBlockAnswer extends RequestAnswer {
+  type: 'GetIntentionsBlockAnswer'
+  intentions: Intention[];
 }
 
 //

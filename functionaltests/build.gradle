@@ -38,20 +38,23 @@ ext.artifactsDir = new File(rootDir, 'artifacts')
 ext.mpsVersion = '2019.3.1'
 ext.mbeddrPlatformVersion = '2019.3.22230.6f9f955'
 ext.iets3opensourceVersion = '2019.3.4458.852c81c'
-ext.mpsserverVersion = '1.1.4'
+ext.mpsserverVersion = '1.1.5-snapshot'
 
 configurations {
 	mps
 	mpsArtifacts
-	ant_lib
 	libs
 	distribution
 }
 
 dependencies {
-	ant_lib "org.apache.ant:ant-junit:1.10.1"
 	mps "com.jetbrains:mps:$mpsVersion"
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-core:$mpsserverVersion"
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-examples:$mpsserverVersion"
 	mpsArtifacts "com.strumenta.mpsserver:mpsserver-launcher:$mpsserverVersion"
+}
+
+mpsserver {
+	mpsServerVersion = mpsserverVersion
+	customMpsProjectPath = file('exampleproject/')
 }
