@@ -182,10 +182,10 @@ export function editableCell(
   }
   const placeholder = '<no ' + propertyName + '>';
 
-  const initialValue = modelNode.property(propertyName) || '';
+  const modelValue = modelNode.property(propertyName) || '';
   const editedValue = data.editedValues.get(modelNode, propertyName);
 
-  const currentValue = editedValue?.inputFieldValue ?? initialValue;
+  const currentValue = editedValue?.inputFieldValue ?? modelValue;
 
   function setEditedValue(value: string) {
     const nodeId: string = modelNode.idString();
@@ -233,7 +233,7 @@ export function editableCell(
         required: 'required',
       },
       class: {
-        emptyProperty: initialValue === '',
+        emptyProperty: currentValue === '',
       },
       hook: {
         insert: (vNode: VNode) => {
@@ -279,7 +279,13 @@ export function editableCell(
           return false;
         },
         input: (e: InputEvent) => {
-          setEditedValue((e.target as HTMLInputElement).value);
+          const value = (e.target as HTMLInputElement).value;
+          setEditedValue(value);
+          if (value === '') {
+            $(e.target).addClass('emptyProperty');
+          } else {
+            $(e.target).removeClass('emptyProperty');
+          }
         },
       },
     },

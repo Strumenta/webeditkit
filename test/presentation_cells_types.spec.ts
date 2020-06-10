@@ -844,5 +844,25 @@ describe('Cells.Types', () => {
 
       clock.tick(1000);
     });
+
+    it('should have class emptyProperty when empty', () => {
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+
+      const cell = editableCell(data, aNode, 'name');
+
+      const doc = prepareFakeDom(html1);
+      patch(toVNode(doc.body), cell);
+
+      const input = cell.elm as HTMLInputElement;
+      input.value = '';
+      triggerInputEvent(input);
+
+      expect(Array.from(input.classList)).to.contain("emptyProperty");
+
+      input.value = 'foobar';
+      triggerInputEvent(input);
+      expect(Array.from(input.classList)).not.to.contain("emptyProperty");
+    });
   });
 });
