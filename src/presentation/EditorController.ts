@@ -102,6 +102,8 @@ class IntentionsMenu {
       return res > 0;
     }
 
+    $("#intentions-menu input:first").focus();
+
     $("body").focusin((e)=>{
       if (!isInIntentionsMenu(e.target)){
         this.deleteMenu();
