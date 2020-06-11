@@ -21,6 +21,7 @@ export {
   editableCell,
   emptyRow,
   childCell,
+
   horizontalGroupCell,
   row,
   tabCell,
