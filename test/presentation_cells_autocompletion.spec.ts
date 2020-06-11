@@ -30,6 +30,8 @@ import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
 import { clearRendererRegistry } from '../src/presentation/renderer';
+import { AskAlternatives, Message } from '../src/communication/messages';
+import exp = require('constants');
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -192,29 +194,40 @@ describe('Presentation.Cells.Autocompletion', () => {
     it('it should handle positive case', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
+      let askAlternativesReceived = false;
+      let registerForChangesReceived = false;
       mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
-          if (received == 0) {
-            const dataj = JSON.parse(data as string);
-            expect(dataj.type).to.eql('askAlternatives');
-            expect(dataj.containmentName).to.eql('foo');
-            expect(dataj.nodeId).to.eql('324292001770075100');
-            expect(dataj.modelName).to.eql('my.qualified.model');
-            const requestId = dataj.requestId;
+          if (received <= 1) {
+            const dataj : Message = JSON.parse(data as string) as Message;
+            if (dataj.type === 'askAlternatives') {
+              const msg = dataj as AskAlternatives;
+              expect(msg.type).to.eql('askAlternatives');
+              expect(msg.containmentName).to.eql('foo');
+              expect(msg.nodeId).to.eql('324292001770075100');
+              expect(msg.modelName).to.eql('my.qualified.model');
+              const requestId = msg.requestId;
+              askAlternativesReceived = true;
 
-            socket.send(
-              JSON.stringify({
-                type: 'AnswerAlternatives',
-                requestId: requestId,
-                items: [
-                  { alias: 'alias1', conceptName: 'foo.bar.concept1' },
-                  { alias: 'alias2', conceptName: 'foo.bar.concept2' },
-                ],
-              }),
-            );
-          } else if (received == 1) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+              socket.send(
+                JSON.stringify({
+                  type: 'AnswerAlternatives',
+                  requestId,
+                  items: [
+                    { alias: 'alias1', conceptName: 'foo.bar.concept1' },
+                    { alias: 'alias2', conceptName: 'foo.bar.concept2' },
+                  ],
+                }),
+              );
+            } else if (dataj.type === 'registerForChanges') {
+              expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+              registerForChangesReceived = true;
+            }
+            if (received === 1) {
+              expect(registerForChangesReceived).to.eql(true);
+              expect(askAlternativesReceived).to.eql(true);
+            }
           } else if (received == 2) {
             const obj = JSON.parse(data as string);
             delete obj['requestId'];
@@ -278,29 +291,45 @@ describe('Presentation.Cells.Autocompletion', () => {
     it('it should handle positive case', (done) => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
+
+      let askAlternativesReceived = false;
+      let registerForChangesReceived = false;
+
       mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
-          if (received == 0) {
-            const dataj = JSON.parse(data as string);
-            expect(dataj.type).to.eql('askAlternatives');
-            expect(dataj.containmentName).to.eql('type');
-            expect(dataj.nodeId).to.eql('1848360241685547698');
-            expect(dataj.modelName).to.eql('my.qualified.model');
-            const requestId = dataj.requestId;
+          if (received <= 1) {
+            const dataj = JSON.parse(data as string) as Message;
+            if (dataj.type === 'askAlternatives') {
+              const msg = dataj as AskAlternatives;
+              expect(msg.type).to.eql('askAlternatives');
+              expect(msg.containmentName).to.eql('type');
+              expect(msg.nodeId).to.eql('1848360241685547698');
+              expect(msg.modelName).to.eql('my.qualified.model');
+              const requestId = msg.requestId;
 
-            socket.send(
-              JSON.stringify({
-                type: 'AnswerAlternatives',
-                requestId: requestId,
-                items: [
-                  { alias: 'alias1', conceptName: 'foo.bar.concept1' },
-                  { alias: 'alias2', conceptName: 'foo.bar.concept2' },
-                ],
-              }),
-            );
-          } else if (received == 1) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+              socket.send(
+                JSON.stringify({
+                  type: 'AnswerAlternatives',
+                  requestId,
+                  items: [
+                    { alias: 'alias1', conceptName: 'foo.bar.concept1' },
+                    { alias: 'alias2', conceptName: 'foo.bar.concept2' },
+                  ],
+                }),
+              )
+              askAlternativesReceived = true;
+            } else if (dataj.type === 'registerForChanges') {
+              expect(JSON.parse(data as string)).to.eql({
+                type: 'registerForChanges',
+                modelName: 'my.qualified.model'
+              });
+              registerForChangesReceived = true;
+            }
+            if (received === 1) {
+              expect(registerForChangesReceived).to.eql(true);
+              expect(askAlternativesReceived).to.eql(true);
+            }
           } else if (received == 2) {
             const obj = JSON.parse(data as string);
             delete obj['requestId'];
