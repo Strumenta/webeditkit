@@ -52,7 +52,7 @@ export function wrapUpdateHook(vnode: VNode, hook: UpdateHook): VNode {
   return vnode;
 }
 
-export function wrapKeydownHandler(vnode: VNode, keydownHandler: (event) => boolean): VNode {
+export function wrapKeydownHandler(vnode: VNode, keydownHandler: (event: KeyboardEvent) => boolean): VNode {
   if (vnode.data === undefined) {
     vnode.data = {};
   }

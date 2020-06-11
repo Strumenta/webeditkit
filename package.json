@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
+    "@types/deep-equal": "^1.0.1",
     "@types/jquery": "^3.3.33",
+    "@types/lodash.merge": "^4.6.6",
     "@types/node": "^13.9.3",
     "autocompleter": "^6.0.2",
     "cryptiles": "^4.1.3",

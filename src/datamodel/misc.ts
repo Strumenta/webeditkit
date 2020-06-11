@@ -68,7 +68,7 @@ export type PropertiesValues = { [key: string]: PropertyValue };
 /// Node navigation
 ///
 
-export function findNode(localModelName, nodeId): ModelNode | undefined {
+export function findNode(localModelName: string, nodeId: string): ModelNode | undefined {
   return getDatamodelRoot(localModelName)?.findNodeById(nodeId);
 }
 

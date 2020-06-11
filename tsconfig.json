@@ -5,7 +5,10 @@
     //"allowJs": true,
     "declaration": true,
     "strictNullChecks": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "lib": ["DOM", "DOM.Iterable", "ES5"]
   },
   "include": [
     "src"

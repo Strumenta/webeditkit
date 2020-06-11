@@ -146,14 +146,15 @@ export function focusOnNode(nodeIdStr: string, rootName: string | undefined) {
   focusOnFirstInputOf(firstNodeFound);
 }
 
-function focusOnFirstInputOf(element): boolean {
+function focusOnFirstInputOf(element: HTMLElement): boolean {
   if (element.tagName === 'INPUT') {
-    $(element).focus();
+    $(element).trigger('focus');
     return true;
   }
+
   for (const chRes of element.children) {
-    if (chRes) {
-      return chRes;
+    if (focusOnFirstInputOf(chRes as HTMLElement)) {
+      return true;
     }
   }
   return false;

@@ -240,35 +240,36 @@ export function editableCell(
         keydown: (e: KeyboardEvent) => {
           const isTabNext = e.key === 'Tab' && !e.shiftKey;
           const isTabPrev = e.key === 'Tab' && e.shiftKey;
+          const target = e.target as HTMLInputElement;
           if (isTabNext) {
-            moveToNextElement(e.target, true);
+            moveToNextElement(target, true);
             e.preventDefault();
             return true;
           } else if (isTabPrev) {
-            moveToPrevElement(e.target, true);
+            moveToPrevElement(target, true);
             e.preventDefault();
             return true;
           }
-          if (isAtEnd(e.target) && e.key === 'ArrowRight') {
-            moveToNextElement(e.target);
+          if (isAtEnd(target) && e.key === 'ArrowRight') {
+            moveToNextElement(target);
             e.preventDefault();
             return true;
           }
-          if (isAtStart(e.target) && e.key === 'ArrowLeft') {
-            moveToPrevElement(e.target);
+          if (isAtStart(target) && e.key === 'ArrowLeft') {
+            moveToPrevElement(target);
             e.preventDefault();
             return true;
           }
           if (!isAutocompleteVisible() && e.key === 'ArrowUp') {
-            moveUp(e.target);
+            moveUp(target);
             return true;
           }
           if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
-            moveDown(e.target);
+            moveDown(target);
             return true;
           }
-          if (isAtStart(e.target) && e.key === 'Backspace') {
-            handleSelfDeletion(e.target, modelNode);
+          if (isAtStart(target) && e.key === 'Backspace') {
+            handleSelfDeletion(target, modelNode);
             return false;
           }
           return false;
@@ -293,7 +294,7 @@ export function editableCell(
 }
 
 export function fixedCell(
-  modelNode: ModelNode,
+  modelNode: ModelNode | undefined,
   text: string,
   extraClasses?: string[],
   alternativesProvider?: any,
@@ -330,23 +331,25 @@ export function fixedCell(
         keydown: (e: KeyboardEvent) => {
           const isTabNext = e.key === 'Tab' && !e.shiftKey;
           const isTabPrev = e.key === 'Tab' && e.shiftKey;
+          const target = e.target as HTMLElement;
           if (isTabNext) {
-            moveToNextElement(e.target, true);
+            moveToNextElement(target, true);
           } else if (isTabPrev) {
-            moveToPrevElement(e.target, true);
+            moveToPrevElement(target, true);
           } else if (e.key === 'ArrowRight') {
-            moveToNextElement(e.target);
+            moveToNextElement(target);
           } else if (e.key === 'ArrowLeft') {
-            moveToPrevElement(e.target);
+            moveToPrevElement(target);
           } else if (!isAutocompleteVisible() && e.key === 'ArrowUp') {
-            moveUp(e.target);
+            moveUp(target);
           } else if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
-            moveDown(e.target);
+            moveDown(target);
           } else if (e.key === 'Backspace') {
-            if (deleter !== undefined) {
+            if (deleter != null) {
               deleter();
-            } else {
-              handleSelfDeletion(e.target, modelNode);
+              return true;
+            } else if (modelNode != null) {
+              handleSelfDeletion(target, modelNode);
               e.preventDefault();
               return false;
             }
@@ -363,7 +366,7 @@ export function fixedCell(
                 // We should stop this when the autocomplete is displayed
 
                 // We do not want to do this for cells with autocompletion
-                handleAddingElement(e.target, modelNode);
+                handleAddingElement(target, modelNode);
                 e.preventDefault();
                 return false;
               }
@@ -384,7 +387,7 @@ export type AlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) =>
 /*
  Here we keep the text that is typed in reference cells and it is not matching some text yet.
  */
-const resolutionMemory = {};
+const resolutionMemory:{[key: string]:string} = {};
 
 function datasetForReference(modelNode: ModelNode, referenceName: string) {
   return {
@@ -394,13 +397,14 @@ function datasetForReference(modelNode: ModelNode, referenceName: string) {
 }
 
 function moveLeftRightWhenAtEnd(e: KeyboardEvent) {
-  if (isAtEnd(e.target) && e.key === 'ArrowRight') {
-    moveToNextElement(e.target);
+  const element = e.target as HTMLInputElement;
+  if (isAtEnd(element) && e.key === 'ArrowRight') {
+    moveToNextElement(element as HTMLElement);
     e.preventDefault();
     return true;
   }
-  if (isAtStart(e.target) && e.key === 'ArrowLeft') {
-    moveToPrevElement(e.target);
+  if (isAtStart(element) && e.key === 'ArrowLeft') {
+    moveToPrevElement(element);
     e.preventDefault();
     return true;
   }
@@ -427,13 +431,11 @@ function editingReferenceCell(
       on: {
         keydown: (e: KeyboardEvent) => {
           if (moveLeftRightWhenAtEnd(e)) {
-            return true;
+            return;
           }
-          // @ts-ignore
-          const v = e.target.value;
+          const v = (e.target as HTMLInputElement).value;
           resolutionMemory[resolutionMemoryKey] = v;
-          // @ts-ignore
-          if (v == '') {
+          if (v === '') {
             renderDataModels(() => {
               focusOnReference(modelNode, referenceName);
             });
@@ -555,7 +557,7 @@ export function referenceCell(
               // ctrl + space should trigger autocomplete
               // we cannot use keypress as it does not work and detecting if a key is printable is not trivial
               // this seems to work...
-              let isPrintableKey = event.key.length === 1;
+              const isPrintableKey = event.key.length === 1;
               if (isPrintableKey) {
                 resolutionMemory[resolutionMemoryKey] = event.key;
                 renderDataModels(() => {
@@ -576,7 +578,7 @@ export function referenceCell(
   //
   const kdCaptureListener = (event: KeyboardEvent): boolean => {
     // TODO move this into the body
-    //log('capture phase in reference, keydown. Is Autocomplete visible?', isAutocompleteVisible());
+    // log('capture phase in reference, keydown. Is Autocomplete visible?', isAutocompleteVisible());
     if (isAutocompleteVisible()) {
       // @ts-ignore
       event.duringAutocomplete = true;
@@ -607,23 +609,22 @@ export function referenceCell(
       },
       on: {
         click: (e: MouseEvent) => {
-          if (opener != null) {
-            return opener(e);
-          }
+          opener?.(e);
         },
         keydown: (e: KeyboardEvent) => {
           if (moveLeftRightWhenAtEnd(e)) {
-            return true;
+            return;
           }
+          const target = e.target as HTMLInputElement;
           if (!isAutocompleteVisible() && e.key === 'ArrowUp') {
-            moveUp(e.target);
+            moveUp(target);
           } else if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
-            moveDown(e.target);
+            moveDown(target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
               deleter();
               e.preventDefault();
-              return false;
+              return;
             }
           }
           if (e.key === 'Enter' && e.altKey === false) {
@@ -633,8 +634,9 @@ export function referenceCell(
           }
           // TODO when typing we destroy the reference
           // and we go to an editable cell
-          //e.preventDefault();
-          //return false;
+          //
+          // e.preventDefault();
+          // return false;
         },
         keyup: (e: KeyboardEvent) => {
           modelNode.ref(referenceName)?.loadData((refNode) => {

@@ -35,7 +35,7 @@ export class ModelNode {
     this.data = data;
   }
 
-  childByLinkName(linkName): ModelNode | null {
+  childByLinkName(linkName: string): ModelNode | null {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     if (filtered.length === 0) {
       return null;
@@ -155,7 +155,7 @@ export class ModelNode {
     return this.data.abstractConcept;
   }
 
-  injectModelName(modelName, rootName): void {
+  injectModelName(modelName: string, rootName: string|undefined): void {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;

@@ -22,10 +22,7 @@ export function getRegisteredRenderer(conceptName: string): Renderer | undefined
   return renderersByName[conceptName];
 }
 
-export function renderModelNode(modelNode): VNode {
-  if (modelNode == null) {
-    throw new Error('renderModelNode invoked with null modelNode');
-  }
+export function renderModelNode(modelNode: ModelNode): VNode {
   let res = setKey(
     addToDataset(
       addClass(getRenderer(modelNode)(modelNode), 'represent-node'),
@@ -53,7 +50,7 @@ export function renderModelNode(modelNode): VNode {
   return res;
 }
 
-function getDefaultRenderer(modelNode): Renderer {
+function getDefaultRenderer(modelNode: ModelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
   const conceptName = modelNode.simpleConceptName();
   return (dataModel) => {
@@ -65,7 +62,7 @@ function getDefaultRenderer(modelNode): Renderer {
   };
 }
 
-function getRenderer(modelNode): Renderer {
+function getRenderer(modelNode: ModelNode | undefined): Renderer {
   if (modelNode == null) {
     // it happens during node replacements
     return () => fixedCell(modelNode, 'null');

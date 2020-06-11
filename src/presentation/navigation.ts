@@ -1,27 +1,32 @@
 import { log } from '../utils/misc';
 
-function moveFocusToStart(next) {
-  next.focus();
+function moveFocusToStart(next: JQuery) {
+  next.trigger("focus");
   const el = next[0];
+
+  // @ts-ignore
   if (el !== undefined && el.setSelectionRange != null) {
+    // @ts-ignore
     el.setSelectionRange(0, 0);
   }
 }
 
-function moveFocusToEnd(next) {
-  next.focus();
+function moveFocusToEnd(next: JQuery) {
+  next.trigger("focus");
   const el = next[0];
+  // @ts-ignore
   if (el !== undefined && el.setSelectionRange != null) {
-    const text = next.val();
+    const text = next.val() as string;
+    // @ts-ignore
     el.setSelectionRange(text.length, text.length);
   }
 }
 
-function findNext(n) {
+function findNext(n: JQuery): JQuery | null {
   const candidate = n.next();
-  if (candidate == null || candidate.length == 0) {
-    const p = $(n).parent();
-    if (p == null || $(p).hasClass('editor')) {
+  if (candidate.length === 0) {
+    const p = n.parent();
+    if (p == null || p.hasClass('editor')) {
       return null;
     } else {
       return findNext(p);
@@ -31,9 +36,9 @@ function findNext(n) {
   }
 }
 
-function findPrev(n) {
+function findPrev(n: JQuery): JQuery | null {
   const candidate = n.prev();
-  if (candidate == null || candidate.length == 0) {
+  if (candidate == null || candidate.length === 0) {
     const p = $(n).parent();
     if (p == null || $(p).hasClass('editor')) {
       return null;
@@ -45,12 +50,12 @@ function findPrev(n) {
   }
 }
 
-function selectFirstElementInRow(row, focusOnEnd) {
+function selectFirstElementInRow(row: HTMLElement, focusOnEnd: boolean): void {
   log('selectFirstElementInRow', row);
   // @ts-ignore
   window.sf = row;
   if ($(row).children('input').length > 0) {
-    $($(row).children('input')[0]).focus();
+    $($(row).children('input')[0]).trigger('focus');
   } else {
     const children = $(row).children();
     if (focusOnEnd) {
@@ -61,10 +66,10 @@ function selectFirstElementInRow(row, focusOnEnd) {
         }
       }
     } else {
-      for (let i = 0; i < children.length; i++) {
-        if ($(children[i]).find('input').length > 0) {
+      for (const child of children) {
+        if ($(child).find('input').length > 0) {
           // there is an input somewhere here, we should dive into this
-          return selectFirstElementInRow(children[i], focusOnEnd);
+          return selectFirstElementInRow(child, focusOnEnd);
         }
       }
     }
@@ -72,7 +77,7 @@ function selectFirstElementInRow(row, focusOnEnd) {
   }
 }
 
-export function moveUp(t) {
+export function moveUp(t: HTMLElement) {
   if ($(t).hasClass('editor')) {
     return;
   }
@@ -87,23 +92,22 @@ export function moveUp(t) {
     console.warn('too many lines found');
   } else {
     log('element found');
-    const currentLine = l;
-    let nextLine = currentLine;
+    let nextLine = l;
     do {
       log(' before', nextLine);
       nextLine = $(nextLine).prev('.row,.vertical-collection');
       log(' after', nextLine);
-    } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
-    if (nextLine.length == 1) {
+    } while (nextLine.length === 1 && $(nextLine).find('input').length === 0);
+    if (nextLine.length === 1) {
       selectFirstElementInRow(nextLine[0], true);
-    } else {
+    } else if (t.parentElement != null) {
       moveUp(t.parentElement);
     }
     // We must find the previous line and pick the first element there
   }
 }
 
-export function moveDown(t) {
+export function moveDown(t: HTMLElement) {
   if ($(t).hasClass('editor')) {
     return;
   }
@@ -118,29 +122,24 @@ export function moveDown(t) {
     console.warn('too many lines found');
   } else {
     log('element found');
-    const currentLine = l;
-    let nextLine = currentLine;
+    let nextLine = l;
     do {
       log(' before', nextLine);
       nextLine = $(nextLine).next('.row,.vertical-collection');
       log(' after', nextLine);
-    } while (nextLine.length == 1 && $(nextLine).find('input').length == 0);
-    if (nextLine.length == 1) {
+    } while (nextLine.length === 1 && $(nextLine).find('input').length === 0);
+    if (nextLine.length === 1) {
       selectFirstElementInRow(nextLine[0], false);
-    } else {
+    } else if (t.parentElement != null) {
       moveDown(t.parentElement);
     }
     // We must find the previous line and pick the first element there
   }
 }
 
-function canBeAccepted(elConsidered, onlyEditable: boolean): boolean {
+function canBeAccepted(elConsidered: JQuery, onlyEditable: boolean): boolean {
   if (onlyEditable) {
-    if (elConsidered.hasClass('fixed')) {
-      return false;
-    } else {
-      return true;
-    }
+    return !elConsidered.hasClass('fixed');
   } else {
     return true;
   }
@@ -149,7 +148,7 @@ function canBeAccepted(elConsidered, onlyEditable: boolean): boolean {
 /**
  * Return true if we manage to find a next element
  */
-export function moveToNextElement(t, onlyEditable: boolean = false): boolean {
+export function moveToNextElement(t: HTMLElement, onlyEditable: boolean = false): boolean {
   let elConsidered = findNext($(t));
   while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');
@@ -180,7 +179,7 @@ export function moveToNextElement(t, onlyEditable: boolean = false): boolean {
   return false;
 }
 
-export function moveToPrevElement(t, onlyEditable: boolean = false): boolean {
+export function moveToPrevElement(t: HTMLElement, onlyEditable: boolean = false): boolean {
   let elConsidered = findPrev($(t));
   while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');
@@ -211,14 +210,13 @@ export function moveToPrevElement(t, onlyEditable: boolean = false): boolean {
   return false;
 }
 
-export function isAtEnd(element: any): boolean {
+export function isAtEnd(element: HTMLInputElement): boolean {
   const cursorPos = element.selectionStart;
-  // @ts-ignore
-  const length = $(element).val().length;
+  const length = element.value.length;
   return cursorPos === length;
 }
 
-export function isAtStart(element: any): boolean {
+export function isAtStart(element: HTMLInputElement): boolean {
   const cursorPos = element.selectionStart;
   return cursorPos === 0;
 }

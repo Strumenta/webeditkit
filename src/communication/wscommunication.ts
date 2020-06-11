@@ -83,7 +83,7 @@ export class WsCommunication {
   private localName: string; // This is the local model name or target
   private silent: boolean;
   private handlers: { [type: string]: MessageHandler<Message> };
-  private readonly callbacks: {};
+  private readonly callbacks: {[requestId: string]: any};
 
   private registerHandlersForErrorMessages() {
     this.registerHandler('ErrorsForModelReport', (msg: ErrorsForModelReport) => {
@@ -219,7 +219,7 @@ export class WsCommunication {
     this.registerHandlersForIntentions();
     this.registerHandlersForNodes();
 
-    this.ws.onopen = (event) => {
+    this.ws.onopen = () => {
       thisWS.registerForChangesInModel(modelName);
     };
 
@@ -340,8 +340,8 @@ export class WsCommunication {
   }
 
   triggerDefaultInsertion(
-    container,
-    containmentName,
+    container: ModelNode,
+    containmentName: string,
     reactorToInsertion: (addedNodeID: NodeId) => void,
     uuid: string = uuidv4(),
   ): void {
@@ -471,7 +471,7 @@ export class WsCommunication {
   askAlternatives(
     modelNode: ModelNode,
     containmentName: string,
-    alternativesReceiver: (Alternatives) => void,
+    alternativesReceiver: (alternatives: Alternatives) => void,
     uuid: string = uuidv4(),
   ): void {
     // we generate a UUID and ask the server to answer us using such UUID
@@ -517,7 +517,7 @@ export class WsCommunication {
   }
 }
 
-const instances = {};
+const instances: {[modelName: string]: WsCommunication} = {};
 
 export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];

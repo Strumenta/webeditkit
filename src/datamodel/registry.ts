@@ -2,7 +2,7 @@ import { NodeData, NodeInModel } from './misc';
 import { ModelNode } from './modelNode';
 
 const datamodelRoots = new Map<string, ModelNode>();
-const datamodelClasses = {};
+const datamodelClasses = new Map<string, new (n:NodeData) => ModelNode>();
 
 class Registry {
   static defaultBaseUrl: string | undefined = undefined;
@@ -21,16 +21,12 @@ export function getDefaultBaseUrl(): string | undefined {
 ///
 
 export function registerDataModelClass(conceptName: string, clazz: new (data: NodeData) => ModelNode): void {
-  datamodelClasses[conceptName] = clazz;
+  datamodelClasses.set(conceptName, clazz);
 }
 
 export function dataToNode(data: NodeData): ModelNode {
-  const clazz = datamodelClasses[data.concept];
-  if (clazz === undefined) {
-    return new ModelNode(data);
-  } else {
-    return new clazz(data);
-  }
+  const clazz = datamodelClasses.get(data.concept);
+  return new (clazz ?? ModelNode)(data);
 }
 
 ///

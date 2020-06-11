@@ -97,7 +97,7 @@ const patch = init([
   seventlisteners.default, // attaches event listeners
   sdataset.default,
 ]);
-const vnodes = {};
+const vnodes: {[name: string]: VNode} = {};
 
 type BasicCallback = () => void;
 
@@ -184,7 +184,7 @@ interface TargetDataType {
   nodeId: string;
 }
 
-const targetData: { [key: string]: TargetDataType } = {};
+const targetData: { [target: string]: TargetDataType } = {};
 
 export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) {
   targetData[target] = { baseUrl, model, nodeId };
@@ -200,7 +200,7 @@ export function loadDataModel(baseUrl: string, model: string, nodeId: string, ta
   });
 }
 
-export function baseUrlForTarget(target): string {
+export function baseUrlForTarget(target: string): string {
   return targetData[target].baseUrl;
 }
 
