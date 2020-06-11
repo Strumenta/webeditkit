@@ -340,15 +340,16 @@ export function fixedCell(
               e.preventDefault();
               return false;
             }
+          } else if (e.key === 'Enter' && e.altKey === true) {
+            // intention trigger, ignoring
+            return true;
           } else if (e.key === 'Enter' && e.altKey === false) {
-            if ($('.autocomplete').length == 0) {
+            if ($('.autocomplete').length === 0) {
               if (onEnter !== undefined) {
-                log('prevent enter on fixed (A)');
                 onEnter();
                 e.preventDefault();
                 return false;
               } else if (alternativesProvider === undefined) {
-                log('prevent enter on fixed (B)');
                 // We should stop this when the autocomplete is displayed
 
                 // We do not want to do this for cells with autocompletion
