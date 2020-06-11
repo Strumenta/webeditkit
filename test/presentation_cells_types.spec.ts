@@ -591,11 +591,13 @@ describe('Cells.Types', () => {
                 type: 'registerForChanges',
                 check: (msg) => {
                   expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-                  mockServer.close();
-                  done();
                 }
               }
             ]);
+            if (received === 1) {
+              mockServer.close();
+              done();
+            }
           } else {
             throw new Error('Too many messages');
           }
@@ -818,15 +820,14 @@ describe('Cells.Types', () => {
     // Change property to 'foo' and then to 'foobar'. The only change request that should be received is to set the
     // value to 'foobar'.
     it('should consolidate change requests', (done) => {
-      const aNode = dataToNode(rootData1);
-      aNode.injectModelName('my.qualified.model', 'calc');
-
-      const cell = editableCell(data, aNode, 'name');
-
+      // @ts-ignore
+      global.WebSocket = WebSocket;
       const mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
+        console.log('connected');
         let received = 0;
         socket.on('message', (data) => {
+          console.log('received', data);
           received++;
           const parsed = JSON.parse(data as string);
           if (received === 2) {
@@ -835,12 +836,15 @@ describe('Cells.Types', () => {
           }
         });
       });
-
-      // @ts-ignore
-      global.WebSocket = WebSocket;
       createInstance(fakeURL, 'my.qualified.model', 'calc');
 
       prepareFakeDom(html1);
+
+      const aNode = dataToNode(rootData1);
+      aNode.injectModelName('my.qualified.model', 'calc');
+
+      const cell = editableCell(data, aNode, 'name');
+
       patch(toVNode(document.body), cell);
 
       const input = cell.elm as HTMLInputElement;

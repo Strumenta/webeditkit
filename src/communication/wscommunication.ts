@@ -288,7 +288,7 @@ export class WsCommunication {
         this.sendMessage(message, nAttempts - 1);
       }, 25);
     } else {
-      throw new Error("Cannot send message because it is not connected");
+      throw new Error("Cannot send message because it is not connected. Cannot send: " + JSON.stringify(message));
     }
   }
 
