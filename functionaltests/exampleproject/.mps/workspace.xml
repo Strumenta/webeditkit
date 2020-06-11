@@ -18,7 +18,7 @@
         <TabState>
           <option name="title" value="Console" />
           <tab>
-            <model ref="608ea4af-d0bd-4960-b3e9-5582143ab188/r:91a1da89-c25d-4929-b4f6-b0b167b72154(TempModule608ea4af-d0bd-4960-b3e9-5582143ab188/ConsoleModel_30748078078312)">
+            <model ref="5c262c63-c886-4515-99fc-24f4097dd334/r:858c2750-43ff-42cc-8c12-4e3da35bfd89(TempModule5c262c63-c886-4515-99fc-24f4097dd334/ConsoleModel_1460326664001)">
               <persistence version="9" />
               <languages>
                 <devkit ref="70d3d6da-af63-483d-a75f-9c8acf8de332(jetbrains.mps.console.devkit)" />
@@ -38,11 +38,11 @@
                   <concept id="757553790980850366" name="jetbrains.mps.console.base.structure.History" flags="ng" index="3balQm" />
                 </language>
               </registry>
-              <node concept="aymSD" id="6uy13ANHsgD">
-                <node concept="3balQm" id="6uy13ANHsgE" role="aymYE" />
-                <node concept="2Clz$F" id="6uy13ANHsgF" role="aymYO" />
-                <node concept="2_V_lH" id="6uy13ANHsgG" role="1PhJh3">
-                  <ref role="2_V_lI" node="6uy13ANHsgF" resolve="CommandHolder" />
+              <node concept="aymSD" id="15JNn0t1g6w">
+                <node concept="3balQm" id="15JNn0t1g6x" role="aymYE" />
+                <node concept="2Clz$F" id="15JNn0t1g6y" role="aymYO" />
+                <node concept="2_V_lH" id="15JNn0t1g6z" role="1PhJh3">
+                  <ref role="2_V_lI" node="15JNn0t1g6y" resolve="CommandHolder" />
                 </node>
               </node>
             </model>
@@ -155,7 +155,6 @@
   <component name="ProjectView">
     <navigator proportions="" version="1" />
     <panes>
-      <pane id="FileSystem" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -164,7 +163,13 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="c9d1fc37-0f86-4774-b4fd-0cdb7807855c" />
+              <option name="myItemId" value="76323df9-b746-4f38-a295-fd089a3e40d4(ExampleLanguage)" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Project" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
@@ -188,7 +193,11 @@
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="76323df9-b746-4f38-a295-fd089a3e40d4(ExampleLanguage)" />
+              <option name="myItemId" value="c9d1fc37-0f86-4774-b4fd-0cdb7807855c" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ExampleLanguage" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
@@ -199,10 +208,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="c9d1fc37-0f86-4774-b4fd-0cdb7807855c" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ExampleLanguage" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
@@ -221,12 +226,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="r:9903d408-e161-4729-a60e-f52886dd6762(ExampleLanguage.sandbox) in IdeaFile[path: /Users/federico/repos/webeditkit/functionaltests/exampleproject/languages/ExampleLanguage/sandbox/models/ExampleLanguage.sandbox.mps]" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Project" />
               <option name="myItemType" value="" />
             </PATH_ELEMENT>
           </PATH>
@@ -268,6 +267,7 @@
           </SELECTED>
         </subPane>
       </pane>
+      <pane id="FileSystem" />
     </panes>
   </component>
   <component name="ProjectViewState">

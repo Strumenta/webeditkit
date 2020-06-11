@@ -263,6 +263,20 @@ export interface GetIntentionsBlockAnswer extends RequestAnswer {
 }
 
 //
+// Node messages
+//
+
+export interface GetNode extends RequestMessage {
+  type: 'GetNode';
+  node: NodeIDInModel;
+}
+
+export interface GetNodeAnswer extends RequestAnswer {
+  type: 'GetNodeAnswer';
+  nodeData: NodeData;
+}
+
+//
 // Other messages
 //
 

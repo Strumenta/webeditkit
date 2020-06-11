@@ -1,5 +1,5 @@
 import {
-  modelNodeToNodeInModel,
+  modelNodeToNodeInModel, NodeData,
   NodeId,
   nodeIdToString,
   PropertiesValues,
@@ -27,7 +27,7 @@ import {
   DefaultInsertion,
   DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport, ExecuteIntention, GetIntentionsBlock, GetIntentionsBlockAnswer,
+  ErrorsForNodeReport, ExecuteIntention, GetIntentionsBlock, GetIntentionsBlockAnswer, GetNode, GetNodeAnswer,
   InsertNextSibling,
   InstantiateConcept, IntentionData,
   IssueDescription,
@@ -190,6 +190,12 @@ export class WsCommunication {
     });
   }
 
+  private registerHandlersForNodes() {
+    this.registerHandler('GetNodeAnswer', (msg: GetNodeAnswer) => {
+      this.invokeCallback(msg.requestId, msg.nodeData);
+    });
+  }
+
   private registerHandler(type: string, handler: MessageHandler<Message>) {
     this.handlers[type.toLowerCase()] = handler;
   }
@@ -209,6 +215,7 @@ export class WsCommunication {
     this.registerHandlersForNodesLifecycle();
     this.registerHandlersForCallbacks();
     this.registerHandlersForIntentions();
+    this.registerHandlersForNodes();
 
     this.ws.onopen = (event) => {
       thisWS.registerForChangesInModel(modelName);
@@ -486,6 +493,20 @@ export class WsCommunication {
       container: modelNode.idString(),
       referenceName,
     } as RequestForDirectReferences);
+  }
+
+  async getNodeData(node: NodeIDInModel, uuid: string = uuidv4()) : Promise<NodeData> {
+    const promise = new Promise<NodeData>((resolve, reject)=> {
+      this.callbacks[uuid] = (data: NodeData) => {
+        resolve(data);
+      };
+      this.sendMessage({
+        type: 'GetNode',
+        requestId: uuid,
+        node,
+      } as GetNode);
+    });
+    return promise
   }
 }
 

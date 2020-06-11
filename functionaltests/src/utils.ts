@@ -1,6 +1,7 @@
 export const MPSSERVER_PORT = 9000;
 
 const request = require('request');
+const rp = require('request-promise-native');
 
 export function tryToConnect(done, attemptLeft=100) {
 
@@ -36,4 +37,14 @@ export function tryToConnect(done, attemptLeft=100) {
     console.log("FAILED to connect", e);
     considerRetrying(attemptLeft);
   }
+}
+
+export async function reloadAll() {
+  rp({uri:`http://localhost:${MPSSERVER_PORT}/persistence/reloadAll`, method: 'POST',resolveWithFullResponse: true })
+    .then((response)=>{
+      if (response.statusCode !== 200) {
+        throw new Error(`reset model failed: ${response.statusCode}`)
+      }
+    })
+    .catch((err)=>{ console.error("ERROR: " + err) });
 }
