@@ -24,7 +24,7 @@ export interface NodeData {
   id: NodeId;
   refs: { [key: string]: ReferenceData };
   rootName?: string;
-  modelName?: string; // The qualified model name
+  modelName: string; // The qualified model name
   parent?: NodeData;
 }
 
@@ -68,8 +68,8 @@ export type PropertiesValues = { [key: string]: PropertyValue };
 /// Node navigation
 ///
 
-export function findNode(localModelName, nodeId): ModelNode | null {
-  return getDatamodelRoot(localModelName).findNodeById(nodeId);
+export function findNode(localModelName, nodeId): ModelNode | undefined {
+  return getDatamodelRoot(localModelName)?.findNodeById(nodeId);
 }
 
 ///
@@ -88,9 +88,9 @@ export function modelNodeToNodeInModel(node: ModelNode | null): NodeInModel | nu
   };
 }
 
-export function refToNodeInModel(ref: Ref | null): NodeInModel | null {
+export function refToNodeInModel(ref: Ref | undefined): NodeInModel | undefined {
   if (ref == null) {
-    return null;
+    return undefined;
   }
   return {
     model: ref.data.model.qualifiedName,

@@ -1,7 +1,7 @@
 import { NodeData, NodeInModel } from './misc';
 import { ModelNode } from './modelNode';
 
-const datamodelRoots: { [key: string]: ModelNode } = {};
+const datamodelRoots = new Map<string, ModelNode>();
 const datamodelClasses = {};
 
 class Registry {
@@ -25,9 +25,6 @@ export function registerDataModelClass(conceptName: string, clazz: new (data: No
 }
 
 export function dataToNode(data: NodeData): ModelNode {
-  if (data === null) {
-    return null;
-  }
   const clazz = datamodelClasses[data.concept];
   if (clazz === undefined) {
     return new ModelNode(data);
@@ -41,35 +38,29 @@ export function dataToNode(data: NodeData): ModelNode {
 ///
 
 export function clearDatamodelRoots(): void {
-  Object.keys(datamodelRoots).forEach((key) => {
-    delete datamodelRoots[key];
-  });
+  datamodelRoots.clear();
 }
 
 export function setDatamodelRoot(name: string, root: ModelNode): void {
-  datamodelRoots[name] = root;
+  datamodelRoots.set(name, root);
 }
 
-export function getDatamodelRoot(name: string): ModelNode {
-  return datamodelRoots[name];
+export function getDatamodelRoot(name: string): ModelNode | undefined {
+  return datamodelRoots.get(name);
 }
 
 export function forEachDataModel(op: (localName: string, root: ModelNode) => void) {
-  const keys = Object.keys(datamodelRoots);
-  for (const key of keys) {
-    op(key, getDatamodelRoot(key));
-  }
+  datamodelRoots.forEach((value, key) => op(key, value));
 }
 
-export function getNodeFromLocalRepo(nodeId: NodeInModel): ModelNode | null {
-  for (const key in datamodelRoots) {
-    const entry: ModelNode = datamodelRoots[key];
-    if (entry.modelName() == nodeId.model) {
+export function getNodeFromLocalRepo(nodeId: NodeInModel): ModelNode | undefined {
+  for (const [, entry] of datamodelRoots.entries()) {
+    if (entry.modelName() === nodeId.model) {
       const res = entry.findNodeById(nodeId.id.regularId);
       if (res != null) {
         return res;
       }
     }
   }
-  return null;
+  return undefined;
 }

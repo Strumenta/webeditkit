@@ -19,15 +19,22 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
   const parents = $(element).parents();
 
   // First find the collection containing this node
-  const collectionIndex = Array.from(parents).findIndex((e) => $(e).hasClass('represent-collection'));
-  const parentsToConsider = Array.from(parents).slice(0, collectionIndex);
-  const nodesToConsider = $(parentsToConsider).filter(function () {
-    return $(this).hasClass('represent-node');
-  });
-  const lastNode = nodesToConsider[nodesToConsider.length - 1];
+  const parentsArray = Array.from(parents);
+  const collectionIndex = parentsArray.findIndex((e) => $(e).hasClass('represent-collection'));
+  const parentsToConsider = parentsArray.slice(0, collectionIndex);
+  const nodesToConsider = $(parentsToConsider).filter('.represent-node');
+  const lastNode = nodesToConsider.last();
 
-  const nodeId = $(lastNode).data('node_represented');
-  const sibling = getDatamodelRoot(modelNode.rootName()).findNodeById(nodeId);
+  const nodeId = lastNode.data('node_represented');
+  const modelRootName = modelNode.rootName();
+  if (modelRootName == null) { return; }
+
+  const root = getDatamodelRoot(modelRootName);
+  if (root == null) { return; }
+
+  const sibling = root.findNodeById(nodeId);
+  if (sibling == null) { return; }
+
   sibling.insertNextSibling();
 }
 
@@ -66,7 +73,7 @@ export function separate(original: any[], separatorGenerator?: () => VNode): any
   if (separatorGenerator === undefined) {
     return original;
   }
-  const separated = [];
+  const separated: any[] = [];
   for (let i = 0; i < original.length; i++) {
     separated.push(original[i]);
     if (i + 1 < original.length) {
@@ -77,27 +84,31 @@ export function separate(original: any[], separatorGenerator?: () => VNode): any
 }
 
 export function focusOnReference(modelNode: ModelNode, referenceName: string) {
-  const firstNodeFound = findDomElement(modelNode.idString(), modelNode.rootName());
-  if (firstNodeFound != null) {
-    // log("  focusOnReference, node found", firstNodeFound);
-    const inputs = $(firstNodeFound).find('input');
-    // check if the node itself represent the reference
-    let refNode;
-    if (
-      $(firstNodeFound).data('node_represented') == modelNode.idString() &&
-      $(firstNodeFound).data('reference_represented') == referenceName
-    ) {
-      refNode = $(firstNodeFound);
-    } else {
-      refNode = inputs.filter((i, el) => {
-        return (
-          $(el).data('node_represented') == modelNode.idString() && $(el).data('reference_represented') == referenceName
-        );
-      });
-    }
-    if (refNode.length === 1) {
-      refNode.focus();
-    }
+  const rootName = modelNode.rootName();
+  if (rootName == null) {
+    return;
+  }
+  const firstNodeFound = findDomElement(modelNode.idString(), rootName);
+  if (firstNodeFound == null) {
+    return;
+  }
+
+  const inputs = $(firstNodeFound).find('input');
+  let refNode;
+  if (
+    $(firstNodeFound).data('node_represented') === modelNode.idString() &&
+    $(firstNodeFound).data('reference_represented') === referenceName
+  ) {
+    refNode = $(firstNodeFound);
+  } else {
+    refNode = inputs.filter((i, el) => {
+      return (
+        $(el).data('node_represented') === modelNode.idString() && $(el).data('reference_represented') === referenceName
+      );
+    });
+  }
+  if (refNode.length === 1) {
+    refNode.focus();
   }
 }
 
@@ -121,12 +132,18 @@ export function findDomElement(nodeIdStr: string, rootName: string) {
 /**
  *
  * @param nodeIdStr
+ * @param rootName
  */
-export function focusOnNode(nodeIdStr: string, rootName: string) {
-  const firstNodeFound = findDomElement(nodeIdStr, rootName);
-  if (firstNodeFound != null) {
-    focusOnFirstInputOf(firstNodeFound);
+export function focusOnNode(nodeIdStr: string, rootName: string | undefined) {
+  if (rootName == null) {
+    return;
   }
+  const firstNodeFound = findDomElement(nodeIdStr, rootName);
+  if (firstNodeFound == null) {
+    return;
+  }
+
+  focusOnFirstInputOf(firstNodeFound);
 }
 
 function focusOnFirstInputOf(element): boolean {
@@ -153,11 +170,11 @@ export function domElementToModelNode(element: HTMLElement): ModelNode | undefin
   log('domElementToModelNode', element);
   log('  data', $(element).data('node_represented'));
   const nodeId = $(element).data('node_represented');
-  if (nodeId != null && nodeId != '') {
+  if (nodeId != null && nodeId !== '') {
     const modelLocalName = $(element).closest('.editor').data('model_local_name');
     log('  model local name', modelLocalName);
     const dataModelRoot = getDatamodelRoot(modelLocalName);
-    return dataModelRoot.findNodeById(nodeId);
+    return dataModelRoot?.findNodeById(nodeId);
   } else if (element.parentElement != null) {
     return domElementToModelNode(element.parentElement);
   } else {

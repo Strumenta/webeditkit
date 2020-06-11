@@ -1,20 +1,24 @@
 import { dataToNode } from './registry';
-import { getWsCommunication, WsCommunication } from '../communication/wscommunication';
+import { getWsCommunication } from '../communication';
 import { modelNodeToNodeInModel, NodeData, nodeIdToString, PropertyValue, refToNodeInModel } from './misc';
 import { Ref } from './ref';
 import { ReferenceChange } from '../communication/messages';
 import { renderDataModels } from '../index';
 import { uuidv4 } from '../utils/misc';
 
-export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode) {
-  const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
+export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): void {
+  const node = root.findNodeById(nodeIdToString(msg.node.id));
+  if (node == null) {
+    return;
+  }
+
   if (msg.referenceValue == null) {
-    node.setRefLocally(msg.referenceName, null);
+    node.setRefLocally(msg.referenceName, undefined);
   } else {
     node.setRefLocally(
       msg.referenceName,
       new Ref({
-        model: { qualifiedName: msg.referenceValue.model },
+        model: {qualifiedName: msg.referenceValue.model},
         id: msg.referenceValue.id,
       }),
     );
@@ -23,7 +27,6 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode) {
 }
 
 export type NodeProcessor = (node: ModelNode) => void;
-export type OptionalNodeProcessor = NodeProcessor | undefined;
 
 export class ModelNode {
   readonly data: NodeData;
@@ -32,7 +35,7 @@ export class ModelNode {
     this.data = data;
   }
 
-  childByLinkName(linkName): ModelNode {
+  childByLinkName(linkName): ModelNode | null {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     if (filtered.length === 0) {
       return null;
@@ -67,9 +70,9 @@ export class ModelNode {
     return value || undefined;
   }
 
-  setRefLocally(referenceName: string, ref: Ref): void {
+  setRefLocally(referenceName: string, ref: Ref | undefined): void {
     if (ref == null) {
-      this.data.refs[referenceName] = null;
+      delete this.data.refs[referenceName];
     } else {
       this.data.refs[referenceName] = ref.data;
     }
@@ -79,13 +82,14 @@ export class ModelNode {
     if (this.isRoot()) {
       return this;
     }
-    if (this.parent() == null) {
+    const parent = this.parent();
+    if (parent == null) {
       return null;
     }
-    return this.parent().root();
+    return parent.root();
   }
 
-  setRef(referenceName: string, ref: Ref): void {
+  setRef(referenceName: string, ref: Ref | undefined): void {
     const root = this.root();
     if (root == null) {
       throw new Error('Root not found');
@@ -128,7 +132,7 @@ export class ModelNode {
     return this.data.concept;
   }
 
-  findNodeById(nodeIdStr: string): ModelNode | null {
+  findNodeById(nodeIdStr: string): ModelNode | undefined {
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
@@ -139,7 +143,7 @@ export class ModelNode {
         return childRes;
       }
     }
-    return null;
+    return undefined;
   }
 
   simpleConceptName(): string {
@@ -161,7 +165,7 @@ export class ModelNode {
     }
   }
 
-  modelName() {
+  modelName(): string {
     return this.data.modelName;
   }
 
@@ -173,10 +177,15 @@ export class ModelNode {
     if (this.isRoot()) {
       throw new Error('Cannot get index of root');
     }
-    if (this.parent() == null) {
+    const parent = this.parent();
+    if (parent == null) {
       throw new Error('Cannot get index when parent is not set');
     }
-    const siblings = this.parent().childrenByLinkName(this.containmentName());
+    const containmentName = this.containmentName();
+    if (containmentName == null) {
+      throw new Error('Cannot get index when containment name is null');
+    }
+    const siblings = parent.childrenByLinkName(containmentName);
     for (let i = 0; i < siblings.length; i++) {
       if (this.idString() === siblings[i].idString()) {
         return i;
@@ -208,7 +217,7 @@ export class ModelNode {
     containmentName: string,
     index: number,
     childConcept: string,
-    initializer: OptionalNodeProcessor = undefined,
+    initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ) {
     this.ws().addChildAtIndex(this, containmentName, index, childConcept, initializer, uuid);
@@ -217,7 +226,7 @@ export class ModelNode {
   createSingleChild(
     containmentName: string,
     childConcept: string,
-    initializer: OptionalNodeProcessor = undefined,
+    initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ) {
     this.ws().setChild(this, containmentName, childConcept, initializer, uuid);

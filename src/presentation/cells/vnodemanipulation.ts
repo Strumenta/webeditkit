@@ -150,11 +150,17 @@ export function addClass(vnode: VNode, className: string): VNode {
 }
 
 export function setDataset(vnode: VNode, dataset: any): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
   vnode.data.dataset = dataset;
   return vnode;
 }
 
 export function addToDataset(vnode: VNode, key: string, value: any): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
   if (vnode.data.dataset === undefined) {
     vnode.data.dataset = {};
   }
@@ -163,6 +169,9 @@ export function addToDataset(vnode: VNode, key: string, value: any): VNode {
 }
 
 export function addToDatasetObj(vnode: VNode, dataObj: object) {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
   if (vnode.data.dataset === undefined) {
     vnode.data.dataset = {};
   }
@@ -176,8 +185,9 @@ export function setKey(vnode: VNode, key: string): VNode {
 }
 
 export function addId(vnode: VNode, myId: string): VNode {
-  const tagName = vnode.sel.split(/\.(.+)/)[0];
-  const classes = vnode.sel.split(/\.(.+)/)[1];
+  const tagNameAndClasses = (vnode.sel ?? '').split(/\.(.+)/);
+  const tagName = tagNameAndClasses[0];
+  const classes = tagNameAndClasses[1];
   vnode.sel = tagName + '#' + myId;
   if (classes !== undefined) {
     vnode.sel += '.' + classes;

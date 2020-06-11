@@ -32,7 +32,7 @@ import { EditedValue, IData } from './data';
 export function childCell(
   node: ModelNode,
   containmentName: string,
-  emptyCell: () => VNode | undefined = undefined,
+  emptyCell?: () => VNode,
 ): VNode {
   const child = node.childByLinkName(containmentName);
   if (child == null) {
@@ -56,7 +56,7 @@ function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNo
     '<< ... >>',
     ['empty-collection'],
     alternativesProviderForAddingChild(modelNode, containmentName),
-    null,
+    undefined,
     () => {
       if (ws == null) {
         throw new Error('no communication through web socket available');
@@ -107,7 +107,7 @@ export function verticalCollectionCell(
           console.log('got enter -> triggering adding element', event.target);
           const targetNode = domElementToModelNode(event.target as HTMLElement);
           console.log('  adding after', targetNode, 'container is', modelNode);
-          targetNode.insertNextSibling();
+          targetNode?.insertNextSibling();
         }
       }
       return true;
@@ -274,12 +274,16 @@ export function editableCell(
           return false;
         },
         input: (e: InputEvent) => {
-          const value = (e.target as HTMLInputElement).value;
+          const target = e.target;
+          if (target == null) {
+            return;
+          }
+          const value = (target as HTMLInputElement).value;
           setEditedValue(value);
           if (value === '') {
-            $(e.target).addClass('emptyProperty');
+            $(target).addClass('emptyProperty');
           } else {
-            $(e.target).removeClass('emptyProperty');
+            $(target).removeClass('emptyProperty');
           }
         },
       },
@@ -586,18 +590,18 @@ export function referenceCell(
       props: { value: 'Loading...' },
       hook: {
         insert: (vnode: VNode) => {
-          vnode.elm.addEventListener('keydown', kdCaptureListener, true);
+          vnode.elm!.addEventListener('keydown', kdCaptureListener, true);
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
           }
-          modelNode.ref(referenceName).loadData((refModelNode) => {
-            $(vnode.elm).val(refModelNode.name());
+          modelNode.ref(referenceName)?.loadData((refModelNode) => {
+            $(vnode.elm!).val(refModelNode.name() ?? '?no name?');
             triggerResize(vnode);
           });
         },
         update: (vnode: VNode) => {
-          vnode.elm.addEventListener('keydown', kdCaptureListener, true);
+          vnode.elm!.addEventListener('keydown', kdCaptureListener, true);
           triggerResize(vnode);
         },
       },
@@ -633,10 +637,9 @@ export function referenceCell(
           //return false;
         },
         keyup: (e: KeyboardEvent) => {
-          modelNode.ref(referenceName).loadData((refNode) => {
-            // @ts-ignore
-            if (refNode.name() != e.target.value) {
-              modelNode.setRef(referenceName, null);
+          modelNode.ref(referenceName)?.loadData((refNode) => {
+            if (refNode.name() !== (e.target as HTMLInputElement).value) {
+              modelNode.setRef(referenceName, undefined);
               const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
               // @ts-ignore
               resolutionMemory[resolutionMemoryKey] = e.target.value;

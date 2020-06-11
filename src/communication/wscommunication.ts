@@ -105,8 +105,10 @@ export class WsCommunication {
         throw new Error('data model with local name ' + this.localName + ' was not found');
       }
       const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
-      node.setProperty(msg.propertyName, msg.propertyValue);
-      renderDataModels();
+      if (node != null) {
+        node.setProperty(msg.propertyName, msg.propertyValue);
+        renderDataModels();
+      }
     });
     this.registerHandler('ReferenceChange', (msg: ReferenceChange) => {
       const root = getDatamodelRoot(this.localName);
@@ -153,7 +155,7 @@ export class WsCommunication {
     this.registerHandler('AddChildAnswer', (msg: AddChildAnswer) => {
       const callback = this.getAndDeleteCallback(msg.requestId);
       if (callback != null) {
-        const createdNode: ModelNode = getNodeFromLocalRepo(msg.nodeCreated);
+        const createdNode: ModelNode | undefined = getNodeFromLocalRepo(msg.nodeCreated);
         if (createdNode == null) {
           console.warn(
             'cannot handle AddChildAnswer as we cannot find the created node in the local repo',
@@ -388,7 +390,7 @@ export class WsCommunication {
     } as AddChild);
   }
 
-  communicateReferenceChange(container: ModelNode, referenceName: string, ref: Ref): void {
+  communicateReferenceChange(container: ModelNode, referenceName: string, ref: Ref | undefined): void {
     // TODO communicateReferenceChange should become a Reference Change: we are saying
     // to the server that a reference changed
     this.sendMessage({

@@ -102,10 +102,7 @@ const vnodes = {};
 type BasicCallback = () => void;
 
 function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
-  if (vnode == null) {
-    return vnode;
-  }
-  if (vnode.data == null || vnode.children == null) {
+  if (vnode.data == null) {
     // throw new Error('This does not seem a valid node');
     // this is a piece of text
     return vnode;
@@ -115,23 +112,27 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
     const errors = issues.getIssuesForNode(myNodeId);
     if (errors.length !== 0) {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
-        $(vNode.elm).addClass('hasErrors');
+        $(vNode.elm!).addClass('hasErrors');
       });
       vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
-        $(vNode.elm).addClass('hasErrors');
+        $(vNode.elm!).addClass('hasErrors');
       });
     } else {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
-        $(vNode.elm).removeClass('hasErrors');
+        $(vNode.elm!).removeClass('hasErrors');
       });
       vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
-        $(vNode.elm).removeClass('hasErrors');
+        $(vNode.elm!).removeClass('hasErrors');
       });
     }
   }
-  for (let i = 0; i < vnode.children.length; i++) {
-    if ((vnode as VNode).children[i] != null) {
-      vnode.children[i] = injectErrors(<VNode>vnode.children[i], issues);
+
+  const children = vnode.children;
+  if (children != null) {
+    for (let i = 0; i < children.length; i++) {
+      if (typeof children[i] !== 'string') {
+        children[i] = injectErrors(children[i] as VNode, issues);
+      }
     }
   }
   return vnode;
@@ -203,11 +204,11 @@ export function baseUrlForTarget(target): string {
   return targetData[target].baseUrl;
 }
 
-export function baseUrlForModelName(model: string): string {
+export function baseUrlForModelName(model: string): string|undefined {
   for (const target in targetData) {
     if (targetData[target].model === model) {
       return targetData[target].baseUrl;
     }
   }
-  return null;
+  return undefined;
 }

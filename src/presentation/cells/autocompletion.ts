@@ -1,14 +1,18 @@
 import { ModelNode } from '../../datamodel';
 import { Alternative, getWsCommunication } from '../../communication/wscommunication';
 
-const autocomplete = require('autocompleter');
+import autocomplete from 'autocompleter';
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
   const parent = modelNode.parent();
   if (parent == null) {
     throw new Error('The given node has no parent');
   }
-  return alternativesProviderForAddingChild(parent, modelNode.containmentName(), true);
+  const containmentName = modelNode.containmentName();
+  if (containmentName == null) {
+    throw new Error('The given node has a parent but no containment name');
+  }
+  return alternativesProviderForAddingChild(parent, containmentName, true);
 }
 
 type SuggestionsReceiverFactory = (suggestionsReceiver: SuggestionsReceiver) => void;
@@ -80,7 +84,7 @@ export function installAutocomplete(
       valuesProvider((suggestions: AutocompleteAlternative[]) => {
         if (!fixed) {
           suggestions = suggestions.filter((n: { label: string }) => n.label.toLowerCase().includes(ltext));
-          if (suggestions.length == 1 && suggestions[0].label == text) {
+          if (suggestions.length === 1 && suggestions[0].label === text) {
             suggestions[0].execute();
           }
         }
