@@ -222,7 +222,7 @@ export interface AnswerForDirectReferences extends RequestAnswer {
 }
 
 //
-// Intention messages
+// IntentionData messages
 //
 
 export interface CreateIntentionsBlock extends RequestMessage {
@@ -251,14 +251,15 @@ export interface GetIntentionsBlock extends RequestMessage {
   blockUUID: UUID;
 }
 
-export interface Intention {
+export interface IntentionData {
   index: number;
   description: string;
 }
 
 export interface GetIntentionsBlockAnswer extends RequestAnswer {
   type: 'GetIntentionsBlockAnswer'
-  intentions: Intention[];
+  blockUUID: UUID,
+  intentions: IntentionData[];
 }
 
 //

@@ -30,8 +30,14 @@ describe('Intentions API', () => {
                 }
             });
             intentions.then((value) => {
-                expect(value).to.eql([ { index: 0, description: 'Assign Standard ID to All Projects' } ]);
-                done();
+                try {
+                    expect(value.length).to.eql(1);
+                    expect(value[0].index).to.eql(0);
+                    expect(value[0].description).to.eql('Assign Standard ID to All Projects');
+                    done();
+                } catch (e) {
+                    done(e);
+                }
             })
 
         }

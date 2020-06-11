@@ -27,9 +27,9 @@ import {
   DefaultInsertion,
   DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport, GetIntentionsBlock, GetIntentionsBlockAnswer,
+  ErrorsForNodeReport, ExecuteIntention, GetIntentionsBlock, GetIntentionsBlockAnswer,
   InsertNextSibling,
-  InstantiateConcept, Intention,
+  InstantiateConcept, IntentionData,
   IssueDescription,
   Message,
   NodeAdded, NodeIDInModel, nodeIDInModelFromNode,
@@ -58,6 +58,24 @@ export type Alternatives = Alternative[];
 export type AlternativesForDirectReference = AlternativeForDirectReference[];
 
 type MessageHandler<M extends Message> = (msg: M) => void;
+
+export class Intention implements IntentionData {
+  description: string;
+  index: number;
+  ws: WsCommunication;
+  blockUUID: UUID;
+
+  constructor(ws: WsCommunication, blockUUID: UUID, index: number, description: string) {
+    this.ws = ws;
+    this.blockUUID = blockUUID;
+    this.index = index;
+    this.description = description;
+  }
+
+  execute() {
+    this.ws.executeIntention(this.blockUUID, this.index);
+  }
+}
 
 export class WsCommunication {
   private ws: WebSocket;
@@ -168,7 +186,7 @@ export class WsCommunication {
       this.invokeCallback(msg.requestId, msg.blockUUID);
     });
     this.registerHandler('GetIntentionsBlockAnswer', (msg: GetIntentionsBlockAnswer) => {
-      this.invokeCallback(msg.requestId, msg.intentions);
+      this.invokeCallback(msg.requestId, msg.blockUUID, msg.intentions);
     });
   }
 
@@ -266,6 +284,14 @@ export class WsCommunication {
     } as RegisterForChanges);
   }
 
+  executeIntention(blockUUID: UUID, index: number) : void {
+    this.sendMessage({
+      type: 'ExecuteIntention',
+      blockUUID,
+      index
+    } as ExecuteIntention);
+  }
+
   async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4(), uuid2: string = uuidv4()) : Promise<Intention[]> {
     return new Promise<Intention[]>((resolve, reject) => {
       this.callbacks[uuid1] = (blockUUID: UUID) => {
@@ -275,7 +301,10 @@ export class WsCommunication {
           blockUUID,
         } as GetIntentionsBlock)
       };
-      this.callbacks[uuid2] = (intentions: Intention[]) => {
+      this.callbacks[uuid2] = (blockUUID: UUID, intentionsData: IntentionData[]) => {
+        const intentions : Intention[] = intentionsData.map<Intention>((data: IntentionData)=>{
+          return new Intention(this, blockUUID, data.index, data.description);
+        });
         return resolve(intentions);
       };
       const nodeIDInModel = modelNode instanceof ModelNode ? nodeIDInModelFromNode(modelNode) : modelNode;
