@@ -3,7 +3,7 @@ import 'mocha';
 import { Server, WebSocket } from 'mock-socket';
 import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import { clone } from './testutils';
+import { assertTheseMessagesAreReceived, clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
 import { AnswerPropertyChange, PropertyChangeNotification, RequestPropertyChange } from '../src/communication/messages';
 
@@ -127,17 +127,29 @@ describe('WsCommunication', () => {
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
-        if (messagesReceivedByServer.length == 2) {
-          expect(messagesReceivedByServer[0]).to.eql({
+        assertTheseMessagesAreReceived(messagesReceivedByServer.length, data as string, [
+          {
             type: 'instantiateConcept',
-            modelName: 'my.qualified.ModelName',
-            conceptToInstantiate: 'myConcept',
-            nodeToReplace: '1848360241685547698',
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
+            check: (msg) => {
+              expect(msg).to.eql({
+                type: 'instantiateConcept',
+                modelName: 'my.qualified.ModelName',
+                conceptToInstantiate: 'myConcept',
+                nodeToReplace: '1848360241685547698',
+              });
+            }
+          },
+          {
             type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
+            check: (msg) => {
+              expect(msg).to.eql({
+                type: 'registerForChanges',
+                modelName: 'my.qualified.ModelName',
+              });
+            }
+          }
+        ]);
+        if (messagesReceivedByServer.length === 2) {
           mockServer.close();
           done();
         }

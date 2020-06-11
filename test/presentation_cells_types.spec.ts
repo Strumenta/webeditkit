@@ -19,7 +19,7 @@ import {
 import { flattenArray } from '../src/presentation';
 import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
 
-import { PropertyChangeNotification } from '../src/communication/messages';
+import { DefaultInsertion, PropertyChangeNotification } from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -43,6 +43,7 @@ import { installAutoresize } from '../src/presentation/uiutils';
 import { createInstance } from '../src/communication/wscommunication';
 import { Server, WebSocket } from 'mock-socket';
 import {
+  assertTheseMessagesAreReceived,
   focusedElement,
   prepareFakeDom,
   pressArrowLeft,
@@ -567,28 +568,34 @@ describe('Cells.Types', () => {
       const mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
-          if (received == 0) {
-            const dataj = JSON.parse(data as string);
-            expect(dataj.type).to.eql('defaultInsertion');
-            expect(dataj.containmentName).to.eql('unexisting');
-            expect(dataj.container).to.eql('324292001770075100');
-            expect(dataj.modelName).to.eql('my.qualified.model');
-            console.log('focus before', focusedElement());
-            socket.send(
-              JSON.stringify({
-                type: 'AnswerDefaultInsertion',
-                requestId: dataj.requestId,
-                addedNodeID: {
-                  regularId: 'xxx-123',
-                },
-              }),
-            );
-            // it works when running test individually, not when running all tests together
-            //expect(focusedElement().outerHTML).to.eql('<input class="represent-node" data-node_represented="xxx-123">');
-          } else if (received == 1) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-            mockServer.close();
-            done();
+          if (received <= 1) {
+            assertTheseMessagesAreReceived(received, data as string, [
+              {type: 'defaultInsertion',
+              check: (msg: DefaultInsertion) => {
+                expect(msg.type).to.eql('defaultInsertion');
+                expect(msg.containmentName).to.eql('unexisting');
+                expect(msg.container).to.eql('324292001770075100');
+                expect(msg.modelName).to.eql('my.qualified.model');
+                console.log('focus before', focusedElement());
+                socket.send(
+                  JSON.stringify({
+                    type: 'AnswerDefaultInsertion',
+                    requestId: msg.requestId,
+                    addedNodeID: {
+                      regularId: 'xxx-123',
+                    },
+                  }),
+                );
+              }},
+              {
+                type: 'registerForChanges',
+                check: (msg) => {
+                  expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+                  mockServer.close();
+                  done();
+                }
+              }
+            ]);
           } else {
             throw new Error('Too many messages');
           }
@@ -810,7 +817,7 @@ describe('Cells.Types', () => {
 
     // Change property to 'foo' and then to 'foobar'. The only change request that should be received is to set the
     // value to 'foobar'.
-    it('should consolidate change requets', (done) => {
+    it('should consolidate change requests', (done) => {
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
 
