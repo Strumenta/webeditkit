@@ -123,11 +123,12 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
-        assertTheseMessagesAreReceived(messagesReceivedByServer.length, data as string, [
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string, [
           {
             type: 'instantiateConcept',
             check: (msg) => {
@@ -170,23 +171,29 @@ describe('WsCommunication', () => {
 
     const messagesReceivedByServer = [];
 
+    const receivedArray = [false, false];
+
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,[
+          {type:'addChild', check: (msg)=> {
+              delete msg['requestId'];
+              expect(msg).to.eql({
+                type: 'addChild',
+                modelName: 'my.qualified.ModelName',
+                container: '1848360241685547698',
+                containmentName: 'type',
+                conceptToInstantiate: 'my.concept.ToInstantiate',
+                index: -1,
+              });
+            }},
+          {type:'registerForChanges', check: (msg)=> {expect(msg).to.eql({
+              type: 'registerForChanges',
+              modelName: 'my.qualified.ModelName',
+            });}}
+        ]);
         if (messagesReceivedByServer.length == 2) {
-          delete messagesReceivedByServer[0]['requestId'];
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'addChild',
-            modelName: 'my.qualified.ModelName',
-            container: '1848360241685547698',
-            containmentName: 'type',
-            conceptToInstantiate: 'my.concept.ToInstantiate',
-            index: -1,
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
           mockServer.close();
           done();
         }
@@ -206,24 +213,32 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+          [
+            {type:'addChild', check: (msg)=> {
+                delete msg['requestId'];
+                expect(msg).to.eql({
+                  type: 'addChild',
+                  modelName: 'my.qualified.ModelName',
+                  container: '1848360241685547698',
+                  containmentName: 'type',
+                  conceptToInstantiate: 'my.concept.ToInstantiate',
+                  index: 2,
+                });
+              }},
+            {type:'registerForChanges', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'registerForChanges',
+                  modelName: 'my.qualified.ModelName',
+                });
+              }}
+          ]);
         if (messagesReceivedByServer.length == 2) {
-          delete messagesReceivedByServer[0]['requestId'];
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'addChild',
-            modelName: 'my.qualified.ModelName',
-            container: '1848360241685547698',
-            containmentName: 'type',
-            conceptToInstantiate: 'my.concept.ToInstantiate',
-            index: 2,
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
           mockServer.close();
           done();
         }
@@ -243,26 +258,34 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
-        if (messagesReceivedByServer.length == 2) {
-          delete messagesReceivedByServer[0]['requestId'];
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'setChild',
-            modelName: 'my.qualified.ModelName',
-            container: '1848360241685547698',
-            containmentName: 'type',
-            conceptToInstantiate: 'my.concept.ToInstantiate',
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
-          mockServer.close();
-          done();
-        }
+            assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+              [
+                {type:'setChild', check: (msg)=> {
+                    delete msg['requestId'];
+                    expect(msg).to.eql({
+                      type: 'setChild',
+                      modelName: 'my.qualified.ModelName',
+                      container: '1848360241685547698',
+                      containmentName: 'type',
+                      conceptToInstantiate: 'my.concept.ToInstantiate',
+                    });
+                  }},
+                {type:'registerForChanges', check: (msg)=> {
+                    expect(msg).to.eql({
+                      type: 'registerForChanges',
+                      modelName: 'my.qualified.ModelName',
+                    });
+                  }}
+              ]);
+            if (messagesReceivedByServer.length == 2) {
+              mockServer.close();
+              done();
+            }
       });
     });
 
@@ -279,20 +302,28 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+          [
+            {type:'deleteNode', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'deleteNode',
+                  modelName: 'my.qualified.ModelName',
+                  node: '1848360241685547698',
+                });
+              }},
+            {type:'registerForChanges', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'registerForChanges',
+                  modelName: 'my.qualified.ModelName',
+                });
+              }}
+          ]);
         if (messagesReceivedByServer.length == 2) {
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'deleteNode',
-            modelName: 'my.qualified.ModelName',
-            node: '1848360241685547698',
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
           mockServer.close();
           done();
         }
@@ -312,20 +343,28 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+          [
+            {type:'insertNextSibling', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'insertNextSibling',
+                  modelName: 'my.qualified.ModelName',
+                  sibling: '1848360241685547698',
+                });
+              }},
+            {type:'registerForChanges', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'registerForChanges',
+                  modelName: 'my.qualified.ModelName',
+                });
+              }}
+          ]);
         if (messagesReceivedByServer.length == 2) {
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'insertNextSibling',
-            modelName: 'my.qualified.ModelName',
-            sibling: '1848360241685547698',
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
           mockServer.close();
           done();
         }
@@ -340,33 +379,41 @@ describe('WsCommunication', () => {
     ws.insertNextSibling(n_a);
   });
 
-  describe('#triggerChangeOnPropertyNode', () => {
+  describe('triggerChangeOnPropertyNode', () => {
     it('should send messages to server', (done) => {
       const fakeURL = 'ws://localhost:8080';
       mockServer = new Server(fakeURL);
 
       const messagesReceivedByServer = [];
+      const receivedArray = [false, false];
 
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           messagesReceivedByServer.push(JSON.parse(data as string));
+          assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+            [
+              {type:'propertyChange', check: (msg)=> {
+                  expect(msg).to.eql({
+                    type: 'propertyChange',
+                    node: {
+                      model: 'my.qualified.ModelName',
+                      id: {
+                        regularId: '1848360241685547698',
+                      },
+                    },
+                    propertyName: 'name',
+                    propertyValue: 'my new name',
+                    requestId: 'request ID',
+                  } as RequestPropertyChange);
+                }},
+              {type:'registerForChanges', check: (msg)=> {
+                  expect(msg).to.eql({
+                    type: 'registerForChanges',
+                    modelName: 'my.qualified.ModelName',
+                  });
+                }}
+            ]);
           if (messagesReceivedByServer.length == 2) {
-            expect(messagesReceivedByServer[0]).to.eql({
-              type: 'propertyChange',
-              node: {
-                model: 'my.qualified.ModelName',
-                id: {
-                  regularId: '1848360241685547698',
-                },
-              },
-              propertyName: 'name',
-              propertyValue: 'my new name',
-              requestId: 'request ID',
-            } as RequestPropertyChange);
-            expect(messagesReceivedByServer[1]).to.eql({
-              type: 'registerForChanges',
-              modelName: 'my.qualified.ModelName',
-            });
             mockServer.close();
             done();
           }
@@ -416,6 +463,7 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     const uuid = '12345678-1234-4444-9876-123456789012';
     const newNodeId = '123456';
@@ -423,18 +471,25 @@ describe('WsCommunication', () => {
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+          [
+            {type:'defaultInsertion', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'defaultInsertion',
+                  modelName: 'my.qualified.ModelName',
+                  container: '1848360241685547698',
+                  requestId: uuid,
+                  containmentName: 'type',
+                });
+              }},
+            {type:'registerForChanges', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'registerForChanges',
+                  modelName: 'my.qualified.ModelName',
+                });
+              }}
+          ]);
         if (messagesReceivedByServer.length == 2) {
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'defaultInsertion',
-            modelName: 'my.qualified.ModelName',
-            container: '1848360241685547698',
-            requestId: uuid,
-            containmentName: 'type',
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
           socket.send(
             JSON.stringify({
               type: 'AnswerDefaultInsertion',
@@ -470,6 +525,7 @@ describe('WsCommunication', () => {
     mockServer = new Server(fakeURL);
 
     const messagesReceivedByServer = [];
+    const receivedArray = [false, false];
 
     const uuid = '12345678-1234-4444-9876-123456789012';
     const newNodeId = '123456';
@@ -477,18 +533,25 @@ describe('WsCommunication', () => {
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         messagesReceivedByServer.push(JSON.parse(data as string));
+        assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string,
+          [
+            {type:'askAlternatives', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'askAlternatives',
+                  modelName: 'my.qualified.ModelName',
+                  nodeId: '1848360241685547698',
+                  requestId: uuid,
+                  containmentName: 'type',
+                });
+              }},
+            {type:'registerForChanges', check: (msg)=> {
+                expect(msg).to.eql({
+                  type: 'registerForChanges',
+                  modelName: 'my.qualified.ModelName',
+                });
+              }}
+          ]);
         if (messagesReceivedByServer.length == 2) {
-          expect(messagesReceivedByServer[0]).to.eql({
-            type: 'askAlternatives',
-            modelName: 'my.qualified.ModelName',
-            nodeId: '1848360241685547698',
-            requestId: uuid,
-            containmentName: 'type',
-          });
-          expect(messagesReceivedByServer[1]).to.eql({
-            type: 'registerForChanges',
-            modelName: 'my.qualified.ModelName',
-          });
           socket.send(
             JSON.stringify({
               type: 'AnswerAlternatives',

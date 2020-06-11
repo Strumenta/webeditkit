@@ -157,12 +157,8 @@ export function triggerInputEvent(element: HTMLInputElement) {
   element.dispatchEvent(new window.InputEvent('input', {}));
 }
 
-export function assertTheseMessagesAreReceived(received: number, data: string, messages: {type: string, check: (msg: Message)=>void}[]) {
-  const receivedArray: boolean[] = [];
-  for (const m of messages) {
-    receivedArray.push(false);
-  }
-
+export function assertTheseMessagesAreReceived(receivedArray: boolean[], received: number,
+                                               data: string, messages: {type: string, check: (msg: Message)=>void}[]){
   if (received <= messages.length) {
     const dataj = JSON.parse(data as string) as Message;
     messages.forEach((value, index) => {

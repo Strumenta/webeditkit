@@ -566,10 +566,11 @@ describe('Cells.Types', () => {
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
       const mockServer = new Server(fakeURL);
+      const receivedArray = [false, false];
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received <= 1) {
-            assertTheseMessagesAreReceived(received, data as string, [
+            assertTheseMessagesAreReceived(receivedArray, received, data as string, [
               {type: 'defaultInsertion',
               check: (msg: DefaultInsertion) => {
                 expect(msg.type).to.eql('defaultInsertion');
