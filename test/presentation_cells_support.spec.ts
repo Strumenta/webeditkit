@@ -27,7 +27,7 @@ import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
-import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
+import { assertTheseMessagesAreReceived, compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { dataToNode } from '../src/datamodel/registry';
 
 const jsdom = require('jsdom');
@@ -277,17 +277,30 @@ describe('Presentation.Cells.Support', () => {
       const mockServer = new Server(fakeURL);
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
-          if (received == 0) {
-            expect(JSON.parse(data as string)).to.eql({
-              type: 'deleteNode',
-              modelName: 'my.qualified.model',
-              node: '324292001770075100',
-            });
-            mockServer.close();
-            done();
-          } else if (received == 1) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-            // actually the test will be finished at this point...
+          if (received <= 1) {
+            assertTheseMessagesAreReceived(received, data as string, [
+              {
+                type: 'deleteNode',
+                check: (msg) => {
+                  expect(msg).to.eql({
+                    type: 'deleteNode',
+                    modelName: 'my.qualified.model',
+                    node: '324292001770075100',
+                  });
+                  mockServer.close();
+                  done();
+                }
+              },
+              {
+                type: 'registerForChanges',
+                check: (msg) => {
+                  expect(JSON.parse(data as string)).to.eql({
+                    type: 'registerForChanges',
+                    modelName: 'my.qualified.model'
+                  });
+                }
+              }
+            ]);
           } else {
             throw new Error('Too many messages');
           }

@@ -1,6 +1,8 @@
 import { VNode } from 'snabbdom/vnode';
 import { expect } from 'chai';
 import { installAutoresize } from '../src/presentation/uiutils';
+import { Message } from '../src/communication/messages';
+import { AskAlternatives } from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -153,4 +155,26 @@ export function focusedElement() {
 
 export function triggerInputEvent(element: HTMLInputElement) {
   element.dispatchEvent(new window.InputEvent('input', {}));
+}
+
+export function assertTheseMessagesAreReceived(received: number, data: string, messages: {type: string, check: (msg: Message)=>void}[]) {
+  const receivedArray: boolean[] = [];
+  for (const m of messages) {
+    receivedArray.push(false);
+  }
+
+  if (received <= messages.length) {
+    const dataj = JSON.parse(data as string) as Message;
+    messages.forEach((value, index) => {
+      if (dataj.type === value.type) {
+        value.check(dataj);
+        receivedArray[index] = true;
+      }
+    });
+    if (received === messages.length) {
+      messages.forEach((value, index) => {
+        expect(receivedArray[index]).to.eql(true, `Message ${messages[index].type} not received`);
+      });
+    }
+  }
 }
