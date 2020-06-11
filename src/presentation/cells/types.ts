@@ -97,16 +97,11 @@ export function verticalCollectionCell(
     );
   }
   return wrapKeydownHandler(baseNode, (event: KeyboardEvent): boolean => {
-    if (event.key == 'Enter') {
+    if (event.key === 'Enter' && event.altKey === false) {
       // it should ignore it if the autocomplete is displayed
       if (!isAutocompleteVisible()) {
-        // if (!event.defaultPrevented) {
-        //   console.log("got enter", event);
-        // } else {
-        //   console.log("got enter avoided because default prevented", event);
-        // }
         // @ts-ignore
-        if (event.duringAutocomplete == true) {
+        if (event.duringAutocomplete === true) {
           console.log('got enter during autocomplete, skipping');
         } else {
           console.log('got enter -> triggering adding element', event.target);
@@ -345,7 +340,7 @@ export function fixedCell(
               e.preventDefault();
               return false;
             }
-          } else if (e.key === 'Enter') {
+          } else if (e.key === 'Enter' && e.altKey === false) {
             if ($('.autocomplete').length == 0) {
               if (onEnter !== undefined) {
                 log('prevent enter on fixed (A)');
@@ -620,7 +615,7 @@ export function referenceCell(
               return false;
             }
           }
-          if (e.key == 'Enter') {
+          if (e.key === 'Enter' && e.altKey === false) {
             log('enter on reference cell', e);
             // @ts-ignore
             e.insertionEnter = true;
