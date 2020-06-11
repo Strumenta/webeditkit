@@ -280,8 +280,16 @@ export class WsCommunication {
     } as CreateRoot);
   }
 
-  private sendMessage(message: Message) {
-    this.ws.send(JSON.stringify(message));
+  private sendMessage(message: Message, nAttempts=10) {
+    if (this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    } else if (nAttempts > 0) {
+      setTimeout(()=>{
+        this.sendMessage(message, nAttempts - 1);
+      }, 25);
+    } else {
+      throw new Error("Cannot send message because it is not connected");
+    }
   }
 
   private registerForChangesInModel(modelName: string): void {

@@ -1,7 +1,7 @@
 import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
 import { domElementToModelNode } from './cells/support';
-import { getWsCommunication } from '../communication';
+import { getWsCommunication } from '../communication/wscommunication';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
