@@ -283,12 +283,16 @@ export class WsCommunication {
   private sendMessage(message: Message, nAttempts=10) {
     if (this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
-    } else if (nAttempts > 0) {
-      setTimeout(()=>{
-        this.sendMessage(message, nAttempts - 1);
-      }, 25);
+    } else if (this.ws.readyState === WebSocket.CONNECTING) {
+      if (nAttempts > 0) {
+        setTimeout(()=>{
+          this.sendMessage(message, nAttempts - 1);
+        }, 25);
+      } else {
+        throw new Error("Cannot send message because it is not connected. Cannot send: " + JSON.stringify(message)+". Status: " + this.ws.readyState);
+      }
     } else {
-      throw new Error("Cannot send message because it is not connected. Cannot send: " + JSON.stringify(message));
+      console.log("message not sent because not connected or connecting", message);
     }
   }
 

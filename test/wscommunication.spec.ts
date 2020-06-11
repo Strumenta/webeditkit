@@ -431,8 +431,14 @@ describe('WsCommunication', () => {
     it('should invoke callback on reply', (done) => {
       const fakeURL = 'ws://localhost:8080';
       mockServer = new Server(fakeURL);
-
-      const ws = new WsCommunication('myurl', 'my.qualified.ModelName', 'localName', new WebSocket(fakeURL));
+      mockServer.on('connection', (socket) => {
+        socket.on('message', (data) => {
+          socket.send(
+            JSON.stringify({ type: 'AnswerPropertyChange', requestId: 'request ID' } as AnswerPropertyChange),
+          );
+        });
+      });
+      const ws = new WsCommunication(fakeURL, 'my.qualified.ModelName', 'localName');
       ws.setSilent();
 
       const root = dataToNode(clone(rootData1));
@@ -441,20 +447,14 @@ describe('WsCommunication', () => {
       ws.triggerChangeOnPropertyNode(
         node,
         'name',
-        'my new name',
+        'my new name which is fantastic',
         () => {
+          mockServer.close();
           done();
         },
         'request ID',
       );
 
-      mockServer.on('connection', (socket) => {
-        socket.on('message', (data) => {
-          socket.send(
-            JSON.stringify({ type: 'AnswerPropertyChange', requestId: 'request ID' } as AnswerPropertyChange),
-          );
-        });
-      });
     });
   });
 
@@ -759,4 +759,5 @@ describe('WsCommunication', () => {
     const ws = new WsCommunication('myurl', 'myModelName', 'localName', new WebSocket(fakeURL));
     ws.setSilent();
   });
+
 });
