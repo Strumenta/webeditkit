@@ -233,6 +233,7 @@ export interface CreateIntentionsBlock extends RequestMessage {
 export interface CreateIntentionsBlockAnswer extends RequestAnswer {
   type: 'CreateIntentionsBlockAnswer'
   blockUUID: UUID;
+  intentions: IntentionData[];
 }
 
 export interface DeleteIntentionsBlock extends Message {

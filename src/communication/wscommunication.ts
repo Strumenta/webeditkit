@@ -183,7 +183,7 @@ export class WsCommunication {
 
   private registerHandlersForIntentions() {
     this.registerHandler('CreateIntentionsBlockAnswer', (msg: CreateIntentionsBlockAnswer) => {
-      this.invokeCallback(msg.requestId, msg.blockUUID);
+      this.invokeCallback(msg.requestId, msg.blockUUID, msg.intentions);
     });
     this.registerHandler('GetIntentionsBlockAnswer', (msg: GetIntentionsBlockAnswer) => {
       this.invokeCallback(msg.requestId, msg.blockUUID, msg.intentions);
@@ -307,16 +307,9 @@ export class WsCommunication {
     } as ExecuteIntention);
   }
 
-  async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4(), uuid2: string = uuidv4()) : Promise<Intention[]> {
+  async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4()) : Promise<Intention[]> {
     return new Promise<Intention[]>((resolve, reject) => {
-      this.callbacks[uuid1] = (blockUUID: UUID) => {
-        this.sendMessage({
-          type: 'GetIntentionsBlock',
-          requestId: uuid2,
-          blockUUID,
-        } as GetIntentionsBlock)
-      };
-      this.callbacks[uuid2] = (blockUUID: UUID, intentionsData: IntentionData[]) => {
+      this.callbacks[uuid1] = (blockUUID: UUID, intentionsData:IntentionData[]) => {
         const intentions : Intention[] = intentionsData.map<Intention>((data: IntentionData)=>{
           return new Intention(this, blockUUID, data.index, data.description);
         });
