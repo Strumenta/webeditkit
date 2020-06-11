@@ -1,5 +1,7 @@
 import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
+import { domElementToModelNode } from './cells/support';
+import { getWsCommunication } from '../communication';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
@@ -32,6 +34,17 @@ export class EditorController {
     for (const o of this.observers) {
       o.errorsForNodeSet(node, errors);
     }
+  }
+
+  async triggerIntentionsMenu(event) {
+    const modelNode = domElementToModelNode(event.target);
+    if (modelNode == null) {
+      console.log("intentions menu triggered, but no containing node found");
+    } else {
+      console.log("intentions menu triggered, containing node found", modelNode);
+    }
+    const intentions = await getWsCommunication(modelNode.modelName()).getIntentions(modelNode);
+    console.log("intentions retrieved", intentions);
   }
 }
 

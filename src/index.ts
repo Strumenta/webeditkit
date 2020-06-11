@@ -81,7 +81,12 @@ export { dataToNode };
 import { IssuesMap } from './datamodel/issues';
 import { VNode } from 'snabbdom/vnode';
 import { getIssuesForModel } from './communication/wscommunication';
-import { wrapInsertHook, wrapUpdateHook } from './presentation/cells/vnodemanipulation';
+import {
+  wrapInsertHook,
+  wrapKeydownHandler,
+  wrapKeypressHandler,
+  wrapUpdateHook,
+} from './presentation/cells/vnodemanipulation';
 
 const patch = init([
   // Init patch function with chosen modules
@@ -143,7 +148,14 @@ export const renderDataModels = (cb?: BasicCallback) => {
       {
         dataset: { model_local_name: name },
       },
-      [injectErrors(renderModelNode(root), issues)],
+      [wrapKeypressHandler(injectErrors(renderModelNode(root), issues), (event): boolean=>{
+        if (event.key === 'Enter' && event.altKey === true) {
+          editorController().triggerIntentionsMenu(event);
+          return false;
+        } else {
+          return true;
+        }
+      })],
     );
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];

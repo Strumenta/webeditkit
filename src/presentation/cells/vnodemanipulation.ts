@@ -75,6 +75,29 @@ export function wrapKeydownHandler(vnode: VNode, keydownHandler: (event) => bool
   return vnode;
 }
 
+export function wrapKeypressHandler(vnode: VNode, handler: (event) => boolean): VNode {
+  if (vnode.data === undefined) {
+    vnode.data = {};
+  }
+  if (vnode.data.on === undefined) {
+    vnode.data.on = {};
+  }
+  if (vnode.data.on.keypress === undefined) {
+    vnode.data.on.keypress = handler;
+  } else {
+    const original = vnode.data.on.keypress;
+    vnode.data.on.keypress = (event) => {
+      const res = handler(event);
+      if (res) {
+        return original(event);
+      } else {
+        return res;
+      }
+    };
+  }
+  return vnode;
+}
+
 export function wrapMouseOverHandler(vnode: VNode, hoverHandler: (event: MouseEvent) => boolean): VNode {
   if (vnode.data === undefined) {
     vnode.data = {};
