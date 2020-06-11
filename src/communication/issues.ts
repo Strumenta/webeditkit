@@ -23,20 +23,18 @@ export function registerIssuesForModel(model: string, issues: IssueDescription[]
 }
 
 export function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): boolean {
+  let changed = false;
   for (const i of issues) {
     if (!deepEqual(i.node, node.id)) {
-      throw new Error(
-        `These issues cannot be attributed to this node: node target is ${JSON.stringify(
-          node,
-        )}, node in issue is ${JSON.stringify(i.node)}`,
-      );
+      // this refer to a descendant or an attribute node
+      changed = changed || registerIssuesForNode({model: node.model, id: i.node}, [i]);
     }
   }
 
   const newIm = new IssuesMap(issues);
   if (deepEqual(newIm, getIssuesForNode(node))) {
     log('registerIssuesForNode, false');
-    return false;
+    return changed;
   }
   log('registerIssuesForNode, true', issuesMap[node.model], newIm);
   getIssuesForModel(node.model).setIssuesForNode(node.id.regularId, issues);
