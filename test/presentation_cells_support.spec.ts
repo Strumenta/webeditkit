@@ -290,17 +290,17 @@ describe('Presentation.Cells.Support', () => {
                   });
                   mockServer.close();
                   done();
-                }
+                },
               },
               {
                 type: 'registerForChanges',
                 check: (msg) => {
                   expect(JSON.parse(data as string)).to.eql({
                     type: 'registerForChanges',
-                    modelName: 'my.qualified.model'
+                    modelName: 'my.qualified.model',
                   });
-                }
-              }
+                },
+              },
             ]);
           } else {
             throw new Error('Too many messages');

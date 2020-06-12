@@ -23,12 +23,12 @@ export interface NodeIDInModel {
   id: NodeId;
 }
 
-export function nodeIDInModelFromNode(node: ModelNode) : NodeIDInModel {
+export function nodeIDInModelFromNode(node: ModelNode): NodeIDInModel {
   return {
     model: node.modelName(),
     id: {
-      regularId: node.idString()
-    }
+      regularId: node.idString(),
+    },
   };
 }
 
@@ -231,18 +231,18 @@ export interface CreateIntentionsBlock extends RequestMessage {
 }
 
 export interface CreateIntentionsBlockAnswer extends RequestAnswer {
-  type: 'CreateIntentionsBlockAnswer'
+  type: 'CreateIntentionsBlockAnswer';
   blockUUID: UUID;
   intentions: IntentionData[];
 }
 
 export interface DeleteIntentionsBlock extends Message {
-  type: 'DeleteIntentionsBlock'
+  type: 'DeleteIntentionsBlock';
   blockUUID: UUID;
 }
 
 export interface ExecuteIntention extends Message {
-  type: 'ExecuteIntention'
+  type: 'ExecuteIntention';
   blockUUID: UUID;
   index: number;
 }
@@ -258,8 +258,8 @@ export interface IntentionData {
 }
 
 export interface GetIntentionsBlockAnswer extends RequestAnswer {
-  type: 'GetIntentionsBlockAnswer'
-  blockUUID: UUID,
+  type: 'GetIntentionsBlockAnswer';
+  blockUUID: UUID;
   intentions: IntentionData[];
 }
 

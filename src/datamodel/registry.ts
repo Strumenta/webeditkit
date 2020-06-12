@@ -2,7 +2,7 @@ import { NodeData, NodeInModel } from './misc';
 import { ModelNode } from './modelNode';
 
 const datamodelRoots = new Map<string, ModelNode>();
-const datamodelClasses = new Map<string, new (n:NodeData) => ModelNode>();
+const datamodelClasses = new Map<string, new (n: NodeData) => ModelNode>();
 
 class Registry {
   static defaultBaseUrl: string | undefined = undefined;

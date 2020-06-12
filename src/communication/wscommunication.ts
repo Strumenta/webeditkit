@@ -1,5 +1,6 @@
 import {
-  modelNodeToNodeInModel, NodeData,
+  modelNodeToNodeInModel,
+  NodeData,
   NodeId,
   nodeIdToString,
   PropertiesValues,
@@ -22,24 +23,35 @@ import {
   AnswerForDirectReferences,
   AnswerPropertyChange,
   AskAlternatives,
-  AskErrorsForNode, CreateIntentionsBlock, CreateIntentionsBlockAnswer,
+  AskErrorsForNode,
+  CreateIntentionsBlock,
+  CreateIntentionsBlockAnswer,
   CreateRoot,
   DefaultInsertion,
   DeleteNode,
   ErrorsForModelReport,
-  ErrorsForNodeReport, ExecuteIntention, GetIntentionsBlock, GetIntentionsBlockAnswer, GetNode, GetNodeAnswer,
+  ErrorsForNodeReport,
+  ExecuteIntention,
+  GetIntentionsBlock,
+  GetIntentionsBlockAnswer,
+  GetNode,
+  GetNodeAnswer,
   InsertNextSibling,
-  InstantiateConcept, IntentionData,
+  InstantiateConcept,
+  IntentionData,
   IssueDescription,
   Message,
-  NodeAdded, NodeIDInModel, nodeIDInModelFromNode,
+  NodeAdded,
+  NodeIDInModel,
+  nodeIDInModelFromNode,
   NodeRemoved,
   PropertyChangeNotification,
   ReferenceChange,
   RegisterForChanges,
   RequestForDirectReferences,
   RequestPropertyChange,
-  SetChild, UUID,
+  SetChild,
+  UUID,
 } from './messages';
 import { registerIssuesForModel, registerIssuesForNode } from './issues';
 
@@ -83,7 +95,7 @@ export class WsCommunication {
   private localName: string; // This is the local model name or target
   private silent: boolean;
   private handlers: { [type: string]: MessageHandler<Message> };
-  private readonly callbacks: {[requestId: string]: any};
+  private readonly callbacks: { [requestId: string]: any };
 
   private registerHandlersForErrorMessages() {
     this.registerHandler('ErrorsForModelReport', (msg: ErrorsForModelReport) => {
@@ -282,19 +294,24 @@ export class WsCommunication {
     } as CreateRoot);
   }
 
-  private sendMessage(message: Message, nAttempts=10) {
+  private sendMessage(message: Message, nAttempts = 10) {
     if (this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else if (this.ws.readyState === WebSocket.CONNECTING) {
       if (nAttempts > 0) {
-        setTimeout(()=>{
+        setTimeout(() => {
           this.sendMessage(message, nAttempts - 1);
         }, 25);
       } else {
-        throw new Error("Cannot send message because it is not connected. Cannot send: " + JSON.stringify(message)+". Status: " + this.ws.readyState);
+        throw new Error(
+          'Cannot send message because it is not connected. Cannot send: ' +
+            JSON.stringify(message) +
+            '. Status: ' +
+            this.ws.readyState,
+        );
       }
     } else {
-      console.log("message not sent because not connected or connecting", message);
+      console.log('message not sent because not connected or connecting', message);
     }
   }
 
@@ -305,18 +322,18 @@ export class WsCommunication {
     } as RegisterForChanges);
   }
 
-  executeIntention(blockUUID: UUID, index: number) : void {
+  executeIntention(blockUUID: UUID, index: number): void {
     this.sendMessage({
       type: 'ExecuteIntention',
       blockUUID,
-      index
+      index,
     } as ExecuteIntention);
   }
 
-  async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4()) : Promise<Intention[]> {
+  async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4()): Promise<Intention[]> {
     return new Promise<Intention[]>((resolve, reject) => {
-      this.callbacks[uuid1] = (blockUUID: UUID, intentionsData:IntentionData[]) => {
-        const intentions : Intention[] = intentionsData.map<Intention>((data: IntentionData)=>{
+      this.callbacks[uuid1] = (blockUUID: UUID, intentionsData: IntentionData[]) => {
+        const intentions: Intention[] = intentionsData.map<Intention>((data: IntentionData) => {
           return new Intention(this, blockUUID, data.index, data.description);
         });
         return resolve(intentions);
@@ -325,8 +342,8 @@ export class WsCommunication {
       this.sendMessage({
         type: 'CreateIntentionsBlock',
         requestId: uuid1,
-        node: nodeIDInModel
-      } as CreateIntentionsBlock)
+        node: nodeIDInModel,
+      } as CreateIntentionsBlock);
     });
   }
 
@@ -397,7 +414,7 @@ export class WsCommunication {
       type: 'ReferenceChange',
       node: modelNodeToNodeInModel(container),
       referenceName,
-      referenceValue: ref == null? null : refToNodeInModel(ref),
+      referenceValue: ref == null ? null : refToNodeInModel(ref),
     } as ReferenceChange);
   }
 
@@ -502,8 +519,8 @@ export class WsCommunication {
     } as RequestForDirectReferences);
   }
 
-  async getNodeData(node: NodeIDInModel, uuid: string = uuidv4()) : Promise<NodeData> {
-    const promise = new Promise<NodeData>((resolve, reject)=> {
+  async getNodeData(node: NodeIDInModel, uuid: string = uuidv4()): Promise<NodeData> {
+    const promise = new Promise<NodeData>((resolve, reject) => {
       this.callbacks[uuid] = (data: NodeData) => {
         resolve(data);
       };
@@ -513,11 +530,11 @@ export class WsCommunication {
         node,
       } as GetNode);
     });
-    return promise
+    return promise;
   }
 }
 
-const instances: {[modelName: string]: WsCommunication} = {};
+const instances: { [modelName: string]: WsCommunication } = {};
 
 export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];

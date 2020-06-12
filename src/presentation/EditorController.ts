@@ -39,12 +39,12 @@ export class EditorController {
   async triggerIntentionsMenu(event) {
     const modelNode = domElementToModelNode(event.target);
     if (modelNode == null) {
-      console.log("intentions menu triggered, but no containing node found");
+      console.log('intentions menu triggered, but no containing node found');
     } else {
-      console.log("intentions menu triggered, containing node found", modelNode);
+      console.log('intentions menu triggered, containing node found', modelNode);
     }
     const intentions = await getWsCommunication(modelNode.modelName()).getIntentions(modelNode);
-    console.log("intentions retrieved", intentions);
+    console.log('intentions retrieved', intentions);
     const intentionsMenu = new IntentionsMenu(event.target, intentions);
   }
 }
@@ -63,15 +63,15 @@ class IntentionsMenu {
   }
 
   constructor(triggerElement: HTMLElement, intentions: Intention[]) {
-    $("body").append( "<div id='intentions-menu'></div>" );
+    $('body').append("<div id='intentions-menu'></div>");
 
     for (const i of intentions) {
-      $("#intentions-menu").append(`<input value='${i.description}'><br>`);
+      $('#intentions-menu').append(`<input value='${i.description}'><br>`);
     }
 
     // Otherwise the handler will kill also future intentions menus
-    this.myIntentionsMenu = $("#intentions-menu")[0] as HTMLDivElement;
-    $("#intentions-menu input").keydown((e)=>{
+    this.myIntentionsMenu = $('#intentions-menu')[0] as HTMLDivElement;
+    $('#intentions-menu input').keydown((e) => {
       if (e.key === 'Enter') {
         const index = $(e.target).prevAll('input').length;
         intentions[index].execute();
@@ -87,7 +87,8 @@ class IntentionsMenu {
           $(dest[0]).focus();
         }
       }
-      e.preventDefault();return false;
+      e.preventDefault();
+      return false;
     });
     const left = triggerElement.getBoundingClientRect().left;
     const top = triggerElement.getBoundingClientRect().bottom;
@@ -98,14 +99,14 @@ class IntentionsMenu {
       return isInIntentionsMenu($(document.activeElement)[0]);
     }
     function isInIntentionsMenu(element) {
-      const res = $(element).parent("#intentions-menu").length;
+      const res = $(element).parent('#intentions-menu').length;
       return res > 0;
     }
 
-    $("#intentions-menu input:first").focus();
+    $('#intentions-menu input:first').focus();
 
-    $("body").focusin((e)=>{
-      if (!isInIntentionsMenu(e.target)){
+    $('body').focusin((e) => {
+      if (!isInIntentionsMenu(e.target)) {
         this.deleteMenu();
       }
     });

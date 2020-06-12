@@ -29,11 +29,7 @@ import { Ref } from '../../datamodel/ref';
 import { log, uuidv4 } from '../../utils/misc';
 import { EditedValue, IData } from './data';
 
-export function childCell(
-  node: ModelNode,
-  containmentName: string,
-  emptyCell?: () => VNode,
-): VNode {
+export function childCell(node: ModelNode, containmentName: string, emptyCell?: () => VNode): VNode {
   const child = node.childByLinkName(containmentName);
   if (child == null) {
     if (emptyCell != null) {
@@ -387,7 +383,7 @@ export type AlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) =>
 /*
  Here we keep the text that is typed in reference cells and it is not matching some text yet.
  */
-const resolutionMemory:{[key: string]:string} = {};
+const resolutionMemory: { [key: string]: string } = {};
 
 function datasetForReference(modelNode: ModelNode, referenceName: string) {
   return {

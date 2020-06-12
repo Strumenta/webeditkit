@@ -27,13 +27,19 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
 
   const nodeId = lastNode.data('node_represented');
   const modelRootName = modelNode.rootName();
-  if (modelRootName == null) { return; }
+  if (modelRootName == null) {
+    return;
+  }
 
   const root = getDatamodelRoot(modelRootName);
-  if (root == null) { return; }
+  if (root == null) {
+    return;
+  }
 
   const sibling = root.findNodeById(nodeId);
-  if (sibling == null) { return; }
+  if (sibling == null) {
+    return;
+  }
 
   sibling.insertNextSibling();
 }

@@ -1,7 +1,7 @@
 import { log } from '../utils/misc';
 
 function moveFocusToStart(next: JQuery) {
-  next.trigger("focus");
+  next.trigger('focus');
   const el = next[0];
 
   // @ts-ignore
@@ -12,7 +12,7 @@ function moveFocusToStart(next: JQuery) {
 }
 
 function moveFocusToEnd(next: JQuery) {
-  next.trigger("focus");
+  next.trigger('focus');
   const el = next[0];
   // @ts-ignore
   if (el !== undefined && el.setSelectionRange != null) {

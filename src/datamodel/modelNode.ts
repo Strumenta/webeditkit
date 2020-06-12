@@ -18,7 +18,7 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): 
     node.setRefLocally(
       msg.referenceName,
       new Ref({
-        model: {qualifiedName: msg.referenceValue.model},
+        model: { qualifiedName: msg.referenceValue.model },
         id: msg.referenceValue.id,
       }),
     );
@@ -155,7 +155,7 @@ export class ModelNode {
     return this.data.abstractConcept;
   }
 
-  injectModelName(modelName: string, rootName: string|undefined): void {
+  injectModelName(modelName: string, rootName: string | undefined): void {
     this.data.rootName = rootName;
     this.data.modelName = modelName;
     const parent = this;

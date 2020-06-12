@@ -104,10 +104,12 @@ describe('Communication.Issues', () => {
   it('registerIssuesForNode, node of issue should match', () => {
     // register issue with different node id: this is now handled
     registerIssuesForNode({ model: 'my.model', id: { regularId: '123' } }, [
-        { message: 'Nothing to bad1', severity: 'warning', node: { regularId: '456' } },
-      ]);
+      { message: 'Nothing to bad1', severity: 'warning', node: { regularId: '456' } },
+    ]);
 
     expect(getIssuesForNode({ model: 'my.model', id: { regularId: '123' } })).to.eql([]);
-    expect(getIssuesForNode({ model: 'my.model', id: { regularId: '456' } })).to.eql([{ message: 'Nothing to bad1', severity: 'warning', node: { regularId: '456' } }]);
+    expect(getIssuesForNode({ model: 'my.model', id: { regularId: '456' } })).to.eql([
+      { message: 'Nothing to bad1', severity: 'warning', node: { regularId: '456' } },
+    ]);
   });
 });

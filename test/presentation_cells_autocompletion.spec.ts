@@ -200,7 +200,7 @@ describe('Presentation.Cells.Autocompletion', () => {
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           if (received <= 1) {
-            const dataj : Message = JSON.parse(data as string) as Message;
+            const dataj: Message = JSON.parse(data as string) as Message;
             if (dataj.type === 'askAlternatives') {
               const msg = dataj as AskAlternatives;
               expect(msg.type).to.eql('askAlternatives');
@@ -221,7 +221,10 @@ describe('Presentation.Cells.Autocompletion', () => {
                 }),
               );
             } else if (dataj.type === 'registerForChanges') {
-              expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
+              expect(JSON.parse(data as string)).to.eql({
+                type: 'registerForChanges',
+                modelName: 'my.qualified.model',
+              });
               registerForChangesReceived = true;
             }
             if (received === 1) {
@@ -317,12 +320,12 @@ describe('Presentation.Cells.Autocompletion', () => {
                     { alias: 'alias2', conceptName: 'foo.bar.concept2' },
                   ],
                 }),
-              )
+              );
               askAlternativesReceived = true;
             } else if (dataj.type === 'registerForChanges') {
               expect(JSON.parse(data as string)).to.eql({
                 type: 'registerForChanges',
-                modelName: 'my.qualified.model'
+                modelName: 'my.qualified.model',
               });
               registerForChangesReceived = true;
             }

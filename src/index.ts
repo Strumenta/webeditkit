@@ -21,7 +21,6 @@ export {
   editableCell,
   emptyRow,
   childCell,
-
   horizontalGroupCell,
   row,
   tabCell,
@@ -97,7 +96,7 @@ const patch = init([
   seventlisteners.default, // attaches event listeners
   sdataset.default,
 ]);
-const vnodes: {[name: string]: VNode} = {};
+const vnodes: { [name: string]: VNode } = {};
 
 type BasicCallback = () => void;
 
@@ -150,14 +149,16 @@ export const renderDataModels = (cb?: BasicCallback) => {
       {
         dataset: { model_local_name: name },
       },
-      [wrapKeypressHandler(injectErrors(renderModelNode(root), issues), (event): boolean=>{
-        if (event.key === 'Enter' && event.altKey === true) {
-          editorController().triggerIntentionsMenu(event);
-          return false;
-        } else {
-          return true;
-        }
-      })],
+      [
+        wrapKeypressHandler(injectErrors(renderModelNode(root), issues), (event): boolean => {
+          if (event.key === 'Enter' && event.altKey === true) {
+            editorController().triggerIntentionsMenu(event);
+            return false;
+          } else {
+            return true;
+          }
+        }),
+      ],
     );
     if (vnodes[name] === undefined) {
       const domNode = $('div#' + name)[0];
@@ -204,7 +205,7 @@ export function baseUrlForTarget(target: string): string {
   return targetData[target].baseUrl;
 }
 
-export function baseUrlForModelName(model: string): string|undefined {
+export function baseUrlForModelName(model: string): string | undefined {
   for (const target in targetData) {
     if (targetData[target].model === model) {
       return targetData[target].baseUrl;

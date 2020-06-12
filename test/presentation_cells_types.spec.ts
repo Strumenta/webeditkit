@@ -571,29 +571,34 @@ describe('Cells.Types', () => {
         socket.on('message', (data) => {
           if (received <= 1) {
             assertTheseMessagesAreReceived(receivedArray, received, data as string, [
-              {type: 'defaultInsertion',
-              check: (msg: DefaultInsertion) => {
-                expect(msg.type).to.eql('defaultInsertion');
-                expect(msg.containmentName).to.eql('unexisting');
-                expect(msg.container).to.eql('324292001770075100');
-                expect(msg.modelName).to.eql('my.qualified.model');
-                console.log('focus before', focusedElement());
-                socket.send(
-                  JSON.stringify({
-                    type: 'AnswerDefaultInsertion',
-                    requestId: msg.requestId,
-                    addedNodeID: {
-                      regularId: 'xxx-123',
-                    },
-                  }),
-                );
-              }},
+              {
+                type: 'defaultInsertion',
+                check: (msg: DefaultInsertion) => {
+                  expect(msg.type).to.eql('defaultInsertion');
+                  expect(msg.containmentName).to.eql('unexisting');
+                  expect(msg.container).to.eql('324292001770075100');
+                  expect(msg.modelName).to.eql('my.qualified.model');
+                  console.log('focus before', focusedElement());
+                  socket.send(
+                    JSON.stringify({
+                      type: 'AnswerDefaultInsertion',
+                      requestId: msg.requestId,
+                      addedNodeID: {
+                        regularId: 'xxx-123',
+                      },
+                    }),
+                  );
+                },
+              },
               {
                 type: 'registerForChanges',
                 check: (msg) => {
-                  expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-                }
-              }
+                  expect(JSON.parse(data as string)).to.eql({
+                    type: 'registerForChanges',
+                    modelName: 'my.qualified.model',
+                  });
+                },
+              },
             ]);
             if (received === 1) {
               mockServer.close();
@@ -870,11 +875,11 @@ describe('Cells.Types', () => {
       input.value = '';
       triggerInputEvent(input);
 
-      expect(Array.from(input.classList)).to.contain("emptyProperty");
+      expect(Array.from(input.classList)).to.contain('emptyProperty');
 
       input.value = 'foobar';
       triggerInputEvent(input);
-      expect(Array.from(input.classList)).not.to.contain("emptyProperty");
+      expect(Array.from(input.classList)).not.to.contain('emptyProperty');
     });
   });
 });

@@ -24,11 +24,11 @@ export function registerIssuesForModel(model: string, issues: IssueDescription[]
 
 export function registerIssuesForNode(node: NodeInModel, issues: IssueDescription[]): boolean {
   let changed = false;
-  const filteredIssues : IssueDescription[] = [];
+  const filteredIssues: IssueDescription[] = [];
   for (const i of issues) {
     if (!deepEqual(i.node, node.id)) {
       // this refer to a descendant or an attribute node
-      changed = changed || registerIssuesForNode({model: node.model, id: i.node}, [i]);
+      changed = changed || registerIssuesForNode({ model: node.model, id: i.node }, [i]);
     } else {
       filteredIssues.push(i);
     }
