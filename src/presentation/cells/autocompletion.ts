@@ -1,6 +1,6 @@
 import { ModelNode } from '../../datamodel';
 import { Alternative, getWsCommunication } from '../../communication/wscommunication';
-
+import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import autocomplete from 'autocompleter';
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
@@ -22,9 +22,6 @@ export function alternativesProviderForAddingChild(
   containmentName: string,
   replacing: boolean = false,
 ): SuggestionsReceiverFactory {
-  if (modelNode == null) {
-    throw new Error('modelNode should not be null');
-  }
   // we should get all the alternatives from the server
   return (suggestionsReceiver: SuggestionsReceiver) => {
     const modelName = modelNode.modelName();

@@ -6,8 +6,9 @@ import { clearRendererRegistry } from '../src/presentation/renderer';
 import { assertTheseMessagesAreReceived, clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
 import { AnswerPropertyChange, PropertyChangeNotification, RequestPropertyChange } from '../src/communication/messages';
+import { NodeData } from '../src/datamodel/misc';
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -22,6 +23,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -31,9 +33,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -48,6 +50,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -57,9 +60,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -69,13 +72,13 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
 describe('WsCommunication', () => {
-  let mockServer: Server | undefined = undefined;
+  let mockServer: Server | undefined;
 
   afterEach(() => {
     if (mockServer != null) {
@@ -91,7 +94,7 @@ describe('WsCommunication', () => {
     mockServer.on('connection', (socket) => {
       socket.on('message', (data) => {
         expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'myModelName' });
-        mockServer.close();
+        mockServer!.close();
         done();
       });
     });
@@ -110,7 +113,7 @@ describe('WsCommunication', () => {
       expect(() => {
         socket.send(JSON.stringify({ type: 'unknownMessageType' }));
       }).to.throw('Unknown message type: unknownMessageType');
-      mockServer.close();
+      mockServer!.close();
       done();
     });
 
@@ -122,7 +125,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
@@ -151,7 +154,7 @@ describe('WsCommunication', () => {
           },
         ]);
         if (messagesReceivedByServer.length === 2) {
-          mockServer.close();
+          mockServer!.close();
           done();
         }
       });
@@ -161,7 +164,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.instantiate('myConcept', n_a);
   });
 
@@ -169,7 +172,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
 
     const receivedArray = [false, false];
 
@@ -179,8 +182,7 @@ describe('WsCommunication', () => {
         assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string, [
           {
             type: 'addChild',
-            check: (msg) => {
-              delete msg['requestId'];
+            check: (msg: any) => {
               expect(msg).to.eql({
                 type: 'addChild',
                 modelName: 'my.qualified.ModelName',
@@ -188,6 +190,7 @@ describe('WsCommunication', () => {
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
                 index: -1,
+                requestId: msg.requestId,
               });
             },
           },
@@ -202,7 +205,7 @@ describe('WsCommunication', () => {
           },
         ]);
         if (messagesReceivedByServer.length == 2) {
-          mockServer.close();
+          mockServer!.close();
           done();
         }
       });
@@ -212,7 +215,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.addChild(n_a, 'type', 'my.concept.ToInstantiate');
   });
 
@@ -220,7 +223,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
@@ -229,7 +232,7 @@ describe('WsCommunication', () => {
         assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string, [
           {
             type: 'addChild',
-            check: (msg) => {
+            check: (msg: any) => {
               delete msg['requestId'];
               expect(msg).to.eql({
                 type: 'addChild',
@@ -252,7 +255,7 @@ describe('WsCommunication', () => {
           },
         ]);
         if (messagesReceivedByServer.length == 2) {
-          mockServer.close();
+          mockServer!.close();
           done();
         }
       });
@@ -262,7 +265,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.addChildAtIndex(n_a, 'type', 2, 'my.concept.ToInstantiate');
   });
 
@@ -270,7 +273,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
@@ -279,7 +282,7 @@ describe('WsCommunication', () => {
         assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string, [
           {
             type: 'setChild',
-            check: (msg) => {
+            check: (msg: any) => {
               delete msg['requestId'];
               expect(msg).to.eql({
                 type: 'setChild',
@@ -301,7 +304,7 @@ describe('WsCommunication', () => {
           },
         ]);
         if (messagesReceivedByServer.length == 2) {
-          mockServer.close();
+          mockServer!.close();
           done();
         }
       });
@@ -311,7 +314,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.setChild(n_a, 'type', 'my.concept.ToInstantiate');
   });
 
@@ -319,7 +322,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
@@ -347,7 +350,7 @@ describe('WsCommunication', () => {
           },
         ]);
         if (messagesReceivedByServer.length == 2) {
-          mockServer.close();
+          mockServer!.close();
           done();
         }
       });
@@ -357,7 +360,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.deleteNode(n_a);
   });
 
@@ -365,7 +368,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     mockServer.on('connection', (socket) => {
@@ -393,7 +396,7 @@ describe('WsCommunication', () => {
           },
         ]);
         if (messagesReceivedByServer.length == 2) {
-          mockServer.close();
+          mockServer!.close();
           done();
         }
       });
@@ -403,7 +406,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.insertNextSibling(n_a);
   });
 
@@ -412,7 +415,7 @@ describe('WsCommunication', () => {
       const fakeURL = 'ws://localhost:8080';
       mockServer = new Server(fakeURL);
 
-      const messagesReceivedByServer = [];
+      const messagesReceivedByServer: any[] = [];
       const receivedArray = [false, false];
 
       mockServer.on('connection', (socket) => {
@@ -447,7 +450,7 @@ describe('WsCommunication', () => {
             },
           ]);
           if (messagesReceivedByServer.length == 2) {
-            mockServer.close();
+            mockServer!.close();
             done();
           }
         });
@@ -457,7 +460,7 @@ describe('WsCommunication', () => {
       ws.setSilent();
       const root = dataToNode(clone(rootData1));
       root.injectModelName('my.qualified.ModelName', 'myRoot');
-      const n_a = root.findNodeById('1848360241685547698');
+      const n_a = root.findNodeById('1848360241685547698')!;
       ws.triggerChangeOnPropertyNode(n_a, 'name', 'my new name', undefined, 'request ID');
     });
 
@@ -476,13 +479,13 @@ describe('WsCommunication', () => {
 
       const root = dataToNode(clone(rootData1));
       root.injectModelName('my.qualified.ModelName', 'myRoot');
-      const node = root.findNodeById('1848360241685547698');
+      const node = root.findNodeById('1848360241685547698')!;
       ws.triggerChangeOnPropertyNode(
         node,
         'name',
         'my new name which is fantastic',
         () => {
-          mockServer.close();
+          mockServer!.close();
           done();
         },
         'request ID',
@@ -494,7 +497,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     const uuid = '12345678-1234-4444-9876-123456789012';
@@ -544,13 +547,13 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.triggerDefaultInsertion(
       n_a,
       'type',
       (addedNodeID) => {
         expect(addedNodeID).to.eql({ regularId: newNodeId });
-        mockServer.close();
+        mockServer!.close();
         done();
       },
       uuid,
@@ -561,7 +564,7 @@ describe('WsCommunication', () => {
     const fakeURL = 'ws://localhost:8080';
     mockServer = new Server(fakeURL);
 
-    const messagesReceivedByServer = [];
+    const messagesReceivedByServer: any[] = [];
     const receivedArray = [false, false];
 
     const uuid = '12345678-1234-4444-9876-123456789012';
@@ -613,7 +616,7 @@ describe('WsCommunication', () => {
     ws.setSilent();
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     ws.askAlternatives(
       n_a,
       'type',
@@ -623,7 +626,7 @@ describe('WsCommunication', () => {
           { conceptName: 'my.concept.B', alias: 'zum' },
           { conceptName: 'my.concept.C', alias: 'bar' },
         ]);
-        mockServer.close();
+        mockServer!.close();
         done();
       },
       uuid,
@@ -660,10 +663,10 @@ describe('WsCommunication', () => {
           } as PropertyChangeNotification),
         );
         expect(root.name()).to.equals('My Shiny New Name');
-        mockServer.close();
+        mockServer!.close();
         done();
       } catch (e) {
-        mockServer.close();
+        mockServer!.close();
         throw e;
       }
     });
@@ -703,7 +706,7 @@ describe('WsCommunication', () => {
           }),
         );
       }).to.throw('Cannot add node because parent was not found. ID was: {"regularId":"1848360241685575188"}');
-      mockServer.close();
+      mockServer!.close();
       done();
     });
 
@@ -742,10 +745,10 @@ describe('WsCommunication', () => {
           }),
         );
         expect(n_b.childrenByLinkName('type').length).to.equals(1);
-        mockServer.close();
+        mockServer!.close();
         done();
       } catch (e) {
-        mockServer.close();
+        mockServer!.close();
         throw e;
       }
     });
@@ -753,7 +756,7 @@ describe('WsCommunication', () => {
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
     setDatamodelRoot('localName', root);
-    const n_b = root.findNodeById('1848360241685547711');
+    const n_b = root.findNodeById('1848360241685547711')!;
     expect(n_b.childrenByLinkName('type').length).to.equals(0);
 
     const ws = new WsCommunication('myurl', 'myModelName', 'localName', new WebSocket(fakeURL));
@@ -788,14 +791,14 @@ describe('WsCommunication', () => {
         }),
       );
       expect(n_a.childrenByLinkName('type').length).to.equals(0);
-      mockServer.close();
+      mockServer!.close();
       done();
     });
 
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
     setDatamodelRoot('localName', root);
-    const n_a = root.findNodeById('1848360241685547698');
+    const n_a = root.findNodeById('1848360241685547698')!;
     expect(n_a.childrenByLinkName('type').length).to.equals(1);
 
     const ws = new WsCommunication('myurl', 'myModelName', 'localName', new WebSocket(fakeURL));

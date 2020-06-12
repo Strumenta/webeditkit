@@ -6,7 +6,7 @@ export function installAutoresize(textWidthAlternativeCalculator?: (text: string
     // get width of text with font.  usage: $("div").textWidth();
     let textToConsider = _text || this.val();
     if (textToConsider === '') {
-      textToConsider = this[0].placeholder;
+      textToConsider = (this[0] as HTMLInputElement).placeholder;
     }
     if (textWidthAlternativeCalculator != null) {
       return textWidthAlternativeCalculator(textToConsider);

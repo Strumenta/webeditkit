@@ -13,6 +13,7 @@ import { Ref } from '../datamodel';
 import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
 import { renderDataModels } from '../index';
 import { getIssuesForModel } from './issues';
+
 export { getIssuesForModel };
 
 import {

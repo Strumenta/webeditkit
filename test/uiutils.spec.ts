@@ -49,7 +49,7 @@ const html1 = `<html>
 </html>`;
 
 describe('UIUtils', () => {
-  let doc: Document | undefined = undefined;
+  let doc: Document | undefined;
 
   beforeEach(() => {
     doc = prepareFakeDom(html1);
@@ -70,7 +70,7 @@ describe('UIUtils', () => {
   });
 
   it('should support installAutoresize', () => {
-    const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
+    const editableName_a = doc!.querySelector('div[data-node_represented="1848360241685547698"] .editable')!;
 
     // check width
     // @ts-ignore

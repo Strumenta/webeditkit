@@ -8,7 +8,9 @@
     "downlevelIteration": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "lib": ["DOM", "DOM.Iterable", "ES5"]
+    "noImplicitThis": true,
+    "lib": ["DOM", "DOM.Iterable", "ES5"],
+    "esModuleInterop": true
   },
   "include": [
     "src"

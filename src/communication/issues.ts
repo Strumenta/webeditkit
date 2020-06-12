@@ -3,7 +3,7 @@ import { IssueDescription } from './messages';
 import { log } from '../utils/misc';
 import { NodeInModel } from '../datamodel/misc';
 import { editorController } from '../presentation';
-import deepEqual = require('deep-equal');
+import deepEqual from 'deep-equal';
 
 const issuesMap: { [key: string]: IssuesMap } = {};
 

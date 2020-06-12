@@ -1,5 +1,5 @@
 import { dataToNode } from './registry';
-import { getWsCommunication } from '../communication';
+import { getWsCommunication } from '../communication/wscommunication';
 import { modelNodeToNodeInModel, NodeData, nodeIdToString, PropertyValue, refToNodeInModel } from './misc';
 import { Ref } from './ref';
 import { ReferenceChange } from '../communication/messages';
@@ -35,10 +35,10 @@ export class ModelNode {
     this.data = data;
   }
 
-  childByLinkName(linkName: string): ModelNode | null {
+  childByLinkName(linkName: string): ModelNode | undefined {
     const filtered = this.data.children.filter((el) => el.containingLink === linkName);
     if (filtered.length === 0) {
-      return null;
+      return undefined;
     } else if (filtered.length === 1) {
       return dataToNode(filtered[0]);
     } else {

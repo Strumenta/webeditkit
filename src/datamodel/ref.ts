@@ -7,9 +7,6 @@ export class Ref {
   data: ReferenceData;
 
   constructor(data: ReferenceData) {
-    if (data == null) {
-      throw new Error('Ref cannot be built with null data');
-    }
     this.data = data;
   }
 

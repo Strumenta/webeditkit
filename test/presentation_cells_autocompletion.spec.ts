@@ -31,7 +31,7 @@ import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { AskAlternatives, Message } from '../src/communication/messages';
-import exp = require('constants');
+import { NodeData } from '../src/datamodel/misc';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -92,7 +92,7 @@ const html1 = `<html>
 \t</body>
 </html>`;
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -107,6 +107,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -116,9 +117,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -133,6 +134,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -142,9 +144,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -154,13 +156,13 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
 describe('Presentation.Cells.Autocompletion', () => {
-  let doc = null;
+  let doc: Document | undefined;
 
   beforeEach(function () {
     doc = prepareFakeDom(html1);
@@ -169,7 +171,7 @@ describe('Presentation.Cells.Autocompletion', () => {
     clearRendererRegistry();
   });
 
-  let mockServer: Server | undefined = undefined;
+  let mockServer: Server | undefined;
 
   afterEach(function () {
     if (mockServer != null) {
@@ -233,7 +235,7 @@ describe('Presentation.Cells.Autocompletion', () => {
             }
           } else if (received == 2) {
             const obj = JSON.parse(data as string);
-            delete obj['requestId'];
+            delete obj.requestId;
             expect(obj).to.eql({
               type: 'addChild',
               index: -1,
@@ -242,7 +244,7 @@ describe('Presentation.Cells.Autocompletion', () => {
               containmentName: 'foo',
               conceptToInstantiate: 'foo.bar.concept1',
             });
-            mockServer.close();
+            mockServer?.close();
             done();
           } else {
             throw new Error('Too many messages');
@@ -262,31 +264,6 @@ describe('Presentation.Cells.Autocompletion', () => {
         expect(suggestions[1].label).to.eql('alias2');
         suggestions[0].execute();
       });
-    });
-    it('it should handle case in which modelNode is null', (done) => {
-      let received = 0;
-      const fakeURL = 'ws://localhost:8080';
-      mockServer = new Server(fakeURL);
-      mockServer.on('connection', (socket) => {
-        socket.on('message', (data) => {
-          if (received == 0) {
-            expect(JSON.parse(data as string)).to.eql({ type: 'registerForChanges', modelName: 'my.qualified.model' });
-          } else {
-            throw new Error('Too many messages');
-          }
-          received += 1;
-        });
-      });
-      // @ts-ignore
-      global.WebSocket = WebSocket;
-      createInstance(fakeURL, 'my.qualified.model', 'calc');
-      const aNode = dataToNode(rootData1);
-      aNode.injectModelName('my.qualified.model', 'calc');
-      expect(() => {
-        alternativesProviderForAddingChild(null, 'foo');
-      }).to.throw('modelNode should not be null');
-      mockServer.close();
-      done();
     });
   });
 
@@ -343,7 +320,7 @@ describe('Presentation.Cells.Autocompletion', () => {
               containmentName: 'type',
               conceptToInstantiate: 'foo.bar.concept1',
             });
-            mockServer.close();
+            mockServer?.close();
             done();
           } else {
             throw new Error('Too many messages');
@@ -356,9 +333,12 @@ describe('Presentation.Cells.Autocompletion', () => {
       createInstance(fakeURL, 'my.qualified.model', 'calc');
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
-      const suggestionsReceiverFactory = alternativesProviderForAbstractConcept(
-        aNode.childrenByLinkName('inputs')[0].childByLinkName('type'),
-      );
+
+      const inputsType = aNode.childrenByLinkName('inputs')[0].childByLinkName('type');
+      expect(inputsType).to.be.not.null;
+
+      const suggestionsReceiverFactory = alternativesProviderForAbstractConcept(inputsType!);
+
       suggestionsReceiverFactory((suggestions: AutocompleteAlternative[]): void => {
         expect(suggestions.length).to.equals(2);
         expect(suggestions[0].label).to.eql('alias1');
@@ -418,11 +398,11 @@ describe('Presentation.Cells.Autocompletion', () => {
         // @ts-ignore
         myNode.elm.focus();
 
-        pressChar(doc.activeElement, 'x', 88);
+        pressChar(doc!.activeElement!, 'x', 88);
       });
 
-      let container = h('div#calc', {}, [cellWithHook]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      const container = h('div#calc', {}, [cellWithHook]);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
 });

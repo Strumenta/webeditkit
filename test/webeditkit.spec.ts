@@ -6,11 +6,9 @@ import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/datamodel/registry';
 import { prepareFakeDom } from './testutils';
 import { clearIssueMap } from '../src/communication/issues';
+import { NodeData } from '../src/datamodel/misc';
 
-var sinon = require('sinon');
-
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import * as sinon from 'sinon';
 
 const html_empty = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -18,7 +16,7 @@ const html_empty = `<html>
 \\t</body>
 </html>`;
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -33,6 +31,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -42,9 +41,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -59,6 +58,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -68,9 +68,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -80,13 +80,13 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheetFoo',
   abstractConcept: false,
+  modelName: '',
 };
 
 describe('WebEditKit', () => {
-  let doc = null;
+  let doc: Document | undefined = undefined;
 
   beforeEach(function () {
     doc = prepareFakeDom(html_empty);
@@ -116,10 +116,10 @@ describe('WebEditKit', () => {
   it('should support renderDataModels', () => {
     installAutoresize();
     renderDataModels();
-    expect(doc.querySelector('div.editor').outerHTML).to.eql('<div id="root-x" class="editor"></div>');
+    expect(doc!.querySelector('div.editor')!.outerHTML).to.eql('<div id="root-x" class="editor"></div>');
     setDatamodelRoot('root-x', dataToNode(rootData1));
     renderDataModels();
-    expect(doc.querySelector('div.editor').outerHTML).to.eql(
+    expect(doc!.querySelector('div.editor')!.outerHTML).to.eql(
       '<div id="root-x" class="editor" data-model_local_name="root-x"><input class="fixed default-cell-concrete represent-node" data-node_represented="324292001770075100" style="width: 10px;"></div>',
     );
   });

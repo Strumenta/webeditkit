@@ -28,21 +28,25 @@ export {
   verticalGroupCell,
 };
 
-import uiutils = require('./presentation/uiutils');
+import * as uiutils from './presentation/uiutils';
 
 import { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode } from './datamodel';
+
 export { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode };
 
 import { editorController, EditorController, Observer } from './presentation';
+
 export { editorController, EditorController, Observer };
 
 import { getIssuesForNode } from './communication/issues';
+
 export { getIssuesForNode };
 
 import { getNodeFromLocalRepo } from './datamodel';
+
 export { getNodeFromLocalRepo };
 
-import wscommunication = require('./communication/wscommunication');
+import * as wscommunication from './communication/wscommunication';
 
 export { registerRenderer };
 
@@ -60,6 +64,7 @@ export function addModel(baseUrl: string, modelName: string, nodeId: string, tar
 }
 
 import { renderModelNode } from './presentation/renderer';
+
 export { renderModelNode };
 
 import { init } from 'snabbdom/snabbdom';
@@ -77,6 +82,7 @@ import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
 import { dataToNode } from './datamodel';
+
 export { dataToNode };
 import { IssuesMap } from './datamodel/issues';
 import { VNode } from 'snabbdom/vnode';

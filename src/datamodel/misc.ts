@@ -20,12 +20,12 @@ export interface NodeData {
   properties: PropertiesValues;
   children: NodeData[];
   concept: string;
-  containingLink?: string;
+  containingLink?: string | undefined;
   id: NodeId;
   refs: { [key: string]: ReferenceData };
-  rootName?: string;
+  rootName?: string | undefined;
   modelName: string; // The qualified model name
-  parent?: NodeData;
+  parent?: NodeData | undefined;
 }
 
 export interface NodeInModel {

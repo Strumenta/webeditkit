@@ -5,6 +5,7 @@ import { getWsCommunication, Intention } from '../communication/wscommunication'
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
+
   errorsForNodeSet(node: NodeInModel, errors: IssueDescription[]): void;
 }
 
@@ -26,6 +27,7 @@ export class EditorController {
       o.hoverNodeSet(node);
     }
   }
+
   registerObserver(observer: Observer): void {
     this.observers.push(observer);
   }
@@ -36,16 +38,16 @@ export class EditorController {
     }
   }
 
-  async triggerIntentionsMenu(event) {
-    const modelNode = domElementToModelNode(event.target);
+  async triggerIntentionsMenu(event: Event) {
+    const modelNode = domElementToModelNode(event.target as HTMLElement);
     if (modelNode == null) {
       console.log('intentions menu triggered, but no containing node found');
     } else {
       console.log('intentions menu triggered, containing node found', modelNode);
+      const intentions = await getWsCommunication(modelNode.modelName()).getIntentions(modelNode);
+      console.log('intentions retrieved', intentions);
+      const intentionsMenu = new IntentionsMenu(event.target as HTMLElement, intentions);
     }
-    const intentions = await getWsCommunication(modelNode.modelName()).getIntentions(modelNode);
-    console.log('intentions retrieved', intentions);
-    const intentionsMenu = new IntentionsMenu(event.target, intentions);
   }
 }
 
@@ -96,9 +98,10 @@ class IntentionsMenu {
     this.myIntentionsMenu.style.top = `${top}px`;
 
     function focusOnIntentionsMenu() {
-      return isInIntentionsMenu($(document.activeElement)[0]);
+      return isInIntentionsMenu($(document.activeElement as HTMLElement).first());
     }
-    function isInIntentionsMenu(element) {
+
+    function isInIntentionsMenu(element: JQuery | HTMLElement) {
       const res = $(element).parent('#intentions-menu').length;
       return res > 0;
     }

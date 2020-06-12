@@ -10,7 +10,9 @@ export class EditedValue {
 
 export interface IEditedValuesStore {
   get(modelNode: ModelNode, propertyName: string): EditedValue | undefined;
+
   getOrCreate(modelNode: ModelNode, propertyName: string): EditedValue;
+
   delete(modelNode: ModelNode, propertyName: string): void;
 }
 

@@ -109,7 +109,11 @@ describe('Communication.Issues', () => {
 
     expect(getIssuesForNode({ model: 'my.model', id: { regularId: '123' } })).to.eql([]);
     expect(getIssuesForNode({ model: 'my.model', id: { regularId: '456' } })).to.eql([
-      { message: 'Nothing to bad1', severity: 'warning', node: { regularId: '456' } },
+      {
+        message: 'Nothing to bad1',
+        severity: 'warning',
+        node: { regularId: '456' },
+      },
     ]);
   });
 });

@@ -11,18 +11,18 @@ const keysim = require('keysim');
 
 export function compareVNodes(rendered: VNode, expectedRendered: VNode): void {
   expect(rendered.sel).to.eql(expectedRendered.sel);
-  expect(rendered.data.props).to.eql(expectedRendered.data.props);
-  expect(rendered.data.dataset).to.eql(expectedRendered.data.dataset);
+  expect(rendered.data!.props).to.eql(expectedRendered.data!.props);
+  expect(rendered.data!.dataset).to.eql(expectedRendered.data!.dataset);
   expect(rendered.children).deep.equal(expectedRendered.children);
   expect(rendered.key).to.eql(expectedRendered.key);
   expect(rendered.text).to.eql(expectedRendered.text);
 }
 
-export function clone(original) {
+export function clone<T extends object>(original: T): T {
   return JSON.parse(JSON.stringify(original));
 }
 
-export function pressChar(element, letter: string, code: number) {
+export function pressChar(element: Element, letter: string, code: number) {
   // @ts-ignore
   const w = global.window;
 
@@ -37,7 +37,7 @@ export function pressChar(element, letter: string, code: number) {
   ); // x
 }
 
-export function pressArrowLeft(element) {
+export function pressArrowLeft(element: Element) {
   // @ts-ignore
   const w = global.window;
 
@@ -52,7 +52,7 @@ export function pressArrowLeft(element) {
   ); // x
 }
 
-export function pressArrowRight(element) {
+export function pressArrowRight(element: Element) {
   // @ts-ignore
   const w = global.window;
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
@@ -76,7 +76,7 @@ export function pressArrowRight(element) {
   ); // x
 }
 
-export function pressEnter(element) {
+export function pressEnter(element: Element) {
   // @ts-ignore
   const w = global.window;
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
@@ -100,7 +100,7 @@ export function pressEnter(element) {
   ); // x
 }
 
-export function pressBackspace(element) {
+export function pressBackspace(element: Element) {
   // @ts-ignore
   const w = global.window;
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
@@ -153,7 +153,7 @@ export function focusedElement() {
   return doc.activeElement;
 }
 
-export function triggerInputEvent(element: HTMLInputElement) {
+export function triggerInputEvent(element: Element) {
   element.dispatchEvent(new window.InputEvent('input', {}));
 }
 

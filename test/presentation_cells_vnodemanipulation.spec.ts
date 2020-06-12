@@ -29,6 +29,7 @@ import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { dataToNode } from '../src/datamodel/registry';
+import { NodeData } from '../src/datamodel/misc';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -89,7 +90,7 @@ const html1 = `<html>
 \t</body>
 </html>`;
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -104,6 +105,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -113,9 +115,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -130,6 +132,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -139,9 +142,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -151,9 +154,9 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
 describe('Presentation.Cells.Vnodemanipulation', () => {

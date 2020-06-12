@@ -1,7 +1,7 @@
 import { VNode } from 'snabbdom/vnode';
 import { InsertHook, UpdateHook } from 'snabbdom/hooks';
 
-import merge = require('lodash.merge');
+import merge from 'lodash.merge';
 
 export function addInsertHook(vnode: VNode, hook: InsertHook): VNode {
   if (vnode.data === undefined) {
@@ -75,7 +75,7 @@ export function wrapKeydownHandler(vnode: VNode, keydownHandler: (event: Keyboar
   return vnode;
 }
 
-export function wrapKeypressHandler(vnode: VNode, handler: (event) => boolean): VNode {
+export function wrapKeypressHandler(vnode: VNode, handler: (event: KeyboardEvent) => boolean): VNode {
   if (vnode.data === undefined) {
     vnode.data = {};
   }

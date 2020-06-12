@@ -11,7 +11,7 @@ class MyDummyModelNode extends ModelNode {
   }
 }
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -26,6 +26,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -35,9 +36,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -52,6 +53,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -61,9 +63,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -73,12 +75,12 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
-function clone(original) {
+function clone<T extends object>(original: T): T {
   return JSON.parse(JSON.stringify(original));
 }
 
@@ -88,10 +90,10 @@ describe('Data Model Class Registry', () => {
       concept: 'my.awesome.concept',
       abstractConcept: false,
       children: [],
-      containingLink: null,
+      containingLink: undefined,
       id: { regularId: '123' },
       modelName: 'foo',
-      parent: null,
+      parent: undefined,
       properties: {},
       refs: {},
       rootName: 'bar',
@@ -100,14 +102,14 @@ describe('Data Model Class Registry', () => {
   });
 
   it('should create a ModelNode if a specific class is registered for the concept', () => {
-    const data = {
+    const data: NodeData = {
       concept: 'my.awesome.other.concept',
       abstractConcept: false,
       children: [],
-      containingLink: null,
+      containingLink: undefined,
       id: { regularId: '123' },
       modelName: 'foo',
-      parent: null,
+      parent: undefined,
       properties: {},
       refs: {},
       rootName: 'bar',
@@ -115,14 +117,6 @@ describe('Data Model Class Registry', () => {
     expect(dataToNode(data)).to.be.an.instanceof(ModelNode);
     registerDataModelClass('my.awesome.other.concept', MyDummyModelNode);
     expect(dataToNode(data)).to.be.an.instanceof(MyDummyModelNode);
-  });
-});
-
-describe('References', () => {
-  it('should not accept null', () => {
-    expect(() => {
-      new Ref(null);
-    }).to.throw('Ref cannot be built with null data');
   });
 });
 
@@ -144,7 +138,7 @@ describe('ModelNode', () => {
 
   it('should support property - unexisting', () => {
     const root = dataToNode(rootData1);
-    expect(root.property('unexisting')).to.equal(undefined);
+    expect(root.property('unexisting')).to.be.undefined;
   });
 
   it('should support name - existing', () => {
@@ -156,7 +150,7 @@ describe('ModelNode', () => {
     const root = dataToNode(rootData1);
     const input_a = root.childrenByLinkName('inputs')[0];
     const type_of_a = input_a.childByLinkName('type');
-    expect(type_of_a.name()).to.equals(undefined);
+    expect(type_of_a!.name()).to.equals(undefined);
   });
 
   it('should support idString', () => {
@@ -176,19 +170,20 @@ describe('ModelNode', () => {
 
   it('should support findNodeById - unexisting', () => {
     const root = dataToNode(rootData1);
-    expect(root.findNodeById('unexisting')).to.equals(null);
+    // tslint:disable-next-line:no-unused-expression
+    expect(root.findNodeById('unexisting')).to.be.undefined;
   });
 
   it('should support findNodeById - existing', () => {
     const root = dataToNode(rootData1);
     const n = root.findNodeById('1848360241685547705');
-    expect(n.name()).to.equals('b');
+    expect(n?.name()).to.equals('b');
   });
 
   it('should support findNodeById - existing', () => {
     const root = dataToNode(rootData1);
     const n = root.findNodeById('1848360241685547705');
-    expect(n.name()).to.equals('b');
+    expect(n!.name()).to.equals('b');
   });
 
   it('should support root - positive', () => {
@@ -199,7 +194,7 @@ describe('ModelNode', () => {
   it('should support root - negative', () => {
     const root = dataToNode(rootData1);
     const n = root.findNodeById('1848360241685547705');
-    expect(n.isRoot()).to.equals(false);
+    expect(n!.isRoot()).to.equals(false);
   });
 
   it('should support containmentName - negative', () => {
@@ -210,7 +205,7 @@ describe('ModelNode', () => {
   it('should support containmentName - positive', () => {
     const root = dataToNode(rootData1);
     const n = root.findNodeById('1848360241685547705');
-    expect(n.containmentName()).to.equals('inputs');
+    expect(n!.containmentName()).to.equals('inputs');
   });
 
   it('should support index - root', () => {
@@ -224,7 +219,7 @@ describe('ModelNode', () => {
     const root = dataToNode(rootData1);
     const n = root.findNodeById('1848360241685547705');
     expect(() => {
-      n.index();
+      n!.index();
     }).to.throw('Cannot get index when parent is not set');
   });
 
@@ -233,7 +228,7 @@ describe('ModelNode', () => {
     root.injectModelName('myModel', 'myRoot');
     const n_a = root.findNodeById('1848360241685547698');
     const n_b = root.findNodeById('1848360241685547705');
-    expect(n_a.index()).to.equals(0);
-    expect(n_b.index()).to.equals(1);
+    expect(n_a!.index()).to.equals(0);
+    expect(n_b!.index()).to.equals(1);
   });
 });

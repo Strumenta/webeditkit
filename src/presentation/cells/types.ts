@@ -362,7 +362,9 @@ export function fixedCell(
                 // We should stop this when the autocomplete is displayed
 
                 // We do not want to do this for cells with autocompletion
-                handleAddingElement(target, modelNode);
+                if (modelNode != null) {
+                  handleAddingElement(target, modelNode);
+                }
                 e.preventDefault();
                 return false;
               }

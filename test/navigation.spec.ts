@@ -50,9 +50,11 @@ describe('Navigation', () => {
   it('should support moveToNextElement - not at end', () => {
     const doc = prepareFakeDom(html1);
 
-    const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
-    const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
-    const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type');
+    const editableName_a = doc.querySelector(
+      'div[data-node_represented="1848360241685547698"] .editable',
+    ) as HTMLElement;
+    const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword') as HTMLElement;
+    const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type') as HTMLElement;
 
     // @ts-ignore
     editableName_a.focus();
@@ -62,9 +64,11 @@ describe('Navigation', () => {
     expect(moveToNextElement(keyword_a)).to.equals(true);
     expect(doc.activeElement).to.equals(type_a);
 
-    const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
-    const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword');
-    const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type');
+    const editableName_b = doc.querySelector(
+      'div[data-node_represented="1848360241685575196"] .editable',
+    ) as HTMLElement;
+    const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword') as HTMLElement;
+    const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type') as HTMLElement;
 
     expect(moveToNextElement(type_a)).to.equals(true);
     expect(doc.activeElement).to.equals(editableName_b);
@@ -84,9 +88,9 @@ describe('Navigation', () => {
     calculationsLabel.focus();
     expect(doc.activeElement).to.equals(calculationsLabel);
 
-    expect(moveToNextElement(doc.activeElement)).to.equals(true);
-    expect(moveToNextElement(doc.activeElement)).to.equals(true);
-    expect(moveToNextElement(doc.activeElement)).to.equals(true);
+    expect(moveToNextElement(doc.activeElement as HTMLElement)).to.equals(true);
+    expect(moveToNextElement(doc.activeElement as HTMLElement)).to.equals(true);
+    expect(moveToNextElement(doc.activeElement as HTMLElement)).to.equals(true);
 
     expect(doc.activeElement).to.equals(editableName_a);
   });
@@ -105,28 +109,32 @@ describe('Navigation', () => {
   it('should support moveToPrevElement - not at end', () => {
     const doc = prepareFakeDom(html1);
 
-    const editableName_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .editable');
-    const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword');
-    const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type');
+    const editableName_a = doc.querySelector(
+      'div[data-node_represented="1848360241685547698"] .editable',
+    ) as HTMLElement;
+    const keyword_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .keyword') as HTMLElement;
+    const type_a = doc.querySelector('div[data-node_represented="1848360241685547698"] .fixed.type') as HTMLElement;
 
-    const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
-    const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword');
-    const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type');
+    const editableName_b = doc.querySelector(
+      'div[data-node_represented="1848360241685575196"] .editable',
+    ) as HTMLElement;
+    const keyword_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .keyword') as HTMLElement;
+    const type_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .fixed.type') as HTMLElement;
 
     // @ts-ignore
     type_b.focus();
-    expect(doc.activeElement).to.equals(type_b);
+    expect(doc.activeElement as HTMLElement).to.equals(type_b);
     expect(moveToPrevElement(type_b)).to.equals(true);
-    expect(doc.activeElement).to.equals(keyword_b);
+    expect(doc.activeElement as HTMLElement).to.equals(keyword_b);
     expect(moveToPrevElement(keyword_b)).to.equals(true);
-    expect(doc.activeElement).to.equals(editableName_b);
+    expect(doc.activeElement as HTMLElement).to.equals(editableName_b);
 
     expect(moveToPrevElement(editableName_b)).to.equals(true);
-    expect(doc.activeElement).to.equals(type_a);
+    expect(doc.activeElement as HTMLElement).to.equals(type_a);
     expect(moveToPrevElement(type_a)).to.equals(true);
-    expect(doc.activeElement).to.equals(keyword_a);
+    expect(doc.activeElement as HTMLElement).to.equals(keyword_a);
     expect(moveToPrevElement(keyword_a)).to.equals(true);
-    expect(doc.activeElement).to.equals(editableName_a);
+    expect(doc.activeElement as HTMLElement).to.equals(editableName_a);
   });
 
   it('should support moveToPrevElement - at end', () => {
@@ -150,9 +158,9 @@ describe('Navigation', () => {
     editableName_a.focus();
     expect(doc.activeElement).to.equals(editableName_a);
 
-    expect(moveToPrevElement(doc.activeElement)).to.equals(true);
-    expect(moveToPrevElement(doc.activeElement)).to.equals(true);
-    expect(moveToPrevElement(doc.activeElement)).to.equals(true);
+    expect(moveToPrevElement(doc.activeElement as HTMLElement)).to.equals(true);
+    expect(moveToPrevElement(doc.activeElement as HTMLElement)).to.equals(true);
+    expect(moveToPrevElement(doc.activeElement as HTMLElement)).to.equals(true);
 
     expect(doc.activeElement).to.equals(calculationsLabel);
   });
@@ -160,7 +168,9 @@ describe('Navigation', () => {
   it('should support isAtStart - positive case', () => {
     const doc = prepareFakeDom(html1);
 
-    const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+    const editableName_b = doc.querySelector(
+      'div[data-node_represented="1848360241685575196"] .editable',
+    ) as HTMLInputElement;
     // @ts-ignore
     expect(editableName_b.value).to.equals('sdsd');
 
@@ -174,7 +184,9 @@ describe('Navigation', () => {
   it('should support isAtStart - negative case', () => {
     const doc = prepareFakeDom(html1);
 
-    const editableName_b = doc.querySelector('div[data-node_represented="1848360241685575196"] .editable');
+    const editableName_b = doc.querySelector(
+      'div[data-node_represented="1848360241685575196"] .editable',
+    ) as HTMLInputElement;
     // @ts-ignore
     expect(editableName_b.value).to.equals('sdsd');
 

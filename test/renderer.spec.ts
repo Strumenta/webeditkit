@@ -11,8 +11,9 @@ import { h } from 'snabbdom';
 import { compareVNodes } from './testutils';
 import { ModelNode } from '../src/datamodel/modelNode';
 import { dataToNode } from '../src/datamodel/registry';
+import { NodeData } from '../src/datamodel/misc';
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -27,6 +28,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -36,9 +38,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -53,6 +55,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -62,9 +65,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -74,9 +77,9 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
 describe('Renderer', () => {
@@ -99,9 +102,12 @@ describe('Renderer', () => {
 
     const n = dataToNode(rootData1);
 
-    expect(getRegisteredRenderer('concept.with.renderer')(n)).to.eql(h('span.bar'));
-    expect(getRegisteredRenderer('concept.with.renderer')(n)).not.eql(h('span.foo'));
-    expect(getRegisteredRenderer('concept.with.renderer')(n)).not.eql(h('span.zum'));
+    const renderer = getRegisteredRenderer('concept.with.renderer');
+    // tslint:disable-next-line:no-unused-expression
+    expect(renderer).to.not.be.undefined;
+    expect(renderer!(n)).to.eql(h('span.bar'));
+    expect(renderer!(n)).not.eql(h('span.foo'));
+    expect(renderer!(n)).not.eql(h('span.zum'));
   });
 
   it('should support clearRendererRegistry', () => {

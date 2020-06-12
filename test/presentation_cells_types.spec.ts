@@ -55,6 +55,7 @@ import {
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
 import { SinonFakeTimers } from 'sinon';
+import AjaxSettings = JQuery.AjaxSettings;
 
 const patch = init([
   // Init patch function with chosen modules
@@ -110,7 +111,7 @@ const html1 = `<html>
 \t</body>
 </html>`;
 
-const rootData1 = {
+const rootData1: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -125,6 +126,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.BooleanType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -134,9 +136,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -151,6 +153,7 @@ const rootData1 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -160,9 +163,9 @@ const rootData1 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -172,12 +175,12 @@ const rootData1 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
-const rootData2 = {
+const rootData2: NodeData = {
   children: [
     {
       containingLink: 'inputs',
@@ -189,9 +192,9 @@ const rootData2 = {
       id: {
         regularId: '1848360241685547698',
       },
-      name: 'a',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -206,6 +209,7 @@ const rootData2 = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -215,9 +219,9 @@ const rootData2 = {
       id: {
         regularId: '1848360241685547705',
       },
-      name: 'b',
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -227,9 +231,9 @@ const rootData2 = {
   id: {
     regularId: '324292001770075100',
   },
-  name: 'My calculations',
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
 const rootData3: NodeData = {
@@ -244,9 +248,9 @@ const rootData3: NodeData = {
       id: {
         regularId: '1848360241685547698',
       },
-      //"name": "a",
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
     {
       containingLink: 'inputs',
@@ -261,6 +265,7 @@ const rootData3: NodeData = {
           },
           concept: 'com.strumenta.financialcalc.StringType',
           abstractConcept: false,
+          modelName: '',
         },
       ],
       properties: {
@@ -281,6 +286,7 @@ const rootData3: NodeData = {
       },
       concept: 'com.strumenta.financialcalc.Input',
       abstractConcept: false,
+      modelName: '',
     },
   ],
   properties: {
@@ -292,6 +298,7 @@ const rootData3: NodeData = {
   },
   concept: 'com.strumenta.financialcalc.FinancialCalcSheet',
   abstractConcept: false,
+  modelName: '',
 };
 
 let data: Data;
@@ -336,14 +343,14 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="fixed">');
         pressArrowLeft(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="bef">');
         done();
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should handle right arrow', (done) => {
       const doc = prepareFakeDom(html1);
@@ -358,14 +365,14 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="fixed">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="fixed">');
         pressArrowRight(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="aft">');
         done();
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
 
@@ -397,16 +404,16 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.equal(
+        expect(doc.activeElement!.outerHTML).to.equal(
           '<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">',
         );
         pressArrowLeft(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="bef">');
         done();
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should handle right arrow', (done) => {
       const doc = prepareFakeDom(html1);
@@ -423,16 +430,16 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql(
+        expect(doc.activeElement!.outerHTML).to.eql(
           '<input class="fixed empty-reference" data-node_represented="1848360241685547698" data-reference_represented="type">',
         );
         pressArrowRight(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="aft">');
         done();
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should load value', (done) => {
       const doc = prepareFakeDom(html1);
@@ -466,10 +473,10 @@ describe('Cells.Types', () => {
 
       // @ts-ignore
       const jQuery = global.$;
-      sinon.replace(jQuery, 'ajax', function (params) {
+      sinon.replace(jQuery, 'ajax', function (params: AjaxSettings) {
         expect(params.url).to.equals('http://localhost:8080/models/my.referred.model/123-foo');
         expect(params.type).to.equals('get');
-        const successCb = params.success;
+        const successCb = params.success as JQuery.Ajax.SuccessCallback<any>;
         const refNodeData: NodeData = {
           concept: 'my.referred.Concept',
           containingLink: '',
@@ -477,16 +484,16 @@ describe('Cells.Types', () => {
             regularId: '123-foo',
           },
           modelName: 'my.referred.model',
-          parent: null,
+          parent: undefined,
           rootName: 'myOtherModel',
           abstractConcept: false,
           properties: { name: 'My referred node' },
           children: [],
           refs: {},
         };
-        successCb(refNodeData);
+        successCb(refNodeData, 'success', sinon.fake());
         // verify the name was updated
-        expect(doc.querySelector('input').value).to.eql('My referred node');
+        expect(doc.querySelector('input')!.value).to.eql('My referred node');
 
         mockServer.close();
         done();
@@ -494,7 +501,7 @@ describe('Cells.Types', () => {
 
       setDefaultBaseUrl('localhost:8080');
 
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
 
@@ -616,14 +623,14 @@ describe('Cells.Types', () => {
 
       const cell = verticalCollectionCell(aNode, 'unexisting');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm.firstChild as HTMLInputElement;
+        let myInput = vnode.elm!.firstChild as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         pressEnter(myInput);
       });
 
       let addedNode = h('input.represent-node', { dataset: { node_represented: 'xxx-123' } }, ['My added node']);
       let container = h('div#calc', {}, [cellWithHook, addedNode]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
 
@@ -715,13 +722,13 @@ describe('Cells.Types', () => {
         let myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
         pressArrowRight(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="aft">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="aft">');
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to ArrowLeft with selection at start', () => {
       const doc = prepareFakeDom(html1);
@@ -736,13 +743,13 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
         pressArrowLeft(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="bef">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="bef">');
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to ArrowLeft with selection not at start', () => {
       const doc = prepareFakeDom(html1);
@@ -757,13 +764,13 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
         pressArrowLeft(myInput);
-        expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
       });
 
       let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to Backspace when at start', (done) => {
       const doc = prepareFakeDom(html1);
@@ -778,9 +785,9 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
         pressBackspace(myInput);
-        expect(myInput.parentElement.outerHTML).to.eql(
+        expect(myInput.parentElement!.outerHTML).to.eql(
           '<div class="represent-node deleting" data-node_represented="324292001770075100"><input class="editable" placeholder="<no name>" required=""></div>',
         );
         done();
@@ -789,7 +796,7 @@ describe('Cells.Types', () => {
       let container = h('div#calc.editor', {}, [
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to Backspace when not at start', (done) => {
       const doc = prepareFakeDom(html1);
@@ -804,13 +811,13 @@ describe('Cells.Types', () => {
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
         myInput.focus();
-        expect(doc.activeElement.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
+        expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
         // the backspace does not actually change the value
         // see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent#Auto-repeat_handling_prior_to_Gecko_5.0
         myInput.value = 'y calculations';
         pressBackspace(myInput);
         // We should not add the "deleting" class
-        expect(myInput.parentElement.outerHTML).to.eql(
+        expect(myInput.parentElement!.outerHTML).to.eql(
           '<div class="represent-node" data-node_represented="324292001770075100"><input class="editable" placeholder="<no name>" required=""></div>',
         );
         done();
@@ -820,7 +827,7 @@ describe('Cells.Types', () => {
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
 
-      patch(toVNode(document.querySelector('#calc')), container);
+      patch(toVNode(document.querySelector('#calc')!), container);
     });
 
     // Change property to 'foo' and then to 'foobar'. The only change request that should be received is to set the
