@@ -3,7 +3,10 @@
   	"target": "es5",
     "outDir": "./dist",
     //"allowJs": true,
-    "declaration": true    
+    "declaration": true,
+    "downlevelIteration": true,
+    "lib": ["DOM", "DOM.Iterable", "ES5"],
+    "esModuleInterop": true
   },
   "include": [
     "src"
