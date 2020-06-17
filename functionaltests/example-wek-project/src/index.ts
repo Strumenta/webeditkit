@@ -31,8 +31,9 @@ webeditkit.registerRenderer('ExampleLanguage.Client', (node: ModelNode) => {
 
 webeditkit.registerRenderer('ExampleLanguage.Project', (node: ModelNode) => {
   return horizontalGroupCell(fixedCell(node, "Project ["),
+    editableCell(data, node, "id"),
+    fixedCell(node, "]"),
     editableCell(data, node, "name"),
-    fixedCell(node, "]")
   );
 });
 
