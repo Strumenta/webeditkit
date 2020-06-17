@@ -1,3 +1,7 @@
+/*
+ Generic tags
+ */
+
 body {
     font-family: monospace;
 }
@@ -20,6 +24,10 @@ span.fixed {
 input:invalid {
     background-color: #FFBDB3;
 }
+
+/*
+ Classes
+ */
 
 .default-cell-abstract {
     background-color: #FFBDB3;
@@ -91,8 +99,24 @@ input.keyword {
     -moz-box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.75);
     box-shadow: 3px 3px 10px 1px rgba(0,0,0,0.75);
     padding: 2px;
-    background-color: #E6F1FE;
+    /*background-color: #E6F1FE;*/
+    background-color: #ddf0f0;
+    min-width: 20%;
+    padding: 4px;
+    border: 1px #888 solid;
 }
+
+.autocomplete > div {
+    padding: 3px;
+    background-color: white;
+    margin: 3px;
+}
+
+.autocomplete > div:hover {
+    background-color: #c8d8cb;
+    color: blue;
+}
+
 
 .autocomplete-item {
     padding: 2px;
@@ -142,10 +166,28 @@ input {
     text-decoration: underline;
 }
 
-.hasErrors {
-    /*border-bottom: red 1px wave;*/
-    background-color: red;
+.collapsibleCell {
+    border: 1px #ccc solid;
+
 }
+
+.collapsibleCell .header {
+    padding: 5px;
+    border-bottom: 1px #ccc solid;
+}
+
+.hidden {
+    display: none;
+}
+
+.vertical-group.represent-node.hasErrors {
+    border: 1px rgba(255,0,0,0.2) solid;
+    background-color: rgba(255,0,0,0.05);
+}
+
+/*.hasErrors {*/
+/*    background-color: red;*/
+/*}*/
 
 #intentions-menu {
     position: fixed;
@@ -164,4 +206,40 @@ input {
     background: transparent;
     border-bottom: 1px black solid;
     box-shadow: 2px 2px 1px 0px rgba(0,0,0,0.75);
+}
+
+input {
+    margin-left: 3px;
+    margin-right: 3px;
+}
+
+input.punctuation {
+    margin-left:0;
+    margin-right: 0;
+}
+
+div.horizontal-collection {
+    display: inline-block;
+}
+
+.vertical-group {
+    display:inline-block;
+}
+
+.row * {
+    vertical-align: top;
+}
+
+input.fixed {
+    /* In this way it is vertically aligned with the editable labels */
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+span.title {
+    margin-right:0.4em;
+}
+
+input:invalid {
+    background-color: #FFBDB3;
 }
