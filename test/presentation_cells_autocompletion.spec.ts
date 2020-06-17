@@ -36,9 +36,9 @@ import { NodeData } from '../src/datamodel/misc';
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 
-var init2html = require('snabbdom-to-html/init');
-var modules = require('snabbdom-to-html/modules/index');
-var toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
+const init2html = require('snabbdom-to-html/init');
+const modules = require('snabbdom-to-html/modules/index');
+const toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
 
 const patch = init([
   // Init patch function with chosen modules

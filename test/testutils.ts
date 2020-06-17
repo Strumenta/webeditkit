@@ -18,7 +18,7 @@ export function compareVNodes(rendered: VNode, expectedRendered: VNode): void {
   expect(rendered.text).to.eql(expectedRendered.text);
 }
 
-export function clone<T extends object>(original: T): T {
+export function clone<T extends Record<string, unknown>>(original: T): T {
   return JSON.parse(JSON.stringify(original));
 }
 
@@ -122,8 +122,6 @@ export function pressBackspace(element: Element) {
       keyCode: 8,
     }),
   ); // x
-  //const keyboard = keysim.Keyboard.US_ENGLISH;
-  //keyboard.dispatchEventsForAction('backspace', element);
 }
 
 export function prepareFakeDom(htmlCode: string): Document {
@@ -164,7 +162,7 @@ export function assertTheseMessagesAreReceived(
   messages: { type: string; check: (msg: Message) => void }[],
 ) {
   if (received <= messages.length) {
-    const dataj = JSON.parse(data as string) as Message;
+    const dataj = JSON.parse(data) as Message;
     messages.forEach((value, index) => {
       if (dataj.type === value.type) {
         value.check(dataj);

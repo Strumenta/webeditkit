@@ -24,9 +24,9 @@ import { DefaultInsertion, PropertyChangeNotification } from '../src/communicati
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
 
-var toHtmlInit = require('snabbdom-to-html/init');
-var modules = require('snabbdom-to-html/modules/index');
-var toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, modules.style]);
+const toHtmlInit = require('snabbdom-to-html/init');
+const modules = require('snabbdom-to-html/modules/index');
+const toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, modules.style]);
 
 import { init } from 'snabbdom/snabbdom';
 
@@ -66,7 +66,7 @@ const patch = init([
   sdataset.default,
 ]);
 
-var sinon = require('sinon');
+const sinon = require('sinon');
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
