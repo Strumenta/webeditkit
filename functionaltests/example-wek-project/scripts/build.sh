@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-npm i
+#npm i
+npm i ../../webeditkit-latest.tgz
 TSDIR=src
 BUILDDIR=public/js/build
 BROWSERIFY_OPTS="--debug -t browserify-css"

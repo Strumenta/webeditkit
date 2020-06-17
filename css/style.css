@@ -160,4 +160,8 @@ input {
 
 #intentions-menu input {
     margin: 3px;
+    border: 0;
+    background: transparent;
+    border-bottom: 1px black solid;
+    box-shadow: 2px 2px 1px 0px rgba(0,0,0,0.75);
 }

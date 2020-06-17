@@ -2,6 +2,7 @@ import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
 import { domElementToModelNode } from './cells/support';
 import { getWsCommunication, Intention } from '../communication/wscommunication';
+import { myAutoresizeOptions } from './uiutils';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
@@ -78,6 +79,8 @@ class IntentionsMenu {
         const index = $(e.target).prevAll('input').length;
         intentions[index].execute();
         this.deleteMenu();
+      } else if (e.key === 'Escape') {
+        this.deleteMenu();
       } else if (e.key === 'ArrowDown') {
         const dest = $(e.target).nextAll('input');
         if (dest.length > 0) {
@@ -108,6 +111,8 @@ class IntentionsMenu {
 
     $('#intentions-menu input:first').focus();
 
+    // @ts-ignore
+    $("#intentions-menu input").autoresize(myAutoresizeOptions);
     $('body').focusin((e) => {
       if (!isInIntentionsMenu(e.target)) {
         this.deleteMenu();
