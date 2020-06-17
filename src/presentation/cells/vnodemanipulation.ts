@@ -149,7 +149,7 @@ export function addClass(vnode: VNode, className: string): VNode {
   return vnode;
 }
 
-export function setDataset(vnode: VNode, dataset: any): VNode {
+export function setDataset(vnode: VNode, dataset: Record<string, any>): VNode {
   if (vnode.data === undefined) {
     vnode.data = {};
   }
@@ -168,7 +168,7 @@ export function addToDataset(vnode: VNode, key: string, value: any): VNode {
   return vnode;
 }
 
-export function addToDatasetObj(vnode: VNode, dataObj: Record<string, unknown>) {
+export function addToDatasetObj(vnode: VNode, dataObj: Record<string, unknown>) : VNode {
   if (vnode.data === undefined) {
     vnode.data = {};
   }
