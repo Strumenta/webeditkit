@@ -45,7 +45,7 @@ export function getDatamodelRoot(name: string): ModelNode | undefined {
   return datamodelRoots.get(name);
 }
 
-export function forEachDataModel(op: (localName: string, root: ModelNode) => void) {
+export function forEachDataModel(op: (localName: string, root: ModelNode) => void) : void {
   datamodelRoots.forEach((value, key) => op(key, value));
 }
 

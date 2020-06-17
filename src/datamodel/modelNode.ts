@@ -121,7 +121,7 @@ export class ModelNode {
     if (typeof value === 'string') {
       return value;
     }
-    throw new Error('Name was expected to be a string, while it is ' + value);
+    throw new Error(`Name was expected to be a string, while it is ${value.toString()}`);
   }
 
   idString(): string {
@@ -169,7 +169,7 @@ export class ModelNode {
     return this.data.modelName;
   }
 
-  rootName() {
+  rootName() : string | undefined {
     return this.data.rootName;
   }
 
@@ -194,7 +194,7 @@ export class ModelNode {
     throw new Error('This element was not found among the children of its parent');
   }
 
-  addChild(relationName: string, index: number, childData: NodeData) {
+  addChild(relationName: string, index: number, childData: NodeData) : void {
     const children = this.data.children;
     let leftToFind = index;
     let i = 0;
@@ -205,7 +205,7 @@ export class ModelNode {
       }
     }
     if (leftToFind > 0) {
-      throw new Error('Invalid index ' + index + ' in relation ' + relationName);
+      throw new Error(`Invalid index ${index} in relation ${relationName}`);
     }
 
     this.data.children.splice(i, 0, childData);
@@ -219,7 +219,7 @@ export class ModelNode {
     childConcept: string,
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
-  ) {
+  ) : void {
     this.ws().addChildAtIndex(this, containmentName, index, childConcept, initializer, uuid);
   }
 
@@ -228,7 +228,7 @@ export class ModelNode {
     childConcept: string,
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
-  ) {
+  ) : void {
     this.ws().setChild(this, containmentName, childConcept, initializer, uuid);
   }
 
@@ -236,7 +236,7 @@ export class ModelNode {
     this.ws().insertNextSibling(this);
   }
 
-  removeChild(relationName: string, childData: NodeData) {
+  removeChild(relationName: string, childData: NodeData) : void {
     for (let i = 0; i < this.data.children.length; i++) {
       const child = this.data.children[i];
       if (child.id.regularId === childData.id.regularId) {
@@ -262,7 +262,7 @@ export class ModelNode {
     return getWsCommunication(this.modelName());
   }
 
-  deleteMe() {
+  deleteMe() : void {
     this.ws().deleteNode(this);
   }
 

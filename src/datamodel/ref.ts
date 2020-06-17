@@ -10,7 +10,7 @@ export class Ref {
     this.data = data;
   }
 
-  loadData(cb: (modelNode: ModelNode) => void) {
+  loadData(cb: (modelNode: ModelNode) => void) : void {
     let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
     if (baseUrl == null) {
       throw new Error(
@@ -21,7 +21,7 @@ export class Ref {
       baseUrl = 'http://' + baseUrl;
     }
     const url = baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
-    $.getJSON(url, (data) => {
+    void $.getJSON(url, (data) => {
       if (data == null) {
         throw new Error('Data not received correctly on request to ' + url);
       }
