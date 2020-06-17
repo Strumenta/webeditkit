@@ -39,7 +39,7 @@ export class EditorController {
     }
   }
 
-  async triggerIntentionsMenu(event: Event) : Promise<void> {
+  async triggerIntentionsMenu(event: Event): Promise<void> {
     const modelNode = domElementToModelNode(event.target as HTMLElement);
     if (modelNode == null) {
       // nothing to do here
@@ -110,7 +110,7 @@ class IntentionsMenu {
     $('#intentions-menu input:first').focus();
 
     // @ts-ignore
-    $("#intentions-menu input").autoresize(myAutoresizeOptions);
+    $('#intentions-menu input').autoresize(myAutoresizeOptions);
     $('body').focusin((e) => {
       if (!isInIntentionsMenu(e.target)) {
         this.deleteMenu();

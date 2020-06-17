@@ -89,7 +89,7 @@ export function separate(original: any[], separatorGenerator?: () => VNode): any
   return separated;
 }
 
-export function focusOnReference(modelNode: ModelNode, referenceName: string) : void {
+export function focusOnReference(modelNode: ModelNode, referenceName: string): void {
   const rootName = modelNode.rootName();
   if (rootName == null) {
     return;
@@ -118,7 +118,7 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) : 
   }
 }
 
-export function findDomElement(nodeIdStr: string, rootName: string) : HTMLElement | null {
+export function findDomElement(nodeIdStr: string, rootName: string): HTMLElement | null {
   const domRoot = $('#' + rootName);
   if (domRoot.length === 0) {
     throw new Error(`Root with ID ${rootName} not found`);
@@ -140,7 +140,7 @@ export function findDomElement(nodeIdStr: string, rootName: string) : HTMLElemen
  * @param nodeIdStr
  * @param rootName
  */
-export function focusOnNode(nodeIdStr: string, rootName: string | undefined) : void {
+export function focusOnNode(nodeIdStr: string, rootName: string | undefined): void {
   if (rootName == null) {
     return;
   }

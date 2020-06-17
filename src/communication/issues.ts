@@ -7,7 +7,7 @@ import deepEqual from 'deep-equal';
 
 const issuesMap: { [key: string]: IssuesMap } = {};
 
-export function clearIssueMap() : void {
+export function clearIssueMap(): void {
   for (const member in issuesMap) delete issuesMap[member];
 }
 

@@ -72,7 +72,7 @@ function selectFirstElementInRow(row: HTMLElement, focusOnEnd: boolean): void {
   }
 }
 
-export function moveUp(t: HTMLElement) : void {
+export function moveUp(t: HTMLElement): void {
   if ($(t).hasClass('editor')) {
     return;
   }
@@ -102,7 +102,7 @@ export function moveUp(t: HTMLElement) : void {
   }
 }
 
-export function moveDown(t: HTMLElement) : void {
+export function moveDown(t: HTMLElement): void {
   if ($(t).hasClass('editor')) {
     return;
   }

@@ -466,52 +466,56 @@ export function referenceCell(
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
-    ws.askAlternativesForDirectReference(modelNode, referenceName, (alternativesFromWs: AlternativeForDirectReference[]) => {
-      // We want to put on top the alternatives from the same model
-      // We want also to mark them as bold (the render should take care of that)
-      // And sort the two groups by name
+    ws.askAlternativesForDirectReference(
+      modelNode,
+      referenceName,
+      (alternativesFromWs: AlternativeForDirectReference[]) => {
+        // We want to put on top the alternatives from the same model
+        // We want also to mark them as bold (the render should take care of that)
+        // And sort the two groups by name
 
-      const group1 = alternativesFromWs
-        .filter((el) => el.modelName === modelNode.modelName())
-        .sort((a, b) => {
-          if (a.label < b.label) return -1;
-          if (a.label > b.label) return 1;
-          return 0;
+        const group1 = alternativesFromWs
+          .filter((el) => el.modelName === modelNode.modelName())
+          .sort((a, b) => {
+            if (a.label < b.label) return -1;
+            if (a.label > b.label) return 1;
+            return 0;
+          });
+        const group2 = alternativesFromWs
+          .filter((el) => el.modelName !== modelNode.modelName())
+          .sort((a, b) => {
+            if (a.label < b.label) return -1;
+            if (a.label > b.label) return 1;
+            return 0;
+          });
+
+        const suggestions1 = group1.map((el) => {
+          return {
+            label: el.label,
+            execute: () => {
+              const ref: Ref = new Ref({ model: { qualifiedName: el.modelName }, id: el.nodeId });
+              modelNode.setRef(referenceName, ref);
+              focusOnReference(modelNode, referenceName);
+            },
+            highlighted: true,
+          };
         });
-      const group2 = alternativesFromWs
-        .filter((el) => el.modelName !== modelNode.modelName())
-        .sort((a, b) => {
-          if (a.label < b.label) return -1;
-          if (a.label > b.label) return 1;
-          return 0;
+
+        const suggestions2 = group2.map((el) => {
+          return {
+            label: el.label,
+            execute: () => {
+              const ref: Ref = new Ref({ model: { qualifiedName: el.modelName }, id: el.nodeId });
+              modelNode.setRef(referenceName, ref);
+              focusOnReference(modelNode, referenceName);
+            },
+            highlighted: false,
+          };
         });
 
-      const suggestions1 = group1.map((el) => {
-        return {
-          label: el.label,
-          execute: () => {
-            const ref: Ref = new Ref({ model: { qualifiedName: el.modelName }, id: el.nodeId });
-            modelNode.setRef(referenceName, ref);
-            focusOnReference(modelNode, referenceName);
-          },
-          highlighted: true,
-        };
-      });
-
-      const suggestions2 = group2.map((el) => {
-        return {
-          label: el.label,
-          execute: () => {
-            const ref: Ref = new Ref({ model: { qualifiedName: el.modelName }, id: el.nodeId });
-            modelNode.setRef(referenceName, ref);
-            focusOnReference(modelNode, referenceName);
-          },
-          highlighted: false,
-        };
-      });
-
-      suggestionsReceiver(suggestions1.concat(suggestions2));
-    });
+        suggestionsReceiver(suggestions1.concat(suggestions2));
+      },
+    );
   };
 
   alternativesProvider = alternativesProvider || defaultAlternativesProvider;

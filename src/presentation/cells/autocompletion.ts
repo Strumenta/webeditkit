@@ -3,7 +3,7 @@ import { Alternative, getWsCommunication } from '../../communication/wscommunica
 import autocomplete from 'autocompleter';
 import { VNode } from 'snabbdom/vnode';
 
-export function alternativesProviderForAbstractConcept(modelNode: ModelNode) : SuggestionsReceiverFactory {
+export function alternativesProviderForAbstractConcept(modelNode: ModelNode): SuggestionsReceiverFactory {
   const parent = modelNode.parent();
   if (parent == null) {
     throw new Error('The given node has no parent');
@@ -63,7 +63,7 @@ export function installAutocomplete(
   vnode: VNode,
   valuesProvider: (suggestionsReceiver: SuggestionsReceiver) => void,
   fixed: boolean,
-) : void {
+): void {
   const input = vnode.elm as HTMLInputElement;
   const ac = autocomplete({
     input,
@@ -101,7 +101,7 @@ export function installAutocomplete(
   });
 }
 
-export function isAutocompleteVisible() : boolean {
+export function isAutocompleteVisible(): boolean {
   const res = $('.autocomplete').parent().length > 0;
   return res;
 }
