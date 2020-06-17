@@ -6,7 +6,7 @@ import { ModelNode } from '../../datamodel/modelNode';
 import { getDatamodelRoot } from '../../datamodel/registry';
 import { log } from '../../utils/misc';
 
-export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
+export function handleSelfDeletion(element: HTMLElement, modelNode: ModelNode): void {
   if ($(element).closest('.represent-node').hasClass('deleting')) {
     modelNode.deleteMe();
   } else {
@@ -14,7 +14,7 @@ export function handleSelfDeletion(element: any, modelNode: ModelNode): void {
   }
 }
 
-export function handleAddingElement(element: any, modelNode: ModelNode): void {
+export function handleAddingElement(element: HTMLElement, modelNode: ModelNode): void {
   log('adding element', element, modelNode);
   const parents = $(element).parents();
 
@@ -25,7 +25,7 @@ export function handleAddingElement(element: any, modelNode: ModelNode): void {
   const nodesToConsider = $(parentsToConsider).filter('.represent-node');
   const lastNode = nodesToConsider.last();
 
-  const nodeId = lastNode.data('node_represented');
+  const nodeId = lastNode.data('node_represented') as string;
   const modelRootName = modelNode.rootName();
   if (modelRootName == null) {
     return;
@@ -72,7 +72,7 @@ const flatten = (arr: any[], result: any[] = []): any[] => {
 };
 
 export function map(originalArray: any, op: (el: any) => any): VNodeChildElement[] {
-  return originalArray.map(op);
+  return originalArray.map(op) as VNodeChildElement[];
 }
 
 export function separate(original: any[], separatorGenerator?: () => VNode): any[] {
@@ -89,7 +89,7 @@ export function separate(original: any[], separatorGenerator?: () => VNode): any
   return separated;
 }
 
-export function focusOnReference(modelNode: ModelNode, referenceName: string) {
+export function focusOnReference(modelNode: ModelNode, referenceName: string) : void {
   const rootName = modelNode.rootName();
   if (rootName == null) {
     return;
@@ -118,7 +118,7 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string) {
   }
 }
 
-export function findDomElement(nodeIdStr: string, rootName: string) {
+export function findDomElement(nodeIdStr: string, rootName: string) : HTMLElement | null {
   const domRoot = $('#' + rootName);
   if (domRoot.length === 0) {
     throw new Error(`Root with ID ${rootName} not found`);
@@ -140,7 +140,7 @@ export function findDomElement(nodeIdStr: string, rootName: string) {
  * @param nodeIdStr
  * @param rootName
  */
-export function focusOnNode(nodeIdStr: string, rootName: string | undefined) {
+export function focusOnNode(nodeIdStr: string, rootName: string | undefined) : void {
   if (rootName == null) {
     return;
   }
@@ -176,9 +176,9 @@ export function domElementToModelNode(element: HTMLElement): ModelNode | undefin
   }
   log('domElementToModelNode', element);
   log('  data', $(element).data('node_represented'));
-  const nodeId = $(element).data('node_represented');
+  const nodeId = $(element).data('node_represented') as string;
   if (nodeId != null && nodeId !== '') {
-    const modelLocalName = $(element).closest('.editor').data('model_local_name');
+    const modelLocalName = $(element).closest('.editor').data('model_local_name') as string;
     log('  model local name', modelLocalName);
     const dataModelRoot = getDatamodelRoot(modelLocalName);
     return dataModelRoot?.findNodeById(nodeId);
