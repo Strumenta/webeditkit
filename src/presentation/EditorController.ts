@@ -78,6 +78,8 @@ class IntentionsMenu {
         const index = $(e.target).prevAll('input').length;
         intentions[index].execute();
         this.deleteMenu();
+      } else if (e.key === 'Escape') {
+        this.deleteMenu();
       } else if (e.key === 'ArrowDown') {
         const dest = $(e.target).nextAll('input');
         if (dest.length > 0) {
