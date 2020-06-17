@@ -20,7 +20,7 @@ type SuggestionsReceiverFactory = (suggestionsReceiver: SuggestionsReceiver) => 
 export function alternativesProviderForAddingChild(
   modelNode: ModelNode,
   containmentName: string,
-  replacing: boolean = false,
+  replacing = false,
 ): SuggestionsReceiverFactory {
   // we should get all the alternatives from the server
   return (suggestionsReceiver: SuggestionsReceiver) => {

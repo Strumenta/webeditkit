@@ -148,7 +148,7 @@ function canBeAccepted(elConsidered: JQuery, onlyEditable: boolean): boolean {
 /**
  * Return true if we manage to find a next element
  */
-export function moveToNextElement(t: HTMLElement, onlyEditable: boolean = false): boolean {
+export function moveToNextElement(t: HTMLElement, onlyEditable = false): boolean {
   let elConsidered = findNext($(t));
   while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');
@@ -179,7 +179,7 @@ export function moveToNextElement(t: HTMLElement, onlyEditable: boolean = false)
   return false;
 }
 
-export function moveToPrevElement(t: HTMLElement, onlyEditable: boolean = false): boolean {
+export function moveToPrevElement(t: HTMLElement, onlyEditable = false): boolean {
   let elConsidered = findPrev($(t));
   while (elConsidered != null) {
     const tag = elConsidered.prop('tagName');

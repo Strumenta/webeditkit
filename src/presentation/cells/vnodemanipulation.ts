@@ -168,7 +168,7 @@ export function addToDataset(vnode: VNode, key: string, value: any): VNode {
   return vnode;
 }
 
-export function addToDatasetObj(vnode: VNode, dataObj: object) {
+export function addToDatasetObj(vnode: VNode, dataObj: Record<string, unknown>) {
   if (vnode.data === undefined) {
     vnode.data = {};
   }

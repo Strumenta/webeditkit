@@ -68,7 +68,7 @@ function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNo
 export function verticalCollectionCell(
   modelNode: ModelNode,
   containmentName: string,
-  wrapInRows: boolean = true,
+  wrapInRows = true,
   extraClasses: string[] = [],
 ): VNode {
   const extraClassesStr = extraClassesToSuffix(extraClasses);
@@ -489,7 +489,7 @@ export function referenceCell(
           label: el.label,
           execute: () => {
             const ref: Ref = new Ref({ model: { qualifiedName: el.modelName }, id: el.nodeId });
-            (modelNode as ModelNode).setRef(referenceName, ref);
+            modelNode.setRef(referenceName, ref);
             focusOnReference(modelNode, referenceName);
           },
           highlighted: true,
@@ -501,7 +501,7 @@ export function referenceCell(
           label: el.label,
           execute: () => {
             const ref: Ref = new Ref({ model: { qualifiedName: el.modelName }, id: el.nodeId });
-            (modelNode as ModelNode).setRef(referenceName, ref);
+            modelNode.setRef(referenceName, ref);
             focusOnReference(modelNode, referenceName);
           },
           highlighted: false,
@@ -656,7 +656,7 @@ export function referenceCell(
 }
 
 export function row(...elements: FlattableNode[]): VNode {
-  return h('div.row', {}, flattenArray(arguments));
+  return h('div.row', {}, flattenArray(elements));
 }
 
 export function emptyRow(): VNode {
