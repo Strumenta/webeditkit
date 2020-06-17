@@ -16,7 +16,8 @@ describe('Intentions API', () => {
     tryToConnect(done);
   });
 
-  beforeEach(async () => {
+  beforeEach(async function () {
+    this.timeout(120000);
     // @ts-ignore
     global.WebSocket = W3CWebSocket;
     await reloadAll();
