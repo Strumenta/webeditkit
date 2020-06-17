@@ -57,6 +57,8 @@ export interface AutocompleteAlternative {
 
 export type SuggestionsReceiver = (suggestions: AutocompleteAlternative[]) => void;
 
+export type AlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => void;
+
 export function installAutocomplete(
   vnode: VNode,
   valuesProvider: (suggestionsReceiver: SuggestionsReceiver) => void,

@@ -1,5 +1,9 @@
 import h from 'snabbdom/h';
-import { getWsCommunication } from '../../communication/wscommunication';
+import {
+  AlternativeForDirectReference,
+  AlternativesForDirectReference,
+  getWsCommunication,
+} from '../../communication/wscommunication';
 import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../navigation';
 import {
   addAutoresize,
@@ -293,7 +297,7 @@ export function fixedCell(
   modelNode: ModelNode | undefined,
   text: string,
   extraClasses?: string[],
-  alternativesProvider?: any,
+  alternativesProvider?: AlternativesProvider,
   deleter?: () => void,
   onEnter?: () => void,
 ): VNode {
@@ -317,12 +321,10 @@ export function fixedCell(
       },
       on: {
         click: (e: MouseEvent) => {
-          // @ts-ignore
-          e.target.setSelectionRange(0, 0);
+          (e.target as HTMLInputElement).setSelectionRange(0, 0);
         },
         focus: (e: FocusEvent) => {
-          // @ts-ignore
-          e.target.setSelectionRange(0, 0);
+          (e.target as HTMLInputElement).setSelectionRange(0, 0);
         },
         keydown: (e: KeyboardEvent) => {
           const isTabNext = e.key === 'Tab' && !e.shiftKey;
@@ -464,7 +466,7 @@ export function referenceCell(
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
-    ws.askAlternativesForDirectReference(modelNode, referenceName, (alternativesFromWs: any[]) => {
+    ws.askAlternativesForDirectReference(modelNode, referenceName, (alternativesFromWs: AlternativeForDirectReference[]) => {
       // We want to put on top the alternatives from the same model
       // We want also to mark them as bold (the render should take care of that)
       // And sort the two groups by name
@@ -590,7 +592,7 @@ export function referenceCell(
       props: { value: 'Loading...' },
       hook: {
         insert: (vnode: VNode) => {
-          vnode.elm!.addEventListener('keydown', kdCaptureListener, true);
+          vnode.elm?.addEventListener('keydown', kdCaptureListener, true);
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
@@ -642,7 +644,7 @@ export function referenceCell(
               modelNode.setRef(referenceName, undefined);
               const resolutionMemoryKey = modelNode.idString() + '-' + referenceName;
               // @ts-ignore
-              resolutionMemory[resolutionMemoryKey] = e.target.value;
+              resolutionMemory[resolutionMemoryKey] = (e.target as HTMLInputElement).value;
               renderDataModels(() => {
                 focusOnReference(modelNode, referenceName);
               });
