@@ -125,7 +125,6 @@ describe('Intentions API', () => {
             expect(nodeData2.properties.id).eql('ACBU');
             done();
           }, 400);
-
       }
   });
 });
