@@ -3,7 +3,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import { XMLHttpRequest } from 'xmlhttprequest';
-import { MPSSERVER_PORT, tryToConnect } from './utils';
+import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 
 const puppeteer = require('puppeteer');
 const request = require('request');
@@ -14,6 +14,10 @@ describe('WebEditKit integration', () => {
     console.log('waiting for server to be up');
 
     tryToConnect(done);
+  });
+
+  beforeEach(async function () {
+    this.timeout(120000);
   });
 
   it('mpsserver is accessible', (done) => {
