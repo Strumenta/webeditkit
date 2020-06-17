@@ -1,0 +1,9 @@
+{
+  "name": "example-wek-project",
+  "dependencies": {
+    "webeditkit": "file:../../webeditkit-latest.tgz"
+  },
+  "devDependencies": {
+    "browserify-css": "^0.15.0"
+  }
+}

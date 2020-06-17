@@ -20,7 +20,8 @@ jobs:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
       - run: sudo apt-get update && sudo apt-get install -y libgbm-dev    
-      - run: npm install && cd functionaltests && sh execute_functional_tests.sh
+      - run: npm install && sh scripts/pack-as-latest.sh
+      - run: cd functionaltests && sh execute_functional_tests.sh
       - name: Upload screenshots
         uses: actions/upload-artifact@v1
         with:

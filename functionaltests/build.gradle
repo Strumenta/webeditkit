@@ -56,5 +56,5 @@ dependencies {
 
 mpsserver {
 	mpsServerVersion = mpsserverVersion
-	customMpsProjectPath = file('exampleproject/')
+	customMpsProjectPath = file('example-mps-project/')
 }
