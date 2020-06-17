@@ -259,7 +259,7 @@ describe('Presentation.Cells.Support', () => {
         addInsertHook(cell, (myNode: VNode) => {
           // @ts-ignore
           expect(myNode.elm.className).to.eql('fixed represent-node');
-          handleSelfDeletion(myNode.elm, aNode);
+          handleSelfDeletion(myNode.elm as HTMLElement, aNode);
           // @ts-ignore
           expect(myNode.elm.className).to.eql('fixed represent-node deleting');
           done();
@@ -323,11 +323,10 @@ describe('Presentation.Cells.Support', () => {
         addInsertHook(cell, (myNode: VNode) => {
           // @ts-ignore
           expect(myNode.elm.className).to.eql('fixed represent-node');
-          handleSelfDeletion(myNode.elm, aNode);
-          handleSelfDeletion(myNode.elm, aNode);
+          handleSelfDeletion(myNode.elm as HTMLElement, aNode);
+          handleSelfDeletion(myNode.elm as HTMLElement, aNode);
           // @ts-ignore
           expect(myNode.elm.className).to.eql('fixed represent-node deleting');
-          //done();
         }),
         'represent-node',
       );
