@@ -3,22 +3,17 @@ import { log } from '../utils/misc';
 function moveFocusToStart(next: JQuery) {
   next.trigger('focus');
   const el = next[0];
-
-  // @ts-ignore
-  if (el !== undefined && el.setSelectionRange != null) {
-    // @ts-ignore
-    el.setSelectionRange(0, 0);
+  if (el !== undefined && (el as HTMLInputElement).setSelectionRange != null) {
+    (el as HTMLInputElement).setSelectionRange(0, 0);
   }
 }
 
 function moveFocusToEnd(next: JQuery) {
   next.trigger('focus');
   const el = next[0];
-  // @ts-ignore
-  if (el !== undefined && el.setSelectionRange != null) {
+  if (el !== undefined && (el as HTMLInputElement).setSelectionRange != null) {
     const text = next.val() as string;
-    // @ts-ignore
-    el.setSelectionRange(text.length, text.length);
+    (el as HTMLInputElement).setSelectionRange(text.length, text.length);
   }
 }
 
@@ -77,7 +72,7 @@ function selectFirstElementInRow(row: HTMLElement, focusOnEnd: boolean): void {
   }
 }
 
-export function moveUp(t: HTMLElement) {
+export function moveUp(t: HTMLElement) : void {
   if ($(t).hasClass('editor')) {
     return;
   }
@@ -107,7 +102,7 @@ export function moveUp(t: HTMLElement) {
   }
 }
 
-export function moveDown(t: HTMLElement) {
+export function moveDown(t: HTMLElement) : void {
   if ($(t).hasClass('editor')) {
     return;
   }
@@ -151,7 +146,7 @@ function canBeAccepted(elConsidered: JQuery, onlyEditable: boolean): boolean {
 export function moveToNextElement(t: HTMLElement, onlyEditable = false): boolean {
   let elConsidered = findNext($(t));
   while (elConsidered != null) {
-    const tag = elConsidered.prop('tagName');
+    const tag = elConsidered.prop('tagName') as string;
     if (tag === 'INPUT') {
       if (canBeAccepted(elConsidered, onlyEditable)) {
         moveFocusToStart(elConsidered);
@@ -182,7 +177,7 @@ export function moveToNextElement(t: HTMLElement, onlyEditable = false): boolean
 export function moveToPrevElement(t: HTMLElement, onlyEditable = false): boolean {
   let elConsidered = findPrev($(t));
   while (elConsidered != null) {
-    const tag = elConsidered.prop('tagName');
+    const tag = elConsidered.prop('tagName') as string;
     if (tag === 'INPUT') {
       if (canBeAccepted(elConsidered, onlyEditable)) {
         moveFocusToEnd(elConsidered);

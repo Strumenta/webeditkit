@@ -39,14 +39,12 @@ export class EditorController {
     }
   }
 
-  async triggerIntentionsMenu(event: Event) {
+  async triggerIntentionsMenu(event: Event) : Promise<void> {
     const modelNode = domElementToModelNode(event.target as HTMLElement);
     if (modelNode == null) {
-      console.log('intentions menu triggered, but no containing node found');
+      // nothing to do here
     } else {
-      console.log('intentions menu triggered, containing node found', modelNode);
       const intentions = await getWsCommunication(modelNode.modelName()).getIntentions(modelNode);
-      console.log('intentions retrieved', intentions);
       const intentionsMenu = new IntentionsMenu(event.target as HTMLElement, intentions);
     }
   }

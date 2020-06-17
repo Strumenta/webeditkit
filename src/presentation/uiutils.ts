@@ -2,9 +2,9 @@ export const myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
 
 export function installAutoresize(textWidthAlternativeCalculator?: (text: string) => number): void {
   // @ts-ignore
-  $.fn.textWidth = function (_text, _font) {
+  $.fn.textWidth = function (_text: string, _font) {
     // get width of text with font.  usage: $("div").textWidth();
-    let textToConsider = _text || this.val();
+    let textToConsider = _text || this.val() as string;
     if (textToConsider === '') {
       textToConsider = (this[0] as HTMLInputElement).placeholder;
     }
@@ -28,7 +28,7 @@ export function installAutoresize(textWidthAlternativeCalculator?: (text: string
   $.fn.inputWidthUpdate = function (options) {
     options = $.extend({ padding: 10, minWidth: 0, maxWidth: 10000 }, options || {});
     // @ts-ignore
-    $(this).css('width', Math.min(options.maxWidth, Math.max(options.minWidth, $(this).textWidth() + options.padding)));
+    $(this).css('width', Math.min(options.maxWidth, Math.max(options.minWidth, $(this).textWidth() as number + options.padding as number)));
   };
 
   // @ts-ignore

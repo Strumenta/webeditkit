@@ -33,7 +33,7 @@ export function renderModelNode(modelNode: ModelNode): VNode {
   );
   res = wrapMouseOverHandler(res, (event: MouseEvent): boolean => {
     // @ts-ignore
-    const nodeId: string = event.target.dataset.node_represented;
+    const nodeId: string = event.target.dataset.node_represented as string;
     if (nodeId != null) {
       editorController().setHoverNode({ regularId: nodeId });
     }
@@ -41,7 +41,7 @@ export function renderModelNode(modelNode: ModelNode): VNode {
   });
   res = wrapMouseOutHandler(res, (event: MouseEvent): boolean => {
     // @ts-ignore
-    const nodeId: string = event.target.dataset.node_represented;
+    const nodeId: string = event.target.dataset.node_represented as string;
     if (nodeId != null) {
       editorController().setHoverNode(undefined);
     }
