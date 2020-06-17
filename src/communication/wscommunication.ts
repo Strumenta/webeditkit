@@ -85,7 +85,7 @@ export class Intention implements IntentionData {
     this.description = description;
   }
 
-  execute() {
+  execute() : void {
     this.ws.executeIntention(this.blockUUID, this.index);
   }
 }
@@ -166,7 +166,7 @@ export class WsCommunication {
       renderDataModels();
     });
     this.registerHandler('AddChildAnswer', (msg: AddChildAnswer) => {
-      const callback = this.getAndDeleteCallback(msg.requestId);
+      const callback = this.getAndDeleteCallback(msg.requestId) as (node:ModelNode) => void;
       if (callback != null) {
         const createdNode: ModelNode | undefined = getNodeFromLocalRepo(msg.nodeCreated);
         if (createdNode == null) {
@@ -240,7 +240,7 @@ export class WsCommunication {
       if (!this.silent) {
         console.info('onmessage', event);
       }
-      const data = JSON.parse(event.data);
+      const data = JSON.parse(event.data) as Message;
       if (!this.silent) {
         console.info('  data: ', data);
       }
@@ -278,11 +278,11 @@ export class WsCommunication {
     return cb;
   }
 
-  setSilent() {
+  setSilent() : void {
     this.silent = true;
   }
 
-  setVerbose() {
+  setVerbose() : void {
     this.silent = false;
   }
 
@@ -305,10 +305,7 @@ export class WsCommunication {
         }, 25);
       } else {
         throw new Error(
-          'Cannot send message because it is not connected. Cannot send: ' +
-            JSON.stringify(message) +
-            '. Status: ' +
-            this.ws.readyState,
+          `Cannot send message because it is not connected. Cannot send: ${JSON.stringify(message)}. Status: ${this.ws.readyState}`
         );
       }
     } else {
