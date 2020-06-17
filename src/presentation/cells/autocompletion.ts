@@ -1,9 +1,9 @@
 import { ModelNode } from '../../datamodel';
 import { Alternative, getWsCommunication } from '../../communication/wscommunication';
-import { AutocompleteItem, AutocompleteResult, AutocompleteSettings } from 'autocompleter';
 import autocomplete from 'autocompleter';
+import { VNode } from 'snabbdom/vnode';
 
-export function alternativesProviderForAbstractConcept(modelNode: ModelNode) {
+export function alternativesProviderForAbstractConcept(modelNode: ModelNode) : SuggestionsReceiverFactory {
   const parent = modelNode.parent();
   if (parent == null) {
     throw new Error('The given node has no parent');
@@ -58,11 +58,11 @@ export interface AutocompleteAlternative {
 export type SuggestionsReceiver = (suggestions: AutocompleteAlternative[]) => void;
 
 export function installAutocomplete(
-  vnode: any,
+  vnode: VNode,
   valuesProvider: (suggestionsReceiver: SuggestionsReceiver) => void,
   fixed: boolean,
-) {
-  const input = vnode.elm;
+) : void {
+  const input = vnode.elm as HTMLInputElement;
   const ac = autocomplete({
     input,
     minLength: 0,
@@ -73,10 +73,10 @@ export function installAutocomplete(
       } else {
         div.className = 'autocomplete-item';
       }
-      div.textContent = item.label;
+      div.textContent = item.label as string;
       return div;
     },
-    fetch: (text: string, update: any) => {
+    fetch: (text: string, update: (suggestions: AutocompleteAlternative[]) => void) => {
       const ltext = text.toLowerCase();
       valuesProvider((suggestions: AutocompleteAlternative[]) => {
         if (!fixed) {
@@ -99,7 +99,7 @@ export function installAutocomplete(
   });
 }
 
-export function isAutocompleteVisible() {
+export function isAutocompleteVisible() : boolean {
   const res = $('.autocomplete').parent().length > 0;
   return res;
 }
