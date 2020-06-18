@@ -55,7 +55,7 @@
     "test": "sh tester.sh",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint": "eslint -c .eslintrc.js --ext .ts src test functionaltests/src",
+    "lint": "eslint -c .eslintrc.js --ext .ts src test",
     "prepare": "npm run build",
     "coverage": "nyc npm run test"
   },

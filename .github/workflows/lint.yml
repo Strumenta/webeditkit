@@ -16,3 +16,4 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm run lint
+      - run: cd functionaltests && npm run lint
