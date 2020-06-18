@@ -16,17 +16,17 @@ describe('Intentions API', () => {
     tryToConnect(done);
   });
 
-  beforeEach(async function () {
+  beforeEach(function () {
     this.timeout(120000);
     // @ts-ignore
     global.WebSocket = W3CWebSocket;
-    await reloadAll();
+    reloadAll();
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     // @ts-ignore
     delete global.WebSocket;
-    await reloadAll();
+    reloadAll();
   });
 
   it('get intentions', (done) => {
@@ -83,10 +83,11 @@ describe('Intentions API', () => {
       expect(intentions[1].index).to.eql(1);
       expect(intentions[1].description).to.eql('Assign Standard ID to All Projects');
       intentions[1].execute();
-      setTimeout(async ()=>{
-        const nodeData2 = await wsc.getNodeData(nodeIdForProject1);
-        expect(nodeData2.properties.id).eql('ACBU');
-        done();
+      setTimeout(()=>{
+        wsc.getNodeData(nodeIdForProject1).then((nodeData2)=>{
+          expect(nodeData2.properties.id).eql('ACBU');
+          done();
+        });
       }, 400);
     }
   });
@@ -121,10 +122,11 @@ describe('Intentions API', () => {
           expect(intentions[0].index).to.eql(0);
           expect(intentions[0].description).to.eql('Assign Standard ID to All Projects');
           intentions[0].execute();
-          setTimeout(async ()=>{
-            const nodeData2 = await wsc.getNodeData(nodeIdForProject1);
-            expect(nodeData2.properties.id).eql('ACBU');
-            done();
+          setTimeout(()=>{
+            wsc.getNodeData(nodeIdForProject1).then((nodeData2)=>{
+              expect(nodeData2.properties.id).eql('ACBU');
+              done();
+            });
           }, 400);
       }
   });

@@ -23,6 +23,7 @@ module.exports = {
     "rules": {
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/ban-types" : "warn",
         "@typescript-eslint/no-unsafe-call": "warn",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-unsafe-assignment": "warn",

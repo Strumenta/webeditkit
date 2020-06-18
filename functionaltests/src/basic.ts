@@ -16,7 +16,7 @@ describe('WebEditKit integration', () => {
     tryToConnect(done);
   });
 
-  beforeEach(async function () {
+  beforeEach(function () {
     this.timeout(120000);
   });
 

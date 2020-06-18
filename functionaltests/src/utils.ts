@@ -38,7 +38,7 @@ export function tryToConnect(done, attemptLeft = 100) {
   }
 }
 
-export async function reloadAll() {
+export function reloadAll() {
   rp({ uri: `http://localhost:${MPSSERVER_PORT}/persistence/reloadAll`, method: 'POST', resolveWithFullResponse: true })
     .then((response) => {
       if (response.statusCode !== 200) {
