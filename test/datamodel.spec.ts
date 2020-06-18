@@ -80,7 +80,7 @@ const rootData1: NodeData = {
   modelName: '',
 };
 
-function clone<T extends Record<string, unknown>>(original: T): T {
+function clone<T extends object>(original: T): T {
   return JSON.parse(JSON.stringify(original));
 }
 

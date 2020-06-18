@@ -27,11 +27,12 @@ export function installAutoresize(textWidthAlternativeCalculator?: (text: string
   // @ts-ignore
   $.fn.inputWidthUpdate = function (options) {
     options = $.extend({ padding: 10, minWidth: 0, maxWidth: 10000 }, options || {});
-    // @ts-ignore
+
     $(this).css(
       'width',
       Math.min(
         options.maxWidth,
+        // @ts-ignore
         Math.max(options.minWidth, (($(this).textWidth() as number) + options.padding) as number),
       ),
     );

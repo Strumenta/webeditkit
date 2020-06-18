@@ -18,7 +18,7 @@ export function compareVNodes(rendered: VNode, expectedRendered: VNode): void {
   expect(rendered.text).to.eql(expectedRendered.text);
 }
 
-export function clone<T extends Record<string, unknown>>(original: T): T {
+export function clone<T extends object>(original: T): T {
   return JSON.parse(JSON.stringify(original));
 }
 
