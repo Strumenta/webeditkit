@@ -14,6 +14,5 @@ jobs:
         with:
           node-version: '12.x'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm install
-      - run: npm run lint
-      - run: cd functionaltests && npm run lint
+      - run: npm install && npm run lint
+      - run: cd functionaltests && npm install && npm run lint
