@@ -3,7 +3,6 @@ import { ModelNode } from '../../datamodel';
 
 export class EditedValue {
   inputFieldValue: string;
-  inputTimeout: number | undefined;
   inFlightValue: PropertyValue | undefined;
   inFlightRequestId: string | undefined;
 }

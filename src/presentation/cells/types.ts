@@ -32,6 +32,8 @@ import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
 import { log, uuidv4 } from '../../utils/misc';
 import { EditedValue, IData } from './data';
+import {BehaviorSubject, Subject} from "rxjs";
+import {debounceTime, delay} from "rxjs/operators";
 
 export function childCell(node: ModelNode, containmentName: string, emptyCell?: () => VNode): VNode {
   const child = node.childByLinkName(containmentName);
@@ -182,19 +184,13 @@ export function editableCell(
 
   const currentValue = editedValue?.inputFieldValue ?? modelValue;
 
-  function setEditedValue(value: string) {
-    const nodeId: string = modelNode.idString();
-    const ev: EditedValue = data.editedValues.getOrCreate(modelNode, propertyName);
-    ev.inputFieldValue = value;
+  const valueEdited = new Subject<EditedValue>();
+  valueEdited.pipe(debounceTime(500)).subscribe((ev) => {
+    const requestId = uuidv4();
+    ev.inFlightRequestId = requestId;
+    ev.inFlightValue = ev.inputFieldValue;
 
-    window.clearTimeout(ev.inputTimeout);
-    ev.inputTimeout = window.setTimeout(() => {
-      ev.inputTimeout = undefined;
-      const requestId = uuidv4();
-      ev.inFlightRequestId = requestId;
-      ev.inFlightValue = ev.inputFieldValue;
-
-      getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(
+    getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(
         modelNode,
         propertyName,
         ev.inputFieldValue,
@@ -213,8 +209,14 @@ export function editableCell(
             currentEV.inFlightRequestId = undefined;
           }
         },
-      );
-    }, 500);
+    );
+  });
+
+  function setEditedValue(value: string) {
+    const nodeId: string = modelNode.idString();
+    const ev: EditedValue = data.editedValues.getOrCreate(modelNode, propertyName);
+    ev.inputFieldValue = value;
+    valueEdited.next(ev);
   }
 
   const extraClassesStr = extraClassesToSuffix(extraClasses);
