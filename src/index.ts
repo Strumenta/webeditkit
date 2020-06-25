@@ -117,17 +117,25 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
     const errors = issues.getIssuesForNode(myNodeId);
     if (errors.length !== 0) {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
-        $(vNode.elm!).addClass('hasErrors');
+        if (vNode.elm != null) {
+          $(vNode.elm).addClass('hasErrors');
+        }
       });
       vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
-        $(vNode.elm!).addClass('hasErrors');
+        if (vNode.elm != null) {
+          $(vNode.elm).addClass('hasErrors');
+        }
       });
     } else {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
-        $(vNode.elm!).removeClass('hasErrors');
+        if (vNode.elm != null) {
+          $(vNode.elm).removeClass('hasErrors');
+        }
       });
       vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
-        $(vNode.elm!).removeClass('hasErrors');
+        if (vNode.elm != null) {
+          $(vNode.elm).removeClass('hasErrors');
+        }
       });
     }
   }
@@ -143,7 +151,7 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
   return vnode;
 }
 
-export const renderDataModels = (cb?: BasicCallback) => {
+export const renderDataModels = (cb?: BasicCallback) : void => {
   if (typeof window === 'undefined') {
     console.log('skipping renderDataModels in Node.JS');
     return;
