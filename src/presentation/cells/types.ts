@@ -184,39 +184,9 @@ export function editableCell(
 
   const currentValue = editedValue?.inputFieldValue ?? modelValue;
 
-  const valueEdited = new Subject<EditedValue>();
-  valueEdited.pipe(debounceTime(500)).subscribe((ev) => {
-    const requestId = uuidv4();
-    ev.inFlightRequestId = requestId;
-    ev.inFlightValue = ev.inputFieldValue;
-
-    getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(
-        modelNode,
-        propertyName,
-        ev.inputFieldValue,
-        () => {
-          const currentEV = data.editedValues.get(modelNode, propertyName);
-
-          if (currentEV == null || currentEV?.inFlightRequestId !== requestId) {
-            // Ignore response to an outdated request
-            return;
-          }
-
-          if (currentEV.inFlightValue === currentEV.inputFieldValue) {
-            data.editedValues.delete(modelNode, propertyName);
-          } else {
-            currentEV.inFlightValue = undefined;
-            currentEV.inFlightRequestId = undefined;
-          }
-        },
-    );
-  });
-
   function setEditedValue(value: string) {
-    const nodeId: string = modelNode.idString();
     const ev: EditedValue = data.editedValues.getOrCreate(modelNode, propertyName);
-    ev.inputFieldValue = value;
-    valueEdited.next(ev);
+    ev.value = value;
   }
 
   const extraClassesStr = extraClassesToSuffix(extraClasses);
