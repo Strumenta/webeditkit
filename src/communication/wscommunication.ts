@@ -454,8 +454,8 @@ export class WsCommunication {
       node: {
         model: modelName,
         id: {
-          regularId: nodeId
-        }
+          regularId: nodeId,
+        },
       },
     } as DeleteNode);
   }
