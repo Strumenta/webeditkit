@@ -73,8 +73,7 @@ export interface NodeRemoved extends Message {
 
 export interface DeleteNode extends Message {
   type: 'deleteNode';
-  modelName: string;
-  node: string;
+  node: NodeIDInModel;
 }
 
 export interface InstantiateConcept extends Message {
@@ -129,8 +128,7 @@ export interface PropertyChangeNotification extends Message {
 export interface AddChild extends RequestMessage {
   type: 'addChild';
   index: number;
-  modelName: string;
-  container: string;
+  container: NodeIDInModel;
   containmentName: string;
   conceptToInstantiate: string;
 }

@@ -400,8 +400,7 @@ export class WsCommunication {
       type: 'addChild',
       requestId: uuid,
       index,
-      modelName: container.modelName(),
-      container: container.idString(),
+      container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
     } as AddChild);
@@ -447,16 +446,19 @@ export class WsCommunication {
   deleteNode(node: ModelNode): void {
     this.sendMessage({
       type: 'deleteNode',
-      modelName: node.modelName(),
-      node: node.idString(),
+      node: modelNodeToNodeInModel(node),
     } as DeleteNode);
   }
 
   deleteNodeById(modelName: string, nodeId: string): void {
     this.sendMessage({
       type: 'deleteNode',
-      modelName,
-      node: nodeId,
+      node: {
+        model: modelName,
+        id: {
+          regularId: nodeId
+        }
+      },
     } as DeleteNode);
   }
 
