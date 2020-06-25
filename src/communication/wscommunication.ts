@@ -90,13 +90,20 @@ export class Intention implements IntentionData {
   }
 }
 
+type IntentionsCallback = (blockUUID: UUID, intentionsData: IntentionData[]) => void;
+type NodeAddedCallback = (addedNodeID: NodeId) => void;
+type DirectAlternativesReceiver = (alternatives: AlternativesForDirectReference) => void;
+type AlternativesReceiver = (alternatives: Alternatives) => void
+type NodeDataReceiver = (data: NodeData) => void;
+type Callback = NodeProcessor | IntentionsCallback | NodeAddedCallback | AlternativesReceiver | DirectAlternativesReceiver | NodeDataReceiver;
+
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
-  private localName: string; // This is the local model name or target
+  private readonly localName: string; // This is the local model name or target
   private silent: boolean;
-  private handlers: { [type: string]: MessageHandler<Message> };
-  private readonly callbacks: { [requestId: string]: any };
+  private readonly handlers: { [type: string]: MessageHandler<Message> };
+  private readonly callbacks: { [requestId: string]: Callback };
 
   private registerHandlersForErrorMessages() {
     this.registerHandler('ErrorsForModelReport', (msg: ErrorsForModelReport) => {
@@ -262,12 +269,14 @@ export class WsCommunication {
     if (cb == null) {
       throw new Error(`No callback for request ${requestId} (${description})`);
     }
+    // @ts-ignore
     cb(...args);
   }
 
   private invokeCallback(requestId: string, ...args: any[]) {
     const cb = this.getAndDeleteCallback(requestId);
     if (cb != null) {
+      // @ts-ignore
       cb(...args);
     }
   }
@@ -394,7 +403,9 @@ export class WsCommunication {
     if (index < -1) {
       throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
     }
-    this.callbacks[uuid] = initializer;
+    if (initializer != null) {
+      this.callbacks[uuid] = initializer;
+    }
     this.sendMessage({
       type: 'addChild',
       requestId: uuid,
@@ -431,7 +442,9 @@ export class WsCommunication {
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
-    this.callbacks[uuid] = initializer;
+    if (initializer != null) {
+      this.callbacks[uuid] = initializer;
+    }
     this.sendMessage({
       type: 'setChild',
       requestId: uuid,
