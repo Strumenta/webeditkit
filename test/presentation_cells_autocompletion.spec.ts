@@ -30,7 +30,7 @@ import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import { AskAlternatives, Message } from '../src/communication/messages';
+import { AskAlternatives, Message, nodeIDInModel } from '../src/communication/messages';
 import { NodeData } from '../src/datamodel/misc';
 
 const jsdom = require('jsdom');
@@ -239,8 +239,7 @@ describe('Presentation.Cells.Autocompletion', () => {
             expect(obj).to.eql({
               type: 'addChild',
               index: -1,
-              modelName: 'my.qualified.model',
-              container: '324292001770075100',
+              container: nodeIDInModel('my.qualified.model', '324292001770075100'),
               containmentName: 'foo',
               conceptToInstantiate: 'foo.bar.concept1',
             });
@@ -315,8 +314,7 @@ describe('Presentation.Cells.Autocompletion', () => {
             delete obj['requestId'];
             expect(obj).to.eql({
               type: 'setChild',
-              modelName: 'my.qualified.model',
-              container: '1848360241685547698',
+              container: nodeIDInModel('my.qualified.model', '1848360241685547698'),
               containmentName: 'type',
               conceptToInstantiate: 'foo.bar.concept1',
             });

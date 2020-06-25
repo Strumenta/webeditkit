@@ -90,13 +90,20 @@ export class Intention implements IntentionData {
   }
 }
 
+type IntentionsCallback = (blockUUID: UUID, intentionsData: IntentionData[]) => void;
+type NodeAddedCallback = (addedNodeID: NodeId) => void;
+type DirectAlternativesReceiver = (alternatives: AlternativesForDirectReference) => void;
+type AlternativesReceiver = (alternatives: Alternatives) => void
+type NodeDataReceiver = (data: NodeData) => void;
+type Callback = NodeProcessor | IntentionsCallback | NodeAddedCallback | AlternativesReceiver | DirectAlternativesReceiver | NodeDataReceiver;
+
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
-  private localName: string; // This is the local model name or target
+  private readonly localName: string; // This is the local model name or target
   private silent: boolean;
-  private handlers: { [type: string]: MessageHandler<Message> };
-  private readonly callbacks: { [requestId: string]: any };
+  private readonly handlers: { [type: string]: MessageHandler<Message> };
+  private readonly callbacks: { [requestId: string]: Callback };
 
   private registerHandlersForErrorMessages() {
     this.registerHandler('ErrorsForModelReport', (msg: ErrorsForModelReport) => {
@@ -262,12 +269,14 @@ export class WsCommunication {
     if (cb == null) {
       throw new Error(`No callback for request ${requestId} (${description})`);
     }
+    // @ts-ignore
     cb(...args);
   }
 
   private invokeCallback(requestId: string, ...args: any[]) {
     const cb = this.getAndDeleteCallback(requestId);
     if (cb != null) {
+      // @ts-ignore
       cb(...args);
     }
   }
@@ -350,9 +359,8 @@ export class WsCommunication {
   instantiate(conceptName: string, nodeToReplace: ModelNode): void {
     this.sendMessage({
       type: 'instantiateConcept',
-      modelName: nodeToReplace.modelName(),
+      nodeToReplace: modelNodeToNodeInModel(nodeToReplace),
       conceptToInstantiate: conceptName,
-      nodeToReplace: nodeToReplace.idString(),
     } as InstantiateConcept);
   }
 
@@ -395,13 +403,14 @@ export class WsCommunication {
     if (index < -1) {
       throw new Error('Index should -1 to indicate to add at the end, or a value >= 0');
     }
-    this.callbacks[uuid] = initializer;
+    if (initializer != null) {
+      this.callbacks[uuid] = initializer;
+    }
     this.sendMessage({
       type: 'addChild',
       requestId: uuid,
       index,
-      modelName: container.modelName(),
-      container: container.idString(),
+      container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
     } as AddChild);
@@ -433,12 +442,13 @@ export class WsCommunication {
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
-    this.callbacks[uuid] = initializer;
+    if (initializer != null) {
+      this.callbacks[uuid] = initializer;
+    }
     this.sendMessage({
       type: 'setChild',
       requestId: uuid,
-      modelName: container.modelName(),
-      container: container.idString(),
+      container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
     } as SetChild);
@@ -447,16 +457,19 @@ export class WsCommunication {
   deleteNode(node: ModelNode): void {
     this.sendMessage({
       type: 'deleteNode',
-      modelName: node.modelName(),
-      node: node.idString(),
+      node: modelNodeToNodeInModel(node),
     } as DeleteNode);
   }
 
   deleteNodeById(modelName: string, nodeId: string): void {
     this.sendMessage({
       type: 'deleteNode',
-      modelName,
-      node: nodeId,
+      node: {
+        model: modelName,
+        id: {
+          regularId: nodeId,
+        },
+      },
     } as DeleteNode);
   }
 

@@ -23,13 +23,17 @@ export interface NodeIDInModel {
   id: NodeId;
 }
 
-export function nodeIDInModelFromNode(node: ModelNode): NodeIDInModel {
+export function nodeIDInModel(model: string, idString: string): NodeIDInModel {
   return {
-    model: node.modelName(),
+    model,
     id: {
-      regularId: node.idString(),
+      regularId: idString,
     },
   };
+}
+
+export function nodeIDInModelFromNode(node: ModelNode): NodeIDInModel {
+  return nodeIDInModel(node.modelName(), node.idString());
 }
 
 export interface IssueDescription {
@@ -73,15 +77,13 @@ export interface NodeRemoved extends Message {
 
 export interface DeleteNode extends Message {
   type: 'deleteNode';
-  modelName: string;
-  node: string;
+  node: NodeIDInModel;
 }
 
 export interface InstantiateConcept extends Message {
   type: 'instantiateConcept';
-  modelName: string;
+  nodeToReplace: NodeIDInModel;
   conceptToInstantiate: string;
-  nodeToReplace: string;
 }
 
 export interface CreateRoot extends Message {
@@ -129,8 +131,7 @@ export interface PropertyChangeNotification extends Message {
 export interface AddChild extends RequestMessage {
   type: 'addChild';
   index: number;
-  modelName: string;
-  container: string;
+  container: NodeIDInModel;
   containmentName: string;
   conceptToInstantiate: string;
 }
@@ -141,8 +142,7 @@ export interface AddChildAnswer extends RequestAnswer {
 
 export interface SetChild extends RequestMessage {
   type: 'setChild';
-  modelName: string;
-  container: string;
+  container: NodeIDInModel;
   containmentName: string;
   conceptToInstantiate: string;
 }

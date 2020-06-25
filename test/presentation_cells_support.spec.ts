@@ -30,6 +30,7 @@ import { createInstance } from '../src/communication/wscommunication';
 import { assertTheseMessagesAreReceived, compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { dataToNode } from '../src/datamodel/registry';
 import { NodeData } from '../src/datamodel/misc';
+import { nodeIDInModel } from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -287,8 +288,7 @@ describe('Presentation.Cells.Support', () => {
                 check: (msg) => {
                   expect(msg).to.eql({
                     type: 'deleteNode',
-                    modelName: 'my.qualified.model',
-                    node: '324292001770075100',
+                    node: nodeIDInModel('my.qualified.model', '324292001770075100'),
                   });
                   mockServer.close();
                   done();
