@@ -50,11 +50,11 @@ import * as wscommunication from './communication/wscommunication';
 
 export { registerRenderer };
 
-export function setup() {
+export function setup() : void {
   uiutils.installAutoresize();
 }
 
-export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string) {
+export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string) : void {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
   loadDataModel('http://' + baseUrl, modelName, nodeId, target);
   // avoid to send message while still in connecting
@@ -158,7 +158,7 @@ export const renderDataModels = (cb?: BasicCallback) => {
       [
         wrapKeypressHandler(injectErrors(renderModelNode(root), issues), (event): boolean => {
           if (event.key === 'Enter' && event.altKey === true) {
-            editorController().triggerIntentionsMenu(event);
+            void editorController().triggerIntentionsMenu(event);
             return false;
           } else {
             return true;
@@ -193,10 +193,10 @@ interface TargetDataType {
 
 const targetData: { [target: string]: TargetDataType } = {};
 
-export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) {
+export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) : void {
   targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
-  $.getJSON(nodeURL, (data) => {
+  void $.getJSON(nodeURL, (data) => {
     const root = dataToNode(data);
     root.injectModelName(model, target);
     setDatamodelRoot(target, root);
