@@ -350,9 +350,8 @@ export class WsCommunication {
   instantiate(conceptName: string, nodeToReplace: ModelNode): void {
     this.sendMessage({
       type: 'instantiateConcept',
-      modelName: nodeToReplace.modelName(),
+      nodeToReplace: modelNodeToNodeInModel(nodeToReplace),
       conceptToInstantiate: conceptName,
-      nodeToReplace: nodeToReplace.idString(),
     } as InstantiateConcept);
   }
 

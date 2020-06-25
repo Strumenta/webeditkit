@@ -78,9 +78,8 @@ export interface DeleteNode extends Message {
 
 export interface InstantiateConcept extends Message {
   type: 'instantiateConcept';
-  modelName: string;
+  nodeToReplace: NodeIDInModel;
   conceptToInstantiate: string;
-  nodeToReplace: string;
 }
 
 export interface CreateRoot extends Message {
