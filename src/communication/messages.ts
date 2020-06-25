@@ -139,8 +139,7 @@ export interface AddChildAnswer extends RequestAnswer {
 
 export interface SetChild extends RequestMessage {
   type: 'setChild';
-  modelName: string;
-  container: string;
+  container: NodeIDInModel;
   containmentName: string;
   conceptToInstantiate: string;
 }

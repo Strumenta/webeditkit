@@ -436,8 +436,7 @@ export class WsCommunication {
     this.sendMessage({
       type: 'setChild',
       requestId: uuid,
-      modelName: container.modelName(),
-      container: container.idString(),
+      container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
     } as SetChild);
