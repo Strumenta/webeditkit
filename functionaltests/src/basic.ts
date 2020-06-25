@@ -16,11 +16,8 @@ describe('WebEditKit integration', () => {
     tryToConnect(done);
   });
 
-  beforeEach(function () {
+  it('mpsserver is accessible', function(done) {
     this.timeout(120000);
-  });
-
-  it('mpsserver is accessible', (done) => {
     (async () => {
       const browser = await puppeteer.launch();
       try {
@@ -47,7 +44,8 @@ describe('WebEditKit integration', () => {
       }
     })();
   });
-  it('modules are listed', (done) => {
+  it('modules are listed', function(done) {
+    this.timeout(120000);
     (async () => {
       const browser = await puppeteer.launch();
       try {

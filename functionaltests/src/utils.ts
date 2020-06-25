@@ -20,7 +20,7 @@ export function tryToConnect(done, attemptLeft = 100) {
   try {
     request(`http://localhost:${MPSSERVER_PORT}`, { json: true }, (err, res, body) => {
       if (err) {
-        console.log('  error returned, cannot yet connect');
+        console.log('  error returned, cannot yet connect', err);
         considerRetrying(attemptLeft);
       } else {
         if (res.statusCode === 200) {
