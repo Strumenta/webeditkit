@@ -5,7 +5,12 @@ import { WsCommunication } from '../src/communication/wscommunication';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { assertTheseMessagesAreReceived, clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
-import { AnswerPropertyChange, PropertyChangeNotification, RequestPropertyChange } from '../src/communication/messages';
+import {
+  AnswerPropertyChange,
+  nodeIDInModel,
+  PropertyChangeNotification,
+  RequestPropertyChange,
+} from '../src/communication/messages';
 import { NodeData } from '../src/datamodel/misc';
 
 const rootData1: NodeData = {
@@ -137,9 +142,8 @@ describe('WsCommunication', () => {
             check: (msg) => {
               expect(msg).to.eql({
                 type: 'instantiateConcept',
-                modelName: 'my.qualified.ModelName',
                 conceptToInstantiate: 'myConcept',
-                nodeToReplace: '1848360241685547698',
+                nodeToReplace: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
               });
             },
           },
@@ -185,8 +189,7 @@ describe('WsCommunication', () => {
             check: (msg: any) => {
               expect(msg).to.eql({
                 type: 'addChild',
-                modelName: 'my.qualified.ModelName',
-                container: '1848360241685547698',
+                container: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
                 index: -1,
@@ -236,8 +239,7 @@ describe('WsCommunication', () => {
               delete msg['requestId'];
               expect(msg).to.eql({
                 type: 'addChild',
-                modelName: 'my.qualified.ModelName',
-                container: '1848360241685547698',
+                container: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
                 index: 2,
@@ -286,8 +288,7 @@ describe('WsCommunication', () => {
               delete msg['requestId'];
               expect(msg).to.eql({
                 type: 'setChild',
-                modelName: 'my.qualified.ModelName',
-                container: '1848360241685547698',
+                container: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
               });
@@ -334,8 +335,7 @@ describe('WsCommunication', () => {
             check: (msg) => {
               expect(msg).to.eql({
                 type: 'deleteNode',
-                modelName: 'my.qualified.ModelName',
-                node: '1848360241685547698',
+                node: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
               });
             },
           },

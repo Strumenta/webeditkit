@@ -23,13 +23,17 @@ export interface NodeIDInModel {
   id: NodeId;
 }
 
-export function nodeIDInModelFromNode(node: ModelNode): NodeIDInModel {
+export function nodeIDInModel(model: string, idString: string): NodeIDInModel {
   return {
-    model: node.modelName(),
+    model,
     id: {
-      regularId: node.idString(),
+      regularId: idString,
     },
   };
+}
+
+export function nodeIDInModelFromNode(node: ModelNode): NodeIDInModel {
+  return nodeIDInModel(node.modelName(), node.idString());
 }
 
 export interface IssueDescription {
