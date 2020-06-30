@@ -50,3 +50,40 @@ export function installAutoresize(textWidthAlternativeCalculator?: (text: string
     return this;
   };
 }
+
+export function previous(el: Element | null, selector: string) {
+  while (el) {
+    el = el.previousElementSibling;
+    if(el && el.matches(selector)) {
+      return el;
+    }
+  }
+  return null;
+}
+
+export function next(el: Element | null, selector: string) {
+  while (el) {
+    el = el.nextElementSibling;
+    if(el && el.matches(selector)) {
+      return el;
+    }
+  }
+  return null;
+}
+
+export function triggerFocus(element: HTMLInputElement) {
+  const eventType = "onfocusin" in element ? "focusin" : "focus";
+  const bubbles = "onfocusin" in element;
+  let event;
+
+  if ("createEvent" in document) {
+    event = document.createEvent("Event");
+    event.initEvent(eventType, bubbles, true);
+  } else if ("Event" in window) {
+    event = new Event(eventType, {bubbles, cancelable: true});
+  }
+
+  element.focus();
+  // @ts-ignore
+  element.dispatchEvent(event);
+}

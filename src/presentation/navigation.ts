@@ -1,36 +1,20 @@
-import { log } from '../utils/misc';
+import {log} from '../utils/misc';
+import {next, previous, triggerFocus} from "./uiutils";
 
-function triggerFocus(element: HTMLInputElement) {
-  const eventType = "onfocusin" in element ? "focusin" : "focus";
-  const bubbles = "onfocusin" in element;
-  let event;
-
-  if ("createEvent" in document) {
-    event = document.createEvent("Event");
-    event.initEvent(eventType, bubbles, true);
-  } else if ("Event" in window) {
-    event = new Event(eventType, { bubbles, cancelable: true });
-  }
-
-  element.focus();
+function moveFocusToStart(el: HTMLInputElement) {
   // @ts-ignore
-  element.dispatchEvent(event);
-}
-
-function moveFocusToStart(next: HTMLInputElement) {
-  // @ts-ignore
-  triggerFocus(next);
-  if (next.setSelectionRange) {
-    next.setSelectionRange(0,0);
+  triggerFocus(el);
+  if (el.setSelectionRange) {
+    el.setSelectionRange(0,0);
   }
 }
 
-function moveFocusToEnd(next: HTMLInputElement) {
+function moveFocusToEnd(el: HTMLInputElement) {
   // @ts-ignore
-  triggerFocus(next);
-  if (next.setSelectionRange) {
-    const text = next.value;
-    next.setSelectionRange(text.length, text.length);
+  triggerFocus(el);
+  if (el.setSelectionRange) {
+    const text = el.value;
+    el.setSelectionRange(text.length, text.length);
   }
 }
 
@@ -62,24 +46,25 @@ function findPrev(n: Element): Element | null {
   }
 }
 
-function selectFirstElementInRow(row: HTMLElement, focusOnEnd: boolean): void {
+function selectFirstElementInRow(row: Element, focusOnEnd: boolean): void {
   log('selectFirstElementInRow', row);
   // @ts-ignore
   window.sf = row;
-  if ($(row).children('input').length > 0) {
-    $($(row).children('input')[0]).trigger('focus');
+  const input = row.querySelector(':scope > input') as HTMLInputElement;
+  if (input) {
+    triggerFocus(input);
   } else {
-    const children = $(row).children();
+    const children = row.children;
     if (focusOnEnd) {
       for (let i = children.length - 1; i >= 0; i--) {
-        if ($(children[i]).find('input').length > 0) {
+        if (children[i].querySelector('input')) {
           // there is an input somewhere here, we should dive into this
           return selectFirstElementInRow(children[i], focusOnEnd);
         }
       }
     } else {
       for (const child of children) {
-        if ($(child).find('input').length > 0) {
+        if (child.querySelector('input')) {
           // there is an input somewhere here, we should dive into this
           return selectFirstElementInRow(child, focusOnEnd);
         }
@@ -90,28 +75,26 @@ function selectFirstElementInRow(row: HTMLElement, focusOnEnd: boolean): void {
 }
 
 export function moveUp(t: HTMLElement): void {
-  if ($(t).hasClass('editor')) {
+  if (t.classList.contains('editor')) {
     return;
   }
   log('move up');
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
-  const l = $(t).closest('.row,.vertical-collection');
-  if (l.length === 0) {
+  const l = t.closest('.row,.vertical-collection');
+  if (!t) {
     console.warn('no line found');
-  } else if (l.length > 1) {
-    console.warn('too many lines found');
   } else {
     log('element found');
     let nextLine = l;
     do {
       log(' before', nextLine);
-      nextLine = $(nextLine).prev('.row,.vertical-collection');
+      nextLine = previous(nextLine, '.row,.vertical-collection');
       log(' after', nextLine);
-    } while (nextLine.length === 1 && $(nextLine).find('input').length === 0);
-    if (nextLine.length === 1) {
-      selectFirstElementInRow(nextLine[0], true);
+    } while (nextLine && nextLine.querySelector('input'));
+    if (nextLine) {
+      selectFirstElementInRow(nextLine, true);
     } else if (t.parentElement != null) {
       moveUp(t.parentElement);
     }
@@ -120,28 +103,26 @@ export function moveUp(t: HTMLElement): void {
 }
 
 export function moveDown(t: HTMLElement): void {
-  if ($(t).hasClass('editor')) {
+  if (t.classList.contains('editor')) {
     return;
   }
   log('move down', t);
   // @ts-ignore
   window.mu = t;
   // @ts-ignore
-  const l = $(t).closest('.row,.vertical-collection');
-  if (l.length === 0) {
+  const l = t.closest('.row,.vertical-collection');
+  if (!l) {
     console.warn('no line found');
-  } else if (l.length > 1) {
-    console.warn('too many lines found');
   } else {
     log('element found');
-    let nextLine = l;
+    let nextLine: Element | null = l;
     do {
       log(' before', nextLine);
-      nextLine = $(nextLine).next('.row,.vertical-collection');
+      nextLine = next(nextLine, '.row,.vertical-collection');
       log(' after', nextLine);
-    } while (nextLine.length === 1 && $(nextLine).find('input').length === 0);
-    if (nextLine.length === 1) {
-      selectFirstElementInRow(nextLine[0], false);
+    } while (nextLine && nextLine.querySelector('input'));
+    if (nextLine) {
+      selectFirstElementInRow(nextLine, false);
     } else if (t.parentElement != null) {
       moveDown(t.parentElement);
     }

@@ -2,7 +2,7 @@ import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
 import { domElementToModelNode } from './cells/support';
 import { getWsCommunication, Intention } from '../communication/wscommunication';
-import { myAutoresizeOptions } from './uiutils';
+import {myAutoresizeOptions, next, previous} from './uiutils';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
@@ -66,30 +66,10 @@ class IntentionsMenu {
   protected indexOfNode(el: Element | null, selector: string) {
     let i = -1;
     while (el) {
-      el = this.previous(el, selector);
+      el = previous(el, selector);
       i++;
     }
     return i;
-  }
-
-  protected previous(el: Element | null, selector: string) {
-    while (el) {
-      el = el.previousElementSibling;
-      if(el && el.matches(selector)) {
-        return el;
-      }
-    }
-    return null;
-  }
-
-  protected next(el: Element | null, selector: string) {
-    while (el) {
-      el = el.nextElementSibling;
-      if(el && el.matches(selector)) {
-        return el;
-      }
-    }
-    return null;
   }
 
   constructor(triggerElement: HTMLElement, intentions: Intention[]) {
@@ -111,12 +91,12 @@ class IntentionsMenu {
       } else if (e.key === 'Escape') {
         this.deleteMenu();
       } else if (e.key === 'ArrowDown') {
-        const dest = this.next(e.target as Element, 'input') as HTMLElement;
+        const dest = next(e.target as Element, 'input') as HTMLElement;
         if (dest) {
           dest.focus();
         }
       } else if (e.key === 'ArrowUp') {
-        const dest = this.previous(e.target as Element, 'input') as HTMLElement;
+        const dest = previous(e.target as Element, 'input') as HTMLElement;
         if (dest) {
           dest.focus();
         }
@@ -140,7 +120,7 @@ class IntentionsMenu {
     (document.querySelector('#intentions-menu input:first') as HTMLElement)?.focus();
 
     // @ts-ignore
-    $('#intentions-menu input').autoresize(myAutoresizeOptions);
+    document.querySelector('#intentions-menu input').autoresize(myAutoresizeOptions);
     document.body.addEventListener('focusin', (e) => {
       if (!isInIntentionsMenu(e.target as HTMLElement)) {
         this.deleteMenu();

@@ -57,7 +57,6 @@ import {
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
 import { SinonFakeTimers } from 'sinon';
-import AjaxSettings = JQuery.AjaxSettings;
 
 const patch = init([
   // Init patch function with chosen modules
@@ -316,10 +315,6 @@ describe('Cells.Types', () => {
     clearDatamodelRoots();
     clearRendererRegistry();
 
-    // @ts-ignore
-    delete global.$;
-    // @ts-ignore
-    delete global.jQuery;
     // @ts-ignore
     delete global.window;
     // @ts-ignore
