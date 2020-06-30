@@ -21,11 +21,13 @@ export class Ref {
       baseUrl = 'http://' + baseUrl;
     }
     const url = baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
-    void $.getJSON(url, (data) => {
-      if (data == null) {
-        throw new Error('Data not received correctly on request to ' + url);
-      }
-      cb(dataToNode(data));
-    });
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data == null) {
+            throw new Error('Data not received correctly on request to ' + url);
+          }
+          cb(dataToNode(data));
+        });
   }
 }

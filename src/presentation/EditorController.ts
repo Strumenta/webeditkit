@@ -60,34 +60,65 @@ class IntentionsMenu {
   private myIntentionsMenu: HTMLDivElement;
 
   deleteMenu() {
-    $(this.myIntentionsMenu).remove();
+    this.myIntentionsMenu.parentElement?.removeChild(this.myIntentionsMenu);
+  }
+
+  protected indexOfNode(el: Element | null, selector: string) {
+    let i = -1;
+    while (el) {
+      el = this.previous(el, selector);
+      i++;
+    }
+    return i;
+  }
+
+  protected previous(el: Element | null, selector: string) {
+    while (el) {
+      el = el.previousElementSibling;
+      if(el && el.matches(selector)) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  protected next(el: Element | null, selector: string) {
+    while (el) {
+      el = el.nextElementSibling;
+      if(el && el.matches(selector)) {
+        return el;
+      }
+    }
+    return null;
   }
 
   constructor(triggerElement: HTMLElement, intentions: Intention[]) {
-    $('body').append("<div id='intentions-menu'></div>");
+    const domParser = new DOMParser();
+    let node = domParser.parseFromString("<div id='intentions-menu'></div>", "text/html");
+    document.body.append(node);
 
     for (const i of intentions) {
-      $('#intentions-menu').append(`<input value='${i.description}'><br>`);
+      node = domParser.parseFromString(`<input value='${i.description}'><br>`, "text/html")
+      document.getElementById('intentions-menu')?.append(node);
     }
 
     // Otherwise the handler will kill also future intentions menus
     this.myIntentionsMenu = $('#intentions-menu')[0] as HTMLDivElement;
-    $('#intentions-menu input').keydown((e) => {
+    document.querySelector('#intentions-menu input')?.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        const index = $(e.target).prevAll('input').length;
-        intentions[index].execute();
+        intentions[this.indexOfNode(e.target as Element, 'input')].execute();
         this.deleteMenu();
       } else if (e.key === 'Escape') {
         this.deleteMenu();
       } else if (e.key === 'ArrowDown') {
-        const dest = $(e.target).nextAll('input');
-        if (dest.length > 0) {
-          $(dest[0]).focus();
+        const dest = this.next(e.target as Element, 'input') as HTMLElement;
+        if (dest) {
+          dest.focus();
         }
       } else if (e.key === 'ArrowUp') {
-        const dest = $(e.target).prevAll('input');
-        if (dest.length > 0) {
-          $(dest[0]).focus();
+        const dest = this.previous(e.target as Element, 'input') as HTMLElement;
+        if (dest) {
+          dest.focus();
         }
       }
       e.preventDefault();
@@ -99,20 +130,19 @@ class IntentionsMenu {
     this.myIntentionsMenu.style.top = `${top}px`;
 
     function focusOnIntentionsMenu() {
-      return isInIntentionsMenu($(document.activeElement as HTMLElement).first());
+      return isInIntentionsMenu(document.activeElement as HTMLElement);
     }
 
-    function isInIntentionsMenu(element: JQuery | HTMLElement) {
-      const res = $(element).parent('#intentions-menu').length;
-      return res > 0;
+    function isInIntentionsMenu(element: HTMLElement) {
+      return element && element.parentElement?.matches('#intentions-menu');
     }
 
-    $('#intentions-menu input:first').focus();
+    (document.querySelector('#intentions-menu input:first') as HTMLElement)?.focus();
 
     // @ts-ignore
     $('#intentions-menu input').autoresize(myAutoresizeOptions);
-    $('body').focusin((e) => {
-      if (!isInIntentionsMenu(e.target)) {
+    document.body.addEventListener('focusin', (e) => {
+      if (!isInIntentionsMenu(e.target as HTMLElement)) {
         this.deleteMenu();
       }
     });

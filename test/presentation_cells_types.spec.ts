@@ -27,6 +27,8 @@ const { JSDOM } = jsdom;
 const toHtmlInit = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
 const toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, modules.style]);
+(global as any).fetch = require("node-fetch");
+const fetchMock = require('fetch-mock');
 
 import { init } from 'snabbdom/snabbdom';
 
@@ -472,12 +474,10 @@ describe('Cells.Types', () => {
       // we need to emulate also http
 
       // @ts-ignore
-      const jQuery = global.$;
-      sinon.replace(jQuery, 'ajax', function (params: AjaxSettings) {
-        expect(params.url).to.equals('http://localhost:8080/models/my.referred.model/123-foo');
-        expect(params.type).to.equals('get');
-        const successCb = params.success as JQuery.Ajax.SuccessCallback<any>;
-        const refNodeData: NodeData = {
+      fetchMock.getOnce('http://localhost:8080/models/my.referred.model/123-foo', () => {
+        mockServer.close();
+        done();
+        return {
           concept: 'my.referred.Concept',
           containingLink: '',
           id: {
@@ -490,18 +490,13 @@ describe('Cells.Types', () => {
           properties: { name: 'My referred node' },
           children: [],
           refs: {},
-        };
-        successCb(refNodeData, 'success', sinon.fake());
-        // verify the name was updated
-        expect(doc.querySelector('input')!.value).to.eql('My referred node');
-
-        mockServer.close();
-        done();
-      });
+        }
+      })
 
       setDefaultBaseUrl('localhost:8080');
 
       patch(toVNode(document.querySelector('#calc')!), container);
+      expect(doc.querySelector('input')!.value).to.eql('My referred node');
     });
   });
 
