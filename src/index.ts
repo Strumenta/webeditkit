@@ -50,7 +50,9 @@ import * as wscommunication from './communication/wscommunication';
 
 export { registerRenderer };
 
-export function setup() : void {}
+export function setup() : void {
+  // No setup necessary for now, but it's useful to keep an init point
+}
 
 export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string) : void {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
