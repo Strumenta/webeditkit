@@ -1,4 +1,4 @@
-import {myAutoresizeOptions, triggerFocus} from '../uiutils';
+import {autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus} from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
 import { ModelNode } from '../../datamodel';
@@ -9,7 +9,6 @@ import _ from 'lodash';
 
 export function handleSelfDeletion(element: HTMLElement, modelNode: ModelNode): void {
   const closest = element.closest('.represent-node');
-  console.log(closest);
   if (closest?.classList.contains('deleting')) {
     modelNode.deleteMe();
   } else {
@@ -44,13 +43,11 @@ export function handleAddingElement(element: HTMLElement, modelNode: ModelNode):
 }
 
 export function addAutoresize(vnode: VNode): void {
-  // @ts-ignore
-  $(vnode.elm).autoresize(myAutoresizeOptions);
+  autoresize(vnode.elm as HTMLElement, myAutoresizeOptions);
 }
 
 export function triggerResize(vnode: VNode): void {
-  // @ts-ignore
-  $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
+  inputWidthUpdate(vnode.elm as HTMLElement, myAutoresizeOptions);
 }
 
 export function flattenArray(value: any): any[] {

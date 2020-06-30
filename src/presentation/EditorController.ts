@@ -2,7 +2,7 @@ import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
 import { domElementToModelNode } from './cells/support';
 import { getWsCommunication, Intention } from '../communication/wscommunication';
-import {myAutoresizeOptions, next, previous} from './uiutils';
+import {autoresize, myAutoresizeOptions, next, previous} from './uiutils';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
@@ -83,7 +83,7 @@ class IntentionsMenu {
     }
 
     // Otherwise the handler will kill also future intentions menus
-    this.myIntentionsMenu = $('#intentions-menu')[0] as HTMLDivElement;
+    this.myIntentionsMenu = document.getElementById('intentions-menu') as HTMLDivElement;
     document.querySelector('#intentions-menu input')?.addEventListener("keydown", (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         intentions[this.indexOfNode(e.target as Element, 'input')].execute();
@@ -119,8 +119,7 @@ class IntentionsMenu {
 
     (document.querySelector('#intentions-menu input:first') as HTMLElement)?.focus();
 
-    // @ts-ignore
-    document.querySelector('#intentions-menu input').autoresize(myAutoresizeOptions);
+    autoresize(document.querySelector('#intentions-menu input') as HTMLElement, myAutoresizeOptions);
     document.body.addEventListener('focusin', (e) => {
       if (!isInIntentionsMenu(e.target as HTMLElement)) {
         this.deleteMenu();

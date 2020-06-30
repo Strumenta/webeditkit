@@ -50,9 +50,7 @@ import * as wscommunication from './communication/wscommunication';
 
 export { registerRenderer };
 
-export function setup() : void {
-  uiutils.installAutoresize();
-}
+export function setup() : void {}
 
 export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string) : void {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);

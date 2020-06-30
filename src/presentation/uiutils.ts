@@ -1,54 +1,61 @@
 export const myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
 
-export function installAutoresize(textWidthAlternativeCalculator?: (text: string) => number): void {
-  // @ts-ignore
-  $.fn.textWidth = function (_text: string, _font) {
-    // get width of text with font.  usage: $("div").textWidth();
-    let textToConsider = _text || (this.val() as string);
-    if (textToConsider === '') {
-      textToConsider = (this[0] as HTMLInputElement).placeholder;
-    }
-    if (textWidthAlternativeCalculator != null) {
-      return textWidthAlternativeCalculator(textToConsider);
-    }
-    const fakeEl = $('<span>')
-      .hide()
-      .appendTo(document.body)
-      .text(textToConsider)
-      .css({
-        font: _font || this.css('font'),
-        whiteSpace: 'pre',
-      });
-    const width = fakeEl.width();
-    fakeEl.remove();
-    return width;
-  };
+function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions = {}): number {
+  // get width of text with font.
+  let textToConsider = (typeof(elOrText) === 'string') ? elOrText : ((elOrText as any).value as string);
+  if (textToConsider === '' && (elOrText instanceof window.HTMLInputElement)) {
+    textToConsider = elOrText.placeholder;
+  }
+  const padding = options.padding || 0;
+  if (options.widthCalculator) {
+    return options.widthCalculator(textToConsider) + padding;
+  }
+  if(!document.body) {
+    return 0;
+  }
+  const fakeEl = document.createElement('span');
+  fakeEl.style.visibility = 'hidden';
+  document.body.appendChild(fakeEl);
+  fakeEl.innerText = textToConsider;
+  const font = options.font || (elOrText as any).style?.font;
+  if(font) {
+    fakeEl.style.font = font;
+  }
+  fakeEl.style.whiteSpace = 'pre';
+  const width = fakeEl.getBoundingClientRect().width;
+  fakeEl.remove();
+  return width + padding;
+}
 
-  // @ts-ignore
-  $.fn.inputWidthUpdate = function (options) {
-    options = $.extend({ padding: 10, minWidth: 0, maxWidth: 10000 }, options || {});
+export type InputWidthOptions = {
+  padding?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  widthCalculator?: (text: string) => number
+  font?: string;
+};
+export function inputWidthUpdate(el: HTMLElement, options?: InputWidthOptions): void {
+  options = {...{ padding: 10, minWidth: 0, maxWidth: 10000 }, ...(options || {})};
 
-    $(this).css(
-      'width',
-      Math.min(
-        options.maxWidth,
-        // @ts-ignore
-        Math.max(options.minWidth, (($(this).textWidth() as number) + options.padding) as number),
-      ),
-    );
-  };
+  el.style.width = `${Math.min(
+      options.maxWidth || 0,
+      // @ts-ignore
+      Math.max(options.minWidth, textWidth(el, options)),
+  )}px`;
+}
 
-  // @ts-ignore
-  $.fn.autoresize = function (options) {
-    // resizes elements based on content size.  usage: $('input').autoresize({padding:10,minWidth:0,maxWidth:100});
-    $(this)
-      .on('input', function () {
-        // @ts-ignore
-        $(this).inputWidthUpdate(options);
-      })
-      .trigger('input');
-    return this;
-  };
+export function autoresize(el: HTMLElement, options?: InputWidthOptions) {
+  // resizes elements based on content size.  usage: autoresize(someInput, {padding:10,minWidth:0,maxWidth:100});
+  const eventType = 'input';
+  const previousListener = (el as any).__autoresizeListener;
+  if(previousListener) {
+    el.removeEventListener(eventType, previousListener);
+  }
+  const listener = () => { inputWidthUpdate(el, options); };
+  el.addEventListener(eventType, listener);
+  inputWidthUpdate(el, options);
+  (el as any).__autoresizeListener = listener;
+  return el;
 }
 
 export function previous(el: Element | null, selector: string) {
@@ -71,17 +78,21 @@ export function next(el: Element | null, selector: string) {
   return null;
 }
 
+function createEvent(eventType: string, bubbles = false, cancelable = true) {
+  let event;
+  if ("createEvent" in document) {
+    event = document.createEvent("Event");
+    event.initEvent(eventType, bubbles, cancelable);
+  } else if ("Event" in window) {
+    event = new window.Event(eventType, {bubbles, cancelable});
+  }
+  return event;
+}
+
 export function triggerFocus(element: HTMLInputElement) {
   const eventType = "onfocusin" in element ? "focusin" : "focus";
   const bubbles = "onfocusin" in element;
-  let event;
-
-  if ("createEvent" in document) {
-    event = document.createEvent("Event");
-    event.initEvent(eventType, bubbles, true);
-  } else if ("Event" in window) {
-    event = new Event(eventType, {bubbles, cancelable: true});
-  }
+  const event = createEvent(eventType, bubbles);
 
   element.focus();
   // @ts-ignore

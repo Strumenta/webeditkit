@@ -41,7 +41,6 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { installAutoresize } from '../src/presentation/uiutils';
 import { createInstance } from '../src/communication/wscommunication';
 import { Server, WebSocket } from 'mock-socket';
 import {

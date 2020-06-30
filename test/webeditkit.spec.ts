@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { loadDataModel, renderDataModels } from '../src/index';
-import { installAutoresize } from '../src/presentation/uiutils';
+import { renderDataModels } from '../src/index';
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/datamodel/registry';
 import { prepareFakeDom } from './testutils';
@@ -110,7 +109,6 @@ describe('WebEditKit', () => {
   });
 
   it('should support renderDataModels', () => {
-    installAutoresize();
     renderDataModels();
     expect(doc!.querySelector('div.editor')!.outerHTML).to.eql('<div id="root-x" class="editor"></div>');
     setDatamodelRoot('root-x', dataToNode(rootData1));
