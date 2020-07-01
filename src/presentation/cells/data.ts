@@ -1,9 +1,9 @@
 import { PropertyValue } from '../../datamodel/misc';
 import { ModelNode } from '../../datamodel';
-import {Subject} from "rxjs";
-import {debounceTime} from "rxjs/operators";
-import {uuidv4} from "../../utils/misc";
-import {getWsCommunication} from "../../communication";
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { uuidv4 } from '../../utils/misc';
+import { getWsCommunication } from '../../communication';
 
 export class EditedValue {
   inputFieldValue: string;
@@ -57,25 +57,25 @@ export class EditedValuesStore implements IEditedValuesStore {
         capturedEv.inFlightValue = capturedEv.inputFieldValue;
 
         getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(
-            modelNode,
-            propertyName,
-            capturedEv.inputFieldValue,
-            () => {
-              const currentEV = this.get(modelNode, propertyName);
+          modelNode,
+          propertyName,
+          capturedEv.inputFieldValue,
+          () => {
+            const currentEV = this.get(modelNode, propertyName);
 
-              if (currentEV == null || currentEV?.inFlightRequestId !== requestId) {
-                // Ignore response to an outdated request
-                return;
-              }
+            if (currentEV == null || currentEV?.inFlightRequestId !== requestId) {
+              // Ignore response to an outdated request
+              return;
+            }
 
-              if (currentEV.inFlightValue === currentEV.inputFieldValue) {
-                this.delete(modelNode, propertyName);
-                subscription.unsubscribe();
-              } else {
-                currentEV.inFlightValue = undefined;
-                currentEV.inFlightRequestId = undefined;
-              }
-            },
+            if (currentEV.inFlightValue === currentEV.inputFieldValue) {
+              this.delete(modelNode, propertyName);
+              subscription.unsubscribe();
+            } else {
+              currentEV.inFlightValue = undefined;
+              currentEV.inFlightRequestId = undefined;
+            }
+          },
         );
       });
       node.set(propertyName, ev);

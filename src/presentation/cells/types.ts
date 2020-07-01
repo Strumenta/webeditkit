@@ -32,8 +32,8 @@ import { ModelNode } from '../../datamodel/modelNode';
 import { Ref } from '../../datamodel/ref';
 import { log, uuidv4 } from '../../utils/misc';
 import { EditedValue, IData } from './data';
-import {BehaviorSubject, Subject} from "rxjs";
-import {debounceTime, delay} from "rxjs/operators";
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, delay } from 'rxjs/operators';
 
 export function childCell(node: ModelNode, containmentName: string, emptyCell?: () => VNode): VNode {
   const child = node.childByLinkName(containmentName);
