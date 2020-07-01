@@ -1,4 +1,4 @@
-import {autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus} from '../uiutils';
+import { autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
 import { ModelNode } from '../../datamodel';
@@ -20,7 +20,7 @@ export function handleAddingElement(element: HTMLElement, modelNode: ModelNode):
   log('adding element', element, modelNode);
   const parent = element.parentElement;
   const nodeId = parent?.dataset.node_represented;
-  if(!nodeId) {
+  if (!nodeId) {
     return;
   }
 
@@ -97,15 +97,14 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string): v
 
   const inputs = firstNodeFound.querySelectorAll('input');
   let refNode;
-  if (firstNodeFound.dataset.node_represented === modelNode.idString() &&
-      firstNodeFound.dataset.reference_represented === referenceName) {
+  if (
+    firstNodeFound.dataset.node_represented === modelNode.idString() &&
+    firstNodeFound.dataset.reference_represented === referenceName
+  ) {
     refNode = [firstNodeFound];
   } else {
-     refNode = _.filter(inputs, (el, i) => {
-      return (
-        el.dataset.node_represented === modelNode.idString() &&
-        el.dataset.reference_represented === referenceName
-      );
+    refNode = _.filter(inputs, (el, i) => {
+      return el.dataset.node_represented === modelNode.idString() && el.dataset.reference_represented === referenceName;
     });
   }
   if (refNode.length === 1) {

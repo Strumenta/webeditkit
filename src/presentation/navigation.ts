@@ -1,11 +1,11 @@
-import {log} from '../utils/misc';
-import {next, previous, triggerFocus} from "./uiutils";
+import { log } from '../utils/misc';
+import { next, previous, triggerFocus } from './uiutils';
 
 function moveFocusToStart(el: HTMLInputElement) {
   // @ts-ignore
   triggerFocus(el);
   if (el.setSelectionRange) {
-    el.setSelectionRange(0,0);
+    el.setSelectionRange(0, 0);
   }
 }
 

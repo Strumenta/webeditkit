@@ -2,7 +2,7 @@ import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
 import { domElementToModelNode } from './cells/support';
 import { getWsCommunication, Intention } from '../communication/wscommunication';
-import {autoresize, myAutoresizeOptions, next, previous} from './uiutils';
+import { autoresize, myAutoresizeOptions, next, previous } from './uiutils';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
@@ -74,17 +74,17 @@ class IntentionsMenu {
 
   constructor(triggerElement: HTMLElement, intentions: Intention[]) {
     const domParser = new DOMParser();
-    let node = domParser.parseFromString("<div id='intentions-menu'></div>", "text/html");
+    let node = domParser.parseFromString("<div id='intentions-menu'></div>", 'text/html');
     document.body.append(node);
 
     for (const i of intentions) {
-      node = domParser.parseFromString(`<input value='${i.description}'><br>`, "text/html")
+      node = domParser.parseFromString(`<input value='${i.description}'><br>`, 'text/html');
       document.getElementById('intentions-menu')?.append(node);
     }
 
     // Otherwise the handler will kill also future intentions menus
     this.myIntentionsMenu = document.getElementById('intentions-menu') as HTMLDivElement;
-    document.querySelector('#intentions-menu input')?.addEventListener("keydown", (e: KeyboardEvent) => {
+    document.querySelector('#intentions-menu input')?.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         intentions[this.indexOfNode(e.target as Element, 'input')].execute();
         this.deleteMenu();

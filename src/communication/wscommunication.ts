@@ -93,9 +93,15 @@ export class Intention implements IntentionData {
 type IntentionsCallback = (blockUUID: UUID, intentionsData: IntentionData[]) => void;
 type NodeAddedCallback = (addedNodeID: NodeId) => void;
 type DirectAlternativesReceiver = (alternatives: AlternativesForDirectReference) => void;
-type AlternativesReceiver = (alternatives: Alternatives) => void
+type AlternativesReceiver = (alternatives: Alternatives) => void;
 type NodeDataReceiver = (data: NodeData) => void;
-type Callback = NodeProcessor | IntentionsCallback | NodeAddedCallback | AlternativesReceiver | DirectAlternativesReceiver | NodeDataReceiver;
+type Callback =
+  | NodeProcessor
+  | IntentionsCallback
+  | NodeAddedCallback
+  | AlternativesReceiver
+  | DirectAlternativesReceiver
+  | NodeDataReceiver;
 
 export class WsCommunication {
   private ws: WebSocket;

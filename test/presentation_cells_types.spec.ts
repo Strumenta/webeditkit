@@ -27,7 +27,7 @@ const { JSDOM } = jsdom;
 const toHtmlInit = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
 const toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, modules.style]);
-(global as any).fetch = require("node-fetch");
+(global as any).fetch = require('node-fetch');
 const fetchMock = require('fetch-mock');
 
 import { init } from 'snabbdom/snabbdom';
@@ -484,8 +484,8 @@ describe('Cells.Types', () => {
           properties: { name: 'My referred node' },
           children: [],
           refs: {},
-        }
-      })
+        };
+      });
 
       setDefaultBaseUrl('localhost:8080');
 

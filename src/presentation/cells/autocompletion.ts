@@ -1,7 +1,7 @@
-import {ModelNode} from '../../datamodel';
-import {getWsCommunication} from '../../communication/wscommunication';
+import { ModelNode } from '../../datamodel';
+import { getWsCommunication } from '../../communication/wscommunication';
 import autocomplete from 'autocompleter';
-import {VNode} from 'snabbdom/vnode';
+import { VNode } from 'snabbdom/vnode';
 
 export function alternativesProviderForAbstractConcept(modelNode: ModelNode): SuggestionsReceiverFactory {
   const parent = modelNode.parent();
@@ -32,7 +32,7 @@ export function alternativesProviderForAddingChild(
     if (ws == null) {
       throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
     }
-    ws.askAlternatives(modelNode, containmentName, alternatives => {
+    ws.askAlternatives(modelNode, containmentName, (alternatives) => {
       const adder = (conceptName: string) => () => {
         if (replacing) {
           ws.setChild(modelNode, containmentName, conceptName);

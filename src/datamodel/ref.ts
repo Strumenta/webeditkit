@@ -22,12 +22,12 @@ export class Ref {
     }
     const url = baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
     fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          if (data == null) {
-            throw new Error('Data not received correctly on request to ' + url);
-          }
-          cb(dataToNode(data));
-        });
+      .then((response) => response.json())
+      .then((data) => {
+        if (data == null) {
+          throw new Error('Data not received correctly on request to ' + url);
+        }
+        cb(dataToNode(data));
+      });
   }
 }

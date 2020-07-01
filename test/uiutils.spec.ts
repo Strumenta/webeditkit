@@ -3,7 +3,7 @@ import 'mocha';
 import { prepareFakeDom } from './testutils';
 import { clearDatamodelRoots } from '../src/datamodel/registry';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import {autoresize} from "../src/presentation/uiutils";
+import { autoresize } from '../src/presentation/uiutils';
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -70,7 +70,9 @@ describe('UIUtils', () => {
   });
 
   it('should support autoresize', () => {
-    const editableName_a = doc!.querySelector('div[data-node_represented="1848360241685547698"] .editable') as HTMLElement;
+    const editableName_a = doc!.querySelector(
+      'div[data-node_represented="1848360241685547698"] .editable',
+    ) as HTMLElement;
 
     // check width
     // @ts-ignore
@@ -81,7 +83,7 @@ describe('UIUtils', () => {
           return 0;
         }
         return text.length * 8;
-      }
+      },
     };
     // @ts-ignore
     expect(editableName_a.style.width).to.eql('');

@@ -2,15 +2,15 @@ export const myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
 
 function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions = {}): number {
   // get width of text with font.
-  let textToConsider = (typeof(elOrText) === 'string') ? elOrText : ((elOrText as any).value as string);
-  if (textToConsider === '' && (elOrText instanceof window.HTMLInputElement)) {
+  let textToConsider = typeof elOrText === 'string' ? elOrText : ((elOrText as any).value as string);
+  if (textToConsider === '' && elOrText instanceof window.HTMLInputElement) {
     textToConsider = elOrText.placeholder;
   }
   const padding = options.padding || 0;
   if (options.widthCalculator) {
     return options.widthCalculator(textToConsider) + padding;
   }
-  if(!document.body) {
+  if (!document.body) {
     return 0;
   }
   const fakeEl = document.createElement('span');
@@ -18,7 +18,7 @@ function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions =
   document.body.appendChild(fakeEl);
   fakeEl.innerText = textToConsider;
   const font = options.font || (elOrText as any).style?.font;
-  if(font) {
+  if (font) {
     fakeEl.style.font = font;
   }
   fakeEl.style.whiteSpace = 'pre';
@@ -31,16 +31,16 @@ export type InputWidthOptions = {
   padding?: number;
   minWidth?: number;
   maxWidth?: number;
-  widthCalculator?: (text: string) => number
+  widthCalculator?: (text: string) => number;
   font?: string;
 };
 export function inputWidthUpdate(el: HTMLElement, options?: InputWidthOptions): void {
-  options = {...{ padding: 10, minWidth: 0, maxWidth: 10000 }, ...(options || {})};
+  options = { ...{ padding: 10, minWidth: 0, maxWidth: 10000 }, ...(options || {}) };
 
   el.style.width = `${Math.min(
-      options.maxWidth || 0,
-      // @ts-ignore
-      Math.max(options.minWidth, textWidth(el, options)),
+    options.maxWidth || 0,
+    // @ts-ignore
+    Math.max(options.minWidth, textWidth(el, options)),
   )}px`;
 }
 
@@ -48,10 +48,12 @@ export function autoresize(el: HTMLElement, options?: InputWidthOptions) {
   // resizes elements based on content size.  usage: autoresize(someInput, {padding:10,minWidth:0,maxWidth:100});
   const eventType = 'input';
   const previousListener = (el as any).__autoresizeListener;
-  if(previousListener) {
+  if (previousListener) {
     el.removeEventListener(eventType, previousListener);
   }
-  const listener = () => { inputWidthUpdate(el, options); };
+  const listener = () => {
+    inputWidthUpdate(el, options);
+  };
   el.addEventListener(eventType, listener);
   inputWidthUpdate(el, options);
   (el as any).__autoresizeListener = listener;
@@ -61,7 +63,7 @@ export function autoresize(el: HTMLElement, options?: InputWidthOptions) {
 export function previous(el: Element | null, selector: string) {
   while (el) {
     el = el.previousElementSibling;
-    if(el && el.matches(selector)) {
+    if (el && el.matches(selector)) {
       return el;
     }
   }
@@ -71,7 +73,7 @@ export function previous(el: Element | null, selector: string) {
 export function next(el: Element | null, selector: string) {
   while (el) {
     el = el.nextElementSibling;
-    if(el && el.matches(selector)) {
+    if (el && el.matches(selector)) {
       return el;
     }
   }
@@ -80,18 +82,18 @@ export function next(el: Element | null, selector: string) {
 
 function createEvent(eventType: string, bubbles = false, cancelable = true) {
   let event;
-  if ("createEvent" in document) {
-    event = document.createEvent("Event");
+  if ('createEvent' in document) {
+    event = document.createEvent('Event');
     event.initEvent(eventType, bubbles, cancelable);
-  } else if ("Event" in window) {
-    event = new window.Event(eventType, {bubbles, cancelable});
+  } else if ('Event' in window) {
+    event = new window.Event(eventType, { bubbles, cancelable });
   }
   return event;
 }
 
 export function triggerFocus(element: HTMLInputElement) {
-  const eventType = "onfocusin" in element ? "focusin" : "focus";
-  const bubbles = "onfocusin" in element;
+  const eventType = 'onfocusin' in element ? 'focusin' : 'focus';
+  const bubbles = 'onfocusin' in element;
   const event = createEvent(eventType, bubbles);
 
   element.focus();
