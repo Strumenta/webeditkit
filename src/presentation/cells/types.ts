@@ -247,16 +247,16 @@ export function editableCell(
           return false;
         },
         input: (e: InputEvent) => {
-          const target = e.target;
+          const target = e.target as Element;
           if (target == null) {
             return;
           }
           const value = (target as HTMLInputElement).value;
           setEditedValue(value);
           if (value === '') {
-            $(target).addClass('emptyProperty');
+            target.classList.add('emptyProperty');
           } else {
-            $(target).removeClass('emptyProperty');
+            target.classList.remove('emptyProperty');
           }
         },
       },
@@ -323,11 +323,11 @@ export function fixedCell(
               e.preventDefault();
               return false;
             }
-          } else if (e.key === 'Enter' && e.altKey === true) {
+          } else if (e.key === 'Enter' && e.altKey) {
             // intention trigger, ignoring
             return true;
-          } else if (e.key === 'Enter' && e.altKey === false) {
-            if ($('.autocomplete').length === 0) {
+          } else if (e.key === 'Enter' && !e.altKey) {
+            if (!document.querySelector('.autocomplete')) {
               if (onEnter !== undefined) {
                 onEnter();
                 e.preventDefault();
@@ -574,7 +574,7 @@ export function referenceCell(
             installAutocomplete(vnode, alternativesProvider, true);
           }
           modelNode.ref(referenceName)?.loadData((refModelNode) => {
-            $(vnode.elm!).val(refModelNode.name() ?? '?no name?');
+            (vnode.elm! as HTMLInputElement).value = refModelNode.name() ?? '?no name?';
             triggerResize(vnode);
           });
         },

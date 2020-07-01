@@ -27,6 +27,8 @@ const { JSDOM } = jsdom;
 const toHtmlInit = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
 const toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, modules.style]);
+(global as any).fetch = require('node-fetch');
+const fetchMock = require('fetch-mock');
 
 import { init } from 'snabbdom/snabbdom';
 
@@ -39,7 +41,6 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { installAutoresize } from '../src/presentation/uiutils';
 import { createInstance } from '../src/communication/wscommunication';
 import { Server, WebSocket } from 'mock-socket';
 import {
@@ -55,7 +56,6 @@ import {
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
 import { SinonFakeTimers } from 'sinon';
-import AjaxSettings = JQuery.AjaxSettings;
 
 const patch = init([
   // Init patch function with chosen modules
@@ -315,10 +315,6 @@ describe('Cells.Types', () => {
     clearRendererRegistry();
 
     // @ts-ignore
-    delete global.$;
-    // @ts-ignore
-    delete global.jQuery;
-    // @ts-ignore
     delete global.window;
     // @ts-ignore
     delete global.document;
@@ -472,12 +468,10 @@ describe('Cells.Types', () => {
       // we need to emulate also http
 
       // @ts-ignore
-      const jQuery = global.$;
-      sinon.replace(jQuery, 'ajax', function (params: AjaxSettings) {
-        expect(params.url).to.equals('http://localhost:8080/models/my.referred.model/123-foo');
-        expect(params.type).to.equals('get');
-        const successCb = params.success as JQuery.Ajax.SuccessCallback<any>;
-        const refNodeData: NodeData = {
+      fetchMock.getOnce('http://localhost:8080/models/my.referred.model/123-foo', () => {
+        mockServer.close();
+        done();
+        return {
           concept: 'my.referred.Concept',
           containingLink: '',
           id: {
@@ -491,17 +485,12 @@ describe('Cells.Types', () => {
           children: [],
           refs: {},
         };
-        successCb(refNodeData, 'success', sinon.fake());
-        // verify the name was updated
-        expect(doc.querySelector('input')!.value).to.eql('My referred node');
-
-        mockServer.close();
-        done();
       });
 
       setDefaultBaseUrl('localhost:8080');
 
       patch(toVNode(document.querySelector('#calc')!), container);
+      expect(doc.querySelector('input')!.value).to.eql('My referred node');
     });
   });
 

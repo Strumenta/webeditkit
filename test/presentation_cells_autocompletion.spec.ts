@@ -183,10 +183,6 @@ describe('Presentation.Cells.Autocompletion', () => {
     clearRendererRegistry();
 
     // @ts-ignore
-    delete global.$;
-    // @ts-ignore
-    delete global.jQuery;
-    // @ts-ignore
     delete global.window;
     // @ts-ignore
     delete global.document;

@@ -2,7 +2,7 @@ import { NodeId, NodeInModel } from '../datamodel/misc';
 import { IssueDescription } from '../communication/messages';
 import { domElementToModelNode } from './cells/support';
 import { getWsCommunication, Intention } from '../communication/wscommunication';
-import { myAutoresizeOptions } from './uiutils';
+import { autoresize, myAutoresizeOptions, next, previous } from './uiutils';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;
@@ -60,34 +60,45 @@ class IntentionsMenu {
   private myIntentionsMenu: HTMLDivElement;
 
   deleteMenu() {
-    $(this.myIntentionsMenu).remove();
+    this.myIntentionsMenu.parentElement?.removeChild(this.myIntentionsMenu);
+  }
+
+  protected indexOfNode(el: Element | null, selector: string) {
+    let i = -1;
+    while (el) {
+      el = previous(el, selector);
+      i++;
+    }
+    return i;
   }
 
   constructor(triggerElement: HTMLElement, intentions: Intention[]) {
-    $('body').append("<div id='intentions-menu'></div>");
+    const domParser = new DOMParser();
+    let node = domParser.parseFromString("<div id='intentions-menu'></div>", 'text/html');
+    document.body.append(node);
 
     for (const i of intentions) {
-      $('#intentions-menu').append(`<input value='${i.description}'><br>`);
+      node = domParser.parseFromString(`<input value='${i.description}'><br>`, 'text/html');
+      document.getElementById('intentions-menu')?.append(node);
     }
 
     // Otherwise the handler will kill also future intentions menus
-    this.myIntentionsMenu = $('#intentions-menu')[0] as HTMLDivElement;
-    $('#intentions-menu input').keydown((e) => {
+    this.myIntentionsMenu = document.getElementById('intentions-menu') as HTMLDivElement;
+    document.querySelector('#intentions-menu input')?.addEventListener('keydown', (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        const index = $(e.target).prevAll('input').length;
-        intentions[index].execute();
+        intentions[this.indexOfNode(e.target as Element, 'input')].execute();
         this.deleteMenu();
       } else if (e.key === 'Escape') {
         this.deleteMenu();
       } else if (e.key === 'ArrowDown') {
-        const dest = $(e.target).nextAll('input');
-        if (dest.length > 0) {
-          $(dest[0]).focus();
+        const dest = next(e.target as Element, 'input') as HTMLElement;
+        if (dest) {
+          dest.focus();
         }
       } else if (e.key === 'ArrowUp') {
-        const dest = $(e.target).prevAll('input');
-        if (dest.length > 0) {
-          $(dest[0]).focus();
+        const dest = previous(e.target as Element, 'input') as HTMLElement;
+        if (dest) {
+          dest.focus();
         }
       }
       e.preventDefault();
@@ -99,20 +110,18 @@ class IntentionsMenu {
     this.myIntentionsMenu.style.top = `${top}px`;
 
     function focusOnIntentionsMenu() {
-      return isInIntentionsMenu($(document.activeElement as HTMLElement).first());
+      return isInIntentionsMenu(document.activeElement as HTMLElement);
     }
 
-    function isInIntentionsMenu(element: JQuery | HTMLElement) {
-      const res = $(element).parent('#intentions-menu').length;
-      return res > 0;
+    function isInIntentionsMenu(element: HTMLElement) {
+      return element && element.parentElement?.matches('#intentions-menu');
     }
 
-    $('#intentions-menu input:first').focus();
+    (document.querySelector('#intentions-menu input:first') as HTMLElement)?.focus();
 
-    // @ts-ignore
-    $('#intentions-menu input').autoresize(myAutoresizeOptions);
-    $('body').focusin((e) => {
-      if (!isInIntentionsMenu(e.target)) {
+    autoresize(document.querySelector('#intentions-menu input') as HTMLElement, myAutoresizeOptions);
+    document.body.addEventListener('focusin', (e) => {
+      if (!isInIntentionsMenu(e.target as HTMLElement)) {
         this.deleteMenu();
       }
     });

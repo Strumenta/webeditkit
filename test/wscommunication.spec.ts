@@ -640,8 +640,6 @@ describe('WsCommunication', () => {
     clearDatamodelRoots();
     clearRendererRegistry();
     // @ts-ignore
-    delete global.$;
-    // @ts-ignore
     delete global.window;
     // @ts-ignore
     delete global.document;

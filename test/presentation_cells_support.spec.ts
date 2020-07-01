@@ -211,8 +211,6 @@ describe('Presentation.Cells.Support', () => {
       const dom = new JSDOM(html1);
       const doc = dom.window.document;
       // @ts-ignore
-      global.$ = require('jquery')(dom.window);
-      // @ts-ignore
       global.document = doc;
 
       const aNode = dataToNode(rootData1);

@@ -50,11 +50,11 @@ import * as wscommunication from './communication/wscommunication';
 
 export { registerRenderer };
 
-export function setup() : void {
-  uiutils.installAutoresize();
+export function setup(): void {
+  // No setup necessary for now, but it's useful to keep an init point
 }
 
-export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string) : void {
+export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): void {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
   loadDataModel('http://' + baseUrl, modelName, nodeId, target);
   // avoid to send message while still in connecting
@@ -118,23 +118,23 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
     if (errors.length !== 0) {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
         if (vNode.elm != null) {
-          $(vNode.elm).addClass('hasErrors');
+          (vNode.elm as Element).classList.add('hasErrors');
         }
       });
       vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
         if (vNode.elm != null) {
-          $(vNode.elm).addClass('hasErrors');
+          (vNode.elm as Element).classList.add('hasErrors');
         }
       });
     } else {
       vnode = wrapInsertHook(vnode, (vNode: VNode): any => {
         if (vNode.elm != null) {
-          $(vNode.elm).removeClass('hasErrors');
+          (vNode.elm as Element).classList.remove('hasErrors');
         }
       });
       vnode = wrapUpdateHook(vnode, (oldVNode: VNode, vNode: VNode): any => {
         if (vNode.elm != null) {
-          $(vNode.elm).removeClass('hasErrors');
+          (vNode.elm as Element).classList.remove('hasErrors');
         }
       });
     }
@@ -151,7 +151,7 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
   return vnode;
 }
 
-export const renderDataModels = (cb?: BasicCallback) : void => {
+export const renderDataModels = (cb?: BasicCallback): void => {
   if (typeof window === 'undefined') {
     console.log('skipping renderDataModels in Node.JS');
     return;
@@ -175,7 +175,7 @@ export const renderDataModels = (cb?: BasicCallback) : void => {
       ],
     );
     if (vnodes[name] === undefined) {
-      const domNode = $('div#' + name)[0];
+      const domNode = document.getElementById(name);
       if (domNode == null) {
         console.warn(`cannot render model on div#${name}`);
         return;
@@ -201,18 +201,22 @@ interface TargetDataType {
 
 const targetData: { [target: string]: TargetDataType } = {};
 
-export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string) : void {
+export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string): void {
   targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
-  void $.getJSON(nodeURL, (data) => {
-    const root = dataToNode(data);
-    root.injectModelName(model, target);
-    setDatamodelRoot(target, root);
+  fetch(nodeURL)
+    .then((response) => response.json())
+    .then((data) => {
+      const root = dataToNode(data);
+      root.injectModelName(model, target);
+      setDatamodelRoot(target, root);
 
-    renderDataModels();
-  }).fail(() => {
-    throw new Error('Failed to load data model, using URL ' + nodeURL);
-  });
+      renderDataModels();
+    })
+    .catch(() => {
+      // TODO Alessio check here - where is it throwing? Is it intended?
+      throw new Error('Failed to load data model, using URL ' + nodeURL);
+    });
 }
 
 export function baseUrlForTarget(target: string): string {

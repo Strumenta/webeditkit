@@ -1,8 +1,6 @@
 import { VNode } from 'snabbdom/vnode';
 import { expect } from 'chai';
-import { installAutoresize } from '../src/presentation/uiutils';
 import { Message } from '../src/communication/messages';
-import { AskAlternatives } from '../src/communication/messages';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;
@@ -130,18 +128,9 @@ export function prepareFakeDom(htmlCode: string): Document {
   // @ts-ignore
   global.window = dom.window;
   // @ts-ignore
-  global.$ = require('jquery');
-  try {
-    $('a');
-  } catch {
-    // @ts-ignore
-    global.$ = require('jquery')(dom.window);
-  }
-  // @ts-ignore
   global.document = doc;
   // @ts-ignore
   global.navigator = { userAgent: 'fake browser' };
-  installAutoresize();
   return doc;
 }
 

@@ -1,3 +1,3 @@
 ## Troubleshooting
 
-When you want to a new version of the MPS Server remember to delete the artifacts directory 
+When you want to use a new version of the MPS Server, remember to delete the artifacts directory. 

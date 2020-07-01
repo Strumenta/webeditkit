@@ -1,5 +1,5 @@
 import { ModelNode } from '../../datamodel';
-import { Alternative, getWsCommunication } from '../../communication/wscommunication';
+import { getWsCommunication } from '../../communication/wscommunication';
 import autocomplete from 'autocompleter';
 import { VNode } from 'snabbdom/vnode';
 
@@ -32,7 +32,7 @@ export function alternativesProviderForAddingChild(
     if (ws == null) {
       throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
     }
-    ws.askAlternatives(modelNode, containmentName, (alternatives: any) => {
+    ws.askAlternatives(modelNode, containmentName, (alternatives) => {
       const adder = (conceptName: string) => () => {
         if (replacing) {
           ws.setChild(modelNode, containmentName, conceptName);
@@ -41,7 +41,7 @@ export function alternativesProviderForAddingChild(
         }
       };
       const uiAlternatives = Array.from(
-        $(alternatives).map((index, domElement: Alternative) => {
+        alternatives.map((domElement, index) => {
           return { label: domElement.alias, execute: adder(domElement.conceptName) };
         }),
       );
@@ -95,13 +95,12 @@ export function installAutocomplete(
     },
     customize: (_input: any, inputRect: any, container: any, maxHeight: any) => {
       // not true in tests
-      $(container).css('width', 'auto');
+      container.style.width = 'auto';
     },
     preventSubmit: true,
   });
 }
 
 export function isAutocompleteVisible(): boolean {
-  const res = $('.autocomplete').parent().length > 0;
-  return res;
+  return !!document.querySelector('.autocomplete')?.parentElement;
 }

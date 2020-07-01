@@ -1,31 +1,29 @@
-import { myAutoresizeOptions } from '../uiutils';
+import { autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus } from '../uiutils';
 import { VNode } from 'snabbdom/vnode';
 import { VNodeChildElement } from 'snabbdom/h';
-import { ModelNode } from '../../datamodel/modelNode';
+import { ModelNode } from '../../datamodel';
 
 import { getDatamodelRoot } from '../../datamodel/registry';
 import { log } from '../../utils/misc';
+import _ from 'lodash';
 
 export function handleSelfDeletion(element: HTMLElement, modelNode: ModelNode): void {
-  if ($(element).closest('.represent-node').hasClass('deleting')) {
+  const closest = element.closest('.represent-node');
+  if (closest?.classList.contains('deleting')) {
     modelNode.deleteMe();
   } else {
-    $(element).closest('.represent-node').addClass('deleting');
+    closest?.classList.add('deleting');
   }
 }
 
 export function handleAddingElement(element: HTMLElement, modelNode: ModelNode): void {
   log('adding element', element, modelNode);
-  const parents = $(element).parents();
+  const parent = element.parentElement;
+  const nodeId = parent?.dataset.node_represented;
+  if (!nodeId) {
+    return;
+  }
 
-  // First find the collection containing this node
-  const parentsArray = Array.from(parents);
-  const collectionIndex = parentsArray.findIndex((e) => $(e).hasClass('represent-collection'));
-  const parentsToConsider = parentsArray.slice(0, collectionIndex);
-  const nodesToConsider = $(parentsToConsider).filter('.represent-node');
-  const lastNode = nodesToConsider.last();
-
-  const nodeId = lastNode.data('node_represented') as string;
   const modelRootName = modelNode.rootName();
   if (modelRootName == null) {
     return;
@@ -45,13 +43,11 @@ export function handleAddingElement(element: HTMLElement, modelNode: ModelNode):
 }
 
 export function addAutoresize(vnode: VNode): void {
-  // @ts-ignore
-  $(vnode.elm).autoresize(myAutoresizeOptions);
+  autoresize(vnode.elm as HTMLElement, myAutoresizeOptions);
 }
 
 export function triggerResize(vnode: VNode): void {
-  // @ts-ignore
-  $(vnode.elm).inputWidthUpdate(myAutoresizeOptions);
+  inputWidthUpdate(vnode.elm as HTMLElement, myAutoresizeOptions);
 }
 
 export function flattenArray(value: any): any[] {
@@ -99,33 +95,31 @@ export function focusOnReference(modelNode: ModelNode, referenceName: string): v
     return;
   }
 
-  const inputs = $(firstNodeFound).find('input');
+  const inputs = firstNodeFound.querySelectorAll('input');
   let refNode;
   if (
-    $(firstNodeFound).data('node_represented') === modelNode.idString() &&
-    $(firstNodeFound).data('reference_represented') === referenceName
+    firstNodeFound.dataset.node_represented === modelNode.idString() &&
+    firstNodeFound.dataset.reference_represented === referenceName
   ) {
-    refNode = $(firstNodeFound);
+    refNode = [firstNodeFound];
   } else {
-    refNode = inputs.filter((i, el) => {
-      return (
-        $(el).data('node_represented') === modelNode.idString() && $(el).data('reference_represented') === referenceName
-      );
+    refNode = _.filter(inputs, (el, i) => {
+      return el.dataset.node_represented === modelNode.idString() && el.dataset.reference_represented === referenceName;
     });
   }
   if (refNode.length === 1) {
-    refNode.focus();
+    triggerFocus(refNode[0] as HTMLInputElement);
   }
 }
 
 export function findDomElement(nodeIdStr: string, rootName: string): HTMLElement | null {
-  const domRoot = $('#' + rootName);
-  if (domRoot.length === 0) {
+  const domRoot = document.getElementById(rootName);
+  if (!domRoot) {
     throw new Error(`Root with ID ${rootName} not found`);
   }
-  const found = domRoot.find('.represent-node').filter(function () {
-    return $(this).data('node_represented') === nodeIdStr;
-  });
+  const found = _.filter(domRoot.querySelectorAll('.represent-node'), (el) => {
+    return el instanceof window.HTMLElement && el.dataset.node_represented === nodeIdStr;
+  }) as HTMLElement[];
   if (found.length === 0) {
     return null;
   } else if (found.length > 1) {
@@ -154,7 +148,7 @@ export function focusOnNode(nodeIdStr: string, rootName: string | undefined): vo
 
 function focusOnFirstInputOf(element: HTMLElement): boolean {
   if (element.tagName === 'INPUT') {
-    $(element).trigger('focus');
+    triggerFocus(element as HTMLInputElement);
     return true;
   }
 
@@ -167,7 +161,7 @@ function focusOnFirstInputOf(element: HTMLElement): boolean {
 }
 
 export function isEditorElement(element: HTMLElement): boolean {
-  return $(element).hasClass('editor');
+  return element.classList.contains('editor');
 }
 
 export function domElementToModelNode(element: HTMLElement): ModelNode | undefined {
@@ -175,10 +169,10 @@ export function domElementToModelNode(element: HTMLElement): ModelNode | undefin
     return undefined;
   }
   log('domElementToModelNode', element);
-  log('  data', $(element).data('node_represented'));
-  const nodeId = $(element).data('node_represented') as string;
+  log('  data', element.dataset.node_represented);
+  const nodeId = element.dataset.node_represented;
   if (nodeId != null && nodeId !== '') {
-    const modelLocalName = $(element).closest('.editor').data('model_local_name') as string;
+    const modelLocalName = (element.closest('.editor') as HTMLElement)?.dataset.model_local_name as string;
     log('  model local name', modelLocalName);
     const dataModelRoot = getDatamodelRoot(modelLocalName);
     return dataModelRoot?.findNodeById(nodeId);
