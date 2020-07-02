@@ -2,7 +2,8 @@ export const myAutoresizeOptions = { padding: 2, minWidth: 10, maxWidth: 800 };
 
 function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions = {}): number {
   // get width of text with font.
-  let textToConsider = typeof elOrText === 'string' ? elOrText : ((elOrText as any).value as string);
+  const element = elOrText as any;
+  let textToConsider = typeof elOrText === 'string' ? elOrText : (element.value as string);
   if (textToConsider === '' && elOrText instanceof window.HTMLInputElement) {
     textToConsider = elOrText.placeholder;
   }
@@ -14,14 +15,25 @@ function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions =
     return 0;
   }
   const fakeEl = document.createElement('span');
-  fakeEl.style.visibility = 'hidden';
-  document.body.appendChild(fakeEl);
-  fakeEl.innerText = textToConsider;
-  const font = options.font || (elOrText as any).style?.font;
-  if (font) {
-    fakeEl.style.font = font;
+  if(element.style) {
+    const style = document.defaultView?.getComputedStyle(element);
+    if(style) {
+      fakeEl.style.font = style.font;
+      fakeEl.style.fontFamily = style.fontFamily;
+      fakeEl.style.fontSize = style.fontSize;
+    }
   }
+  fakeEl.style.visibility = 'hidden';
   fakeEl.style.whiteSpace = 'pre';
+  if (options.style) {
+    // tslint:disable-next-line:forin
+    for(const p in options.style) {
+      // @ts-ignore
+      fakeEl.style[p] = options.style[p];
+    }
+  }
+  fakeEl.innerText = textToConsider;
+  document.body.appendChild(fakeEl);
   const width = fakeEl.getBoundingClientRect().width;
   fakeEl.remove();
   return width + padding;
@@ -32,7 +44,7 @@ export type InputWidthOptions = {
   minWidth?: number;
   maxWidth?: number;
   widthCalculator?: (text: string) => number;
-  font?: string;
+  style?: { [property: string]: string };
 };
 export function inputWidthUpdate(el: HTMLElement, options?: InputWidthOptions): void {
   options = { ...{ padding: 10, minWidth: 0, maxWidth: 10000 }, ...(options || {}) };

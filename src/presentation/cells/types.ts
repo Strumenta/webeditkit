@@ -1,7 +1,6 @@
 import h from 'snabbdom/h';
 import {
   AlternativeForDirectReference,
-  AlternativesForDirectReference,
   getWsCommunication,
 } from '../../communication/wscommunication';
 import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../navigation';
@@ -19,23 +18,24 @@ import {
 } from './support';
 import { addToDatasetObj, wrapKeydownHandler } from './vnodemanipulation';
 import {
+  AlternativeFilter,
   alternativesProviderForAddingChild,
   installAutocomplete,
   isAutocompleteVisible,
   SuggestionsReceiver,
 } from './autocompletion';
-import { NodeId, nodeIdToString, PropertyValue } from '../../datamodel/misc';
+import { NodeId, nodeIdToString} from '../../datamodel/misc';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
-import { ModelNode } from '../../datamodel/modelNode';
-import { Ref } from '../../datamodel/ref';
-import { log, uuidv4 } from '../../utils/misc';
+import { ModelNode } from '../../datamodel';
+import { Ref } from '../../datamodel';
+import { log} from '../../utils/misc';
 import { EditedValue, IData } from './data';
-import { BehaviorSubject, Subject } from 'rxjs';
-import { debounceTime, delay } from 'rxjs/operators';
 
-export function childCell(node: ModelNode, containmentName: string, emptyCell?: () => VNode): VNode {
+export function childCell(node: ModelNode, containmentName: string,
+                          emptyCell?: () => VNode,
+                          filter: AlternativeFilter = () => true): VNode {
   const child = node.childByLinkName(containmentName);
   if (child == null) {
     if (emptyCell != null) {
@@ -43,9 +43,9 @@ export function childCell(node: ModelNode, containmentName: string, emptyCell?: 
     }
     return fixedCell(
       node,
-      '<no ' + containmentName + '>',
+      `<no ${containmentName}>`,
       ['missing-element'],
-      alternativesProviderForAddingChild(node, containmentName),
+      alternativesProviderForAddingChild(node, containmentName, false, filter),
     );
   }
   return renderModelNode(child);
@@ -110,6 +110,7 @@ export function verticalCollectionCell(
           const targetNode = domElementToModelNode(event.target as HTMLElement);
           console.log('  adding after', targetNode, 'container is', modelNode);
           targetNode?.insertNextSibling();
+          event.stopPropagation();
         }
       }
       return true;
@@ -263,6 +264,31 @@ export function editableCell(
     },
     [],
   );
+}
+
+/**
+ * Renders a flag cell, i.e., a cell that is either present (with fixed text) or not, tied to a boolean property.
+ */
+export function flagCell(modelNode: ModelNode, propertyName: string, extraClasses?: string[]) {
+  const property = modelNode.property(propertyName);
+  if(property === true || property === 'true') {
+    return wrapKeydownHandler(fixedCell(modelNode, propertyName, ['flag', 'true']), event => {
+      if (event.key === 'Backspace') {
+        getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(modelNode, propertyName, false);
+        return false;
+      } else {
+        return true;
+      }
+    });
+  } else if(!property || property === 'false') {
+    return fixedCell(modelNode, '', ['flag', 'false'], suggestionsReceiver => {
+      suggestionsReceiver([{ label: propertyName, execute: () => {
+        getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(modelNode, propertyName, true);
+      }}])
+    });
+  } else {
+    return fixedCell(modelNode, `<not a boolean value: ${property}>`, ['error']);
+  }
 }
 
 export function fixedCell(
