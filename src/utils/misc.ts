@@ -4,6 +4,10 @@ export function enableVerbosity(): void {
   verbosity = true;
 }
 
+export function disableVerbosity(): void {
+  verbosity = false;
+}
+
 export function log(...messages: any[]): void {
   if (verbosity) {
     console.log(messages);
