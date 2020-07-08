@@ -1,7 +1,7 @@
 import { ModelNode } from './modelNode';
 import { baseUrlForModelName } from '../index';
 import { dataToNode, getDefaultBaseUrl } from './registry';
-import { ReferenceData } from './misc';
+import { NodeData, ReferenceData } from './misc';
 
 export class Ref {
   data: ReferenceData;
@@ -27,7 +27,7 @@ export class Ref {
         if (data == null) {
           throw new Error('Data not received correctly on request to ' + url);
         }
-        cb(dataToNode(data));
+        cb(dataToNode(data.value as NodeData));
       });
   }
 }

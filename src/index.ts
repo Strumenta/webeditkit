@@ -95,6 +95,7 @@ import {
   wrapKeypressHandler,
   wrapUpdateHook,
 } from './presentation/cells/vnodemanipulation';
+import { NodeData } from './datamodel/misc';
 
 const patch = init([
   // Init patch function with chosen modules
@@ -209,7 +210,7 @@ export function loadDataModel(baseUrl: string, model: string, nodeId: string, ta
   fetch(nodeURL)
     .then((response) => response.json())
     .then((data) => {
-      const root = dataToNode(data);
+      const root = dataToNode(data.value as NodeData);
       root.injectModelName(model, target);
       setDatamodelRoot(target, root);
 
