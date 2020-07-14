@@ -214,8 +214,8 @@ export function loadDataModel(baseUrl: string, model: string, nodeId: string, ta
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
   return fetch(nodeURL)
     .then((response) => response.json())
-    .then((data: NodeData) => {
-      const root = dataToNode(data);
+    .then((data) => {
+      const root = dataToNode(data.value as NodeData);
       root.injectModelName(model, target);
       setDatamodelRoot(target, root);
 
