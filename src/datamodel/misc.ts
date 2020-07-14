@@ -26,6 +26,7 @@ export interface NodeData {
   rootName?: string | undefined;
   modelName: string; // The qualified model name
   parent?: NodeData | undefined;
+  alias?: string;
 }
 
 export interface NodeInModel {

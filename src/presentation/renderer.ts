@@ -52,12 +52,12 @@ export function renderModelNode(modelNode: ModelNode): VNode {
 
 function getDefaultRenderer(modelNode: ModelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
-  const conceptName = modelNode.simpleConceptName();
-  return (dataModel) => {
+  return () => {
     if (abstractConcept) {
       return fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
     } else {
-      return fixedCell(modelNode, '[default ' + conceptName + ']', ['default-cell-concrete']);
+      const label = modelNode.alias || `[default ${modelNode.simpleConceptName()}]`;
+      return fixedCell(modelNode, label, ['default-cell-concrete']);
     }
   };
 }

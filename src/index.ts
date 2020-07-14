@@ -58,7 +58,12 @@ export function setup(): void {
 
 export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): void {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
-  loadDataModel('http://' + baseUrl, modelName, nodeId, target);
+  loadDataModel('http://' + baseUrl, modelName, nodeId, target)
+      .catch((e) => {
+        console.error(e);
+        // TODO Alessio check here - where is it throwing? Is it intended?
+        throw new Error('Failed to load data model, base URL ' + baseUrl);
+      });
   // avoid to send message while still in connecting
   setTimeout(() => {
     ws.askForErrorsInNode(modelName, nodeId);
@@ -204,21 +209,17 @@ interface TargetDataType {
 
 const targetData: { [target: string]: TargetDataType } = {};
 
-export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string): void {
+export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string): Promise<void> {
   targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
-  fetch(nodeURL)
+  return fetch(nodeURL)
     .then((response) => response.json())
-    .then((data) => {
-      const root = dataToNode(data.value as NodeData);
+    .then((data: NodeData) => {
+      const root = dataToNode(data);
       root.injectModelName(model, target);
       setDatamodelRoot(target, root);
 
       renderDataModels();
-    })
-    .catch(() => {
-      // TODO Alessio check here - where is it throwing? Is it intended?
-      throw new Error('Failed to load data model, using URL ' + nodeURL);
     });
 }
 
