@@ -1,8 +1,5 @@
-//import {Test} from "./utility";
-
 import { expect } from 'chai';
 import 'mocha';
-import { XMLHttpRequest } from 'xmlhttprequest';
 import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 
 const puppeteer = require('puppeteer');
@@ -32,7 +29,7 @@ describe('WebEditKit integration', () => {
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/`);
         await page.screenshot({ path: `screenshots/s1.png` });
-        let bodyHTML = await page.evaluate(() => document.body.innerHTML);
+        const bodyHTML = await page.evaluate(() => document.body.innerHTML);
         expect(bodyHTML).to.equal('MPS Server up and running.');
       } catch (e) {
         console.log('exception captured', e);
@@ -60,8 +57,8 @@ describe('WebEditKit integration', () => {
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/modules?includeReadOnly=true&includePackaged=true`);
         await page.screenshot({ path: `screenshots/s2.png` });
-        let bodyHTML = await page.evaluate(() => document.body.innerHTML);
-        const modules = JSON.parse(bodyHTML);
+        const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+        const modules = JSON.parse(bodyHTML).value;
         let found = false;
         for (const m of modules) {
           if (m['name'] == 'com.strumenta.mpsserver.server') {
