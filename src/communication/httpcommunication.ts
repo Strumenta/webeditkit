@@ -44,6 +44,19 @@ export class HttpCommunication {
     this.httpMpsServerAddress = httpMpsServerAddress;
   }
 
+  async getCurrentBranch() : Promise<string> {
+    return new Promise<string>((resolve, onrejected) => {
+      void fetch(`${this.httpMpsServerAddress}/git/currentBranch`).then(async (response) => {
+        const data = (await response.json()) as OperationResult;
+        if (data.success) {
+          resolve(data.value as string);
+        } else {
+          onrejected(data.message);
+        }
+      });
+    });
+  }
+
   getInstancesOfConcept(modelName: string, conceptName: string, receiver: (nodes: LimitedModelNode[]) => void): void {
     void fetch(`${this.httpMpsServerAddress}/models/${modelName}/concept/${conceptName}`).then(async (response) => {
       const data = (await response.json()) as OperationResult;
