@@ -59,6 +59,7 @@ import { registerIssuesForModel, registerIssuesForNode } from './issues';
 export interface Alternative {
   conceptName: string;
   alias: string;
+  node?: NodeData
 }
 
 export interface AlternativeForDirectReference {

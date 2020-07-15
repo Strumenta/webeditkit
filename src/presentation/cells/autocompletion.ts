@@ -2,6 +2,7 @@ import { ModelNode } from '../../datamodel';
 import {Alternative, Alternatives, getWsCommunication} from '../../communication/wscommunication';
 import autocomplete from 'autocompleter';
 import { VNode } from 'snabbdom/vnode';
+import {NodeData} from "../../datamodel/misc";
 
 export function alternativesProviderForAbstractConcept(
     modelNode: ModelNode, filter: AlternativeFilter = () => true): SuggestionsReceiverFactory {
@@ -42,9 +43,17 @@ export function alternativesProviderForAddingChild(
           ws.addChild(modelNode, containmentName, conceptName);
         }
       };
+      const smartRefAdder = (node: NodeData) => () => {
+        alert("TODO");
+        console.log(modelNode, containmentName, node);
+      };
       const uiAlternatives = Array.from(
-        alternatives.filter(filter).map((domElement, index) => {
-          return { label: domElement.alias, execute: adder(domElement.conceptName) };
+        alternatives.filter(filter).map((alt, index) => {
+          if(alt.node) {
+            return { label: alt.alias, execute: smartRefAdder(alt.node) };
+          } else {
+            return { label: alt.alias, execute: adder(alt.conceptName) };
+          }
         }),
       );
       suggestionsReceiver(uiAlternatives);
