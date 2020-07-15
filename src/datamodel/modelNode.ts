@@ -155,6 +155,10 @@ export class ModelNode extends LimitedModelNode {
     return undefined;
   }
 
+  get alias(): string | undefined {
+    return this.data.alias;
+  }
+
   simpleConceptName(): string {
     const parts = this.data.concept.split('.');
     return parts[parts.length - 1];
