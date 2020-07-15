@@ -111,14 +111,14 @@ const html1 = `<html>
 </html>`;
 
 const rootData1: NodeData = {
-  name: "My calculations",
+  name: 'My calculations',
   children: [
     {
-      name: "a",
+      name: 'a',
       containingLink: 'inputs',
       children: [
         {
-          name: "some name",
+          name: 'some name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -143,11 +143,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
-      name: "b",
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
-          name: "some name",
+          name: 'some name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -185,10 +185,10 @@ const rootData1: NodeData = {
 };
 
 const rootData2: NodeData = {
-  name: "My calculations",
+  name: 'My calculations',
   children: [
     {
-      name: "a",
+      name: 'a',
       containingLink: 'inputs',
       children: [],
       properties: {
@@ -203,11 +203,11 @@ const rootData2: NodeData = {
       modelName: '',
     },
     {
-      name: "b",
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
-          name: "some name",
+          name: 'some name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -245,10 +245,10 @@ const rootData2: NodeData = {
 };
 
 const rootData3: NodeData = {
-  name: "My calculations",
+  name: 'My calculations',
   children: [
     {
-      name: "a",
+      name: 'a',
       containingLink: 'inputs',
       children: [],
       properties: {
@@ -263,11 +263,11 @@ const rootData3: NodeData = {
       modelName: '',
     },
     {
-      name: "b",
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
-          name: "some name",
+          name: 'some name',
           containingLink: 'type',
           children: [],
           properties: {},

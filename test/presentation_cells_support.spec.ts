@@ -2,13 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
 import { addClass, fixedCell, map } from '../src/presentation/cells';
-import {
-  addInsertHook,
-  focusOnNode,
-  handleSelfDeletion,
-  separate,
-  setDataset,
-  } from '../src/presentation/cells';
+import { addInsertHook, focusOnNode, handleSelfDeletion, separate, setDataset } from '../src/presentation/cells';
 
 import { Server, WebSocket } from 'mock-socket';
 import { init } from 'snabbdom/snabbdom';
@@ -87,14 +81,14 @@ const html1 = `<html>
 </html>`;
 
 const rootData1: NodeData = {
-  name: "My calculations",
+  name: 'My calculations',
   children: [
     {
-      name: "a",
+      name: 'a',
       containingLink: 'inputs',
       children: [
         {
-          name: "-",
+          name: '-',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -119,11 +113,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
-      name: "b",
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
-          name: "-",
+          name: '-',
           containingLink: 'type',
           children: [],
           properties: {},

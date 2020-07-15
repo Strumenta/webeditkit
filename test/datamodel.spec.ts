@@ -11,14 +11,14 @@ class MyDummyModelNode extends ModelNode {
 }
 
 const rootData1: NodeData = {
-  name: "My calculations",
+  name: 'My calculations',
   children: [
     {
-      name: "a",
+      name: 'a',
       containingLink: 'inputs',
       children: [
         {
-          name: "type-name",
+          name: 'type-name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -43,11 +43,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
-      name: "b",
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
-          name: "myNode",
+          name: 'myNode',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -91,7 +91,7 @@ function clone<T extends object>(original: T): T {
 describe('Data Model Class Registry', () => {
   it('should create a ModelNode if not specific class is registered for the concept', () => {
     const modelnode = dataToNode({
-      name: "myNode",
+      name: 'myNode',
       concept: 'my.awesome.concept',
       abstractConcept: false,
       children: [],
@@ -108,7 +108,7 @@ describe('Data Model Class Registry', () => {
 
   it('should create a ModelNode if a specific class is registered for the concept', () => {
     const data: NodeData = {
-      name: "myNode",
+      name: 'myNode',
       concept: 'my.awesome.other.concept',
       abstractConcept: false,
       children: [],
