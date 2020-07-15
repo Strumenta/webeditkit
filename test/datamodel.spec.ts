@@ -2,7 +2,6 @@ import { NodeData } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
 import { ModelNode } from '../src/datamodel/modelNode';
-import { Ref } from '../src/datamodel/ref';
 import { dataToNode, registerDataModelClass } from '../src/datamodel/registry';
 
 class MyDummyModelNode extends ModelNode {
@@ -12,11 +11,14 @@ class MyDummyModelNode extends ModelNode {
 }
 
 const rootData1: NodeData = {
+  name: 'My calculations',
   children: [
     {
+      name: 'a',
       containingLink: 'inputs',
       children: [
         {
+          name: 'type-name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -41,9 +43,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
+          name: 'myNode',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -87,6 +91,7 @@ function clone<T extends object>(original: T): T {
 describe('Data Model Class Registry', () => {
   it('should create a ModelNode if not specific class is registered for the concept', () => {
     const modelnode = dataToNode({
+      name: 'myNode',
       concept: 'my.awesome.concept',
       abstractConcept: false,
       children: [],
@@ -103,6 +108,7 @@ describe('Data Model Class Registry', () => {
 
   it('should create a ModelNode if a specific class is registered for the concept', () => {
     const data: NodeData = {
+      name: 'myNode',
       concept: 'my.awesome.other.concept',
       abstractConcept: false,
       children: [],
@@ -132,8 +138,8 @@ describe('ModelNode', () => {
   it('should support property - existing', () => {
     const root = dataToNode(rootData1);
     const inputs = root.childrenByLinkName('inputs');
-    const input_a = inputs[0];
-    expect(input_a.property('name')).to.equals('a');
+    const inputA = inputs[0];
+    expect(inputA.property('name')).to.equals('a');
   });
 
   it('should support property - unexisting', () => {
@@ -148,9 +154,9 @@ describe('ModelNode', () => {
 
   it('should support name - unexisting', () => {
     const root = dataToNode(rootData1);
-    const input_a = root.childrenByLinkName('inputs')[0];
-    const type_of_a = input_a.childByLinkName('type');
-    expect(type_of_a!.name()).to.equals(undefined);
+    const inputA = root.childrenByLinkName('inputs')[0];
+    const typeOfA = inputA.childByLinkName('type');
+    expect(typeOfA!.name()).to.equals('type-name');
   });
 
   it('should support idString', () => {
@@ -226,9 +232,9 @@ describe('ModelNode', () => {
   it('should support index - parent set', () => {
     const root = dataToNode(clone(rootData1));
     root.injectModelName('myModel', 'myRoot');
-    const n_a = root.findNodeById('1848360241685547698');
-    const n_b = root.findNodeById('1848360241685547705');
-    expect(n_a!.index()).to.equals(0);
-    expect(n_b!.index()).to.equals(1);
+    const na = root.findNodeById('1848360241685547698');
+    const nb = root.findNodeById('1848360241685547705');
+    expect(na!.index()).to.equals(0);
+    expect(nb!.index()).to.equals(1);
   });
 });

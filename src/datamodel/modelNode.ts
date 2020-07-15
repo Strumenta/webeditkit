@@ -1,6 +1,13 @@
 import { dataToNode } from './registry';
 import { getWsCommunication } from '../communication/wscommunication';
-import { modelNodeToNodeInModel, NodeData, nodeIdToString, PropertyValue, refToNodeInModel } from './misc';
+import {
+  LimitedNodeData,
+  modelNodeToNodeInModel,
+  NodeData,
+  nodeIdToString,
+  PropertyValue,
+  refToNodeInModel,
+} from './misc';
 import { Ref } from './ref';
 import { ReferenceChange } from '../communication/messages';
 import { renderDataModels } from '../index';
@@ -28,10 +35,31 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): 
 
 export type NodeProcessor = (node: ModelNode) => void;
 
-export class ModelNode {
+export class LimitedModelNode {
+  readonly limitedData: LimitedNodeData;
+
+  constructor(limitedData: LimitedNodeData) {
+    this.limitedData = limitedData;
+  }
+
+  name(): string | undefined {
+    return this.limitedData.name;
+  }
+
+  idString(): string {
+    return this.limitedData.id.regularId;
+  }
+
+  conceptName(): string {
+    return this.limitedData.concept;
+  }
+}
+
+export class ModelNode extends LimitedModelNode {
   readonly data: NodeData;
 
   constructor(data: NodeData) {
+    super(data);
     this.data = data;
   }
 
@@ -111,25 +139,6 @@ export class ModelNode {
       return undefined;
     }
     return new Ref(this.data.refs[referenceName]);
-  }
-
-  name(): string | undefined {
-    const value = this.property('name');
-    if (value == null) {
-      return undefined;
-    }
-    if (typeof value === 'string') {
-      return value;
-    }
-    throw new Error(`Name was expected to be a string, while it is ${value.toString()}`);
-  }
-
-  idString(): string {
-    return this.data.id.regularId;
-  }
-
-  conceptName(): string {
-    return this.data.concept;
   }
 
   findNodeById(nodeIdStr: string): ModelNode | undefined {

@@ -1,12 +1,10 @@
-//import {Test} from "./utility";
-
 import { expect } from 'chai';
 import 'mocha';
-import { XMLHttpRequest } from 'xmlhttprequest';
 import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
+import { Browser, Page } from 'puppeteer';
 
-const puppeteer = require('puppeteer');
-const request = require('request');
+import puppeteer from 'puppeteer';
+import { ModuleInfo } from '../../src/communication/httpcommunication';
 
 describe('WebEditKit integration', () => {
   before(function (done) {
@@ -18,21 +16,23 @@ describe('WebEditKit integration', () => {
 
   it('mpsserver is accessible', function(done) {
     this.timeout(120000);
-    (async () => {
-      const browser = await puppeteer.launch();
+    void (async () => {
+      const browser : Browser = await puppeteer.launch();
       try {
-        const page = await browser.newPage();
-        await page.on('response', (response) => {
-          if (response.status() != 200) {
+        const page : Page = await browser.newPage();
+        page.on('response', (response) => {
+          if (response.status() !== 200) {
             throw new Error('Not 200');
           }
         });
-        await page.on('console', (message) =>
+        page.on('console', (message) =>
           console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`),
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/`);
         await page.screenshot({ path: `screenshots/s1.png` });
-        let bodyHTML = await page.evaluate(() => document.body.innerHTML);
+        const bodyHTML = await page.evaluate(() => {
+          return document.body.innerHTML
+        });
         expect(bodyHTML).to.equal('MPS Server up and running.');
       } catch (e) {
         console.log('exception captured', e);
@@ -46,26 +46,26 @@ describe('WebEditKit integration', () => {
   });
   it('modules are listed', function(done) {
     this.timeout(120000);
-    (async () => {
+    void (async () => {
       const browser = await puppeteer.launch();
       try {
         const page = await browser.newPage();
-        await page.on('response', (response) => {
-          if (response.status() != 200) {
+        page.on('response', (response) => {
+          if (response.status() !== 200) {
             throw new Error('Not 200');
           }
         });
-        await page.on('console', (message) =>
+        page.on('console', (message) =>
           console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`),
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/modules?includeReadOnly=true&includePackaged=true`);
         await page.screenshot({ path: `screenshots/s2.png` });
-        let bodyHTML = await page.evaluate(() => document.body.innerHTML);
-        const modules = JSON.parse(bodyHTML);
+        const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+        const modules = JSON.parse(bodyHTML).value as ModuleInfo[];
         let found = false;
         for (const m of modules) {
-          if (m['name'] == 'com.strumenta.mpsserver.server') {
-            expect(m['uuid']).to.equal('bf983e15-b4da-4ef2-8e0a-5041eab7ff32');
+          if (m.name === 'com.strumenta.mpsserver.server') {
+            expect(m.uuid).to.equal('bf983e15-b4da-4ef2-8e0a-5041eab7ff32');
             found = true;
           }
         }

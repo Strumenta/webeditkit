@@ -1,8 +1,5 @@
 import h from 'snabbdom/h';
-import {
-  AlternativeForDirectReference,
-  getWsCommunication,
-} from '../../communication/wscommunication';
+import { AlternativeForDirectReference, getWsCommunication } from '../../communication/wscommunication';
 import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../navigation';
 import {
   addAutoresize,
@@ -24,18 +21,21 @@ import {
   isAutocompleteVisible,
   SuggestionsReceiver,
 } from './autocompletion';
-import { NodeId, nodeIdToString} from '../../datamodel/misc';
+import { NodeId, nodeIdToString } from '../../datamodel/misc';
 import { renderModelNode } from '../renderer';
 import { VNode } from 'snabbdom/vnode';
 import { renderDataModels } from '../../index';
 import { ModelNode } from '../../datamodel';
 import { Ref } from '../../datamodel';
-import { log} from '../../utils/misc';
+import { log } from '../../utils/misc';
 import { EditedValue, IData } from './data';
 
-export function childCell(node: ModelNode, containmentName: string,
-                          emptyCell?: () => VNode,
-                          filter: AlternativeFilter = () => true): VNode {
+export function childCell(
+  node: ModelNode,
+  containmentName: string,
+  emptyCell?: () => VNode,
+  filter: AlternativeFilter = () => true,
+): VNode {
   const child = node.childByLinkName(containmentName);
   if (child == null) {
     if (emptyCell != null) {
@@ -271,8 +271,8 @@ export function editableCell(
  */
 export function flagCell(modelNode: ModelNode, propertyName: string, extraClasses?: string[]) {
   const property = modelNode.property(propertyName);
-  if(property === true || property === 'true') {
-    return wrapKeydownHandler(fixedCell(modelNode, propertyName, ['flag', 'true']), event => {
+  if (property === true || property === 'true') {
+    return wrapKeydownHandler(fixedCell(modelNode, propertyName, ['flag', 'true']), (event) => {
       if (event.key === 'Backspace') {
         getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(modelNode, propertyName, false);
         return false;
@@ -280,11 +280,16 @@ export function flagCell(modelNode: ModelNode, propertyName: string, extraClasse
         return true;
       }
     });
-  } else if(!property || property === 'false') {
-    return fixedCell(modelNode, '', ['flag', 'false'], suggestionsReceiver => {
-      suggestionsReceiver([{ label: propertyName, execute: () => {
-        getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(modelNode, propertyName, true);
-      }}])
+  } else if (!property || property === 'false') {
+    return fixedCell(modelNode, '', ['flag', 'false'], (suggestionsReceiver) => {
+      suggestionsReceiver([
+        {
+          label: propertyName,
+          execute: () => {
+            getWsCommunication(modelNode.modelName()).triggerChangeOnPropertyNode(modelNode, propertyName, true);
+          },
+        },
+      ]);
     });
   } else {
     return fixedCell(modelNode, `<not a boolean value: ${property}>`, ['error']);

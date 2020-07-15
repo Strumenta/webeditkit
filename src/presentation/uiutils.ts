@@ -15,9 +15,9 @@ function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions =
     return 0;
   }
   const fakeEl = document.createElement('span');
-  if(element.style) {
+  if (element.style) {
     const style = document.defaultView?.getComputedStyle(element);
-    if(style) {
+    if (style) {
       fakeEl.style.font = style.font;
       fakeEl.style.fontFamily = style.fontFamily;
       fakeEl.style.fontSize = style.fontSize;
@@ -27,7 +27,7 @@ function textWidth(elOrText?: HTMLElement | string, options: InputWidthOptions =
   fakeEl.style.whiteSpace = 'pre';
   if (options.style) {
     // tslint:disable-next-line:forin
-    for(const p in options.style) {
+    for (const p in options.style) {
       // @ts-ignore
       fakeEl.style[p] = options.style[p];
     }

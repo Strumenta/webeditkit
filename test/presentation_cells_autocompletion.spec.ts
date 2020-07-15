@@ -7,7 +7,6 @@ import {
   addInsertHook,
   alternativesProviderForAddingChild,
   AutocompleteAlternative,
-  focusOnNode,
   handleSelfDeletion,
   installAutocomplete,
   separate,
@@ -93,11 +92,14 @@ const html1 = `<html>
 </html>`;
 
 const rootData1: NodeData = {
+  name: 'My calculations',
   children: [
     {
+      name: 'a',
       containingLink: 'inputs',
       children: [
         {
+          name: 'some name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -122,9 +124,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
+      name: 'b',
       containingLink: 'inputs',
       children: [
         {
+          name: 'some name',
           containingLink: 'type',
           children: [],
           properties: {},
@@ -369,8 +373,6 @@ describe('Presentation.Cells.Autocompletion', () => {
 
   describe('should support installAutocomplete', () => {
     it('it should handle positive case', (done) => {
-      //const doc = prepareFakeDom(html1);
-
       const aNode = dataToNode(rootData1);
       let cell = h('input', {}, []);
       let cellWithHook = addInsertHook(cell, (myNode: VNode) => {
