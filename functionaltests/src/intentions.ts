@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
-import { XMLHttpRequest } from 'xmlhttprequest';
 import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 import { createInstance, getWsCommunication } from '../../src/communication';
-import { GetNode, GetNodeAnswer } from '../../src/communication/messages';
-import delay from 'delay';
 
 const W3CWebSocket = require('websocket').w3cwebsocket;
 
@@ -31,8 +28,7 @@ describe('Intentions API', () => {
 
   it('get intentions', (done) => {
     const ws = new W3CWebSocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
-    // tslint:disable-next-line:only-arrow-functions
-    ws.onopen = function () {
+    ws.onopen = () => {
       const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo', ws);
       const intentions = wsc.getIntentions({
         model: 'ExampleLanguage.sandbox',
@@ -40,7 +36,7 @@ describe('Intentions API', () => {
           regularId: '7467535778008416706',
         },
       });
-      intentions.then((value) => {
+      void intentions.then((value) => {
         try {
           expect(value.length).to.eql(1);
           expect(value[0].index).to.eql(0);
@@ -84,7 +80,7 @@ describe('Intentions API', () => {
       expect(intentions[1].description).to.eql('Assign Standard ID to All Projects');
       intentions[1].execute();
       setTimeout(()=>{
-        wsc.getNodeData(nodeIdForProject1).then((nodeData2)=>{
+        void wsc.getNodeData(nodeIdForProject1).then((nodeData2)=>{
           expect(nodeData2.properties.id).eql('ACBU');
           done();
         });
@@ -111,8 +107,7 @@ describe('Intentions API', () => {
               regularId: '7467535778008416706'
           }
       };
-      // tslint:disable-next-line:only-arrow-functions
-      ws.onopen = async function() {
+      ws.onopen = async () => {
           const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo',
             ws);
           const nodeData1 = await wsc.getNodeData(nodeIdForProject1);
@@ -123,7 +118,7 @@ describe('Intentions API', () => {
           expect(intentions[0].description).to.eql('Assign Standard ID to All Projects');
           intentions[0].execute();
           setTimeout(()=>{
-            wsc.getNodeData(nodeIdForProject1).then((nodeData2)=>{
+            void wsc.getNodeData(nodeIdForProject1).then((nodeData2)=>{
               expect(nodeData2.properties.id).eql('ACBU');
               done();
             });
