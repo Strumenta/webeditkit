@@ -46,7 +46,7 @@ export class HttpCommunication {
 
   async executeAction(modelName: string, nodeIdString: string, actionName: string) : Promise<any> {
     return new Promise<any>((resolve, onrejected) => {
-      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/${actionName}`, {method: 'POST'}).then(async (response) => {
+      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}`, {method: 'POST'}).then(async (response) => {
         const data = (await response.json()) as OperationResult;
         if (data.success) {
           resolve(data.value);
