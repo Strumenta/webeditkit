@@ -58,12 +58,11 @@ export function setup(): void {
 
 export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): void {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
-  loadDataModel('http://' + baseUrl, modelName, nodeId, target)
-      .catch((e) => {
-        console.error(e);
-        // TODO Alessio check here - where is it throwing? Is it intended?
-        throw new Error('Failed to load data model, base URL ' + baseUrl);
-      });
+  loadDataModel('http://' + baseUrl, modelName, nodeId, target).catch((e) => {
+    console.error(e);
+    // TODO Alessio check here - where is it throwing? Is it intended?
+    throw new Error('Failed to load data model, base URL ' + baseUrl);
+  });
   // avoid to send message while still in connecting
   setTimeout(() => {
     ws.askForErrorsInNode(modelName, nodeId);

@@ -1,10 +1,12 @@
 import { ModelNode } from '../../datamodel';
-import {Alternative, Alternatives, getWsCommunication} from '../../communication/wscommunication';
+import { Alternative, Alternatives, getWsCommunication } from '../../communication/wscommunication';
 import autocomplete from 'autocompleter';
 import { VNode } from 'snabbdom/vnode';
 
 export function alternativesProviderForAbstractConcept(
-    modelNode: ModelNode, filter: AlternativeFilter = () => true): SuggestionsReceiverFactory {
+  modelNode: ModelNode,
+  filter: AlternativeFilter = () => true,
+): SuggestionsReceiverFactory {
   const parent = modelNode.parent();
   if (parent == null) {
     throw new Error('The given node has no parent');
@@ -23,7 +25,8 @@ export function alternativesProviderForAddingChild(
   modelNode: ModelNode,
   containmentName: string,
   replacing = false,
-  filter: AlternativeFilter = () => true): SuggestionsReceiverFactory {
+  filter: AlternativeFilter = () => true,
+): SuggestionsReceiverFactory {
   // we should get all the alternatives from the server
   return (suggestionsReceiver: SuggestionsReceiver) => {
     const modelName = modelNode.modelName();

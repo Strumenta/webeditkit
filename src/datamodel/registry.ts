@@ -30,7 +30,7 @@ export function dataToNode(data: NodeData): ModelNode {
 }
 
 export function limitedDataToNode(data: LimitedNodeData): LimitedModelNode {
-  return new LimitedModelNode((data));
+  return new LimitedModelNode(data);
 }
 
 ///
