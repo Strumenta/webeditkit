@@ -4,7 +4,7 @@ import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 import { createInstance, getWsCommunication } from '../../src/communication';
 import { w3cwebsocket } from 'websocket';
 
-const W3CWebSocket : w3cwebsocket = require('websocket').w3cwebsocket;
+//const W3CWebSocket = require('websocket').w3cwebsocket;
 
 describe('Intentions API', () => {
   before(function (done) {
@@ -17,7 +17,7 @@ describe('Intentions API', () => {
   beforeEach(function () {
     this.timeout(120000);
     // @ts-ignore
-    global.WebSocket = W3CWebSocket;
+    global.WebSocket = w3cwebsocket;
     reloadAll();
   });
 
@@ -28,9 +28,9 @@ describe('Intentions API', () => {
   });
 
   it('get intentions', (done) => {
-    const ws = new W3CWebSocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
+    const ws = new w3cwebsocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
     ws.onopen = () => {
-      const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo', ws);
+      const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo', ws as unknown as WebSocket);
       const intentions = wsc.getIntentions({
         model: 'ExampleLanguage.sandbox',
         id: {
@@ -56,7 +56,7 @@ describe('Intentions API', () => {
     // 2) Call intention
     // 3) Verify final name of project
 
-    const ws  = new W3CWebSocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
+    const ws  = new w3cwebsocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
     const nodeIdForProject1 = {
       model: 'ExampleLanguage.sandbox',
       id: {
@@ -72,7 +72,7 @@ describe('Intentions API', () => {
     // tslint:disable-next-line:only-arrow-functions
     ws.onopen = async function() {
       const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo',
-        ws);
+        ws as unknown as WebSocket);
       const nodeData1 = await wsc.getNodeData(nodeIdForProject1);
       expect(nodeData1.properties.id).eql('ACME-1');
       const intentions = await wsc.getIntentions(nodeIdForProject1);
@@ -95,7 +95,7 @@ describe('Intentions API', () => {
       // 2) Call intention
       // 3) Verify final name of project
 
-      const ws  = new W3CWebSocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
+      const ws  = new w3cwebsocket(`ws://localhost:${MPSSERVER_PORT}/socket`);
       const nodeIdForProject1 = {
           model: 'ExampleLanguage.sandbox',
           id: {
@@ -110,7 +110,7 @@ describe('Intentions API', () => {
       };
       ws.onopen = async () => {
           const wsc = createInstance(`ws://localhost:${MPSSERVER_PORT}/socket`, 'ExampleLanguage.sandbox', 'foo',
-            ws);
+            ws as unknown as WebSocket);
           const nodeData1 = await wsc.getNodeData(nodeIdForProject1);
           expect(nodeData1.properties.id).eql('ACME-1');
           const intentions = await wsc.getIntentions(nodeIdForClient);
