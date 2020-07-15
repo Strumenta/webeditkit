@@ -44,6 +44,32 @@ export class HttpCommunication {
     this.httpMpsServerAddress = httpMpsServerAddress;
   }
 
+  async executeAction(modelName: string, nodeIdString: string, actionName: string) : Promise<any> {
+    return new Promise<any>((resolve, onrejected) => {
+      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/${actionName}`, {method: 'POST'}).then(async (response) => {
+        const data = (await response.json()) as OperationResult;
+        if (data.success) {
+          resolve(data.value);
+        } else {
+          onrejected(data.message);
+        }
+      });
+    });
+  }
+
+  async reload(modelName: string) : Promise<void> {
+    return new Promise<void>((resolve, onrejected) => {
+      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/reload`, {method: 'POST'}).then(async (response) => {
+        const data = (await response.json()) as OperationResult;
+        if (data.success) {
+          resolve();
+        } else {
+          onrejected(data.message);
+        }
+      });
+    });
+  }
+
   async getCurrentBranch() : Promise<string> {
     return new Promise<string>((resolve, onrejected) => {
       void fetch(`${this.httpMpsServerAddress}/git/currentBranch`).then(async (response) => {
