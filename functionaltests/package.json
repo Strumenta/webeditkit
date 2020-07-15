@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/mocha": "^7.0.2",
     "@types/puppeteer": "^2.0.1",
+    "@types/websocket": "^1.0.1",
     "delay": "^4.3.0",
     "prettier": "^2.0.5",
     "puppeteer": "^3.0.3",
