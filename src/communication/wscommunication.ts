@@ -117,11 +117,11 @@ export class WsCommunication {
   private readonly callbacks: { [requestId: string]: Callback };
   private rootsObservers: RootsObserver[] = [];
 
-  registerRootsObserver(observer: RootsObserver) {
+  registerRootsObserver(observer: RootsObserver) : void {
     this.rootsObservers.push(observer);
   }
 
-  unregisterRootsObserver(observer: RootsObserver): boolean {
+  unregisterRootsObserver(observer: RootsObserver) : boolean {
     const index = this.rootsObservers.indexOf(observer, 0);
     if (index !== -1) {
       this.rootsObservers.splice(index, 1);
