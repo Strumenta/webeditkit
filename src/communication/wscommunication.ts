@@ -153,6 +153,9 @@ export class WsCommunication {
       }
       const node = dataToNode(root.data).findNodeById(nodeIdToString(msg.node.id));
       if (node != null) {
+        if (msg.propertyName === 'name') {
+          node.data.name = msg.propertyValue as string;
+        }
         node.setProperty(msg.propertyName, msg.propertyValue);
         renderDataModels();
       }

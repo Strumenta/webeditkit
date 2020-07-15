@@ -16,11 +16,14 @@ const html_empty = `<html>
 </html>`;
 
 const rootData1: NodeData = {
+  name: "My calculations",
   children: [
     {
+      name: "a",
       containingLink: 'inputs',
       children: [
         {
+          name: "-",
           containingLink: 'type',
           children: [],
           properties: {},
@@ -45,9 +48,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
+      name: "b",
       containingLink: 'inputs',
       children: [
         {
+          name: "-",
           containingLink: 'type',
           children: [],
           properties: {},

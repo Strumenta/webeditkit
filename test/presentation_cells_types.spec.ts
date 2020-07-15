@@ -1,7 +1,6 @@
 import { NodeData } from '../src/datamodel/misc';
 import { expect } from 'chai';
 import 'mocha';
-import { VNode } from 'snabbdom/vnode';
 import {
   childCell,
   Data,
@@ -112,11 +111,14 @@ const html1 = `<html>
 </html>`;
 
 const rootData1: NodeData = {
+  name: "My calculations",
   children: [
     {
+      name: "a",
       containingLink: 'inputs',
       children: [
         {
+          name: "some name",
           containingLink: 'type',
           children: [],
           properties: {},
@@ -141,9 +143,11 @@ const rootData1: NodeData = {
       modelName: '',
     },
     {
+      name: "b",
       containingLink: 'inputs',
       children: [
         {
+          name: "some name",
           containingLink: 'type',
           children: [],
           properties: {},
@@ -181,8 +185,10 @@ const rootData1: NodeData = {
 };
 
 const rootData2: NodeData = {
+  name: "My calculations",
   children: [
     {
+      name: "a",
       containingLink: 'inputs',
       children: [],
       properties: {
@@ -197,9 +203,11 @@ const rootData2: NodeData = {
       modelName: '',
     },
     {
+      name: "b",
       containingLink: 'inputs',
       children: [
         {
+          name: "some name",
           containingLink: 'type',
           children: [],
           properties: {},
@@ -237,8 +245,10 @@ const rootData2: NodeData = {
 };
 
 const rootData3: NodeData = {
+  name: "My calculations",
   children: [
     {
+      name: "a",
       containingLink: 'inputs',
       children: [],
       properties: {
@@ -253,9 +263,11 @@ const rootData3: NodeData = {
       modelName: '',
     },
     {
+      name: "b",
       containingLink: 'inputs',
       children: [
         {
+          name: "some name",
           containingLink: 'type',
           children: [],
           properties: {},
