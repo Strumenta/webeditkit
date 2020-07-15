@@ -103,6 +103,12 @@ type Callback =
   | DirectAlternativesReceiver
   | NodeDataReceiver;
 
+
+export class RootsObserver {
+  nodeAdded: (modelName: string, node: ModelNode) => void;
+  nodeRemoved: (modelName: string, nodeId: NodeId) => void;
+}
+
 export class WsCommunication {
   private ws: WebSocket;
   private modelName: string; // This is the qualified model name
@@ -110,6 +116,21 @@ export class WsCommunication {
   private silent: boolean;
   private readonly handlers: { [type: string]: MessageHandler<Message> };
   private readonly callbacks: { [requestId: string]: Callback };
+  private rootsObservers : RootsObserver[] = [];
+
+  registerRootsObserver(observer: RootsObserver) {
+    this.rootsObservers.push(observer);
+  }
+
+  unregisterRootsObserver(observer: RootsObserver) : boolean {
+    const index = this.rootsObservers.indexOf(observer, 0);
+    if (index !== -1) {
+      this.rootsObservers.splice(index, 1);
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   private registerHandlersForErrorMessages() {
     this.registerHandler('ErrorsForModelReport', (msg: ErrorsForModelReport) => {
@@ -150,6 +171,7 @@ export class WsCommunication {
       const root = getDatamodelRoot(this.localName);
       if (msg.parentNodeId == null) {
         // this is a new root
+        this.rootsObservers.forEach((o: RootsObserver) => o.nodeAdded(this.modelName, dataToNode(msg.child)));
       } else {
         if (root == null) {
           throw new Error('data model with local name ' + this.localName + ' was not found');
@@ -166,6 +188,7 @@ export class WsCommunication {
       const root = getDatamodelRoot(this.localName);
       if (msg.parentNodeId == null) {
         // this is a root
+        this.rootsObservers.forEach((o: RootsObserver) => o.nodeRemoved(this.modelName, msg.child.id));
       } else {
         if (root == null) {
           throw new Error('data model with local name ' + this.localName + ' was not found');

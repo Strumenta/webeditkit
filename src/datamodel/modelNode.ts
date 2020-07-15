@@ -45,6 +45,14 @@ export class LimitedModelNode {
   name(): string | undefined {
     return this.limitedData.name;
   }
+
+  idString(): string {
+    return this.limitedData.id.regularId;
+  }
+
+  conceptName(): string {
+    return this.limitedData.concept;
+  }
 }
 
 export class ModelNode extends LimitedModelNode {
@@ -131,14 +139,6 @@ export class ModelNode extends LimitedModelNode {
       return undefined;
     }
     return new Ref(this.data.refs[referenceName]);
-  }
-
-  idString(): string {
-    return this.data.id.regularId;
-  }
-
-  conceptName(): string {
-    return this.data.concept;
   }
 
   findNodeById(nodeIdStr: string): ModelNode | undefined {
