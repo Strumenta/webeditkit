@@ -6,7 +6,7 @@ const compareByName = (a: LimitedNodeData, b: LimitedNodeData) => {
   return a.name.localeCompare(b.name);
 };
 
-class HttpCommunication {
+export class HttpCommunication {
   private readonly httpMpsServerAddress: string;
 
   constructor(httpMpsServerAddress: string) {
