@@ -2,8 +2,7 @@ import { expect } from 'chai';
 import 'mocha';
 import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 
-const puppeteer = require('puppeteer');
-const request = require('request');
+import puppeteer from 'puppeteer';
 
 describe('WebEditKit integration', () => {
   before(function (done) {
@@ -20,7 +19,7 @@ describe('WebEditKit integration', () => {
       try {
         const page = await browser.newPage();
         await page.on('response', (response) => {
-          if (response.status() != 200) {
+          if (response.status() !== 200) {
             throw new Error('Not 200');
           }
         });
@@ -48,7 +47,7 @@ describe('WebEditKit integration', () => {
       try {
         const page = await browser.newPage();
         await page.on('response', (response) => {
-          if (response.status() != 200) {
+          if (response.status() !== 200) {
             throw new Error('Not 200');
           }
         });
@@ -61,8 +60,8 @@ describe('WebEditKit integration', () => {
         const modules = JSON.parse(bodyHTML).value;
         let found = false;
         for (const m of modules) {
-          if (m['name'] == 'com.strumenta.mpsserver.server') {
-            expect(m['uuid']).to.equal('bf983e15-b4da-4ef2-8e0a-5041eab7ff32');
+          if (m.name === 'com.strumenta.mpsserver.server') {
+            expect(m.uuid).to.equal('bf983e15-b4da-4ef2-8e0a-5041eab7ff32');
             found = true;
           }
         }
