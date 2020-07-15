@@ -3,7 +3,7 @@ import 'mocha';
 import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 import { Browser, Page } from 'puppeteer';
 
-import * as puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer';
 import { ModuleInfo } from '../../src/communication/httpcommunication';
 
 describe('WebEditKit integration', () => {
@@ -30,7 +30,9 @@ describe('WebEditKit integration', () => {
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/`);
         await page.screenshot({ path: `screenshots/s1.png` });
-        const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+        const bodyHTML = await page.evaluate(() => {
+          return document.body.innerHTML
+        });
         expect(bodyHTML).to.equal('MPS Server up and running.');
       } catch (e) {
         console.log('exception captured', e);
