@@ -4,6 +4,7 @@ import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 import { Browser, Page } from 'puppeteer';
 
 import * as puppeteer from 'puppeteer';
+import { ModuleInfo } from '../../src/communication/httpcommunication';
 
 describe('WebEditKit integration', () => {
   before(function (done) {
@@ -43,7 +44,7 @@ describe('WebEditKit integration', () => {
   });
   it('modules are listed', function(done) {
     this.timeout(120000);
-    (async () => {
+    void (async () => {
       const browser = await puppeteer.launch();
       try {
         const page = await browser.newPage();
@@ -58,7 +59,7 @@ describe('WebEditKit integration', () => {
         await page.goto(`http://localhost:${MPSSERVER_PORT}/modules?includeReadOnly=true&includePackaged=true`);
         await page.screenshot({ path: `screenshots/s2.png` });
         const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-        const modules = JSON.parse(bodyHTML).value;
+        const modules = JSON.parse(bodyHTML).value as ModuleInfo[];
         let found = false;
         for (const m of modules) {
           if (m.name === 'com.strumenta.mpsserver.server') {
