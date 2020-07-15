@@ -15,13 +15,17 @@ export function nodeIdToString(nodeId: NodeId): string {
   return nodeId.regularId;
 }
 
-export interface NodeData {
+export interface LimitedNodeData {
   abstractConcept: boolean;
+  concept: string;
+  id: NodeId;
+  name: string;
+}
+
+export interface NodeData extends LimitedNodeData {
   properties: PropertiesValues;
   children: NodeData[];
-  concept: string;
   containingLink?: string | undefined;
-  id: NodeId;
   refs: { [key: string]: ReferenceData };
   rootName?: string | undefined;
   modelName: string; // The qualified model name

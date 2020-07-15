@@ -1,5 +1,5 @@
-import { NodeData, NodeInModel } from './misc';
-import { ModelNode } from './modelNode';
+import { LimitedNodeData, NodeData, NodeInModel } from './misc';
+import { LimitedModelNode, ModelNode } from './modelNode';
 
 const datamodelRoots = new Map<string, ModelNode>();
 const datamodelClasses = new Map<string, new (n: NodeData) => ModelNode>();
@@ -24,9 +24,14 @@ export function registerDataModelClass(conceptName: string, clazz: new (data: No
   datamodelClasses.set(conceptName, clazz);
 }
 
-export function dataToNode(data: NodeData): ModelNode {
-  const clazz = datamodelClasses.get(data.concept);
-  return new (clazz ?? ModelNode)(data);
+export function dataToNode(data: NodeData): ModelNode;
+export function dataToNode(data: LimitedNodeData): LimitedModelNode {
+  if ('properties' in data) {
+    const clazz = datamodelClasses.get((data as NodeData).concept);
+    return new (clazz ? ? ModelNode)(data as NodeData);
+  } else {
+    return new LimitedModelNode((data));
+  }
 }
 
 ///
