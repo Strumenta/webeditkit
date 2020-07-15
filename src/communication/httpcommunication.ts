@@ -44,9 +44,9 @@ export class HttpCommunication {
     this.httpMpsServerAddress = httpMpsServerAddress;
   }
 
-  getInstancesOfConcept(modelName: string, conceptName: string, receiver: (nodes: LimitedModelNode[]) => void) : void {
+  getInstancesOfConcept(modelName: string, conceptName: string, receiver: (nodes: LimitedModelNode[]) => void): void {
     void fetch(`${this.httpMpsServerAddress}/models/${modelName}/concept/${conceptName}`).then(async (response) => {
-      const data = await response.json() as OperationResult;
+      const data = (await response.json()) as OperationResult;
       if (data.success) {
         const instances = data.value as LimitedNodeData[];
         instances.sort(compareByName);
@@ -57,13 +57,13 @@ export class HttpCommunication {
     });
   }
 
-  getSolutions(languages: string[] = [], receiver: (solutions: SolutionInfo[]) => void) : void {
+  getSolutions(languages: string[] = [], receiver: (solutions: SolutionInfo[]) => void): void {
     let url = `${this.httpMpsServerAddress}/solutions`;
     if (languages.length > 0) {
-      url += `?languages=${languages.join(",")}`;
+      url += `?languages=${languages.join(',')}`;
     }
     void fetch(url).then(async (response) => {
-      const data = await response.json() as OperationResult;
+      const data = (await response.json()) as OperationResult;
       if (data.success) {
         receiver(data.value);
       } else {
@@ -72,11 +72,15 @@ export class HttpCommunication {
     });
   }
 
-  getModule(moduleName: string, includeModelsWithoutUUID = false, receiver: (module: ModuleInfoDetailed) => void) : void {
+  getModule(
+    moduleName: string,
+    includeModelsWithoutUUID = false,
+    receiver: (module: ModuleInfoDetailed) => void,
+  ): void {
     const flagValue = Boolean(includeModelsWithoutUUID).toString();
     const url = `${this.httpMpsServerAddress}/modules/${moduleName}?includeModelsWithoutUUID=${flagValue}`;
     void fetch(url).then(async (response) => {
-      const data = await response.json() as OperationResult;
+      const data = (await response.json()) as OperationResult;
       if (data.success) {
         receiver(data.value);
       } else {
