@@ -1,8 +1,9 @@
 import { expect } from 'chai';
 import 'mocha';
 import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
+import { Browser, Page } from 'puppeteer';
 
-import puppeteer from 'puppeteer';
+import * as puppeteer from 'puppeteer';
 
 describe('WebEditKit integration', () => {
   before(function (done) {
@@ -14,16 +15,16 @@ describe('WebEditKit integration', () => {
 
   it('mpsserver is accessible', function(done) {
     this.timeout(120000);
-    (async () => {
-      const browser = await puppeteer.launch();
+    void (async () => {
+      const browser : Browser = await puppeteer.launch();
       try {
-        const page = await browser.newPage();
-        await page.on('response', (response) => {
+        const page : Page = await browser.newPage();
+        page.on('response', (response) => {
           if (response.status() !== 200) {
             throw new Error('Not 200');
           }
         });
-        await page.on('console', (message) =>
+        page.on('console', (message) =>
           console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`),
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/`);
@@ -46,12 +47,12 @@ describe('WebEditKit integration', () => {
       const browser = await puppeteer.launch();
       try {
         const page = await browser.newPage();
-        await page.on('response', (response) => {
+        page.on('response', (response) => {
           if (response.status() !== 200) {
             throw new Error('Not 200');
           }
         });
-        await page.on('console', (message) =>
+        page.on('console', (message) =>
           console.log(`  (browser) ${message.type().substr(0, 3).toUpperCase()} ${message.text()}`),
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/modules?includeReadOnly=true&includePackaged=true`);
