@@ -7,7 +7,7 @@ const compareByName = (a: LimitedNodeData, b: LimitedNodeData) => {
   return a.name.localeCompare(b.name);
 };
 
-interface ModuleInfo {
+export interface ModuleInfo {
   name: string;
   uuid: UUID;
   foreignName: string;
@@ -15,15 +15,15 @@ interface ModuleInfo {
   readonly: boolean;
 }
 
-interface SolutionInfo extends ModuleInfo {
+export interface SolutionInfo extends ModuleInfo {
   usedLanguages: string[];
 }
 
-interface ModuleInfoDetailed extends ModuleInfo {
+export interface ModuleInfoDetailed extends ModuleInfo {
   models: ModelInfo[];
 }
 
-interface ModelInfo {
+export interface ModelInfo {
   qualifiedName: string;
   uuid: UUID;
   foreignName: string;
@@ -67,7 +67,7 @@ export class HttpCommunication {
   }
 
   getModule(moduleName: string, includeModelsWithoutUUID: boolean = false, receiver: (module: ModuleInfoDetailed) => void) {
-    const flagValue = new Boolean(includeModelsWithoutUUID).toString();
+    const flagValue = Boolean(includeModelsWithoutUUID).toString();
     const url = `${this.httpMpsServerAddress}/modules/${moduleName}?includeModelsWithoutUUID=${flagValue}`;
     fetch(url).then(async (response) => {
       const data = await response.json();
