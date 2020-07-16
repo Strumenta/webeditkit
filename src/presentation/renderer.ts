@@ -56,7 +56,7 @@ function getDefaultRenderer(modelNode: ModelNode): Renderer {
     if (abstractConcept) {
       return fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
     } else {
-      const label = modelNode.alias || `[default ${modelNode.simpleConceptName()}]`;
+      const label = modelNode.data.smartReference?.name || modelNode.conceptAlias || `[default ${modelNode.simpleConceptName()}]`;
       return fixedCell(modelNode, label, ['default-cell-concrete']);
     }
   };

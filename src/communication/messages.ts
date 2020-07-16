@@ -134,6 +134,7 @@ export interface AddChild extends RequestMessage {
   container: NodeIDInModel;
   containmentName: string;
   conceptToInstantiate: string;
+  smartRefNodeId?: number; // TODO Alessio should this be a NodeIDInModel? How?
 }
 
 export interface AddChildAnswer extends RequestAnswer {

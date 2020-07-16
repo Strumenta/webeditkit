@@ -224,7 +224,7 @@ describe('WsCommunication', () => {
     const root = dataToNode(clone(rootData1));
     root.injectModelName('my.qualified.ModelName', 'myRoot');
     const n_a = root.findNodeById('1848360241685547698')!;
-    ws.addChild(n_a, 'type', 'my.concept.ToInstantiate');
+    ws.addChild(n_a, 'type', 'my.concept.ToInstantiate', node);
   });
 
   it('should support addChildAtIndex', (done) => {

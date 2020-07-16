@@ -30,7 +30,8 @@ export interface NodeData extends LimitedNodeData {
   rootName?: string | undefined;
   modelName: string; // The qualified model name
   parent?: NodeData | undefined;
-  alias?: string;
+  conceptAlias?: string;
+  smartReference?: NodeData;
 }
 
 export interface NodeInModel {

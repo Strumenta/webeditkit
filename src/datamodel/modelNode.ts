@@ -155,8 +155,8 @@ export class ModelNode extends LimitedModelNode {
     return undefined;
   }
 
-  get alias(): string | undefined {
-    return this.data.alias;
+  get conceptAlias(): string | undefined {
+    return this.data.conceptAlias;
   }
 
   simpleConceptName(): string {
@@ -233,7 +233,7 @@ export class ModelNode extends LimitedModelNode {
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
-    this.ws().addChildAtIndex(this, containmentName, index, childConcept, initializer, uuid);
+    this.ws().addChildAtIndex(this, containmentName, index, childConcept, undefined, initializer, uuid);
   }
 
   createSingleChild(

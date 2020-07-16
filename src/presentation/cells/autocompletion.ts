@@ -39,24 +39,16 @@ export function alternativesProviderForAddingChild(
       throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
     }
     ws.askAlternatives(modelNode, containmentName, (alternatives) => {
-      const adder = (conceptName: string) => () => {
+      const adder = (conceptName: string, node?: NodeData) => () => {
         if (replacing) {
-          ws.setChild(modelNode, containmentName, conceptName);
+          ws.setChild(modelNode, containmentName, conceptName); // TODO
         } else {
-          ws.addChild(modelNode, containmentName, conceptName);
+          ws.addChild(modelNode, containmentName, conceptName, node);
         }
-      };
-      const smartRefAdder = (node: NodeData) => () => {
-        alert("TODO");
-        console.log(modelNode, containmentName, node);
       };
       const uiAlternatives = Array.from(
         alternatives.filter(filter).map((alt, index) => {
-          if(alt.node) {
-            return { label: alt.alias, execute: smartRefAdder(alt.node) };
-          } else {
-            return { label: alt.alias, execute: adder(alt.conceptName) };
-          }
+          return { label: alt.alias, execute: adder(alt.conceptName, alt.node) };
         }),
       );
       suggestionsReceiver(uiAlternatives);
