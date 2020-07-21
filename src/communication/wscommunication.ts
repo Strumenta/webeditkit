@@ -473,6 +473,7 @@ export class WsCommunication {
     container: ModelNode,
     containmentName: string,
     conceptName: string,
+    node?: NodeData,
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
@@ -485,6 +486,7 @@ export class WsCommunication {
       container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
+      smartRefNodeId: node?.id
     } as SetChild);
   }
 

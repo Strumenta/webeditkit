@@ -242,7 +242,7 @@ export class ModelNode extends LimitedModelNode {
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
-    this.ws().setChild(this, containmentName, childConcept, initializer, uuid);
+    this.ws().setChild(this, containmentName, childConcept, undefined, initializer, uuid);
   }
 
   insertNextSibling(): void {

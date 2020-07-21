@@ -41,14 +41,14 @@ export function alternativesProviderForAddingChild(
     ws.askAlternatives(modelNode, containmentName, (alternatives) => {
       const adder = (conceptName: string, node?: NodeData) => () => {
         if (replacing) {
-          ws.setChild(modelNode, containmentName, conceptName); // TODO
+          ws.setChild(modelNode, containmentName, conceptName, node);
         } else {
           ws.addChild(modelNode, containmentName, conceptName, node);
         }
       };
       const uiAlternatives = Array.from(
         alternatives.filter(filter).map((alt, index) => {
-          return { label: alt.alias, execute: adder(alt.conceptName, alt.node) };
+          return { label: alt.node ? alt.node.name : alt.alias, execute: adder(alt.conceptName, alt.node) };
         }),
       );
       suggestionsReceiver(uiAlternatives);
