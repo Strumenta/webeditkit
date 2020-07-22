@@ -1,7 +1,8 @@
-import { LimitedModelNode } from '../datamodel/modelNode';
-import { limitedDataToNode } from '../datamodel/registry';
-import { LimitedNodeData } from '../datamodel/misc';
+import { LimitedModelNode, ModelNode } from '../datamodel/modelNode';
+import { dataToNode, limitedDataToNode } from '../datamodel/registry';
+import { LimitedNodeData, NodeData } from '../datamodel/misc';
 import { UUID } from './messages';
+import { SyncRequestClient } from 'ts-sync-request';
 
 const compareByName = (a: LimitedNodeData, b: LimitedNodeData) => {
   return a.name.localeCompare(b.name);
@@ -126,5 +127,18 @@ export class HttpCommunication {
         console.error(data.message);
       }
     });
+  }
+
+  getMpsEditor(conceptName: string) : ModelNode | null {
+    const url = `${this.httpMpsServerAddress}/concepts/${conceptName}/editor`;
+    const response = new SyncRequestClient()
+      .get<OperationResult<NodeData>>(url);
+    if (response.success) {
+      if (response.value.concept === 'jetbrains.mps.lang.editor.ConceptEditorDeclaration') {
+        const cellModel = dataToNode(response.value).childByLinkName('cellModel') as ModelNode;
+        return cellModel;
+      }
+    }
+    return null;
   }
 }
