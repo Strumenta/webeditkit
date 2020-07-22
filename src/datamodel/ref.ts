@@ -2,6 +2,8 @@ import { ModelNode } from './modelNode';
 import { baseUrlForModelName } from '../index';
 import { dataToNode, getDefaultBaseUrl } from './registry';
 import { NodeData, ReferenceData } from './misc';
+import {SyncRequestClient} from "ts-sync-request";
+import { OperationResult } from '../communication/httpcommunication';
 
 export class Ref {
   data: ReferenceData;
@@ -29,5 +31,24 @@ export class Ref {
         }
         cb(dataToNode(data.value as NodeData));
       });
+  }
+
+  syncLoadData() : ModelNode {
+    let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
+    if (baseUrl == null) {
+      throw new Error(
+        'No base url specified for model ' + this.data.model.qualifiedName + ' and no default base url available',
+      );
+    }
+    if (!baseUrl.startsWith('http://')) {
+      baseUrl = 'http://' + baseUrl;
+    }
+    const url = baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
+    const response = new SyncRequestClient()
+      .get<OperationResult<NodeData>>(url);
+    if (!response.success) {
+      throw new Error('No data obtained');
+    }
+    return dataToNode(response.value);
   }
 }
