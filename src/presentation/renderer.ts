@@ -50,7 +50,7 @@ export function renderModelNode(modelNode: ModelNode): VNode {
   return res;
 }
 
-function getDefaultRenderer(modelNode: ModelNode): Renderer {
+export function getBasicDefaultRenderer(modelNode: ModelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
   return () => {
     if (abstractConcept) {
@@ -62,11 +62,18 @@ function getDefaultRenderer(modelNode: ModelNode): Renderer {
   };
 }
 
+type DefaultRendererProvider = (modelNode: ModelNode) => Renderer;
+let defaultRendererProvider : DefaultRendererProvider = getBasicDefaultRenderer;
+
+export function setDefaultRendererProvider(newDefaultRendererProvider : DefaultRendererProvider) {
+  defaultRendererProvider = newDefaultRendererProvider;
+}
+
 function getRenderer(modelNode: ModelNode | undefined): Renderer {
   if (modelNode == null) {
     // it happens during node replacements
     return () => fixedCell(modelNode, 'null');
   }
   const conceptName = modelNode.conceptName();
-  return getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
+  return getRegisteredRenderer(conceptName) || defaultRendererProvider(modelNode);
 }
