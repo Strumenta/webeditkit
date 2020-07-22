@@ -6,7 +6,7 @@ import { editorController } from './EditorController';
 
 const renderersByName: { [key: string]: Renderer } = {};
 
-type Renderer = (modelNode: ModelNode) => VNode;
+export type Renderer = (modelNode: ModelNode) => VNode;
 
 export function clearRendererRegistry(): void {
   Object.keys(renderersByName).forEach((key) => {
