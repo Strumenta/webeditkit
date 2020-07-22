@@ -16,6 +16,7 @@
     "lodash.merge": "^4.6.2",
     "rxjs": "^6.5.5",
     "snabbdom": "^0.7.4",
+    "ts-sync-request": "^1.4.1",
     "tsify": "^4.0.1"
   },
   "devDependencies": {
