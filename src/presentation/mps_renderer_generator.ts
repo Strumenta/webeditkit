@@ -1,8 +1,7 @@
-import { VNode } from 'snabbdom/vnode';
-import { SyncRequestClient } from 'ts-sync-request';
-import { HttpCommunication, OperationResult } from '../communication/httpcommunication';
-import { NodeData } from '../datamodel/misc';
-import { ModelNode, Ref } from '../datamodel';
+import h from 'snabbdom/h';
+
+import { HttpCommunication} from '../internal';
+import { ModelNode, Ref } from '../internal';
 import {
   childCell,
   editableCell,
@@ -15,9 +14,8 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from '../internal';
-import { Renderer } from './renderer';
-import h from 'snabbdom/h';
-import { horizontalLine } from './cells/types';
+import { Renderer } from '../internal';
+import { horizontalLine } from '../internal';
 
 /*
  We get the editor definition from MPS and generate a renderer out of it.

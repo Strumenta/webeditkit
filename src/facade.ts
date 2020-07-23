@@ -1,5 +1,3 @@
-import * as wscommunication from './communication/wscommunication';
-import { dataToNode, editorController, ModelNode, renderModelNode } from './index';
 import { init } from 'snabbdom';
 import * as sclass from 'snabbdom/modules/class';
 import * as sprops from 'snabbdom/modules/props';
@@ -7,14 +5,17 @@ import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { VNode } from 'snabbdom/vnode';
-import { IssuesMap } from './datamodel/issues';
-import { wrapInsertHook, wrapUpdateHook } from './presentation/cells';
-import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
-import { getIssuesForModel } from './communication/wscommunication';
 import h from 'snabbdom/h';
-import { wrapKeypressHandler } from './presentation/cells/vnodemanipulation';
 import toVNode from 'snabbdom/tovnode';
-import { NodeData } from './datamodel/misc';
+
+import * as wscommunication from './internal';
+import { dataToNode, editorController, ModelNode, renderModelNode } from './internal';
+import { IssuesMap } from './internal';
+import { wrapInsertHook, wrapUpdateHook } from './internal';
+import { forEachDataModel, setDatamodelRoot } from './internal';
+import { getIssuesForModel } from './internal';
+import { wrapKeypressHandler } from './internal';
+import { NodeData } from './internal';
 
 export function setup(): void {
   // No setup necessary for now, but it's useful to keep an init point

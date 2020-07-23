@@ -11,9 +11,9 @@ import {
   tabCell,
   verticalCollectionCell,
   verticalGroupCell,
-} from './presentation/cells';
+} from './internal';
 
-import { registerRenderer } from './presentation/renderer';
+import { registerRenderer } from './internal';
 
 export {
   fixedCell,
@@ -30,36 +30,36 @@ export {
   verticalGroupCell,
 };
 
-import { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode } from './datamodel';
+import { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode } from './internal';
 
 export { getDefaultBaseUrl, setDefaultBaseUrl, findNode, registerDataModelClass, ModelNode };
 
-import { editorController, EditorController, Observer } from './presentation';
+import { editorController, EditorController, Observer } from './internal';
 
 export { editorController, EditorController, Observer };
 
-import { getIssuesForNode } from './communication/issues';
+import { getIssuesForNode } from './internal';
 
 export { getIssuesForNode };
 
-import { getNodeFromLocalRepo } from './datamodel';
+import { getNodeFromLocalRepo } from './internal';
 
 export { getNodeFromLocalRepo };
 
 export { registerRenderer };
 
-import { setup, addModel, renderDataModels, loadDataModel, baseUrlForTarget, baseUrlForModelName } from './facade'
+import { setup, addModel, renderDataModels, loadDataModel, baseUrlForTarget, baseUrlForModelName } from './internal'
 export { setup, addModel, renderDataModels, loadDataModel, baseUrlForTarget, baseUrlForModelName }
 
-import { renderModelNode } from './presentation/renderer';
+import { renderModelNode } from './internal';
 
 export { renderModelNode };
 
-import h from 'snabbdom/h'; // helper function for creating vnodes
+import h from 'snabbdom/h';
 
 export { h };
 
-import { dataToNode } from './datamodel';
+import { dataToNode } from './internal';
 
 export { dataToNode };
 

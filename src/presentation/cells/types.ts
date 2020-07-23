@@ -1,6 +1,8 @@
 import h from 'snabbdom/h';
-import { AlternativeForDirectReference, getWsCommunication } from '../../communication/wscommunication';
-import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../navigation';
+import { VNode } from 'snabbdom/vnode';
+
+import { AlternativeForDirectReference, getWsCommunication } from '../../internal';
+import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../../internal';
 import {
   addAutoresize,
   domElementToModelNode,
@@ -12,7 +14,7 @@ import {
   map,
   separate,
   triggerResize,
-} from './support';
+} from '../../internal';
 import { addToDatasetObj, wrapKeydownHandler } from './vnodemanipulation';
 import {
   AlternativeFilter,
@@ -20,15 +22,14 @@ import {
   installAutocomplete,
   isAutocompleteVisible,
   SuggestionsReceiver,
-} from './autocompletion';
-import { NodeId, nodeIdToString } from '../../datamodel/misc';
-import { renderModelNode } from '../renderer';
-import { VNode } from 'snabbdom/vnode';
-import { renderDataModels } from '../../index';
-import { ModelNode } from '../../datamodel';
-import { Ref } from '../../datamodel';
-import { log } from '../../utils/misc';
-import { EditedValue, IData } from './data';
+} from '../../internal';
+import { NodeId, nodeIdToString } from '../../internal';
+import { renderModelNode } from '../../internal';
+import { renderDataModels } from '../../internal';
+import { ModelNode } from '../../internal';
+import { Ref } from '../../internal';
+import { log } from '../../internal';
+import { EditedValue, IData } from '../../internal';
 
 export function childCell(
   node: ModelNode,

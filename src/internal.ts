@@ -2,13 +2,13 @@ import { LimitedModelNode, ModelNode } from './datamodel/modelNode';
 import { dataToNode, limitedDataToNode } from './datamodel/registry';
 import { LimitedNodeData, NodeData, ReferenceData } from './datamodel/misc';
 import { UUID } from './communication/messages';
-import { getWsCommunication, Alternative, WsCommunication, createInstance } from './communication/wscommunication';
+import { getWsCommunication, Intention, AlternativeForDirectReference, Alternative, WsCommunication, createInstance } from './communication/wscommunication';
 import { getIssuesForNode } from './communication/issues';
 import { IssuesMap } from './datamodel/issues';
 import { IssueDescription } from './communication/messages';
 import { log } from './utils/misc';
 import { NodeInModel } from './datamodel/misc';
-import { editorController } from './presentation';
+import { editorController } from './presentation/EditorController';
 
 import { NodeId, PropertiesValues, PropertyValue } from './datamodel/misc';
 import { Alternatives } from './communication/wscommunication';
@@ -102,7 +102,11 @@ import {
   AutocompleteAlternative,
   installAutocomplete,
 } from './presentation/cells/autocompletion';
-import { IData} from './presentation/cells/data'
+import { IData, EditedValue} from './presentation/cells/data'
+
+import { autoresize, next, previous, inputWidthUpdate, myAutoresizeOptions, triggerFocus } from './presentation/uiutils';
+
+export { autoresize, next, previous, inputWidthUpdate, myAutoresizeOptions, triggerFocus }
 
 export {
   fixedCell,
@@ -143,7 +147,7 @@ export {
 };
 
 export {LimitedNodeData,ModelNode, dataToNode, limitedDataToNode, LimitedModelNode, NodeData, ReferenceData, UUID,
-  getWsCommunication, Alternative, WsCommunication, createInstance, getIssuesForNode, IssuesMap, IssueDescription, log,
+  getWsCommunication, Intention, AlternativeForDirectReference, Alternative, WsCommunication, createInstance, getIssuesForNode, IssuesMap, IssueDescription, log,
 NodeInModel, editorController, NodeId, PropertiesValues, PropertyValue, Alternatives,
 modelNodeToNodeInModel, nodeIdToString, refToNodeInModel, uuidv4, NodeProcessor, reactToAReferenceChange, Ref,
 getDatamodelRoot, getNodeFromLocalRepo, renderDataModels, getIssuesForModel, AddChild,
@@ -180,4 +184,58 @@ getDatamodelRoot, getNodeFromLocalRepo, renderDataModels, getIssuesForModel, Add
   RequestForDirectReferences,
   RequestPropertyChange,
   SetChild, registerIssuesForModel, registerIssuesForNode, setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass, findNode,
-  baseUrlForModelName, OperationResult, IData}
+  baseUrlForModelName, OperationResult, IData, EditedValue}
+
+import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from './presentation/navigation';
+export { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp }
+import {
+  addAutoresize,
+  domElementToModelNode,
+  flattenArray,
+  focusOnReference,
+  handleAddingElement,
+  triggerResize,
+} from './presentation/cells/support';
+export {
+  addAutoresize,
+  domElementToModelNode,
+  flattenArray,
+  focusOnReference,
+  handleAddingElement,
+  triggerResize,
+}
+import { addToDatasetObj, wrapKeydownHandler } from './presentation/cells/vnodemanipulation';
+export { addToDatasetObj, wrapKeydownHandler }
+import {
+  AlternativeFilter,
+  isAutocompleteVisible
+} from './presentation/cells/autocompletion';
+import {renderModelNode} from './presentation/renderer';
+export { AlternativeFilter, isAutocompleteVisible, renderModelNode }
+
+import { EditorController, Observer } from './presentation/EditorController';
+
+export { EditorController, Observer}
+
+import { HttpCommunication} from './communication/httpcommunication';
+export { HttpCommunication }
+
+import { Renderer } from './presentation/renderer';
+import { horizontalLine } from './presentation/cells/types';
+
+export {Renderer, horizontalLine}
+
+import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
+
+export { forEachDataModel, setDatamodelRoot }
+
+import { wrapKeypressHandler } from './presentation/cells/vnodemanipulation';
+
+export { wrapKeypressHandler}
+
+import { registerRenderer } from './presentation/renderer';
+
+export { registerRenderer }
+
+import { setup, addModel, loadDataModel, baseUrlForTarget } from './facade'
+export { setup, addModel, loadDataModel, baseUrlForTarget }
