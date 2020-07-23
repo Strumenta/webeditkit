@@ -677,5 +677,13 @@ export function tabCell(): VNode {
 }
 
 export function horizontalLine(): VNode {
-  return row(h('div.horizontal-line', {}, []));
+  return h('div.horizontal-line', {}, []);
+}
+
+export function alias(node: ModelNode, extraClasses: string[] = []) : VNode {
+  return fixedCell(node, node.alias as string, extraClasses);
+}
+
+export function name(data: IData, node: ModelNode, extraClasses: string[] = []) {
+  return editableCell(data, node, 'name', extraClasses);
 }
