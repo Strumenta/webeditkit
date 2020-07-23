@@ -5,8 +5,8 @@ import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
 import { VNode } from 'snabbdom/vnode';
-import h from 'snabbdom/h';
-import toVNode from 'snabbdom/tovnode';
+import { h } from 'snabbdom/h';
+import { toVNode } from 'snabbdom/tovnode';
 
 import * as wscommunication from './internal';
 import { dataToNode, editorController, ModelNode, renderModelNode } from './internal';
@@ -34,12 +34,11 @@ export function addModel(baseUrl: string, modelName: string, nodeId: string, tar
   }, 200);
 }
 
-const patch = init([
-  // Init patch function with chosen modules
-  sclass.default, // makes it easy to toggle classes
-  sprops.default, // for setting properties on DOM elements
-  sstyle.default, // handles styling on elements with support for animations
-  seventlisteners.default, // attaches event listeners
+export const patch = init([
+  sclass.default,
+  sprops.default,
+  sstyle.default,
+  seventlisteners.default,
   sdataset.default,
 ]);
 const vnodes: { [name: string]: VNode } = {};

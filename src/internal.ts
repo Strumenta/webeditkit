@@ -288,3 +288,10 @@ export { setup, addModel, loadDataModel, baseUrlForTarget };
 
 import { clearDatamodelRoots } from './datamodel/registry';
 export { clearDatamodelRoots };
+
+import { patch } from './facade'
+export { patch }
+import { VNode } from 'snabbdom/vnode';
+import { toVNode } from 'snabbdom/tovnode';
+import { h } from 'snabbdom/h';
+export { VNode, toVNode, h }
