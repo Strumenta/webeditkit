@@ -29,17 +29,8 @@ const toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, mod
 (global as any).fetch = require('node-fetch');
 const fetchMock = require('fetch-mock');
 
-import { init } from 'snabbdom/snabbdom';
+import { h, toVNode, patch } from '../src/internal';
 
-import h from 'snabbdom/h'; // helper function for creating vnodes
-
-import toVNode from 'snabbdom/tovnode';
-
-import * as sclass from 'snabbdom/modules/class';
-import * as sprops from 'snabbdom/modules/props';
-import * as sstyle from 'snabbdom/modules/style';
-import * as seventlisteners from 'snabbdom/modules/eventlisteners';
-import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { Server, WebSocket } from 'mock-socket';
 import {
@@ -55,15 +46,6 @@ import {
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
 import { SinonFakeTimers } from 'sinon';
-
-const patch = init([
-  // Init patch function with chosen modules
-  sclass.default, // makes it easy to toggle classes
-  sprops.default, // for setting properties on DOM elements
-  sstyle.default, // handles styling on elements with support for animations
-  seventlisteners.default, // attaches event listeners
-  sdataset.default,
-]);
 
 const sinon = require('sinon');
 

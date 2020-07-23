@@ -295,3 +295,6 @@ import { VNode } from 'snabbdom/vnode';
 import { toVNode } from 'snabbdom/tovnode';
 import { h } from 'snabbdom/h';
 export { VNode, toVNode, h }
+
+import { nodeIDInModel } from './communication/messages';
+export { nodeIDInModel }

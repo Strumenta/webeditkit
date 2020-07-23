@@ -1,4 +1,4 @@
-import { VNode } from 'snabbdom/vnode';
+import { VNode } from '../src/internal';
 import { expect } from 'chai';
 import { Message } from '../src/internal';
 

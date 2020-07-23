@@ -6,11 +6,11 @@ import { addInsertHook, focusOnNode, handleSelfDeletion, separate, setDataset } 
 import { Server, WebSocket } from 'mock-socket';
 import { VNode, patch, toVNode, h } from '../src/internal'
 
-import { createInstance } from '../src/communication/wscommunication';
+import { createInstance } from '../src/internal';
 import { assertTheseMessagesAreReceived, compareVNodes, prepareFakeDom, pressChar } from './testutils';
-import { dataToNode } from '../src/datamodel/registry';
-import { NodeData } from '../src/datamodel/misc';
-import { nodeIDInModel } from '../src/communication/messages';
+import { dataToNode } from '../src/internal';
+import { NodeData } from '../src/internal';
+import { nodeIDInModel } from '../src/internal';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;

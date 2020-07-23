@@ -1,30 +1,16 @@
 import { expect } from 'chai';
 import 'mocha';
-import { VNode } from 'snabbdom/vnode';
-import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/internal';
+import { VNode, h, toVNode, patch } from '../src/internal';
+import { alternativesProviderForAbstractConcept, fixedCell, map } from '../src/internal';
 import {
-  addId,
   addInsertHook,
   alternativesProviderForAddingChild,
   AutocompleteAlternative,
-  handleSelfDeletion,
   installAutocomplete,
-  separate,
-  setDataset,
   SuggestionsReceiver,
 } from '../src/internal';
 
 import { Server, WebSocket } from 'mock-socket';
-import { init } from 'snabbdom/snabbdom';
-
-import h from 'snabbdom/h'; // helper function for creating vnodes
-import toVNode from 'snabbdom/tovnode';
-
-import * as sclass from 'snabbdom/modules/class';
-import * as sprops from 'snabbdom/modules/props';
-import * as sstyle from 'snabbdom/modules/style';
-import * as seventlisteners from 'snabbdom/modules/eventlisteners';
-import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
@@ -38,15 +24,6 @@ const { JSDOM } = jsdom;
 const init2html = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
 const toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
-
-const patch = init([
-  // Init patch function with chosen modules
-  sclass.default, // makes it easy to toggle classes
-  sprops.default, // for setting properties on DOM elements
-  sstyle.default, // handles styling on elements with support for animations
-  seventlisteners.default, // attaches event listeners
-  sdataset.default,
-]);
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
