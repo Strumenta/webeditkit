@@ -18,6 +18,10 @@ It contains also some basic instructions on how to use MPSServer and WebEditKit.
 
 We suggest using nvm to specify the exact version of node we use.
 
+### Circular dependencies
+
+To avoid them we do what is suggested here: https://medium.com/visual-development/how-to-fix-nasty-circular-dependency-issues-once-and-for-all-in-javascript-typescript-a04c987cf0de
+
 ## License
 
 This framework is released under the Apache License V2.0.
