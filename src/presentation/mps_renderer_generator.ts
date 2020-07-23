@@ -72,6 +72,10 @@ function cellToRenderer(data: IData, cellModel: ModelNode) : Renderer {
         return (modelNode => fixedCell(modelNode, '???'));
     } else if (cellModel.conceptName() === 'com.mbeddr.mpsutil.grammarcells.OptionalCell') {
         return cellToRenderer(data, cellModel.childByLinkName('option') as ModelNode);
+    } else if (cellModel.conceptName() === 'com.mbeddr.mpsutil.grammarcells.GrammarInfoCell') {
+        return cellToRenderer(data, cellModel.childByLinkName('projection') as ModelNode);
+    } else if (cellModel.conceptName() === 'com.mbeddr.mpsutil.grammarcells.WrapperCell') {
+        return cellToRenderer(data, cellModel.childByLinkName('wrapped') as ModelNode);
     } else if (cellModel.conceptName() === 'com.mbeddr.mpsutil.grammarcells.FlagCell') {
         const ref = cellModel.ref('relationDeclaration') as Ref;
         const refData = ref.syncLoadData();
