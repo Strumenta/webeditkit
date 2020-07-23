@@ -1,9 +1,10 @@
-import { PropertyValue } from '../../datamodel/misc';
-import { ModelNode } from '../../datamodel';
-import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { uuidv4 } from '../../utils/misc';
-import { getWsCommunication } from '../../communication';
+import { Subject } from 'rxjs';
+
+import { PropertyValue } from '../../internal';
+import { ModelNode } from '../../internal';
+import { uuidv4 } from '../../internal';
+import { getWsCommunication } from '../../internal';
 
 export class EditedValue {
   inputFieldValue: string;

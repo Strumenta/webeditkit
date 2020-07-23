@@ -20,7 +20,7 @@ import {
 } from './datamodel/misc';
 import { uuidv4 } from './utils/misc';
 import { NodeProcessor, reactToAReferenceChange } from './datamodel/modelNode';
-import { Ref } from './datamodel';
+import { Ref } from './datamodel/ref';
 import { getDatamodelRoot, getNodeFromLocalRepo } from './datamodel/registry';
 import { renderDataModels } from './facade';
 import { getIssuesForModel } from './communication/issues';
@@ -63,6 +63,9 @@ import {
 } from './communication/messages';
 import { registerIssuesForModel, registerIssuesForNode } from './communication/issues';
 
+import { setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass } from './datamodel/registry';
+import { findNode } from './datamodel/misc';
+
 export {LimitedNodeData,ModelNode, dataToNode, limitedDataToNode, LimitedModelNode, NodeData, UUID,
   getWsCommunication, WsCommunication, createInstance, getIssuesForNode, IssuesMap, IssueDescription, log,
 NodeInModel, editorController, NodeId, PropertiesValues, PropertyValue, Alternatives,
@@ -100,4 +103,4 @@ getDatamodelRoot, getNodeFromLocalRepo, renderDataModels, getIssuesForModel, Add
   RegisterForChanges,
   RequestForDirectReferences,
   RequestPropertyChange,
-  SetChild, registerIssuesForModel, registerIssuesForNode}
+  SetChild, registerIssuesForModel, registerIssuesForNode, setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass, findNode}

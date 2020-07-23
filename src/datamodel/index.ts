@@ -1,11 +1,9 @@
-import { setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass } from './registry';
-import { findNode } from './misc';
-import { ModelNode } from './modelNode';
-import { Ref } from './ref';
-import { dataToNode } from './registry';
+import { setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass } from '../internal';
+import { findNode } from '../internal';
+import { ModelNode } from '../internal';
+import { Ref } from '../internal';
+import { dataToNode } from '../internal';
+import { getNodeFromLocalRepo } from '../internal';
 
 export { setDefaultBaseUrl, ModelNode, getDefaultBaseUrl, registerDataModelClass, findNode, Ref, dataToNode };
-
-import { getNodeFromLocalRepo } from './registry';
-
 export { getNodeFromLocalRepo };
