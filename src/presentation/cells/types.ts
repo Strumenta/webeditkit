@@ -675,3 +675,7 @@ export function emptyRow(): VNode {
 export function tabCell(): VNode {
   return h('div.tab', {}, []);
 }
+
+export function horizontalLine(): VNode {
+  return row(h('div.horizontal-line', {}, []));
+}

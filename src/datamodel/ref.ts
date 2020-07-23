@@ -2,7 +2,7 @@ import { ModelNode } from './modelNode';
 import { baseUrlForModelName } from '../index';
 import { dataToNode, getDefaultBaseUrl } from './registry';
 import { NodeData, ReferenceData } from './misc';
-import {SyncRequestClient} from "ts-sync-request";
+import { SyncRequestClient } from 'ts-sync-request';
 import { OperationResult } from '../communication/httpcommunication';
 
 export class Ref {
@@ -33,7 +33,7 @@ export class Ref {
       });
   }
 
-  syncLoadData() : ModelNode {
+  syncLoadData(): ModelNode {
     let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
     if (baseUrl == null) {
       throw new Error(
@@ -44,8 +44,7 @@ export class Ref {
       baseUrl = 'http://' + baseUrl;
     }
     const url = baseUrl + '/models/' + this.data.model.qualifiedName + '/' + this.data.id.regularId;
-    const response = new SyncRequestClient()
-      .get<OperationResult<NodeData>>(url);
+    const response = new SyncRequestClient().get<OperationResult<NodeData>>(url);
     if (!response.success) {
       throw new Error('No data obtained');
     }

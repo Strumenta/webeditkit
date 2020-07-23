@@ -45,9 +45,11 @@ export class HttpCommunication {
     this.httpMpsServerAddress = httpMpsServerAddress;
   }
 
-  async executeAction(modelName: string, nodeIdString: string, actionName: string) : Promise<any> {
+  async executeAction(modelName: string, nodeIdString: string, actionName: string): Promise<any> {
     return new Promise<any>((resolve, onrejected) => {
-      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}`, {method: 'POST'}).then(async (response) => {
+      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}`, {
+        method: 'POST',
+      }).then(async (response) => {
         const data = (await response.json()) as OperationResult<any>;
         if (data.success) {
           resolve(data.value);
@@ -58,20 +60,22 @@ export class HttpCommunication {
     });
   }
 
-  async reload(modelName: string) : Promise<void> {
+  async reload(modelName: string): Promise<void> {
     return new Promise<void>((resolve, onrejected) => {
-      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/reload`, {method: 'POST'}).then(async (response) => {
-        const data = (await response.json()) as OperationResult<any>;
-        if (data.success) {
-          resolve();
-        } else {
-          onrejected(data.message);
-        }
-      });
+      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/reload`, { method: 'POST' }).then(
+        async (response) => {
+          const data = (await response.json()) as OperationResult<any>;
+          if (data.success) {
+            resolve();
+          } else {
+            onrejected(data.message);
+          }
+        },
+      );
     });
   }
 
-  async getCurrentBranch() : Promise<string> {
+  async getCurrentBranch(): Promise<string> {
     return new Promise<string>((resolve, onrejected) => {
       void fetch(`${this.httpMpsServerAddress}/git/currentBranch`).then(async (response) => {
         const data = (await response.json()) as OperationResult<string>;
@@ -129,10 +133,9 @@ export class HttpCommunication {
     });
   }
 
-  getMpsEditor(conceptName: string) : ModelNode | null {
+  getMpsEditor(conceptName: string): ModelNode | null {
     const url = `${this.httpMpsServerAddress}/concepts/${conceptName}/editor`;
-    const response = new SyncRequestClient()
-      .get<OperationResult<NodeData>>(url);
+    const response = new SyncRequestClient().get<OperationResult<NodeData>>(url);
     if (response.success) {
       if (response.value.concept === 'jetbrains.mps.lang.editor.ConceptEditorDeclaration') {
         const cellModel = dataToNode(response.value).childByLinkName('cellModel') as ModelNode;

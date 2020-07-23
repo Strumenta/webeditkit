@@ -63,9 +63,9 @@ export function getBasicDefaultRenderer(modelNode: ModelNode): Renderer {
 }
 
 type DefaultRendererProvider = (modelNode: ModelNode) => Renderer;
-let defaultRendererProvider : DefaultRendererProvider = getBasicDefaultRenderer;
+let defaultRendererProvider: DefaultRendererProvider = getBasicDefaultRenderer;
 
-export function setDefaultRendererProvider(newDefaultRendererProvider : DefaultRendererProvider) {
+export function setDefaultRendererProvider(newDefaultRendererProvider: DefaultRendererProvider) {
   defaultRendererProvider = newDefaultRendererProvider;
 }
 
