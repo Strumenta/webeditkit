@@ -1,5 +1,5 @@
 import * as wscommunication from './communication/wscommunication';
-import { dataToNode, editorController, loadDataModel, ModelNode, renderModelNode } from './index';
+import { dataToNode, editorController, ModelNode, renderModelNode } from './index';
 import { init } from 'snabbdom';
 import * as sclass from 'snabbdom/modules/class';
 import * as sprops from 'snabbdom/modules/props';
