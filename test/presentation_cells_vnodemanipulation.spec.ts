@@ -5,9 +5,6 @@ import { addId, setDataset, patch } from '../src/internal';
 import { dataToNode } from '../src/internal';
 import { NodeData } from '../src/internal';
 
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
-
 const init2html = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
 const toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
