@@ -1,11 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import {
-  clearRendererRegistry,
-  getRegisteredRenderer,
-  registerRenderer,
-  renderModelNode,
-} from '../src/internal';
+import { clearRendererRegistry, getRegisteredRenderer, registerRenderer, renderModelNode } from '../src/internal';
 import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
 import { compareVNodes } from './testutils';

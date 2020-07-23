@@ -1,6 +1,6 @@
 import h from 'snabbdom/h';
 
-import { HttpCommunication} from '../internal';
+import { HttpCommunication } from '../internal';
 import { ModelNode, Ref } from '../internal';
 import {
   childCell,
@@ -32,7 +32,7 @@ function cellToRenderer(data: IData, cellModel: ModelNode): Renderer {
     const childrenRenderers: Renderer[] = cellModel
       .childrenByLinkName('childCellModel')
       .map((cm) => cellToRenderer(data, cm));
-    if (cellModel.property('vertical') as boolean || cellModel.property('gridLayout') as boolean) {
+    if ((cellModel.property('vertical') as boolean) || (cellModel.property('gridLayout') as boolean)) {
       return (modelNode) => verticalGroupCell(...childrenRenderers.map((r) => row(r(modelNode))));
     } else {
       return (modelNode) => horizontalGroupCell(...childrenRenderers.map((r) => r(modelNode)));
@@ -59,7 +59,7 @@ function cellToRenderer(data: IData, cellModel: ModelNode): Renderer {
   } else if (cellModel.conceptName() === 'jetbrains.mps.lang.editor.CellModel_RefNodeList') {
     const ref = cellModel.ref('relationDeclaration') as Ref;
     const refData = ref.syncLoadData();
-    if (cellModel.property('vertical') as boolean || cellModel.property('gridLayout') as boolean) {
+    if ((cellModel.property('vertical') as boolean) || (cellModel.property('gridLayout') as boolean)) {
       return (modelNode) => verticalCollectionCell(modelNode, refData.name() as string);
     } else {
       return (modelNode) => horizontalCollectionCell(modelNode, refData.name() as string);

@@ -681,7 +681,7 @@ export function horizontalLine(): VNode {
   return h('div.horizontal-line', {}, []);
 }
 
-export function alias(node: ModelNode, extraClasses: string[] = []) : VNode {
+export function alias(node: ModelNode, extraClasses: string[] = []): VNode {
   return fixedCell(node, node.alias as string, extraClasses);
 }
 

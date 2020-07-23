@@ -1,5 +1,13 @@
 import { SyncRequestClient } from 'ts-sync-request';
-import { LimitedModelNode, ModelNode,dataToNode, limitedDataToNode, LimitedNodeData, NodeData, UUID } from '../internal';
+import {
+  LimitedModelNode,
+  ModelNode,
+  dataToNode,
+  limitedDataToNode,
+  LimitedNodeData,
+  NodeData,
+  UUID,
+} from '../internal';
 
 const compareByName = (a: LimitedNodeData, b: LimitedNodeData) => {
   return a.name.localeCompare(b.name);

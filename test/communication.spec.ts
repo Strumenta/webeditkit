@@ -1,11 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import {
-  clearIssueMap,
-  getIssuesForModel,
-  registerIssuesForModel,
-  registerIssuesForNode,
-} from '../src/internal';
+import { clearIssueMap, getIssuesForModel, registerIssuesForModel, registerIssuesForNode } from '../src/internal';
 import { getIssuesForNode } from '../src/internal';
 
 describe('Communication.Issues', () => {
