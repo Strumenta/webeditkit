@@ -208,8 +208,8 @@ describe('Presentation.Cells.Support', () => {
       global.document = doc;
 
       const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'My fixed test');
-      let cellWithHook = addInsertHook(cell, (myNode) => {
+      const cell = fixedCell(aNode, 'My fixed test');
+      const cellWithHook = addInsertHook(cell, (myNode) => {
         compareVNodes(myNode, cellWithHook);
         done();
       });
@@ -222,8 +222,8 @@ describe('Presentation.Cells.Support', () => {
       const doc = prepareFakeDom(html1);
 
       const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'My fixed test');
-      let cellWithHook = addClass(
+      const cell = fixedCell(aNode, 'My fixed test');
+      const cellWithHook = addClass(
         setDataset(
           addInsertHook(cell, (myNode) => {
             focusOnNode('my-node-id', 'calc');
@@ -237,7 +237,7 @@ describe('Presentation.Cells.Support', () => {
         ),
         'represent-node',
       );
-      let container = h('div#calc', {}, [cellWithHook]);
+      const container = h('div#calc', {}, [cellWithHook]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
@@ -247,8 +247,8 @@ describe('Presentation.Cells.Support', () => {
       const doc = prepareFakeDom(html1);
 
       const aNode = dataToNode(rootData1);
-      let cell = fixedCell(aNode, 'myFixedCell');
-      let cellWithHook = addClass(
+      const cell = fixedCell(aNode, 'myFixedCell');
+      const cellWithHook = addClass(
         addInsertHook(cell, (myNode: VNode) => {
           // @ts-ignore
           expect(myNode.elm.className).to.eql('fixed represent-node');
@@ -260,7 +260,7 @@ describe('Presentation.Cells.Support', () => {
         'represent-node',
       );
 
-      let container = h('div#calc', {}, [cellWithHook]);
+      const container = h('div#calc', {}, [cellWithHook]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
@@ -310,8 +310,8 @@ describe('Presentation.Cells.Support', () => {
 
       const aNode = dataToNode(rootData1);
       aNode.injectModelName('my.qualified.model', 'calc');
-      let cell = fixedCell(aNode, 'myFixedCell');
-      let cellWithHook = addClass(
+      const cell = fixedCell(aNode, 'myFixedCell');
+      const cellWithHook = addClass(
         addInsertHook(cell, (myNode: VNode) => {
           // @ts-ignore
           expect(myNode.elm.className).to.eql('fixed represent-node');
@@ -323,7 +323,7 @@ describe('Presentation.Cells.Support', () => {
         'represent-node',
       );
 
-      let container = h('div#calc', {}, [cellWithHook]);
+      const container = h('div#calc', {}, [cellWithHook]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });

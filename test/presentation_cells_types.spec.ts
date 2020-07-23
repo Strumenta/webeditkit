@@ -346,7 +346,7 @@ describe('Cells.Types', () => {
 
       const cell = fixedCell(aNode, 'My fixed cell');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -357,7 +357,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should handle right arrow', (done) => {
@@ -368,7 +368,7 @@ describe('Cells.Types', () => {
 
       const cell = fixedCell(aNode, 'My fixed cell');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -379,7 +379,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
@@ -407,7 +407,7 @@ describe('Cells.Types', () => {
       const cell = referenceCell(inputNode, 'type');
 
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -420,7 +420,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should handle right arrow', (done) => {
@@ -433,7 +433,7 @@ describe('Cells.Types', () => {
       const cell = referenceCell(inputNode, 'type');
 
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -446,7 +446,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should load value', (done) => {
@@ -458,7 +458,7 @@ describe('Cells.Types', () => {
       const inputNode = aNode.childrenByLinkName('inputs')[1];
       const cell = referenceCell(inputNode, 'myref');
       expect(toHTML(cell)).to.equal('<input class="reference" value="Loading...">');
-      let container = h('div#calc.editor', {}, [cell]);
+      const container = h('div#calc.editor', {}, [cell]);
 
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
@@ -624,13 +624,13 @@ describe('Cells.Types', () => {
 
       const cell = verticalCollectionCell(aNode, 'unexisting');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm!.firstChild as HTMLInputElement;
+        const myInput = vnode.elm!.firstChild as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         pressEnter(myInput);
       });
 
-      let addedNode = h('input.represent-node', { dataset: { node_represented: 'xxx-123' } }, ['My added node']);
-      let container = h('div#calc', {}, [cellWithHook, addedNode]);
+      const addedNode = h('input.represent-node', { dataset: { node_represented: 'xxx-123' } }, ['My added node']);
+      const container = h('div#calc', {}, [cellWithHook, addedNode]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
@@ -720,7 +720,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.focus();
         expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
@@ -728,7 +728,7 @@ describe('Cells.Types', () => {
         expect(doc.activeElement!.outerHTML).to.eql('<input class="aft">');
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to ArrowLeft with selection at start', () => {
@@ -739,7 +739,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
@@ -749,7 +749,7 @@ describe('Cells.Types', () => {
         expect(doc.activeElement!.outerHTML).to.eql('<input class="bef">');
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to ArrowLeft with selection not at start', () => {
@@ -760,7 +760,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -770,7 +770,7 @@ describe('Cells.Types', () => {
         expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to Backspace when at start', (done) => {
@@ -781,7 +781,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
@@ -794,7 +794,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [
+      const container = h('div#calc.editor', {}, [
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
       patch(toVNode(document.querySelector('#calc')!), container);
@@ -807,7 +807,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -824,7 +824,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [
+      const container = h('div#calc.editor', {}, [
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
 

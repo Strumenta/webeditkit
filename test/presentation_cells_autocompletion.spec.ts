@@ -374,8 +374,8 @@ describe('Presentation.Cells.Autocompletion', () => {
   describe('should support installAutocomplete', () => {
     it('it should handle positive case', (done) => {
       const aNode = dataToNode(rootData1);
-      let cell = h('input', {}, []);
-      let cellWithHook = addInsertHook(cell, (myNode: VNode) => {
+      const cell = h('input', {}, []);
+      const cellWithHook = addInsertHook(cell, (myNode: VNode) => {
         installAutocomplete(
           myNode,
           (suggestionsReceiver: SuggestionsReceiver) => {
