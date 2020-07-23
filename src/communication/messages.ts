@@ -2,9 +2,9 @@
  * This file contains all the messages which are exchanged with the MPS Server
  */
 
-import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
-import { Alternatives } from './wscommunication';
-import { ModelNode } from '../datamodel';
+import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../internal';
+import { Alternatives } from '../internal';
+import { ModelNode } from '../internal';
 
 // Refactoring plan:
 // * Revisit NodeId to be a simple string

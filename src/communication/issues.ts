@@ -1,9 +1,9 @@
-import { IssuesMap } from '../datamodel/issues';
-import { IssueDescription } from './messages';
-import { log } from '../utils/misc';
-import { NodeInModel } from '../datamodel/misc';
-import { editorController } from '../presentation';
 import deepEqual from 'deep-equal';
+import { IssuesMap } from '../internal';
+import { IssueDescription } from '../internal';
+import { log } from '../internal';
+import { NodeInModel } from '../internal';
+import { editorController } from '../internal';
 
 const issuesMap: { [key: string]: IssuesMap } = {};
 
