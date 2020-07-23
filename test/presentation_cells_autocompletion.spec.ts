@@ -18,8 +18,7 @@ import { clearRendererRegistry } from '../src/presentation/renderer';
 import { AskAlternatives, Message, nodeIDInModel } from '../src/communication/messages';
 import { NodeData } from '../src/datamodel/misc';
 
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import { JSDOM } from 'jsdom';
 
 const init2html = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');

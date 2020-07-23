@@ -20,8 +20,7 @@ import { addInsertHook } from '../src/internal';
 
 import { DefaultInsertion, PropertyChangeNotification } from '../src/internal';
 
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import { JSDOM } from 'jsdom';
 
 const toHtmlInit = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');

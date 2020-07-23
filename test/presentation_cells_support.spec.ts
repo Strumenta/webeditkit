@@ -12,8 +12,7 @@ import { dataToNode } from '../src/internal';
 import { NodeData } from '../src/internal';
 import { nodeIDInModel } from '../src/internal';
 
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import { JSDOM } from 'jsdom';
 
 const init2html = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
