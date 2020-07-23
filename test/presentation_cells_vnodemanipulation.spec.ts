@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { fixedCell} from '../src/internal';
+import { fixedCell } from '../src/internal';
 import { addId, setDataset, patch } from '../src/internal';
 import { dataToNode } from '../src/internal';
 import { NodeData } from '../src/internal';

@@ -4,7 +4,7 @@ import { addClass, fixedCell, map } from '../src/internal';
 import { addInsertHook, focusOnNode, handleSelfDeletion, separate, setDataset } from '../src/internal';
 
 import { Server, WebSocket } from 'mock-socket';
-import { VNode, patch, toVNode, h } from '../src/internal'
+import { VNode, patch, toVNode, h } from '../src/internal';
 
 import { createInstance } from '../src/internal';
 import { assertTheseMessagesAreReceived, compareVNodes, prepareFakeDom, pressChar } from './testutils';

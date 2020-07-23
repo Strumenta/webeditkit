@@ -4,7 +4,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { toVNode, h, VNode} from './internal';
+import { toVNode, h, VNode } from './internal';
 
 import * as wscommunication from './internal';
 import { dataToNode, editorController, ModelNode, renderModelNode } from './internal';
@@ -32,13 +32,7 @@ export function addModel(baseUrl: string, modelName: string, nodeId: string, tar
   }, 200);
 }
 
-export const patch = init([
-  sclass.default,
-  sprops.default,
-  sstyle.default,
-  seventlisteners.default,
-  sdataset.default,
-]);
+export const patch = init([sclass.default, sprops.default, sstyle.default, seventlisteners.default, sdataset.default]);
 const vnodes: { [name: string]: VNode } = {};
 
 type BasicCallback = () => void;

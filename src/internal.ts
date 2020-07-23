@@ -289,14 +289,14 @@ export { setup, addModel, loadDataModel, baseUrlForTarget };
 import { clearDatamodelRoots } from './datamodel/registry';
 export { clearDatamodelRoots };
 
-import { patch } from './facade'
-export { patch }
+import { patch } from './facade';
+export { patch };
 import { VNode } from 'snabbdom/vnode';
 import { toVNode } from 'snabbdom/tovnode';
 import { h, VNodeChildElement } from 'snabbdom/h';
-export { VNode, toVNode, h, VNodeChildElement }
+export { VNode, toVNode, h, VNodeChildElement };
 import { InsertHook, UpdateHook } from 'snabbdom/hooks';
-export { InsertHook, UpdateHook }
+export { InsertHook, UpdateHook };
 
 import { nodeIDInModel } from './communication/messages';
-export { nodeIDInModel }
+export { nodeIDInModel };
