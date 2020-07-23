@@ -1,4 +1,4 @@
-import h from 'snabbdom/h';
+import { h } from '../internal';
 
 import { HttpCommunication } from '../internal';
 import { ModelNode, Ref } from '../internal';

@@ -1,4 +1,4 @@
-import { VNode } from 'snabbdom/vnode';
+import { VNode } from '../internal';
 
 import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCell } from '../internal';
 import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from '../internal';

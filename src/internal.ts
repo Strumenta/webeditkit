@@ -293,8 +293,10 @@ import { patch } from './facade'
 export { patch }
 import { VNode } from 'snabbdom/vnode';
 import { toVNode } from 'snabbdom/tovnode';
-import { h } from 'snabbdom/h';
-export { VNode, toVNode, h }
+import { h, VNodeChildElement } from 'snabbdom/h';
+export { VNode, toVNode, h, VNodeChildElement }
+import { InsertHook, UpdateHook } from 'snabbdom/hooks';
+export { InsertHook, UpdateHook }
 
 import { nodeIDInModel } from './communication/messages';
 export { nodeIDInModel }

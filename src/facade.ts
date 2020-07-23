@@ -4,9 +4,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { VNode } from 'snabbdom/vnode';
-import { h } from 'snabbdom/h';
-import { toVNode } from 'snabbdom/tovnode';
+import { toVNode, h, VNode} from './internal';
 
 import * as wscommunication from './internal';
 import { dataToNode, editorController, ModelNode, renderModelNode } from './internal';

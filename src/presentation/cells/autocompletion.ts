@@ -1,5 +1,5 @@
 import autocomplete from 'autocompleter';
-import { VNode } from 'snabbdom/vnode';
+import { VNode } from '../../internal';
 
 import { ModelNode } from '../../internal';
 import { Alternative, getWsCommunication } from '../../internal';

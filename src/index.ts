@@ -55,7 +55,7 @@ import { renderModelNode } from './internal';
 
 export { renderModelNode };
 
-import h from 'snabbdom/h';
+import { h } from './internal';
 
 export { h };
 

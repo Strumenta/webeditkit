@@ -1,6 +1,5 @@
-import { VNode } from 'snabbdom/vnode';
+import { VNode, VNodeChildElement } from '../../internal';
 import _ from 'lodash';
-import { VNodeChildElement } from 'snabbdom/h';
 
 import { autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus } from '../../internal';
 import { ModelNode } from '../../internal';

@@ -1,5 +1,5 @@
-import { VNode } from 'snabbdom/vnode';
-import { InsertHook, UpdateHook } from 'snabbdom/hooks';
+import { VNode } from '../../internal';
+import { InsertHook, UpdateHook } from '../../internal';
 
 import merge from 'lodash.merge';
 

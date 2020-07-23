@@ -1,5 +1,4 @@
-import h from 'snabbdom/h';
-import { VNode } from 'snabbdom/vnode';
+import { h, VNode } from '../../internal';
 
 import { AlternativeForDirectReference, getWsCommunication } from '../../internal';
 import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../../internal';
