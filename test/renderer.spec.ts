@@ -5,13 +5,13 @@ import {
   getRegisteredRenderer,
   registerRenderer,
   renderModelNode,
-} from '../src/presentation/renderer';
+} from '../src/internal';
 import { VNode } from 'snabbdom/vnode';
 import { h } from 'snabbdom';
 import { compareVNodes } from './testutils';
-import { ModelNode } from '../src/datamodel/modelNode';
-import { dataToNode } from '../src/datamodel/registry';
-import { NodeData } from '../src/datamodel/misc';
+import { ModelNode } from '../src/internal';
+import { dataToNode } from '../src/internal';
+import { NodeData } from '../src/internal';
 
 const rootData1: NodeData = {
   name: 'My calculations',

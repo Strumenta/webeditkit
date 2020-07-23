@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import 'mocha';
-import { isAtStart, isAtEnd, moveToNextElement, moveToPrevElement } from '../src/presentation/navigation';
+import { isAtStart, isAtEnd, moveToNextElement, moveToPrevElement } from '../src/internal';
 import { prepareFakeDom } from './testutils';
 
 const html1 = `<html>

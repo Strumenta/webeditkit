@@ -1,4 +1,4 @@
-import { NodeData } from '../src/datamodel/misc';
+import { NodeData } from '../src/internal';
 import { expect } from 'chai';
 import 'mocha';
 import {
@@ -14,11 +14,11 @@ import {
   tabCell,
   verticalCollectionCell,
   verticalGroupCell,
-} from '../src/presentation/cells';
-import { flattenArray } from '../src/presentation';
-import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
+} from '../src/internal';
+import { flattenArray } from '../src/internal';
+import { addInsertHook } from '../src/internal';
 
-import { DefaultInsertion, PropertyChangeNotification } from '../src/communication/messages';
+import { DefaultInsertion, PropertyChangeNotification } from '../src/internal';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;

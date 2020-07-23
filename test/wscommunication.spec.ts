@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Server, WebSocket } from 'mock-socket';
-import { WsCommunication } from '../src/communication/wscommunication';
-import { clearRendererRegistry } from '../src/presentation/renderer';
+import { WsCommunication } from '../src/internal';
+import { clearRendererRegistry } from '../src/internal';
 import { assertTheseMessagesAreReceived, clone } from './testutils';
-import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
+import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/internal';
 import {
   AnswerPropertyChange,
   nodeIDInModel,

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
-import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/presentation/cells';
+import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/internal';
 import {
   addId,
   addInsertHook,
@@ -12,7 +12,7 @@ import {
   separate,
   setDataset,
   SuggestionsReceiver,
-} from '../src/presentation/cells';
+} from '../src/internal';
 
 import { Server, WebSocket } from 'mock-socket';
 import { init } from 'snabbdom/snabbdom';

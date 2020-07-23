@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import 'mocha';
 import { prepareFakeDom } from './testutils';
-import { clearDatamodelRoots } from '../src/datamodel/registry';
-import { clearRendererRegistry } from '../src/presentation/renderer';
-import { autoresize } from '../src/presentation/uiutils';
+import { clearDatamodelRoots } from '../src/internal';
+import { clearRendererRegistry } from '../src/internal';
+import { autoresize } from '../src/internal';
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">

@@ -5,8 +5,8 @@ import {
   getIssuesForModel,
   registerIssuesForModel,
   registerIssuesForNode,
-} from '../src/communication/issues';
-import { getIssuesForNode } from '../src/communication/issues';
+} from '../src/internal';
+import { getIssuesForNode } from '../src/internal';
 
 describe('Communication.Issues', () => {
   beforeEach(() => {

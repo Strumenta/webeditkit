@@ -24,7 +24,9 @@ import { NodeProcessor, reactToAReferenceChange } from './datamodel/modelNode';
 import { Ref } from './datamodel/ref';
 import { getDatamodelRoot, getNodeFromLocalRepo } from './datamodel/registry';
 import { renderDataModels } from './facade';
-import { getIssuesForModel } from './communication/issues';
+import { getIssuesForModel, clearIssueMap } from './communication/issues';
+
+export { clearIssueMap }
 
 import {
   AddChild,
@@ -82,6 +84,7 @@ import {
   verticalCollectionCell,
   verticalGroupCell,
 } from './presentation/cells/types';
+import { Data } from './presentation/cells/data';
 import { map, focusOnNode, handleSelfDeletion, separate } from './presentation/cells/support';
 import {
   addClass,
@@ -115,6 +118,7 @@ export {
   editableCell,
   emptyRow,
   childCell,
+  Data,
   flagCell,
   horizontalGroupCell,
   row,
@@ -233,9 +237,14 @@ import { wrapKeypressHandler } from './presentation/cells/vnodemanipulation';
 
 export { wrapKeypressHandler}
 
-import { registerRenderer } from './presentation/renderer';
+import { registerRenderer, clearRendererRegistry,
+  getRegisteredRenderer, } from './presentation/renderer';
 
-export { registerRenderer }
+export { registerRenderer, clearRendererRegistry,
+  getRegisteredRenderer, }
 
 import { setup, addModel, loadDataModel, baseUrlForTarget } from './facade'
 export { setup, addModel, loadDataModel, baseUrlForTarget }
+
+import { clearDatamodelRoots } from './datamodel/registry';
+export { clearDatamodelRoots }

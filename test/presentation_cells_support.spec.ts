@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
 import { VNode } from 'snabbdom/vnode';
-import { addClass, fixedCell, map } from '../src/presentation/cells';
-import { addInsertHook, focusOnNode, handleSelfDeletion, separate, setDataset } from '../src/presentation/cells';
+import { addClass, fixedCell, map } from '../src/internal';
+import { addInsertHook, focusOnNode, handleSelfDeletion, separate, setDataset } from '../src/internal';
 
 import { Server, WebSocket } from 'mock-socket';
 import { init } from 'snabbdom/snabbdom';

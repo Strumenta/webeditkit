@@ -1,6 +1,6 @@
 import { VNode } from 'snabbdom/vnode';
 import { expect } from 'chai';
-import { Message } from '../src/communication/messages';
+import { Message } from '../src/internal';
 
 const jsdom = require('jsdom');
 const { JSDOM } = jsdom;

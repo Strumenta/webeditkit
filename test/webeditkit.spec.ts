@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import 'mocha';
-import { renderDataModels } from '../src/index';
-import { clearRendererRegistry } from '../src/presentation/renderer';
-import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/datamodel/registry';
+import { renderDataModels } from '../src/internal';
+import { clearRendererRegistry } from '../src/internal';
+import { clearDatamodelRoots, dataToNode, getDatamodelRoot, setDatamodelRoot } from '../src/internal';
 import { prepareFakeDom } from './testutils';
-import { clearIssueMap } from '../src/communication/issues';
-import { NodeData } from '../src/datamodel/misc';
+import { clearIssueMap } from '../src/internal';
+import { NodeData } from '../src/internal';
 
 import * as sinon from 'sinon';
 
