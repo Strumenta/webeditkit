@@ -6,13 +6,13 @@ import {
   PropertiesValues,
   PropertyValue,
   refToNodeInModel,
-} from '../datamodel/misc';
-import { uuidv4 } from '../utils/misc';
-import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
-import { Ref } from '../datamodel';
-import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
-import { renderDataModels } from '../index';
-import { getIssuesForModel } from './issues';
+} from '../internal';
+import { uuidv4 } from '../internal';
+import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../internal';
+import { Ref } from '../internal';
+import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../internal';
+import { renderDataModels } from '../internal';
+import { getIssuesForModel } from '../internal';
 
 export { getIssuesForModel };
 
@@ -53,8 +53,8 @@ import {
   RequestPropertyChange,
   SetChild,
   UUID,
-} from './messages';
-import { registerIssuesForModel, registerIssuesForNode } from './issues';
+} from '../internal';
+import { registerIssuesForModel, registerIssuesForNode } from '../internal';
 
 export interface Alternative {
   conceptName: string;

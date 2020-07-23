@@ -13,6 +13,91 @@ import { editorController } from './presentation';
 import { NodeId, PropertiesValues, PropertyValue } from './datamodel/misc';
 import { Alternatives } from './communication/wscommunication';
 
+import {
+  modelNodeToNodeInModel,
+  nodeIdToString,
+  refToNodeInModel,
+} from './datamodel/misc';
+import { uuidv4 } from './utils/misc';
+import { NodeProcessor, reactToAReferenceChange } from './datamodel/modelNode';
+import { Ref } from './datamodel';
+import { getDatamodelRoot, getNodeFromLocalRepo } from './datamodel/registry';
+import { renderDataModels } from './facade';
+import { getIssuesForModel } from './communication/issues';
+
+import {
+  AddChild,
+  AddChildAnswer,
+  AnswerAlternatives,
+  AnswerDefaultInsertion,
+  AnswerForDirectReferences,
+  AnswerPropertyChange,
+  AskAlternatives,
+  AskErrorsForNode,
+  CreateIntentionsBlock,
+  CreateIntentionsBlockAnswer,
+  CreateRoot,
+  DefaultInsertion,
+  DeleteNode,
+  ErrorsForModelReport,
+  ErrorsForNodeReport,
+  ExecuteIntention,
+  GetIntentionsBlock,
+  GetIntentionsBlockAnswer,
+  GetNode,
+  GetNodeAnswer,
+  InsertNextSibling,
+  InstantiateConcept,
+  IntentionData,
+  Message,
+  NodeAdded,
+  NodeIDInModel,
+  nodeIDInModelFromNode,
+  NodeRemoved,
+  PropertyChangeNotification,
+  ReferenceChange,
+  RegisterForChanges,
+  RequestForDirectReferences,
+  RequestPropertyChange,
+  SetChild,
+} from './communication/messages';
+import { registerIssuesForModel, registerIssuesForNode } from './communication/issues';
+
 export {LimitedNodeData,ModelNode, dataToNode, limitedDataToNode, LimitedModelNode, NodeData, UUID,
   getWsCommunication, WsCommunication, createInstance, getIssuesForNode, IssuesMap, IssueDescription, log,
-NodeInModel, editorController, NodeId, PropertiesValues, PropertyValue, Alternatives}
+NodeInModel, editorController, NodeId, PropertiesValues, PropertyValue, Alternatives,
+modelNodeToNodeInModel, nodeIdToString, refToNodeInModel, uuidv4, NodeProcessor, reactToAReferenceChange, Ref,
+getDatamodelRoot, getNodeFromLocalRepo, renderDataModels, getIssuesForModel, AddChild,
+  AddChildAnswer,
+  AnswerAlternatives,
+  AnswerDefaultInsertion,
+  AnswerForDirectReferences,
+  AnswerPropertyChange,
+  AskAlternatives,
+  AskErrorsForNode,
+  CreateIntentionsBlock,
+  CreateIntentionsBlockAnswer,
+  CreateRoot,
+  DefaultInsertion,
+  DeleteNode,
+  ErrorsForModelReport,
+  ErrorsForNodeReport,
+  ExecuteIntention,
+  GetIntentionsBlock,
+  GetIntentionsBlockAnswer,
+  GetNode,
+  GetNodeAnswer,
+  InsertNextSibling,
+  InstantiateConcept,
+  IntentionData,
+  Message,
+  NodeAdded,
+  NodeIDInModel,
+  nodeIDInModelFromNode,
+  NodeRemoved,
+  PropertyChangeNotification,
+  ReferenceChange,
+  RegisterForChanges,
+  RequestForDirectReferences,
+  RequestPropertyChange,
+  SetChild, registerIssuesForModel, registerIssuesForNode}
