@@ -1,9 +1,10 @@
-import { ModelNode } from './modelNode';
-import { baseUrlForModelName } from '../index';
-import { dataToNode, getDefaultBaseUrl } from './registry';
-import { NodeData, ReferenceData } from './misc';
 import { SyncRequestClient } from 'ts-sync-request';
-import { OperationResult } from '../communication/httpcommunication';
+
+import { ModelNode } from '../internal';
+import { baseUrlForModelName } from '../internal';
+import { dataToNode, getDefaultBaseUrl } from '../internal';
+import { NodeData, ReferenceData } from '../internal';
+import { OperationResult } from '../internal';
 
 export class Ref {
   data: ReferenceData;

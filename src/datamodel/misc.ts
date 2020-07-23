@@ -1,6 +1,6 @@
-import { getDatamodelRoot } from './registry';
-import { ModelNode } from './modelNode';
-import { Ref } from './ref';
+import { getDatamodelRoot } from '../internal';
+import { ModelNode } from '../internal';
+import { Ref } from '../internal';
 
 ///
 /// Nodes

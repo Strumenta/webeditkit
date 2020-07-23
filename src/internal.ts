@@ -1,6 +1,6 @@
 import { LimitedModelNode, ModelNode } from './datamodel/modelNode';
 import { dataToNode, limitedDataToNode } from './datamodel/registry';
-import { LimitedNodeData, NodeData } from './datamodel/misc';
+import { LimitedNodeData, NodeData, ReferenceData } from './datamodel/misc';
 import { UUID } from './communication/messages';
 import { getWsCommunication, WsCommunication, createInstance } from './communication/wscommunication';
 import { getIssuesForNode } from './communication/issues';
@@ -12,6 +12,7 @@ import { editorController } from './presentation';
 
 import { NodeId, PropertiesValues, PropertyValue } from './datamodel/misc';
 import { Alternatives } from './communication/wscommunication';
+import {OperationResult} from './communication/httpcommunication';
 
 import {
   modelNodeToNodeInModel,
@@ -65,8 +66,9 @@ import { registerIssuesForModel, registerIssuesForNode } from './communication/i
 
 import { setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass } from './datamodel/registry';
 import { findNode } from './datamodel/misc';
+import { baseUrlForModelName } from './facade';
 
-export {LimitedNodeData,ModelNode, dataToNode, limitedDataToNode, LimitedModelNode, NodeData, UUID,
+export {LimitedNodeData,ModelNode, dataToNode, limitedDataToNode, LimitedModelNode, NodeData, ReferenceData, UUID,
   getWsCommunication, WsCommunication, createInstance, getIssuesForNode, IssuesMap, IssueDescription, log,
 NodeInModel, editorController, NodeId, PropertiesValues, PropertyValue, Alternatives,
 modelNodeToNodeInModel, nodeIdToString, refToNodeInModel, uuidv4, NodeProcessor, reactToAReferenceChange, Ref,
@@ -103,4 +105,5 @@ getDatamodelRoot, getNodeFromLocalRepo, renderDataModels, getIssuesForModel, Add
   RegisterForChanges,
   RequestForDirectReferences,
   RequestPropertyChange,
-  SetChild, registerIssuesForModel, registerIssuesForNode, setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass, findNode}
+  SetChild, registerIssuesForModel, registerIssuesForNode, setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass, findNode,
+  baseUrlForModelName, OperationResult}
