@@ -14,7 +14,7 @@ import {
   row,
   verticalCollectionCell,
   verticalGroupCell,
-} from './cells';
+} from '../internal';
 import { Renderer } from './renderer';
 import h from 'snabbdom/h';
 import { horizontalLine } from './cells/types';

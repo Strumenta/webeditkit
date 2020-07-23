@@ -11,8 +11,8 @@ import {
   tabCell,
   verticalCollectionCell,
   verticalGroupCell,
-} from './types';
-import { map, focusOnNode, handleSelfDeletion, separate } from './support';
+} from '../../internal';
+import { map, focusOnNode, handleSelfDeletion, separate } from '../../internal';
 import {
   addClass,
   addToDataset,
@@ -24,14 +24,14 @@ import {
   wrapMouseOverHandler,
   addId,
   setDataset,
-} from './vnodemanipulation';
+} from '../../internal';
 import {
   alternativesProviderForAbstractConcept,
   SuggestionsReceiver,
   alternativesProviderForAddingChild,
   AutocompleteAlternative,
   installAutocomplete,
-} from './autocompletion';
+} from '../../internal';
 
 export {
   fixedCell,
@@ -71,4 +71,3 @@ export {
   setDataset,
 };
 
-export * from './data';
