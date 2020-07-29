@@ -300,3 +300,10 @@ export { InsertHook, UpdateHook };
 
 import { nodeIDInModel } from './communication/messages';
 export { nodeIDInModel };
+
+import { setDefaultRendererProvider } from './presentation/renderer';
+import { generateRendererFromMPSEditor } from './presentation/mps_renderer_generator';
+export { setDefaultRendererProvider, generateRendererFromMPSEditor }
+
+import {alias, name} from './presentation/cells/types'
+export {alias, name}

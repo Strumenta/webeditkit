@@ -19,9 +19,9 @@ export function setup(): void {
   // No setup necessary for now, but it's useful to keep an init point
 }
 
-export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): void {
+export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): Promise<ModelNode> {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
-  loadDataModel('http://' + baseUrl, modelName, nodeId, target).catch((e) => {
+  const p : Promise<ModelNode> = loadDataModel('http://' + baseUrl, modelName, nodeId, target).catch((e) => {
     console.error(e);
     // TODO Alessio check here - where is it throwing? Is it intended?
     throw new Error('Failed to load data model, base URL ' + baseUrl);
@@ -30,6 +30,7 @@ export function addModel(baseUrl: string, modelName: string, nodeId: string, tar
   setTimeout(() => {
     ws.askForErrorsInNode(modelName, nodeId);
   }, 200);
+  return p;
 }
 
 export const patch = init([sclass.default, sprops.default, sstyle.default, seventlisteners.default, sdataset.default]);

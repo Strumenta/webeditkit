@@ -59,6 +59,9 @@ import { h } from './internal';
 
 export { h };
 
-import { dataToNode } from './internal';
+import { dataToNode, Data, IData, getDatamodelRoot, HttpCommunication, setDefaultRendererProvider, generateRendererFromMPSEditor } from './internal';
 
-export { dataToNode };
+export { dataToNode, Data, IData, getDatamodelRoot, HttpCommunication, setDefaultRendererProvider, generateRendererFromMPSEditor };
+
+import { addInsertHook, addId, addToDataset, Ref, alias, name} from './internal'
+export { addInsertHook, addId, addToDataset, Ref, alias, name}
