@@ -132,7 +132,7 @@ interface TargetDataType {
 
 const targetData: { [target: string]: TargetDataType } = {};
 
-export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string): Promise<void> {
+export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string): Promise<ModelNode> {
   targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
   return fetch(nodeURL)
@@ -140,9 +140,11 @@ export function loadDataModel(baseUrl: string, model: string, nodeId: string, ta
     .then((data) => {
       const root = dataToNode(data.value as NodeData);
       root.injectModelName(model, target);
+
       setDatamodelRoot(target, root);
 
       renderDataModels();
+      return root;
     });
 }
 
