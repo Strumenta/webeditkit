@@ -59,9 +59,25 @@ import { h } from './internal';
 
 export { h };
 
-import { dataToNode, Data, IData, getDatamodelRoot, HttpCommunication, setDefaultRendererProvider, generateRendererFromMPSEditor } from './internal';
+import {
+  dataToNode,
+  Data,
+  IData,
+  getDatamodelRoot,
+  HttpCommunication,
+  setDefaultRendererProvider,
+  generateRendererFromMPSEditor,
+} from './internal';
 
-export { dataToNode, Data, IData, getDatamodelRoot, HttpCommunication, setDefaultRendererProvider, generateRendererFromMPSEditor };
+export {
+  dataToNode,
+  Data,
+  IData,
+  getDatamodelRoot,
+  HttpCommunication,
+  setDefaultRendererProvider,
+  generateRendererFromMPSEditor,
+};
 
-import { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication} from './internal'
-export { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication}
+import { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication } from './internal';
+export { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication };

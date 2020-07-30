@@ -21,7 +21,7 @@ export function setup(): void {
 
 export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): Promise<ModelNode> {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
-  const p : Promise<ModelNode> = loadDataModel('http://' + baseUrl, modelName, nodeId, target).catch((e) => {
+  const p: Promise<ModelNode> = loadDataModel('http://' + baseUrl, modelName, nodeId, target).catch((e) => {
     console.error(e);
     // TODO Alessio check here - where is it throwing? Is it intended?
     throw new Error('Failed to load data model, base URL ' + baseUrl);
