@@ -57,8 +57,8 @@ import {
   IntentionData,
   Message,
   NodeAdded,
-  NodeIDInModel,
-  nodeIDInModelFromNode,
+  NodeReference,
+  nodeReferenceFromNode,
   NodeRemoved,
   PropertyChangeNotification,
   ReferenceChange,
@@ -221,8 +221,8 @@ export {
   IntentionData,
   Message,
   NodeAdded,
-  NodeIDInModel,
-  nodeIDInModelFromNode,
+  NodeReference,
+  nodeReferenceFromNode,
   NodeRemoved,
   PropertyChangeNotification,
   ReferenceChange,
@@ -298,8 +298,8 @@ export { VNode, toVNode, h, VNodeChildElement };
 import { InsertHook, UpdateHook } from 'snabbdom/hooks';
 export { InsertHook, UpdateHook };
 
-import { nodeIDInModel } from './communication/messages';
-export { nodeIDInModel };
+import { nodeReference } from './communication/messages';
+export { nodeReference };
 
 import { setDefaultRendererProvider } from './presentation/renderer';
 import { generateRendererFromMPSEditor } from './presentation/mps_renderer_generator';

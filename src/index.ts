@@ -63,5 +63,5 @@ import { dataToNode, Data, IData, getDatamodelRoot, HttpCommunication, setDefaul
 
 export { dataToNode, Data, IData, getDatamodelRoot, HttpCommunication, setDefaultRendererProvider, generateRendererFromMPSEditor };
 
-import { addInsertHook, addId, addToDataset, Ref, alias, name} from './internal'
-export { addInsertHook, addId, addToDataset, Ref, alias, name}
+import { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication} from './internal'
+export { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication}

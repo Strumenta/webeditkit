@@ -10,7 +10,7 @@ import { createInstance } from '../src/internal';
 import { assertTheseMessagesAreReceived, compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { dataToNode } from '../src/internal';
 import { NodeData } from '../src/internal';
-import { nodeIDInModel } from '../src/internal';
+import { nodeReference } from '../src/internal';
 
 import { JSDOM } from 'jsdom';
 
@@ -261,7 +261,7 @@ describe('Presentation.Cells.Support', () => {
                 check: (msg) => {
                   expect(msg).to.eql({
                     type: 'deleteNode',
-                    node: nodeIDInModel('my.qualified.model', '324292001770075100'),
+                    node: nodeReference('my.qualified.model', '324292001770075100'),
                   });
                   mockServer.close();
                   done();
