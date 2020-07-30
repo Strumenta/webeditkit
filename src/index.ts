@@ -86,6 +86,6 @@ import { keyword } from './internal';
 export { keyword };
 
 import {OperationResult, LanguageInfoDetailed, LanguageInfo, Concept, Enum,
-  EnumLiteral, Property, Containment, Link, Reference} from './internal'
+  EnumLiteral, Property, Containment, Link, Reference, NodeData} from './internal'
 export {OperationResult, LanguageInfoDetailed, LanguageInfo, Concept, Enum,
-  EnumLiteral, Property, Containment, Link, Reference}
+  EnumLiteral, Property, Containment, Link, Reference, NodeData}
