@@ -84,3 +84,8 @@ export { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunicatio
 
 import { keyword } from './internal';
 export { keyword };
+
+import {OperationResult, LanguageInfoDetailed, LanguageInfo, Concept, Enum,
+  EnumLiteral, Property, Containment, Link, Reference} from './internal'
+export {OperationResult, LanguageInfoDetailed, LanguageInfo, Concept, Enum,
+  EnumLiteral, Property, Containment, Link, Reference}

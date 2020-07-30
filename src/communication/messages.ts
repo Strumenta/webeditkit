@@ -300,7 +300,7 @@ export interface Containment extends Link {
   multiple: boolean;
 }
 
-type Reference = Link;
+export type Reference = Link;
 
 export interface Property {
   name: string;
