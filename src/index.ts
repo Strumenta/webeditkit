@@ -81,3 +81,6 @@ export {
 
 import { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication } from './internal';
 export { addInsertHook, addId, addToDataset, Ref, alias, name, getWsCommunication };
+
+import { keyword } from './internal';
+export { keyword };

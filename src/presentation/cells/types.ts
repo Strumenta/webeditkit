@@ -14,7 +14,7 @@ import {
   separate,
   triggerResize,
 } from '../../internal';
-import { addToDatasetObj, wrapKeydownHandler } from './vnodemanipulation';
+import { addToDatasetObj, wrapKeydownHandler } from '../../internal';
 import {
   AlternativeFilter,
   alternativesProviderForAddingChild,
@@ -686,4 +686,8 @@ export function alias(node: ModelNode, extraClasses: string[] = []): VNode {
 
 export function name(data: IData, node: ModelNode, extraClasses: string[] = []) {
   return editableCell(data, node, 'name', extraClasses);
+}
+
+export function keyword(modelNode: ModelNode, text: string): VNode {
+  return fixedCell(modelNode, text, ['keyword']);
 }

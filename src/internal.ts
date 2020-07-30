@@ -305,5 +305,5 @@ import { setDefaultRendererProvider } from './presentation/renderer';
 import { generateRendererFromMPSEditor } from './presentation/mps_renderer_generator';
 export { setDefaultRendererProvider, generateRendererFromMPSEditor };
 
-import { alias, name } from './presentation/cells/types';
-export { alias, name };
+import { alias, name, keyword } from './presentation/cells/types';
+export { alias, name, keyword };
