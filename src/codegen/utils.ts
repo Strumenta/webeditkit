@@ -1,8 +1,8 @@
 export const baseConcept = 'jetbrains.mps.lang.core.structure.BaseConcept';
 
 export class GeneratedCode {
-  imports : {[key:string] : string[]} = {};
-  generatedConcepts : string[] = [];
+  imports: { [key: string]: string[] } = {};
+  generatedConcepts: string[] = [];
   languageName: string;
   ignoreOtherLanguages = true;
 
@@ -10,7 +10,7 @@ export class GeneratedCode {
     this.languageName = languageName;
   }
 
-  cleanClassName(name: string) : string {
+  cleanClassName(name: string): string {
     if (simpleName(name) !== name) {
       if (!this.isInThisLanguage(name) && this.ignoreOtherLanguages) {
         return 'ModelNode';
@@ -20,11 +20,11 @@ export class GeneratedCode {
     if (name === 'Object') {
       return 'MyObject';
     } else {
-      return name.replace("_","");
+      return name.replace('_', '');
     }
   }
 
-  processParent(parentName: string) : string {
+  processParent(parentName: string): string {
     if (this.isInThisLanguage(parentName)) {
       return parentName;
     } else {
@@ -36,11 +36,11 @@ export class GeneratedCode {
     }
   }
 
-  isInThisLanguage(name: string) : boolean {
+  isInThisLanguage(name: string): boolean {
     return name.startsWith(`${this.languageName}.structure.`);
   }
 
-  considerDependency(dependency: string) : boolean {
+  considerDependency(dependency: string): boolean {
     if (this.generatedConcepts.includes(dependency)) {
       return true;
     }
@@ -50,12 +50,12 @@ export class GeneratedCode {
     }
     // concept to be imported
     if (!this.ignoreOtherLanguages) {
-      const classSimpleName = dependency.split(".").pop() as string;
+      const classSimpleName = dependency.split('.').pop() as string;
       const rest = dependency.substring(0, dependency.length - classSimpleName.length);
-      if (!rest.endsWith(".structure.")) {
-        throw new Error("invalid dependency " + dependency);
+      if (!rest.endsWith('.structure.')) {
+        throw new Error('invalid dependency ' + dependency);
       }
-      const importedLanguageName = rest.substring(0, rest.length - ".structure.".length);
+      const importedLanguageName = rest.substring(0, rest.length - '.structure.'.length);
       if (this.imports[importedLanguageName] == null) {
         this.imports[importedLanguageName] = [];
       }
@@ -68,20 +68,19 @@ export class GeneratedCode {
   }
 }
 
-export function simpleName(qname: string) : string {
+export function simpleName(qname: string): string {
   return qname.split('.').pop() as string;
 }
 
-export function propertyConstName(origname: string) : string {
+export function propertyConstName(origname: string): string {
   return `PROP_${camelCaseToUppercaseSnakeName(origname)}`;
 }
 
-export function linkConstName(origname: string) : string {
+export function linkConstName(origname: string): string {
   return `LINK_${camelCaseToUppercaseSnakeName(origname)}`;
 }
 
-export function camelCaseToUppercaseSnakeName(origname: string) : string {
-  const words = origname.replace(/([a-z])([A-Z])/g, '$1 $2').split(" ");
-  return words.join("_").toUpperCase();
+export function camelCaseToUppercaseSnakeName(origname: string): string {
+  const words = origname.replace(/([a-z])([A-Z])/g, '$1 $2').split(' ');
+  return words.join('_').toUpperCase();
 }
-

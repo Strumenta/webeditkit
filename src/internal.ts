@@ -308,9 +308,16 @@ export { setDefaultRendererProvider, generateRendererFromMPSEditor };
 import { alias, name, keyword } from './presentation/cells/types';
 export { alias, name, keyword };
 
-import {LanguageInfoDetailed, LanguageInfo, Concept, Enum,
-  EnumLiteral, Property, Containment, Link, Reference} from './communication/messages'
+import {
+  LanguageInfoDetailed,
+  LanguageInfo,
+  Concept,
+  Enum,
+  EnumLiteral,
+  Property,
+  Containment,
+  Link,
+  Reference,
+} from './communication/messages';
 
-export {LanguageInfoDetailed, LanguageInfo, Concept, Enum,
-  EnumLiteral, Property, Containment, Link, Reference}
-
+export { LanguageInfoDetailed, LanguageInfo, Concept, Enum, EnumLiteral, Property, Containment, Link, Reference };

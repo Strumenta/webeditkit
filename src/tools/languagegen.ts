@@ -1,20 +1,15 @@
 #! /usr/bin/env npx ts-node
-import request from "sync-request";
-import {
-  ModelNode,
-  OperationResult,
-  Ref,
-  registerDataModelClass,
-} from '../index';
-import {LanguageInfoDetailed} from "../index";
+import request from 'sync-request';
+import { ModelNode, OperationResult, Ref, registerDataModelClass } from '../index';
+import { LanguageInfoDetailed } from '../index';
 import { Project } from 'ts-morph';
 
-import fs from "fs";
+import fs from 'fs';
 import commandLineArgs = require('command-line-args');
 import { GeneratedCode } from '../codegen/utils';
 import { processConcepts } from '../codegen/conceptgen';
 
-function mpsserverPort() : string {
+function mpsserverPort(): string {
   let port = process.env.MPSSERVER_PORT;
   if (port == null) {
     port = '2904';
@@ -22,7 +17,7 @@ function mpsserverPort() : string {
   return port;
 }
 
-function makeRequest<T>(partialUrl: string) : T {
+function makeRequest<T>(partialUrl: string): T {
   const url = `http://localhost:${mpsserverPort()}/${partialUrl}`;
   let data;
   try {
@@ -44,23 +39,31 @@ function makeRequest<T>(partialUrl: string) : T {
 }
 
 async function processLanguage(languageName: string, destDir: string) {
-  console.log("");
+  console.log('');
   console.log(`(* Processing language ${languageName} *)`);
-  console.log("");
+  console.log('');
 
   const project = new Project({});
 
   const languageFileName = `${destDir}/${languageName.replace(/\./gi, '_')}.ts`;
-  const languageFile = project.createSourceFile(languageFileName, "", {overwrite: true});
+  const languageFile = project.createSourceFile(languageFileName, '', { overwrite: true });
 
   languageFile.addImportDeclaration({
-    moduleSpecifier: "webeditkit",
-    namedImports: ["childCell", "ModelNode", "NodeData", "PropertyValue", "Ref", "referenceCell", "registerDataModelClass"]
+    moduleSpecifier: 'webeditkit',
+    namedImports: [
+      'childCell',
+      'ModelNode',
+      'NodeData',
+      'PropertyValue',
+      'Ref',
+      'referenceCell',
+      'registerDataModelClass',
+    ],
   });
 
   languageFile.addImportDeclaration({
-    moduleSpecifier: "snabbdom/vnode",
-    namedImports: ["VNode"]
+    moduleSpecifier: 'snabbdom/vnode',
+    namedImports: ['VNode'],
   });
 
   const langInfo = makeRequest<LanguageInfoDetailed>(`/languages/${languageName}`);
@@ -73,14 +76,16 @@ async function processLanguage(languageName: string, destDir: string) {
   }
 
   languageFile.addFunction({
-    name: "registerLanguage",
-    statements: languageFile.getClasses().filter((cd)=>cd.getProperties().filter((p)=>p.getName() === 'CONCEPT_NAME').length === 1).map((cd)=> `registerDataModelClass(${cd.getName()}.CONCEPT_NAME, ${cd.getName()})`)
+    name: 'registerLanguage',
+    statements: languageFile
+      .getClasses()
+      .filter((cd) => cd.getProperties().filter((p) => p.getName() === 'CONCEPT_NAME').length === 1)
+      .map((cd) => `registerDataModelClass(${cd.getName()}.CONCEPT_NAME, ${cd.getName()})`),
   });
-  languageFile.addStatements("registerLanguage()");
+  languageFile.addStatements('registerLanguage()');
 
   await project.save();
 }
-
 
 function main() {
   const optionDefinitions = [
@@ -89,13 +94,13 @@ function main() {
   ];
   const options = commandLineArgs(optionDefinitions);
   const destdir = options.destdir || 'src';
-  if (!fs.existsSync(destdir)){
+  if (!fs.existsSync(destdir)) {
     fs.mkdirSync(destdir);
   }
 
   const languages = options.languageNames;
   if (languages == null || languages.length === 0) {
-    console.error("no languages specified");
+    console.error('no languages specified');
     process.exit(1);
   }
   for (const languageName of languages) {
