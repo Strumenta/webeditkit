@@ -78,13 +78,17 @@ async function processLanguage(languageName: string, destDir: string) {
     process.exit(5);
   }
 
-  languageFile.addFunction({
+  languageFile.addStatements(`let registered = false;`);
+
+  const registerLanguage = languageFile.addFunction({
     name: 'registerLanguage',
+    isExported: true,
     statements: languageFile
       .getClasses()
       .filter((cd) => cd.getProperties().filter((p) => p.getName() === 'CONCEPT_NAME').length === 1)
-      .map((cd) => `registerDataModelClass(${cd.getName()}.CONCEPT_NAME, ${cd.getName()})`),
+      .map((cd) => `registerDataModelClass(${cd.getName()}.CONCEPT_NAME, ${cd.getName()})`)
   });
+  registerLanguage.insertStatements(0, `if (registered) return; else registered = true;`);
   languageFile.addStatements('registerLanguage()');
 
   await project.save();
