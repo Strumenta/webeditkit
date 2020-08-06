@@ -83,6 +83,6 @@
     "lib": "./dist"
   },
   "bin": {
-    "languagegen": "bin/languagegen.ts"
+    "languagegen": "dist/tools/languagegen.js"
   }
 }

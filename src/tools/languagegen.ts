@@ -5,14 +5,14 @@ import {
   OperationResult,
   Ref,
   registerDataModelClass,
-} from '../src';
-import {LanguageInfoDetailed} from "../src";
+} from '../index';
+import {LanguageInfoDetailed} from "../index";
 import { Project } from 'ts-morph';
 
 import fs from "fs";
 import commandLineArgs = require('command-line-args');
-import { GeneratedCode } from '../src/codegen/utils';
-import { processConcepts } from '../src/codegen/conceptgen';
+import { GeneratedCode } from '../codegen/utils';
+import { processConcepts } from '../codegen/conceptgen';
 
 function mpsserverPort() : string {
   let port = process.env.MPSSERVER_PORT;
