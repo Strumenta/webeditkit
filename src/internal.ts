@@ -313,3 +313,4 @@ import {LanguageInfoDetailed, LanguageInfo, Concept, Enum,
 
 export {LanguageInfoDetailed, LanguageInfo, Concept, Enum,
   EnumLiteral, Property, Containment, Link, Reference}
+
