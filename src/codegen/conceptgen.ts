@@ -1,4 +1,4 @@
-import { Concept, Containment, Property, Reference } from '..';
+import { Concept, Containment, IData, Property, Reference } from '..';
 import { baseConcept, linkConstName, GeneratedCode, propertyConstName, simpleName } from './utils';
 import { ClassDeclaration, SourceFile } from 'ts-morph';
 
@@ -39,30 +39,43 @@ export function processConcepts(concepts: Concept[], gc: GeneratedCode, language
   return gc;
 }
 
-const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent'];
+const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent', 'index'];
 
-function generateContainmentAccessor(link: Containment, classdecl: ClassDeclaration) {
+function generateContainmentAccessor(link: Containment, gc: GeneratedCode, classdecl: ClassDeclaration) {
   let name = link.name;
   if (forbiddenNames.includes(name)) {
     name = name + '_';
   }
+  const baseType = gc.processUsedType(link.type);
   if (link.multiple) {
+    let cast = "";
+    if (baseType !== 'ModelNode') {
+      cast = ` as ${baseType}[]`;
+    };
     classdecl.addMethod({
       name,
-      returnType: 'ModelNode[]',
-      statements: [`return this.childrenByLinkName("${link.name}")`],
+      returnType: `${baseType}[]`,
+      statements: [`return this.childrenByLinkName("${link.name}")${cast}`],
     });
   } else if (link.optional) {
+    let cast = "";
+    if (baseType !== 'ModelNode') {
+      cast = ` as (${baseType}| undefined)`;
+    } ;
     classdecl.addMethod({
       name,
-      returnType: 'ModelNode | undefined',
-      statements: [`return this.childByLinkName("${link.name}")`],
+      returnType: `${baseType} | undefined`,
+      statements: [`return this.childByLinkName("${link.name}")${cast}`],
     });
   } else {
+    let cast = " as ModelNode";
+    if (baseType !== 'ModelNode') {
+      cast = ` as ${baseType}`;
+    };
     classdecl.addMethod({
       name,
-      returnType: 'ModelNode',
-      statements: [`return this.childByLinkName("${link.name}") as ModelNode`],
+      returnType: baseType,
+      statements: [`return this.childByLinkName("${link.name}")${cast}`],
     });
   }
 }
@@ -81,7 +94,7 @@ function generateReferenceAccessor(link: Reference, classdecl: ClassDeclaration)
   }
 
   // sync accessor
-  const syncName = name + 'Sync';
+  const syncName = link.name + 'Sync';
   if (link.optional) {
     classdecl.addMethod({
       name: syncName,
@@ -111,7 +124,26 @@ function generatePropertyAccessor(prop: Property, classdecl: ClassDeclaration) {
 
 function generateEditingSupportForContainment(link: Containment, classdecl: ClassDeclaration) {
   if (link.multiple) {
-    // not supported, for now
+    classdecl.addMethod({
+      name: `${link.name}HorizontalColl`,
+      returnType: 'VNode',
+      parameters: [{name: 'separator', type: 'null | string | (() => VNode)', initializer: 'null'}],
+      statements: [`      let sepGen : (() => VNode) | undefined = undefined;
+      if (separator != null) {
+        if (typeof separator === "string") {
+          sepGen = () => fixedCell(this, separator);
+        } else {
+          sepGen = separator;
+        }
+      }
+      return horizontalCollectionCell(this, '${link.name}', sepGen);`],
+    });
+    classdecl.addMethod({
+      name: `${link.name}VerticalColl`,
+      returnType: 'VNode',
+      parameters: [{name: 'wrapInRows?', type: 'boolean'}, {name: 'extraClasses?', type: 'string[]'}],
+      statements: [`return verticalCollectionCell(this, '${link.name}', wrapInRows, extraClasses);`],
+    });
   } else {
     classdecl.addMethod({
       name: `${link.name}ChildCell`,
@@ -129,12 +161,22 @@ function generateEditingSupportForReference(link: Reference, classdecl: ClassDec
   });
 }
 
+function generateEditingSupportForProperty(prop: Property, classdecl: ClassDeclaration) {
+  classdecl.addMethod({
+    name: `${prop.name}EditableCell`,
+    returnType: 'VNode',
+    parameters: [{name: 'data', type: 'IData'}, {name: 'classNames', type: "string[]", initializer:"[]"}],
+    statements: [`return editableCell(data, this, ${classdecl.getName()}.${propertyConstName(prop.name)}, classNames)`],
+  });
+}
+
 function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile): GeneratedCode {
   console.log(`  -> processing concept ${c.qualifiedName}`);
   if (!c.isInterface) {
     let parent = 'ModelNode';
+    // console.log(`    superConcept ${c.superConcept}`);
     if (c.superConcept != null && c.superConcept !== baseConcept) {
-      parent = gc.processParent(simpleName(c.superConcept));
+      parent = gc.processParent(c.superConcept);
     }
     const className = gc.cleanClassName(simpleName(c.qualifiedName));
     languageFile.addStatements('// tslint:disable-next-line:max-classes-per-file');
@@ -184,7 +226,7 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
 
     // Generate accessor
     for (const link of relevantContainments) {
-      generateContainmentAccessor(link, classDeclaration);
+      generateContainmentAccessor(link, gc, classDeclaration);
     }
     for (const link of relevantReferences) {
       generateReferenceAccessor(link, classDeclaration);
@@ -199,6 +241,9 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
     }
     for (const link of relevantReferences) {
       generateEditingSupportForReference(link, classDeclaration);
+    }
+    for (const prop of relevantProperties) {
+      generateEditingSupportForProperty(prop, classDeclaration);
     }
   } else {
     const className = gc.cleanClassName(simpleName(c.qualifiedName));

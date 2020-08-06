@@ -24,20 +24,37 @@ export class GeneratedCode {
     }
   }
 
-  processParent(parentName: string): string {
-    if (this.isInThisLanguage(parentName)) {
-      return parentName;
+  processUsedType(typeName: string): string {
+    if (this.isInThisLanguage(typeName)) {
+      return simpleName(typeName);
     } else {
       if (this.ignoreOtherLanguages) {
         return 'ModelNode';
       } else {
-        return parentName;
+        return simpleName(typeName);
+      }
+    }
+  }
+
+  processParent(parentName: string): string {
+    if (this.isInThisLanguage(parentName)) {
+      // console.log(`    superConcept is in the language`);
+      return this.cleanClassName(simpleName(parentName));
+    } else {
+      if (this.ignoreOtherLanguages) {
+        // console.log(`    superConcept ignore because not in the language`);
+        return 'ModelNode';
+      } else {
+        // console.log(`    superConcept considered even if not in the language`);
+        return this.cleanClassName(simpleName(parentName));
       }
     }
   }
 
   isInThisLanguage(name: string): boolean {
-    return name.startsWith(`${this.languageName}.structure.`);
+    const res : boolean = name.startsWith(`${this.languageName}.structure.`)
+    // console.log(`  isInThisLanguage prefix=<${this.languageName}.structure.>, name=<${name}> res=${res}`);
+    return res;
   }
 
   considerDependency(dependency: string): boolean {

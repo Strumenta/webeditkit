@@ -52,12 +52,15 @@ async function processLanguage(languageName: string, destDir: string) {
     moduleSpecifier: 'webeditkit',
     namedImports: [
       'childCell',
+      'editableCell',
+      'IData',
       'ModelNode',
       'NodeData',
       'PropertyValue',
       'Ref',
       'referenceCell',
       'registerDataModelClass',
+      'fixedCell', 'horizontalCollectionCell', 'verticalCollectionCell'
     ],
   });
 
