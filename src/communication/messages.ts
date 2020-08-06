@@ -290,10 +290,16 @@ export interface RegisterForChanges extends Message {
 // Language and concept
 //
 
+export interface Declaration {
+  conceptName: string;
+  isInterface: boolean;
+}
+
 export interface Link {
   name: string;
   optional: boolean;
   type: string;
+  declaration: Declaration;
 }
 
 export interface Containment extends Link {
@@ -305,6 +311,7 @@ export type Reference = Link;
 export interface Property {
   name: string;
   type: string;
+  declaration: Declaration;
 }
 
 export interface Concept {

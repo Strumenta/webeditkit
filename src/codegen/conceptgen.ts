@@ -42,7 +42,7 @@ export function processConcepts(concepts: Concept[], gc: GeneratedCode, language
   return gc;
 }
 
-const forbiddenNames = ['alias', 'property', 'ref', 'parent'];
+const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent'];
 
 function generateContainmentAccessor(link: Containment, classdecl: ClassDeclaration) {
   let name = link.name;
@@ -90,7 +90,7 @@ function generateReferenceAccessor(link: Reference, classdecl: ClassDeclaration)
   } else {
     classdecl.addMethod({name: syncName,
       returnType: "ModelNode",
-      statements: [`return this.ref("${link.name}")!!.syncLoadData()`]});
+      statements: [`return this.ref("${link.name}")!.syncLoadData()`]});
   }
 }
 
@@ -140,19 +140,26 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
     classDeclaration.addProperty({name: "CONCEPT_NAME", isStatic: true, initializer: `"${c.qualifiedName}"`});
 
     // Constants for links and properties names
-    for (const link of c.declaredContainments) {
+    const relevantContainments : Containment[] = c.declaredContainments.concat(
+      c.inheritedContainments.filter((l)=>l.declaration.isInterface));
+    const relevantReferences : Reference[] = c.declaredReferences.concat(
+      c.inheritedReferences.filter((l)=>l.declaration.isInterface));
+    const relevantProperties : Property[] = c.declaredProperties.concat(
+      c.inheritedProperties.filter((p)=>p.declaration.isInterface));
+
+    for (const link of relevantContainments) {
       classDeclaration.addProperty({
         name: linkConstName(link.name),
         isStatic: true,
         initializer: `"${link.name}"`});
     }
-    for (const link of c.declaredReferences) {
+    for (const link of relevantReferences) {
       classDeclaration.addProperty({
         name: linkConstName(link.name),
         isStatic: true,
         initializer: `"${link.name}"`});
     }
-    for (const p of c.declaredProperties) {
+    for (const p of relevantProperties) {
       classDeclaration.addProperty({
         name: propertyConstName(p.name),
         isStatic: true,
@@ -165,21 +172,21 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
     });
 
     // Generate accessor
-    for (const link of c.declaredContainments) {
+    for (const link of relevantContainments) {
       generateContainmentAccessor(link, classDeclaration);
     }
-    for (const link of c.declaredReferences) {
+    for (const link of relevantReferences) {
       generateReferenceAccessor(link, classDeclaration);
     }
-    for (const prop of c.declaredProperties) {
+    for (const prop of relevantProperties) {
       generatePropertyAccessor(prop, classDeclaration);
     }
 
     // Generate editing helper methods
-    for (const link of c.declaredContainments) {
+    for (const link of relevantContainments) {
       generateEditingSupportForContainment(link, classDeclaration);
     }
-    for (const link of c.declaredReferences) {
+    for (const link of relevantReferences) {
       generateEditingSupportForReference(link, classDeclaration);
     }
   } else {
