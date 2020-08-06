@@ -54,7 +54,7 @@ async function processLanguage(languageName: string, destDir: string) {
   const languageFile = project.createSourceFile(languageFileName, "", {overwrite: true});
 
   languageFile.addImportDeclaration({
-    moduleSpecifier: "../src",
+    moduleSpecifier: "webeditkit",
     namedImports: ["childCell", "ModelNode", "NodeData", "PropertyValue", "Ref", "referenceCell", "registerDataModelClass"]
   });
 
