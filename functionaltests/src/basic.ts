@@ -4,7 +4,7 @@ import { MPSSERVER_PORT, tryToConnect } from './utils';
 import { Browser, Page } from 'puppeteer';
 
 import puppeteer from 'puppeteer';
-import { ModuleInfo } from '../../src/communication/httpcommunication';
+import {ModuleInfo, OperationResult} from '../../src/communication/httpcommunication';
 
 describe('WebEditKit integration', () => {
   before(function (done) {
@@ -62,9 +62,13 @@ describe('WebEditKit integration', () => {
         await page.goto(`http://localhost:${MPSSERVER_PORT}/modules?includeReadOnly=true&includePackaged=true`);
         await page.screenshot({ path: `screenshots/s2.png` });
         bodyHTML = await page.evaluate(() => document.body.innerHTML);
-        const modules = JSON.parse(bodyHTML) as ModuleInfo[];
+        const modules = JSON.parse(bodyHTML) as OperationResult<ModuleInfo[]>;
+        if(!modules.success) {
+          console.error("Could not load modules", modules.message);
+          process.exit(1);
+        }
         let found = false;
-        for (const m of modules) {
+        for (const m of modules.value) {
           if (m.name === 'com.strumenta.mpsserver.server') {
             expect(m.uuid).to.equal('bf983e15-b4da-4ef2-8e0a-5041eab7ff32');
             found = true;
