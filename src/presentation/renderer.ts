@@ -53,14 +53,12 @@ export function renderModelNode(modelNode: ModelNode): VNode {
 
 export function getBasicDefaultRenderer(modelNode: ModelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
-  return () => {
-    if (abstractConcept) {
-      return fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
-    } else {
+  if (abstractConcept) {
+    return () => fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
+  } else {
       const label = modelNode.data.smartReference?.name || modelNode.conceptAlias || `[default ${modelNode.simpleConceptName()}]`;
-      return fixedCell(modelNode, label, ['default-cell-concrete']);
-    }
-  };
+      return () => fixedCell(modelNode, label, ['default-cell-concrete']);
+  }
 }
 
 type DefaultRendererProvider = (modelNode: ModelNode) => Renderer;

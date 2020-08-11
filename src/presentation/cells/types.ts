@@ -681,7 +681,7 @@ export function horizontalLine(): VNode {
 }
 
 export function alias(node: ModelNode, extraClasses: string[] = []): VNode {
-  return fixedCell(node, node.alias as string, extraClasses);
+  return fixedCell(node, node.conceptAlias as string, extraClasses);
 }
 
 export function name(data: IData, node: ModelNode, extraClasses: string[] = []) {

@@ -48,7 +48,7 @@ function cellToRenderer(data: IData, cellModel: ModelNode): Renderer {
     const refData = ref.syncLoadData();
     if (refData.name() === 'alias') {
       return (modelNode) =>
-        fixedCell(modelNode, modelNode.alias == null ? modelNode.simpleConceptName() : modelNode.alias);
+        fixedCell(modelNode, modelNode.conceptAlias == null ? modelNode.simpleConceptName() : modelNode.conceptAlias);
     } else {
       if (refData.conceptName() === 'jetbrains.mps.lang.editor.EditorComponentDeclaration') {
         return cellToRenderer(data, refData.childByLinkName('cellModel') as ModelNode);
