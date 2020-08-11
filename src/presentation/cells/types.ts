@@ -29,6 +29,7 @@ import { ModelNode } from '../../internal';
 import { Ref } from '../../internal';
 import { log } from '../../internal';
 import { EditedValue, IData } from '../../internal';
+import {unsetDeleting} from "./support";
 
 export function childCell(
   node: ModelNode,
@@ -40,13 +41,14 @@ export function childCell(
   if (child == null) {
     if (emptyCell != null) {
       return emptyCell();
+    } else {
+      return fixedCell(
+          node,
+          `<no ${containmentName}>`,
+          ['missing-element'],
+          alternativesProviderForAddingChild(node, containmentName, false, filter),
+      );
     }
-    return fixedCell(
-      node,
-      `<no ${containmentName}>`,
-      ['missing-element'],
-      alternativesProviderForAddingChild(node, containmentName, false, filter),
-    );
   }
   return renderModelNode(child);
 }
@@ -210,6 +212,9 @@ export function editableCell(
         update: triggerResize,
       },
       on: {
+        blur: (e: FocusEvent) => {
+          unsetDeleting(e.target as HTMLElement);
+        },
         keydown: (e: KeyboardEvent) => {
           const isTabNext = e.key === 'Tab' && !e.shiftKey;
           const isTabPrev = e.key === 'Tab' && e.shiftKey;
@@ -323,6 +328,9 @@ export function fixedCell(
         update: triggerResize,
       },
       on: {
+        blur: (e: FocusEvent) => {
+          unsetDeleting(e.target as HTMLElement);
+        },
         click: (e: MouseEvent) => {
           (e.target as HTMLInputElement).setSelectionRange(0, 0);
         },
