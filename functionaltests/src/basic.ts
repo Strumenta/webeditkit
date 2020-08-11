@@ -48,6 +48,7 @@ describe('WebEditKit integration', () => {
     this.timeout(120000);
     void (async () => {
       const browser = await puppeteer.launch();
+      let bodyHTML;
       try {
         const page = await browser.newPage();
         page.on('response', (response) => {
@@ -60,7 +61,7 @@ describe('WebEditKit integration', () => {
         );
         await page.goto(`http://localhost:${MPSSERVER_PORT}/modules?includeReadOnly=true&includePackaged=true`);
         await page.screenshot({ path: `screenshots/s2.png` });
-        const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+        bodyHTML = await page.evaluate(() => document.body.innerHTML);
         const modules = JSON.parse(bodyHTML) as ModuleInfo[];
         let found = false;
         for (const m of modules) {
@@ -71,7 +72,8 @@ describe('WebEditKit integration', () => {
         }
         expect(found).to.equal(true);
       } catch (e) {
-        console.log('exception captured', e);
+        console.error('exception captured', e);
+        console.error('modules', bodyHTML);
         process.exit(1);
       } finally {
         console.log('[Closing browser]');
