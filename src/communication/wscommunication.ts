@@ -6,13 +6,13 @@ import {
   PropertiesValues,
   PropertyValue,
   refToNodeInModel,
-} from '../datamodel/misc';
-import { uuidv4 } from '../utils/misc';
-import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../datamodel/modelNode';
-import { Ref } from '../datamodel';
-import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../datamodel/registry';
-import { renderDataModels } from '../index';
-import { getIssuesForModel } from './issues';
+} from '../internal';
+import { uuidv4 } from '../internal';
+import { ModelNode, NodeProcessor, reactToAReferenceChange } from '../internal';
+import { Ref } from '../internal';
+import { dataToNode, getDatamodelRoot, getNodeFromLocalRepo } from '../internal';
+import { renderDataModels } from '../internal';
+import { getIssuesForModel } from '../internal';
 
 export { getIssuesForModel };
 
@@ -43,8 +43,8 @@ import {
   IssueDescription,
   Message,
   NodeAdded,
-  NodeIDInModel,
-  nodeIDInModelFromNode,
+  NodeReference,
+  nodeReferenceFromNode,
   NodeRemoved,
   PropertyChangeNotification,
   ReferenceChange,
@@ -53,8 +53,8 @@ import {
   RequestPropertyChange,
   SetChild,
   UUID,
-} from './messages';
-import { registerIssuesForModel, registerIssuesForNode } from './issues';
+} from '../internal';
+import { registerIssuesForModel, registerIssuesForNode } from '../internal';
 
 export interface Alternative {
   conceptName: string;
@@ -371,7 +371,7 @@ export class WsCommunication {
     } as ExecuteIntention);
   }
 
-  async getIntentions(modelNode: ModelNode | NodeIDInModel, uuid1: string = uuidv4()): Promise<Intention[]> {
+  async getIntentions(modelNode: ModelNode | NodeReference, uuid1: string = uuidv4()): Promise<Intention[]> {
     return new Promise<Intention[]>((resolve, reject) => {
       this.callbacks[uuid1] = (blockUUID: UUID, intentionsData: IntentionData[]) => {
         const intentions: Intention[] = intentionsData.map<Intention>((data: IntentionData) => {
@@ -379,7 +379,7 @@ export class WsCommunication {
         });
         return resolve(intentions);
       };
-      const nodeIDInModel = modelNode instanceof ModelNode ? nodeIDInModelFromNode(modelNode) : modelNode;
+      const nodeIDInModel = modelNode instanceof ModelNode ? nodeReferenceFromNode(modelNode) : modelNode;
       this.sendMessage({
         type: 'CreateIntentionsBlock',
         requestId: uuid1,
@@ -568,7 +568,7 @@ export class WsCommunication {
     } as RequestForDirectReferences);
   }
 
-  async getNodeData(node: NodeIDInModel, uuid: string = uuidv4()): Promise<NodeData> {
+  async getNodeData(node: NodeReference, uuid: string = uuidv4()): Promise<NodeData> {
     const promise = new Promise<NodeData>((resolve, reject) => {
       this.callbacks[uuid] = (data: NodeData) => {
         resolve(data);

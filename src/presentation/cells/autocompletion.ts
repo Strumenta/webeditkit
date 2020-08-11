@@ -1,7 +1,8 @@
-import { ModelNode } from '../../datamodel';
-import { Alternative, Alternatives, getWsCommunication } from '../../communication/wscommunication';
 import autocomplete from 'autocompleter';
-import { VNode } from 'snabbdom/vnode';
+import { VNode } from '../../internal';
+
+import { ModelNode } from '../../internal';
+import { Alternative, getWsCommunication } from '../../internal';
 import {NodeData} from "../../datamodel/misc";
 
 export function alternativesProviderForAbstractConcept(

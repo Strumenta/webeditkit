@@ -27,3 +27,10 @@ Certain HTML elements will represent MPS nodes.
 Those elements:
 
 * Must have in the associated data set the key `represented_reference` indicating the name of the reference
+
+## Language class generator
+
+```
+npm link
+MPSSERVER_PORT=2939 languagegen my.lanugage -d destination_dir
+```

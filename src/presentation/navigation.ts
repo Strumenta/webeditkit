@@ -1,5 +1,5 @@
-import { log } from '../utils/misc';
-import { next, previous, triggerFocus } from './uiutils';
+import { log } from '../internal';
+import { next, previous, triggerFocus } from '../internal';
 
 function moveFocusToStart(el: HTMLInputElement) {
   // @ts-ignore

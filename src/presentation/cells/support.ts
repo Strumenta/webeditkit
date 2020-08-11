@@ -1,11 +1,11 @@
-import { autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus } from '../uiutils';
-import { VNode } from 'snabbdom/vnode';
-import { VNodeChildElement } from 'snabbdom/h';
-import { ModelNode } from '../../datamodel';
-
-import { getDatamodelRoot } from '../../datamodel/registry';
-import { log } from '../../utils/misc';
+import { VNode, VNodeChildElement } from '../../internal';
 import _ from 'lodash';
+
+import { autoresize, inputWidthUpdate, myAutoresizeOptions, triggerFocus } from '../../internal';
+import { ModelNode } from '../../internal';
+
+import { getDatamodelRoot } from '../../internal';
+import { log } from '../../internal';
 
 export function handleSelfDeletion(element: HTMLElement, modelNode: ModelNode): void {
   const closest = element.closest('.represent-node');

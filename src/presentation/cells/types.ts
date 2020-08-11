@@ -1,6 +1,7 @@
-import h from 'snabbdom/h';
-import { AlternativeForDirectReference, getWsCommunication } from '../../communication/wscommunication';
-import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../navigation';
+import { h, VNode } from '../../internal';
+
+import { AlternativeForDirectReference, getWsCommunication } from '../../internal';
+import { isAtEnd, isAtStart, moveDown, moveToNextElement, moveToPrevElement, moveUp } from '../../internal';
 import {
   addAutoresize,
   domElementToModelNode,
@@ -12,23 +13,22 @@ import {
   map,
   separate,
   triggerResize,
-} from './support';
-import { addToDatasetObj, wrapKeydownHandler } from './vnodemanipulation';
+} from '../../internal';
+import { addToDatasetObj, wrapKeydownHandler } from '../../internal';
 import {
   AlternativeFilter,
   alternativesProviderForAddingChild,
   installAutocomplete,
   isAutocompleteVisible,
   SuggestionsReceiver,
-} from './autocompletion';
-import { NodeId, nodeIdToString } from '../../datamodel/misc';
-import { renderModelNode } from '../renderer';
-import { VNode } from 'snabbdom/vnode';
-import { renderDataModels } from '../../index';
-import { ModelNode } from '../../datamodel';
-import { Ref } from '../../datamodel';
-import { log } from '../../utils/misc';
-import { EditedValue, IData } from './data';
+} from '../../internal';
+import { NodeId, nodeIdToString } from '../../internal';
+import { renderModelNode } from '../../internal';
+import { renderDataModels } from '../../internal';
+import { ModelNode } from '../../internal';
+import { Ref } from '../../internal';
+import { log } from '../../internal';
+import { EditedValue, IData } from '../../internal';
 
 export function childCell(
   node: ModelNode,
@@ -674,4 +674,20 @@ export function emptyRow(): VNode {
 
 export function tabCell(): VNode {
   return h('div.tab', {}, []);
+}
+
+export function horizontalLine(): VNode {
+  return h('div.horizontal-line', {}, []);
+}
+
+export function alias(node: ModelNode, extraClasses: string[] = []): VNode {
+  return fixedCell(node, node.alias as string, extraClasses);
+}
+
+export function name(data: IData, node: ModelNode, extraClasses: string[] = []) {
+  return editableCell(data, node, 'name', extraClasses);
+}
+
+export function keyword(modelNode: ModelNode, text: string): VNode {
+  return fixedCell(modelNode, text, ['keyword']);
 }

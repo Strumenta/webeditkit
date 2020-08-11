@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import 'mocha';
 import { Server, WebSocket } from 'mock-socket';
-import { WsCommunication } from '../src/communication/wscommunication';
-import { clearRendererRegistry } from '../src/presentation/renderer';
+import { WsCommunication } from '../src/internal';
+import { clearRendererRegistry } from '../src/internal';
 import { assertTheseMessagesAreReceived, clone } from './testutils';
-import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/datamodel/registry';
+import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/internal';
 import {
   AnswerPropertyChange,
-  nodeIDInModel,
+  nodeReference,
   PropertyChangeNotification,
   RequestPropertyChange,
 } from '../src/communication/messages';
@@ -148,7 +148,7 @@ describe('WsCommunication', () => {
               expect(msg).to.eql({
                 type: 'instantiateConcept',
                 conceptToInstantiate: 'myConcept',
-                nodeToReplace: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
+                nodeToReplace: nodeReference('my.qualified.ModelName', '1848360241685547698'),
               });
             },
           },
@@ -194,7 +194,7 @@ describe('WsCommunication', () => {
             check: (msg: any) => {
               expect(msg).to.eql({
                 type: 'addChild',
-                container: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
+                container: nodeReference('my.qualified.ModelName', '1848360241685547698'),
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
                 index: -1,
@@ -244,7 +244,7 @@ describe('WsCommunication', () => {
               delete msg['requestId'];
               expect(msg).to.eql({
                 type: 'addChild',
-                container: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
+                container: nodeReference('my.qualified.ModelName', '1848360241685547698'),
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
                 index: 2,
@@ -293,7 +293,7 @@ describe('WsCommunication', () => {
               delete msg['requestId'];
               expect(msg).to.eql({
                 type: 'setChild',
-                container: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
+                container: nodeReference('my.qualified.ModelName', '1848360241685547698'),
                 containmentName: 'type',
                 conceptToInstantiate: 'my.concept.ToInstantiate',
               });
@@ -340,7 +340,7 @@ describe('WsCommunication', () => {
             check: (msg) => {
               expect(msg).to.eql({
                 type: 'deleteNode',
-                node: nodeIDInModel('my.qualified.ModelName', '1848360241685547698'),
+                node: nodeReference('my.qualified.ModelName', '1848360241685547698'),
               });
             },
           },

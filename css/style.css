@@ -243,3 +243,10 @@ span.title {
 input:invalid {
     background-color: #FFBDB3;
 }
+
+div.horizontal-line {
+    height: 2px;
+    background-color: black;
+    display: inline-block;
+    width: 100%;
+}

@@ -1,52 +1,28 @@
 import { expect } from 'chai';
 import 'mocha';
-import { VNode } from 'snabbdom/vnode';
-import { addClass, alternativesProviderForAbstractConcept, fixedCell, map } from '../src/presentation/cells';
+import { VNode, h, toVNode, patch } from '../src/internal';
+import { alternativesProviderForAbstractConcept, fixedCell, map } from '../src/internal';
 import {
-  addId,
   addInsertHook,
   alternativesProviderForAddingChild,
   AutocompleteAlternative,
-  handleSelfDeletion,
   installAutocomplete,
-  separate,
-  setDataset,
   SuggestionsReceiver,
-} from '../src/presentation/cells';
+} from '../src/internal';
 
 import { Server, WebSocket } from 'mock-socket';
-import { init } from 'snabbdom/snabbdom';
-
-import h from 'snabbdom/h'; // helper function for creating vnodes
-import toVNode from 'snabbdom/tovnode';
-
-import * as sclass from 'snabbdom/modules/class';
-import * as sprops from 'snabbdom/modules/props';
-import * as sstyle from 'snabbdom/modules/style';
-import * as seventlisteners from 'snabbdom/modules/eventlisteners';
-import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import { AskAlternatives, Message, nodeIDInModel } from '../src/communication/messages';
+import { AskAlternatives, Message, nodeReference } from '../src/communication/messages';
 import { NodeData } from '../src/datamodel/misc';
 
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import { JSDOM } from 'jsdom';
 
 const init2html = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
 const toHTML = init2html([modules.class, modules.props, modules.attributes, modules.style, modules.dataset]);
-
-const patch = init([
-  // Init patch function with chosen modules
-  sclass.default, // makes it easy to toggle classes
-  sprops.default, // for setting properties on DOM elements
-  sstyle.default, // handles styling on elements with support for animations
-  seventlisteners.default, // attaches event listeners
-  sdataset.default,
-]);
 
 const html1 = `<html>
 \t<body data-gr-c-s-loaded="true">
@@ -239,7 +215,7 @@ describe('Presentation.Cells.Autocompletion', () => {
             expect(obj).to.eql({
               type: 'addChild',
               index: -1,
-              container: nodeIDInModel('my.qualified.model', '324292001770075100'),
+              container: nodeReference('my.qualified.model', '324292001770075100'),
               containmentName: 'foo',
               conceptToInstantiate: 'foo.bar.concept1',
             });
@@ -314,7 +290,7 @@ describe('Presentation.Cells.Autocompletion', () => {
             delete obj['requestId'];
             expect(obj).to.eql({
               type: 'setChild',
-              container: nodeIDInModel('my.qualified.model', '1848360241685547698'),
+              container: nodeReference('my.qualified.model', '1848360241685547698'),
               containmentName: 'type',
               conceptToInstantiate: 'foo.bar.concept1',
             });
@@ -374,8 +350,8 @@ describe('Presentation.Cells.Autocompletion', () => {
   describe('should support installAutocomplete', () => {
     it('it should handle positive case', (done) => {
       const aNode = dataToNode(rootData1);
-      let cell = h('input', {}, []);
-      let cellWithHook = addInsertHook(cell, (myNode: VNode) => {
+      const cell = h('input', {}, []);
+      const cellWithHook = addInsertHook(cell, (myNode: VNode) => {
         installAutocomplete(
           myNode,
           (suggestionsReceiver: SuggestionsReceiver) => {

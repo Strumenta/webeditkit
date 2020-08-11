@@ -1,12 +1,13 @@
-import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCell } from './cells';
-import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from './cells';
-import { ModelNode } from '../datamodel/modelNode';
-import { VNode } from 'snabbdom/vnode';
-import { editorController } from './EditorController';
+import { VNode } from '../internal';
+
+import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCell } from '../internal';
+import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from '../internal';
+import { ModelNode } from '../internal';
+import { editorController } from '../internal';
 
 const renderersByName: { [key: string]: Renderer } = {};
 
-type Renderer = (modelNode: ModelNode) => VNode;
+export type Renderer = (modelNode: ModelNode) => VNode;
 
 export function clearRendererRegistry(): void {
   Object.keys(renderersByName).forEach((key) => {
@@ -50,7 +51,7 @@ export function renderModelNode(modelNode: ModelNode): VNode {
   return res;
 }
 
-function getDefaultRenderer(modelNode: ModelNode): Renderer {
+export function getBasicDefaultRenderer(modelNode: ModelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
   return () => {
     if (abstractConcept) {
@@ -62,11 +63,18 @@ function getDefaultRenderer(modelNode: ModelNode): Renderer {
   };
 }
 
+type DefaultRendererProvider = (modelNode: ModelNode) => Renderer;
+let defaultRendererProvider: DefaultRendererProvider = getBasicDefaultRenderer;
+
+export function setDefaultRendererProvider(newDefaultRendererProvider: DefaultRendererProvider) {
+  defaultRendererProvider = newDefaultRendererProvider;
+}
+
 function getRenderer(modelNode: ModelNode | undefined): Renderer {
   if (modelNode == null) {
     // it happens during node replacements
     return () => fixedCell(modelNode, 'null');
   }
   const conceptName = modelNode.conceptName();
-  return getRegisteredRenderer(conceptName) || getDefaultRenderer(modelNode);
+  return getRegisteredRenderer(conceptName) || defaultRendererProvider(modelNode);
 }

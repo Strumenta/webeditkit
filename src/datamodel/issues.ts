@@ -1,4 +1,4 @@
-import { IssueDescription } from '../communication/messages';
+import { IssueDescription } from '../internal';
 
 export class IssuesMap {
   private map: { [key: string]: IssueDescription[] } = {};

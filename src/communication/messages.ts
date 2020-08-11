@@ -2,13 +2,13 @@
  * This file contains all the messages which are exchanged with the MPS Server
  */
 
-import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../datamodel/misc';
-import { Alternatives } from './wscommunication';
-import { ModelNode } from '../datamodel';
+import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../internal';
+import { Alternatives } from '../internal';
+import { ModelNode } from '../internal';
 
 // Refactoring plan:
 // * Revisit NodeId to be a simple string
-// * Rename NodeIDInModel as QualifiedNodeID
+// * Rename NodeReference as QualifiedNodeID
 // * Use QualifiedNodeID in all messages which uses both a model name and an ID
 // * Use NodeID where the an identifier of a node is expected
 
@@ -18,12 +18,12 @@ export type UUID = string;
 // Support structures
 //
 
-export interface NodeIDInModel {
+export interface NodeReference {
   model: string;
   id: NodeId;
 }
 
-export function nodeIDInModel(model: string, idString: string): NodeIDInModel {
+export function nodeReference(model: string, idString: string): NodeReference {
   return {
     model,
     id: {
@@ -32,8 +32,8 @@ export function nodeIDInModel(model: string, idString: string): NodeIDInModel {
   };
 }
 
-export function nodeIDInModelFromNode(node: ModelNode): NodeIDInModel {
-  return nodeIDInModel(node.modelName(), node.idString());
+export function nodeReferenceFromNode(node: ModelNode): NodeReference {
+  return nodeReference(node.modelName(), node.idString());
 }
 
 export interface IssueDescription {
@@ -77,12 +77,12 @@ export interface NodeRemoved extends Message {
 
 export interface DeleteNode extends Message {
   type: 'deleteNode';
-  node: NodeIDInModel;
+  node: NodeReference;
 }
 
 export interface InstantiateConcept extends Message {
   type: 'instantiateConcept';
-  nodeToReplace: NodeIDInModel;
+  nodeToReplace: NodeReference;
   conceptToInstantiate: string;
 }
 
@@ -102,7 +102,7 @@ export interface CreateRoot extends Message {
  */
 export interface RequestPropertyChange extends RequestMessage {
   type: 'propertyChange';
-  node: NodeIDInModel;
+  node: NodeReference;
   propertyName: string;
   propertyValue: PropertyValue;
 }
@@ -119,7 +119,7 @@ export interface AnswerPropertyChange extends RequestAnswer {
  */
 export interface PropertyChangeNotification extends Message {
   type: 'PropertyChange';
-  node: NodeIDInModel;
+  node: NodeReference;
   propertyName: string;
   propertyValue: PropertyValue;
 }
@@ -131,7 +131,7 @@ export interface PropertyChangeNotification extends Message {
 export interface AddChild extends RequestMessage {
   type: 'addChild';
   index: number;
-  container: NodeIDInModel;
+  container: NodeReference;
   containmentName: string;
   conceptToInstantiate: string;
   smartRefNodeId?: NodeId; // TODO Alessio should this be a NodeIDInModel? How?
@@ -143,7 +143,7 @@ export interface AddChildAnswer extends RequestAnswer {
 
 export interface SetChild extends RequestMessage {
   type: 'setChild';
-  container: NodeIDInModel;
+  container: NodeReference;
   containmentName: string;
   conceptToInstantiate: string;
   smartRefNodeId?: NodeId; // TODO Alessio should this be a NodeIDInModel? How?
@@ -229,7 +229,7 @@ export interface AnswerForDirectReferences extends RequestAnswer {
 
 export interface CreateIntentionsBlock extends RequestMessage {
   type: 'CreateIntentionsBlock';
-  node: NodeIDInModel;
+  node: NodeReference;
 }
 
 export interface CreateIntentionsBlockAnswer extends RequestAnswer {
@@ -271,7 +271,7 @@ export interface GetIntentionsBlockAnswer extends RequestAnswer {
 
 export interface GetNode extends RequestMessage {
   type: 'GetNode';
-  node: NodeIDInModel;
+  node: NodeReference;
 }
 
 export interface GetNodeAnswer extends RequestAnswer {
@@ -286,4 +286,69 @@ export interface GetNodeAnswer extends RequestAnswer {
 export interface RegisterForChanges extends Message {
   type: 'registerForChanges';
   modelName: string;
+}
+
+//
+// Language and concept
+//
+
+export interface Declaration {
+  conceptName: string;
+  isInterface: boolean;
+}
+
+export interface Link {
+  name: string;
+  optional: boolean;
+  type: string;
+  declaration: Declaration;
+}
+
+export interface Containment extends Link {
+  multiple: boolean;
+}
+
+export type Reference = Link;
+
+export interface Property {
+  name: string;
+  type: string;
+  declaration: Declaration;
+}
+
+export interface Concept {
+  qualifiedName: string;
+  alias: string;
+  isInterface: boolean;
+  isAbstract: boolean;
+  rootable: boolean;
+  superConcept?: string;
+  interfaceConcepts: string[];
+  declaredContainments: Containment[];
+  inheritedContainments: Containment[];
+  declaredReferences: Reference[];
+  inheritedReferences: Reference[];
+  declaredProperties: Property[];
+  inheritedProperties: Property[];
+}
+
+export interface EnumLiteral {
+  name: string;
+  label: string;
+}
+
+export interface Enum {
+  name: string;
+  defaultLiteral?: string;
+  literals: EnumLiteral[];
+}
+
+export interface LanguageInfo {
+  qualifiedName: string;
+  sourceModuleName: string;
+}
+
+export interface LanguageInfoDetailed extends LanguageInfo {
+  concepts: Concept[];
+  enums: Enum[];
 }

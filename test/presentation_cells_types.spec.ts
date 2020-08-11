@@ -1,4 +1,4 @@
-import { NodeData } from '../src/datamodel/misc';
+import { NodeData } from '../src/internal';
 import { expect } from 'chai';
 import 'mocha';
 import {
@@ -14,14 +14,13 @@ import {
   tabCell,
   verticalCollectionCell,
   verticalGroupCell,
-} from '../src/presentation/cells';
-import { flattenArray } from '../src/presentation';
-import { addInsertHook } from '../src/presentation/cells/vnodemanipulation';
+} from '../src/internal';
+import { flattenArray } from '../src/internal';
+import { addInsertHook } from '../src/internal';
 
-import { DefaultInsertion, PropertyChangeNotification } from '../src/communication/messages';
+import { DefaultInsertion, PropertyChangeNotification } from '../src/internal';
 
-const jsdom = require('jsdom');
-const { JSDOM } = jsdom;
+import { JSDOM } from 'jsdom';
 
 const toHtmlInit = require('snabbdom-to-html/init');
 const modules = require('snabbdom-to-html/modules/index');
@@ -29,17 +28,8 @@ const toHTML = toHtmlInit([modules.class, modules.props, modules.attributes, mod
 (global as any).fetch = require('node-fetch');
 const fetchMock = require('fetch-mock');
 
-import { init } from 'snabbdom/snabbdom';
+import { h, toVNode, patch } from '../src/internal';
 
-import h from 'snabbdom/h'; // helper function for creating vnodes
-
-import toVNode from 'snabbdom/tovnode';
-
-import * as sclass from 'snabbdom/modules/class';
-import * as sprops from 'snabbdom/modules/props';
-import * as sstyle from 'snabbdom/modules/style';
-import * as seventlisteners from 'snabbdom/modules/eventlisteners';
-import * as sdataset from 'snabbdom/modules/dataset';
 import { createInstance } from '../src/communication/wscommunication';
 import { Server, WebSocket } from 'mock-socket';
 import {
@@ -55,15 +45,6 @@ import {
 import { clearRendererRegistry } from '../src/presentation/renderer';
 import { clearDatamodelRoots, dataToNode, setDefaultBaseUrl } from '../src/datamodel/registry';
 import { SinonFakeTimers } from 'sinon';
-
-const patch = init([
-  // Init patch function with chosen modules
-  sclass.default, // makes it easy to toggle classes
-  sprops.default, // for setting properties on DOM elements
-  sstyle.default, // handles styling on elements with support for animations
-  seventlisteners.default, // attaches event listeners
-  sdataset.default,
-]);
 
 const sinon = require('sinon');
 
@@ -346,7 +327,7 @@ describe('Cells.Types', () => {
 
       const cell = fixedCell(aNode, 'My fixed cell');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -357,7 +338,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should handle right arrow', (done) => {
@@ -368,7 +349,7 @@ describe('Cells.Types', () => {
 
       const cell = fixedCell(aNode, 'My fixed cell');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -379,7 +360,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
@@ -407,7 +388,7 @@ describe('Cells.Types', () => {
       const cell = referenceCell(inputNode, 'type');
 
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -420,7 +401,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should handle right arrow', (done) => {
@@ -433,7 +414,7 @@ describe('Cells.Types', () => {
       const cell = referenceCell(inputNode, 'type');
 
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -446,7 +427,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should load value', (done) => {
@@ -458,7 +439,7 @@ describe('Cells.Types', () => {
       const inputNode = aNode.childrenByLinkName('inputs')[1];
       const cell = referenceCell(inputNode, 'myref');
       expect(toHTML(cell)).to.equal('<input class="reference" value="Loading...">');
-      let container = h('div#calc.editor', {}, [cell]);
+      const container = h('div#calc.editor', {}, [cell]);
 
       let received = 0;
       const fakeURL = 'ws://localhost:8080';
@@ -624,13 +605,13 @@ describe('Cells.Types', () => {
 
       const cell = verticalCollectionCell(aNode, 'unexisting');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm!.firstChild as HTMLInputElement;
+        const myInput = vnode.elm!.firstChild as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         pressEnter(myInput);
       });
 
-      let addedNode = h('input.represent-node', { dataset: { node_represented: 'xxx-123' } }, ['My added node']);
-      let container = h('div#calc', {}, [cellWithHook, addedNode]);
+      const addedNode = h('input.represent-node', { dataset: { node_represented: 'xxx-123' } }, ['My added node']);
+      const container = h('div#calc', {}, [cellWithHook, addedNode]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
   });
@@ -720,7 +701,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.focus();
         expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
@@ -728,7 +709,7 @@ describe('Cells.Types', () => {
         expect(doc.activeElement!.outerHTML).to.eql('<input class="aft">');
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to ArrowLeft with selection at start', () => {
@@ -739,7 +720,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
@@ -749,7 +730,7 @@ describe('Cells.Types', () => {
         expect(doc.activeElement!.outerHTML).to.eql('<input class="bef">');
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to ArrowLeft with selection not at start', () => {
@@ -760,7 +741,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -770,7 +751,7 @@ describe('Cells.Types', () => {
         expect(doc.activeElement!.outerHTML).to.eql('<input class="editable" placeholder="<no name>" required="">');
       });
 
-      let container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
+      const container = h('div#calc.editor', {}, [h('input.bef', {}, []), cellWithHook, h('input.aft', {}, [])]);
       patch(toVNode(document.querySelector('#calc')!), container);
     });
     it('it should react to Backspace when at start', (done) => {
@@ -781,7 +762,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 0;
         myInput.selectionEnd = 0;
@@ -794,7 +775,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [
+      const container = h('div#calc.editor', {}, [
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
       patch(toVNode(document.querySelector('#calc')!), container);
@@ -807,7 +788,7 @@ describe('Cells.Types', () => {
 
       const cell = editableCell(data, aNode, 'name');
       const cellWithHook = addInsertHook(cell, (vnode) => {
-        let myInput = vnode.elm as HTMLInputElement;
+        const myInput = vnode.elm as HTMLInputElement;
         expect(myInput.tagName).to.eql('INPUT');
         myInput.selectionStart = 1;
         myInput.selectionEnd = 1;
@@ -824,7 +805,7 @@ describe('Cells.Types', () => {
         done();
       });
 
-      let container = h('div#calc.editor', {}, [
+      const container = h('div#calc.editor', {}, [
         h('div.represent-node', { dataset: { node_represented: '324292001770075100' } }, [cellWithHook]),
       ]);
 

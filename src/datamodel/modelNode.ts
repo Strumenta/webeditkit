@@ -1,5 +1,5 @@
-import { dataToNode } from './registry';
-import { getWsCommunication } from '../communication/wscommunication';
+import { dataToNode } from '../internal';
+import { getWsCommunication } from '../internal';
 import {
   LimitedNodeData,
   modelNodeToNodeInModel,
@@ -7,11 +7,11 @@ import {
   nodeIdToString,
   PropertyValue,
   refToNodeInModel,
-} from './misc';
-import { Ref } from './ref';
-import { ReferenceChange } from '../communication/messages';
-import { renderDataModels } from '../index';
-import { uuidv4 } from '../utils/misc';
+} from '../internal';
+import { Ref } from '../internal';
+import { ReferenceChange } from '../internal';
+import { renderDataModels } from '../internal';
+import { uuidv4 } from '../internal';
 
 export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): void {
   const node = root.findNodeById(nodeIdToString(msg.node.id));

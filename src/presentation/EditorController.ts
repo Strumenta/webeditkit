@@ -1,8 +1,8 @@
-import { NodeId, NodeInModel } from '../datamodel/misc';
-import { IssueDescription } from '../communication/messages';
-import { domElementToModelNode } from './cells/support';
-import { getWsCommunication, Intention } from '../communication/wscommunication';
-import { autoresize, myAutoresizeOptions, next, previous } from './uiutils';
+import { NodeId, NodeInModel } from '../internal';
+import { IssueDescription } from '../internal';
+import { domElementToModelNode } from '../internal';
+import { getWsCommunication, Intention } from '../internal';
+import { autoresize, myAutoresizeOptions, next, previous } from '../internal';
 
 export interface Observer {
   hoverNodeSet(node: NodeId | undefined): void;

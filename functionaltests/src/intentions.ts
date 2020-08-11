@@ -4,8 +4,6 @@ import { MPSSERVER_PORT, reloadAll, tryToConnect } from './utils';
 import { createInstance, getWsCommunication } from '../../src/communication';
 import { w3cwebsocket } from 'websocket';
 
-//const W3CWebSocket = require('websocket').w3cwebsocket;
-
 describe('Intentions API', () => {
   before(function (done) {
     this.timeout(500000);

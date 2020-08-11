@@ -38,7 +38,7 @@ ext.artifactsDir = new File(rootDir, 'artifacts')
 ext.mpsVersion = '2019.3.1'
 ext.mbeddrPlatformVersion = '2019.3.22230.6f9f955'
 ext.iets3opensourceVersion = '2019.3.4458.852c81c'
-ext.mpsserverVersion = '1.2.3-rc5'
+ext.mpsserverVersion = '1.2.4-rc3'
 
 configurations {
 	mps

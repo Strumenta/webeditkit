@@ -1,5 +1,5 @@
-import { LimitedNodeData, NodeData, NodeInModel } from './misc';
-import { LimitedModelNode, ModelNode } from './modelNode';
+import { LimitedNodeData, NodeData, NodeInModel } from '../internal';
+import { LimitedModelNode, ModelNode } from '../internal';
 
 const datamodelRoots = new Map<string, ModelNode>();
 const datamodelClasses = new Map<string, new (n: NodeData) => ModelNode>();

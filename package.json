@@ -1,6 +1,6 @@
 {
   "name": "webeditkit",
-  "version": "1.0.19-development",
+  "version": "1.2.1-dev",
   "description": "A framework to create projectional editors",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,14 +12,19 @@
     "cryptiles": ">=4.1.3",
     "deep-equal": "^2.0.2",
     "hoek": ">=4.2.1",
-    "jsdom": "^16.2.1",
+    "jsdom": "^16.3.0",
     "lodash.merge": "^4.6.2",
     "rxjs": "^6.5.5",
     "snabbdom": "^0.7.4",
-    "tsify": "^4.0.1"
+    "ts-sync-request": "^1.4.1",
+    "tsify": "^4.0.1",
+    "ts-morph": "^7.1.3",
+    "command-line-args": "^5.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/command-line-args": "^5.0.0",
+    "@types/jsdom": "^16.2.3",
     "@types/mocha": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^3.3.0",
     "@typescript-eslint/parser": "^3.3.0",
@@ -32,7 +37,7 @@
     "eslint-plugin-prefer-arrow": "^1.2.1",
     "fetch-mock": "^9.10.3",
     "keysim": "^2.1.0",
-    "mocha": "^7.1.1",
+    "mocha": "^8.0.1",
     "mock-socket": "^9.0.3",
     "node-fetch": "^2.6.0",
     "nyc": "^15.0.0",
@@ -41,7 +46,7 @@
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
     "sinon": "^9.0.1",
-    "snabbdom-to-html": "^5.1.1",
+    "snabbdom-to-html": "^6.0.0",
     "ts-node": "^8.8.1",
     "ts-sinon": "^1.0.25",
     "tslint": "^6.1.0",
@@ -56,8 +61,10 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint --ext .ts src test",
+    "lintfix": "eslint --ext .ts src test --fix",
     "prepare": "npm run build",
-    "coverage": "nyc npm run test"
+    "coverage": "nyc npm run test",
+    "languagegen": "./src/tools/languagegen.ts "
   },
   "repository": {
     "type": "git",
@@ -75,5 +82,8 @@
   ],
   "directories": {
     "lib": "./dist"
+  },
+  "bin": {
+    "languagegen": "dist/tools/languagegen.js"
   }
 }
