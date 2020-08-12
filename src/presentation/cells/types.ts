@@ -213,7 +213,8 @@ export function editableCell(
       },
       on: {
         blur: (e: FocusEvent) => {
-          unsetDeleting(e.target as HTMLElement);
+          const closest = (e.target as HTMLElement).closest('.represent-node');
+          unsetDeleting(closest);
         },
         keydown: (e: KeyboardEvent) => {
           const isTabNext = e.key === 'Tab' && !e.shiftKey;
@@ -306,7 +307,7 @@ export function fixedCell(
   text: string,
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
-  deleter?: () => void,
+  deleter?: (doDelete: boolean) => void,
   onEnter?: () => void,
 ): VNode {
   extraClasses = extraClasses || [];
@@ -329,7 +330,12 @@ export function fixedCell(
       },
       on: {
         blur: (e: FocusEvent) => {
-          unsetDeleting(e.target as HTMLElement);
+          if(deleter) {
+            deleter(false);
+          } else {
+            const closest = (e.target as HTMLElement).closest('.represent-node');
+            unsetDeleting(closest);
+          }
         },
         click: (e: MouseEvent) => {
           (e.target as HTMLInputElement).setSelectionRange(0, 0);
@@ -355,7 +361,7 @@ export function fixedCell(
             moveDown(target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
-              deleter();
+              deleter(true);
               return true;
             } else if (modelNode != null) {
               handleSelfDeletion(target, modelNode);
@@ -472,7 +478,7 @@ export function referenceCell(
   referenceName: string,
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
-  deleter?: () => void,
+  deleter?: (doDelete: boolean) => void,
   opener?: (e: MouseEvent) => boolean,
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
@@ -543,7 +549,7 @@ export function referenceCell(
   // 3) Matching an element
   //
   // Case 1: when we type we move to Case 2
-  // Case 2: if we type something that matches or the user select an entry we got to case 3
+  // Case 2: if we type something that matches or the user select an entry we go to case 3
   // Case 3: if we type we move to case 2
 
   if (modelNode.ref(referenceName) == null) {
@@ -623,6 +629,11 @@ export function referenceCell(
         },
       },
       on: {
+        blur: e => {
+          if(deleter) {
+            deleter(false);
+          }
+        },
         click: (e: MouseEvent) => {
           opener?.(e);
         },
@@ -637,7 +648,7 @@ export function referenceCell(
             moveDown(target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
-              deleter();
+              deleter(true);
               e.preventDefault();
               return;
             }
