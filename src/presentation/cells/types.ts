@@ -29,7 +29,8 @@ import { ModelNode } from '../../internal';
 import { Ref } from '../../internal';
 import { log } from '../../internal';
 import { EditedValue, IData } from '../../internal';
-import {unsetDeleting} from "./support";
+import {isDeleting, unsetDeleting} from "./support";
+import {AutocompleteResult} from "autocompleter";
 
 export function childCell(
   node: ModelNode,
@@ -49,8 +50,9 @@ export function childCell(
           alternativesProviderForAddingChild(node, containmentName, false, filter),
       );
     }
+  } else {
+    return renderModelNode(child);
   }
-  return renderModelNode(child);
 }
 
 function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNode {
@@ -320,10 +322,21 @@ export function fixedCell(
     {
       props: { value: text },
       hook: {
-        insert: (vnode: any) => {
+        insert: vnode => {
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
+          }
+        },
+        prepatch: (oldVNode, vNode) => {
+          if(!vNode.data) {
+            vNode.data = {};
+          }
+          vNode.data.autocomplete = oldVNode.data?.autocomplete;
+        },
+        destroy: vNode => {
+          if(vNode.data?.autocomplete) {
+            (vNode.data.autocomplete as AutocompleteResult).destroy();
           }
         },
         update: triggerResize,
@@ -464,6 +477,17 @@ function editingReferenceCell(
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, false);
+          }
+        },
+        prepatch: (oldVNode, vNode) => {
+          if(!vNode.data) {
+            vNode.data = {};
+          }
+          vNode.data.autocomplete = oldVNode.data?.autocomplete;
+        },
+        destroy: vNode => {
+          if(vNode.data?.autocomplete) {
+            (vNode.data.autocomplete as AutocompleteResult).destroy();
           }
         },
         update: triggerResize,
@@ -622,6 +646,17 @@ export function referenceCell(
             (vnode.elm! as HTMLInputElement).value = refModelNode.name() ?? '?no name?';
             triggerResize(vnode);
           });
+        },
+        prepatch: (oldVNode, vNode) => {
+          if(!vNode.data) {
+            vNode.data = {};
+          }
+          vNode.data.autocomplete = oldVNode.data?.autocomplete;
+        },
+        destroy: vNode => {
+          if(vNode.data?.autocomplete) {
+            (vNode.data.autocomplete as AutocompleteResult).destroy();
+          }
         },
         update: (vnode: VNode) => {
           vnode.elm!.addEventListener('keydown', kdCaptureListener, true);

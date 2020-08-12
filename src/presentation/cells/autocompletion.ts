@@ -1,8 +1,5 @@
-import autocomplete from 'autocompleter';
-import { VNode } from '../../internal';
-
-import { ModelNode } from '../../internal';
-import { Alternative, getWsCommunication } from '../../internal';
+import autocomplete, {AutocompleteResult} from 'autocompleter';
+import {Alternative, getWsCommunication, ModelNode, VNode} from '../../internal';
 import {NodeData} from "../../datamodel/misc";
 
 export function alternativesProviderForAbstractConcept(
@@ -70,7 +67,7 @@ export function installAutocomplete(
   vnode: VNode,
   valuesProvider: (suggestionsReceiver: SuggestionsReceiver) => void,
   fixed: boolean,
-): void {
+): AutocompleteResult {
   const input = vnode.elm as HTMLInputElement;
   const ac = autocomplete({
     input,
@@ -106,6 +103,11 @@ export function installAutocomplete(
     },
     preventSubmit: true,
   });
+  if(!vnode.data) {
+    vnode.data = {};
+  }
+  vnode.data.autocomplete = ac;
+  return ac;
 }
 
 export function isAutocompleteVisible(): boolean {

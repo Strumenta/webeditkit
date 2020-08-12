@@ -37,7 +37,7 @@
     "eslint-plugin-prefer-arrow": "^1.2.1",
     "fetch-mock": "^9.10.3",
     "keysim": "^2.1.0",
-    "mocha": "^8.0.1",
+    "mocha": "^8.1.1",
     "mock-socket": "^9.0.3",
     "node-fetch": "^2.6.0",
     "nyc": "^15.0.0",

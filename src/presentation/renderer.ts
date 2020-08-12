@@ -4,6 +4,7 @@ import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCe
 import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from '../internal';
 import { ModelNode } from '../internal';
 import { editorController } from '../internal';
+import {AlternativesProvider} from "./cells/types";
 
 const renderersByName: { [key: string]: Renderer } = {};
 
@@ -57,7 +58,11 @@ export function getBasicDefaultRenderer(modelNode: ModelNode): Renderer {
     return () => fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
   } else {
       const label = modelNode.data.smartReference?.name || modelNode.conceptAlias || `[default ${modelNode.simpleConceptName()}]`;
-      return () => fixedCell(modelNode, label, ['default-cell-concrete'], alternativesProviderForAbstractConcept(modelNode));
+    let alternativesProvider: AlternativesProvider;
+    if(modelNode.parent() && modelNode.containmentName()) {
+      alternativesProvider = alternativesProviderForAbstractConcept(modelNode);
+    }
+    return () => fixedCell(modelNode, label, ['default-cell-concrete'], alternativesProvider);
   }
 }
 
