@@ -48,8 +48,8 @@ export { getNodeFromLocalRepo };
 
 export { registerRenderer };
 
-import { setup, addModel, renderDataModels, loadDataModel, baseUrlForTarget, baseUrlForModelName } from './internal';
-export { setup, addModel, renderDataModels, loadDataModel, baseUrlForTarget, baseUrlForModelName };
+import { setup, addModel, loadModule, renderDataModels, loadDataModel, loadModel, baseUrlForTarget, baseUrlForModelName } from './internal';
+export { setup, addModel, loadModule, renderDataModels, loadDataModel, loadModel, baseUrlForTarget, baseUrlForModelName };
 
 import { renderModelNode } from './internal';
 

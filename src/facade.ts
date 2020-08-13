@@ -4,7 +4,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import { toVNode, h, VNode } from './internal';
+import {toVNode, h, VNode, HttpCommunication, OperationResult} from './internal';
 
 import * as wscommunication from './internal';
 import { dataToNode, editorController, ModelNode, renderModelNode } from './internal';
@@ -14,11 +14,29 @@ import { forEachDataModel, setDatamodelRoot } from './internal';
 import { getIssuesForModel } from './internal';
 import { wrapKeypressHandler } from './internal';
 import { NodeData } from './internal';
+import {ModelInfoDetailed, ModuleInfoDetailed} from "./communication/httpcommunication";
 
 export function setup(): void {
   // No setup necessary for now, but it's useful to keep an init point
 }
 
+function ensureHttpURL(baseUrl: string) {
+  if (!baseUrl.startsWith("http") && !baseUrl.startsWith("/")) {
+    baseUrl = `http://${baseUrl}`;
+  }
+  return baseUrl;
+}
+
+export function loadModule(baseUrl: string, moduleName: string, callback: (module: ModuleInfoDetailed) => void): void {
+  new HttpCommunication(ensureHttpURL(baseUrl)).getModule(moduleName, false, callback);
+}
+
+// TODO Alessio
+// Shouldn't this be called addRootNode instead?
+// Also, this might benefit from migration to an RxJS Observable and its pipeline capability:
+// - the setTimeout could be issued only on successful load
+// - the error message could be printed without preventing callers to provide their own logic
+// - observables can still be converted to promises so calling code would not need to change much
 export function addModel(baseUrl: string, modelName: string, nodeId: string, target: string): Promise<ModelNode> {
   const ws = wscommunication.createInstance('ws://' + baseUrl + '/socket', modelName, target);
   const p: Promise<ModelNode> = loadDataModel('http://' + baseUrl, modelName, nodeId, target).catch((e) => {
@@ -133,6 +151,7 @@ interface TargetDataType {
 
 const targetData: { [target: string]: TargetDataType } = {};
 
+// TODO Alessio shouldn't this be named loadRootNode instead?
 export function loadDataModel(baseUrl: string, model: string, nodeId: string, target: string): Promise<ModelNode> {
   targetData[target] = { baseUrl, model, nodeId };
   const nodeURL = baseUrl + '/models/' + model + '/' + nodeId;
@@ -147,6 +166,11 @@ export function loadDataModel(baseUrl: string, model: string, nodeId: string, ta
       renderDataModels();
       return root;
     });
+}
+
+export function loadModel(baseUrl: string, model: string): Promise<OperationResult<ModelInfoDetailed>> {
+  const modelURL = ensureHttpURL(baseUrl) + '/models/' + model;
+  return fetch(modelURL).then((response) => response.json());
 }
 
 export function baseUrlForTarget(target: string): string {

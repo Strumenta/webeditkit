@@ -20,6 +20,7 @@ export interface LimitedNodeData {
   concept: string;
   id: NodeId;
   name: string;
+  conceptAlias?: string;
 }
 
 export interface NodeData extends LimitedNodeData {
@@ -30,7 +31,6 @@ export interface NodeData extends LimitedNodeData {
   rootName?: string | undefined;
   modelName: string; // The qualified model name
   parent?: NodeData | undefined;
-  conceptAlias?: string;
   smartReference?: NodeData;
 }
 
