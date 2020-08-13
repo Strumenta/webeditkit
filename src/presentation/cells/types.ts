@@ -388,8 +388,6 @@ export function fixedCell(
             if (!document.querySelector('.autocomplete')) {
               if (onEnter !== undefined) {
                 onEnter();
-                e.preventDefault();
-                return false;
               } else if (alternativesProvider === undefined) {
                 // We should stop this when the autocomplete is displayed
 
@@ -397,9 +395,10 @@ export function fixedCell(
                 if (modelNode != null) {
                   handleAddingElement(target, modelNode);
                 }
-                e.preventDefault();
-                return false;
               }
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
             }
           }
           log('prevent key on fixed (C)');
