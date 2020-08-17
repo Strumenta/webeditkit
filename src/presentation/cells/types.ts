@@ -185,9 +185,24 @@ export function editableCell(
   const placeholder = '<no ' + propertyName + '>';
 
   const modelValue = modelNode.property(propertyName) || '';
+  let stringValue: string;
+
+  if (typeof modelValue === 'string') {
+    stringValue = modelValue;
+  } else if (typeof modelValue === 'number') {
+    stringValue = modelValue.toString();
+  } else if (typeof modelValue === 'boolean') {
+    stringValue = modelValue.toString();
+  } else if("myNameHint" in (modelValue as any)) {
+    stringValue = (modelValue as any).myNameHint;
+  } else {
+    const error = new Error(`Unsupported model value: ${modelValue}`);
+    (error as any).modelValue = modelValue;
+    throw error;
+  }
   const editedValue = data.editedValues.get(modelNode, propertyName);
 
-  const currentValue = editedValue?.inputFieldValue ?? modelValue;
+  const currentValue = editedValue?.inputFieldValue ?? stringValue;
 
   function setEditedValue(value: string) {
     const ev: EditedValue = data.editedValues.getOrCreate(modelNode, propertyName);
