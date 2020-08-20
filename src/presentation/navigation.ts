@@ -48,8 +48,6 @@ function findPrev(n: Element): Element | null {
 
 function selectFirstElementInRow(row: Element, focusOnEnd: boolean): void {
   log('selectFirstElementInRow', row);
-  // @ts-ignore
-  window.sf = row;
   const input = row.querySelector(':scope > input') as HTMLInputElement;
   if (input) {
     triggerFocus(input);
@@ -92,7 +90,7 @@ export function moveUp(t: HTMLElement): void {
       log(' before', nextLine);
       nextLine = previous(nextLine, '.row,.vertical-collection');
       log(' after', nextLine);
-    } while (nextLine && nextLine.querySelector('input'));
+    } while (nextLine && !nextLine.querySelector('input'));
     if (nextLine) {
       selectFirstElementInRow(nextLine, true);
     } else if (t.parentElement != null) {
@@ -120,7 +118,7 @@ export function moveDown(t: HTMLElement): void {
       log(' before', nextLine);
       nextLine = next(nextLine, '.row,.vertical-collection');
       log(' after', nextLine);
-    } while (nextLine && nextLine.querySelector('input'));
+    } while (nextLine && !nextLine.querySelector('input'));
     if (nextLine) {
       selectFirstElementInRow(nextLine, false);
     } else if (t.parentElement != null) {
