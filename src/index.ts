@@ -98,6 +98,7 @@ import {
   Reference,
   NodeData,
   PropertyValue,
+  EnumValue
 } from './internal';
 export {
   OperationResult,
@@ -112,4 +113,5 @@ export {
   Reference,
   NodeData,
   PropertyValue,
+  EnumValue
 };

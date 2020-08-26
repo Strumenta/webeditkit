@@ -17,7 +17,7 @@ import { log } from './utils/misc';
 import { NodeInModel } from './datamodel/misc';
 import { editorController } from './presentation/EditorController';
 
-import { NodeId, PropertiesValues, PropertyValue } from './datamodel/misc';
+import { NodeId, PropertiesValues, PropertyValue, EnumValue } from './datamodel/misc';
 import { Alternatives } from './communication/wscommunication';
 import { OperationResult } from './communication/httpcommunication';
 
@@ -184,6 +184,7 @@ export {
   NodeId,
   PropertiesValues,
   PropertyValue,
+  EnumValue,
   Alternatives,
   modelNodeToNodeInModel,
   nodeIdToString,
