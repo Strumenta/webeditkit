@@ -57,6 +57,7 @@ async function processLanguage(languageName: string, destDir: string) {
       'ModelNode',
       'NodeData',
       'PropertyValue',
+      'EnumValue',
       'Ref',
       'referenceCell',
       'registerDataModelClass',

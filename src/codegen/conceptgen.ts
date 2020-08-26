@@ -124,11 +124,31 @@ function generatePropertyAccessor(prop: Property, classdecl: ClassDeclaration) {
   if (forbiddenNames.includes(name)) {
     name = name + '_';
   }
-  classdecl.addMethod({
-    name,
-    returnType: 'PropertyValue | undefined',
-    statements: [`return this.property("${prop.name}")`],
-  });
+  if (prop.type === 'string') {
+    classdecl.addMethod({
+      name,
+      returnType: 'string | undefined',
+      statements: [`return this.property("${prop.name} as (string | undefined)")`],
+    });
+  } else if (prop.type === 'boolean') {
+    classdecl.addMethod({
+      name,
+      returnType: 'boolean | undefined',
+      statements: [`return this.property("${prop.name} as (boolean | undefined)")`],
+    });
+  } else if (prop.type === 'integer') {
+    classdecl.addMethod({
+      name,
+      returnType: 'number | undefined',
+      statements: [`return this.property("${prop.name} as (number | undefined)")`],
+    });
+  } else {
+    classdecl.addMethod({
+      name,
+      returnType: 'EnumValue | undefined',
+      statements: [`return this.property("${prop.name} as (EnumValue | undefined)")`],
+    });
+  }
 }
 
 function generateEditingSupportForContainment(link: Containment, classdecl: ClassDeclaration) {
