@@ -117,7 +117,13 @@ function generateReferenceAccessor(link: Reference, classdecl: ClassDeclaration)
     classdecl.addMethod({
       name: syncName,
       returnType: 'ModelNode',
-      statements: [`return this.ref("${link.name}")!.syncLoadData()`],
+      statements: [
+        `const value = this.ref('${link.name}');`,
+        `if (value !== undefined) {
+      return value.syncLoadData();
+    } else {
+      throw new Error("reference ${link.name} should not be null");
+    }`],
     });
   }
 }
