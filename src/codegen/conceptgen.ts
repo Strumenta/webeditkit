@@ -67,6 +67,7 @@ function generateContainmentAccessor(link: Containment, gc: GeneratedCode, class
         { name: 'index', type: 'number' },
         { name: 'conceptName?', type: 'string' },
       ],
+      returnType: 'void',
       statements: [`this.createChild("${link.name}", index, conceptName || "${link.type}");`],
     });
   } else if (link.optional) {
