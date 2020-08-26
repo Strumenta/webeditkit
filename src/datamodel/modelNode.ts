@@ -1,4 +1,4 @@
-import { dataToNode } from '../internal';
+import { dataToNode, fixedCell } from '../internal';
 import { getWsCommunication } from '../internal';
 import {
   LimitedNodeData,
@@ -7,11 +7,13 @@ import {
   nodeIdToString,
   PropertyValue,
   refToNodeInModel,
+  AlternativesProvider
 } from '../internal';
 import { Ref } from '../internal';
 import { ReferenceChange } from '../internal';
 import { renderDataModels } from '../internal';
 import { uuidv4 } from '../internal';
+import { VNode } from 'snabbdom/vnode';
 
 export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): void {
   const node = root.findNodeById(nodeIdToString(msg.node.id));
@@ -285,5 +287,9 @@ export class ModelNode extends LimitedModelNode {
 
   setProperty(propertyName: string, propertyValue: PropertyValue): void {
     this.data.properties[propertyName] = propertyValue;
+  }
+
+  constant(value: string, extraClasses?: string[], alternativesProvider?: AlternativesProvider, deleter?: (doDelete: boolean) => void, onEnter?: () => void) : VNode {
+    return fixedCell(this, value, extraClasses, alternativesProvider, deleter, onEnter);
   }
 }
