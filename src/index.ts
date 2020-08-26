@@ -48,8 +48,26 @@ export { getNodeFromLocalRepo };
 
 export { registerRenderer };
 
-import { setup, addModel, loadModule, renderDataModels, loadDataModel, loadModel, baseUrlForTarget, baseUrlForModelName } from './internal';
-export { setup, addModel, loadModule, renderDataModels, loadDataModel, loadModel, baseUrlForTarget, baseUrlForModelName };
+import {
+  setup,
+  addModel,
+  loadModule,
+  renderDataModels,
+  loadDataModel,
+  loadModel,
+  baseUrlForTarget,
+  baseUrlForModelName,
+} from './internal';
+export {
+  setup,
+  addModel,
+  loadModule,
+  renderDataModels,
+  loadDataModel,
+  loadModel,
+  baseUrlForTarget,
+  baseUrlForModelName,
+};
 
 import { renderModelNode } from './internal';
 
@@ -98,7 +116,7 @@ import {
   Reference,
   NodeData,
   PropertyValue,
-  EnumValue
+  EnumValue,
 } from './internal';
 export {
   OperationResult,
@@ -113,5 +131,5 @@ export {
   Reference,
   NodeData,
   PropertyValue,
-  EnumValue
+  EnumValue,
 };

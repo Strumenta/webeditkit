@@ -29,8 +29,8 @@ import { ModelNode } from '../../internal';
 import { Ref } from '../../internal';
 import { log } from '../../internal';
 import { EditedValue, IData } from '../../internal';
-import {isDeleting, unsetDeleting} from "./support";
-import {AutocompleteResult} from "autocompleter";
+import { isDeleting, unsetDeleting } from './support';
+import { AutocompleteResult } from 'autocompleter';
 
 export function childCell(
   node: ModelNode,
@@ -44,10 +44,10 @@ export function childCell(
       return emptyCell();
     } else {
       return fixedCell(
-          node,
-          `<no ${containmentName}>`,
-          ['missing-element'],
-          alternativesProviderForAddingChild(node, containmentName, false, filter),
+        node,
+        `<no ${containmentName}>`,
+        ['missing-element'],
+        alternativesProviderForAddingChild(node, containmentName, false, filter),
       );
     }
   } else {
@@ -193,7 +193,7 @@ export function editableCell(
     stringValue = modelValue.toString();
   } else if (typeof modelValue === 'boolean') {
     stringValue = modelValue.toString();
-  } else if("myNameHint" in (modelValue as any)) {
+  } else if ('myNameHint' in (modelValue as any)) {
     stringValue = (modelValue as any).myNameHint;
   } else {
     const error = new Error(`Unsupported model value: ${modelValue}`);
@@ -337,20 +337,20 @@ export function fixedCell(
     {
       props: { value: text },
       hook: {
-        insert: vnode => {
+        insert: (vnode) => {
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
           }
         },
         prepatch: (oldVNode, vNode) => {
-          if(!vNode.data) {
+          if (!vNode.data) {
             vNode.data = {};
           }
           vNode.data.autocomplete = oldVNode.data?.autocomplete;
         },
-        destroy: vNode => {
-          if(vNode.data?.autocomplete) {
+        destroy: (vNode) => {
+          if (vNode.data?.autocomplete) {
             (vNode.data.autocomplete as AutocompleteResult).destroy();
           }
         },
@@ -358,7 +358,7 @@ export function fixedCell(
       },
       on: {
         blur: (e: FocusEvent) => {
-          if(deleter) {
+          if (deleter) {
             deleter(false);
           } else {
             const closest = (e.target as HTMLElement).closest('.represent-node');
@@ -494,13 +494,13 @@ function editingReferenceCell(
           }
         },
         prepatch: (oldVNode, vNode) => {
-          if(!vNode.data) {
+          if (!vNode.data) {
             vNode.data = {};
           }
           vNode.data.autocomplete = oldVNode.data?.autocomplete;
         },
-        destroy: vNode => {
-          if(vNode.data?.autocomplete) {
+        destroy: (vNode) => {
+          if (vNode.data?.autocomplete) {
             (vNode.data.autocomplete as AutocompleteResult).destroy();
           }
         },
@@ -662,13 +662,13 @@ export function referenceCell(
           });
         },
         prepatch: (oldVNode, vNode) => {
-          if(!vNode.data) {
+          if (!vNode.data) {
             vNode.data = {};
           }
           vNode.data.autocomplete = oldVNode.data?.autocomplete;
         },
-        destroy: vNode => {
-          if(vNode.data?.autocomplete) {
+        destroy: (vNode) => {
+          if (vNode.data?.autocomplete) {
             (vNode.data.autocomplete as AutocompleteResult).destroy();
           }
         },
@@ -678,8 +678,8 @@ export function referenceCell(
         },
       },
       on: {
-        blur: e => {
-          if(deleter) {
+        blur: (e) => {
+          if (deleter) {
             deleter(false);
           }
         },

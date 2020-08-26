@@ -73,7 +73,7 @@ export function autoresize(el: HTMLElement, options?: InputWidthOptions) {
 }
 
 export function previous(el: Element | null, selector: string) {
-  if(!el) {
+  if (!el) {
     return null;
   }
   const prev = el.previousElementSibling;
@@ -85,7 +85,7 @@ export function previous(el: Element | null, selector: string) {
 }
 
 export function next(el: Element | null, selector: string) {
-  if(!el) {
+  if (!el) {
     return null;
   }
   const prev = el.nextElementSibling;

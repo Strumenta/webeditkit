@@ -52,7 +52,7 @@ export class GeneratedCode {
   }
 
   isInThisLanguage(name: string): boolean {
-    const res : boolean = name.startsWith(`${this.languageName}.structure.`)
+    const res: boolean = name.startsWith(`${this.languageName}.structure.`);
     // console.log(`  isInThisLanguage prefix=<${this.languageName}.structure.>, name=<${name}> res=${res}`);
     return res;
   }

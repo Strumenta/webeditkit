@@ -1,6 +1,6 @@
-import autocomplete, {AutocompleteResult} from 'autocompleter';
-import {Alternative, getWsCommunication, ModelNode, VNode} from '../../internal';
-import {NodeData} from "../../datamodel/misc";
+import autocomplete, { AutocompleteResult } from 'autocompleter';
+import { Alternative, getWsCommunication, ModelNode, VNode } from '../../internal';
+import { NodeData } from '../../datamodel/misc';
 
 export function alternativesProviderForAbstractConcept(
   modelNode: ModelNode,
@@ -103,7 +103,7 @@ export function installAutocomplete(
     },
     preventSubmit: true,
   });
-  if(!vnode.data) {
+  if (!vnode.data) {
     vnode.data = {};
   }
   vnode.data.autocomplete = ac;

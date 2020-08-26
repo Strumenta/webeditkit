@@ -4,7 +4,7 @@ import * as sprops from 'snabbdom/modules/props';
 import * as sstyle from 'snabbdom/modules/style';
 import * as seventlisteners from 'snabbdom/modules/eventlisteners';
 import * as sdataset from 'snabbdom/modules/dataset';
-import {toVNode, h, VNode, HttpCommunication, OperationResult} from './internal';
+import { toVNode, h, VNode, HttpCommunication, OperationResult } from './internal';
 
 import * as wscommunication from './internal';
 import { dataToNode, editorController, ModelNode, renderModelNode } from './internal';
@@ -14,14 +14,14 @@ import { forEachDataModel, setDatamodelRoot } from './internal';
 import { getIssuesForModel } from './internal';
 import { wrapKeypressHandler } from './internal';
 import { NodeData } from './internal';
-import {ModelInfoDetailed, ModuleInfoDetailed} from "./communication/httpcommunication";
+import { ModelInfoDetailed, ModuleInfoDetailed } from './communication/httpcommunication';
 
 export function setup(): void {
   // No setup necessary for now, but it's useful to keep an init point
 }
 
 function ensureHttpURL(baseUrl: string) {
-  if (!baseUrl.startsWith("http") && !baseUrl.startsWith("/")) {
+  if (!baseUrl.startsWith('http') && !baseUrl.startsWith('/')) {
     baseUrl = `http://${baseUrl}`;
   }
   return baseUrl;

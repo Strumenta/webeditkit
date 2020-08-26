@@ -41,8 +41,8 @@ export function processConcepts(concepts: Concept[], gc: GeneratedCode, language
 
 const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent', 'index'];
 
-function capitalize(word: string){
-  return word[0].toUpperCase()+word.slice(1).toLowerCase();
+function capitalize(word: string) {
+  return word[0].toUpperCase() + word.slice(1).toLowerCase();
 }
 
 function generateContainmentAccessor(link: Containment, gc: GeneratedCode, classdecl: ClassDeclaration) {
@@ -52,10 +52,10 @@ function generateContainmentAccessor(link: Containment, gc: GeneratedCode, class
   }
   const baseType = gc.processUsedType(link.type);
   if (link.multiple) {
-    let cast = "";
+    let cast = '';
     if (baseType !== 'ModelNode') {
       cast = ` as ${baseType}[]`;
-    };
+    }
     classdecl.addMethod({
       name,
       returnType: `${baseType}[]`,
@@ -63,24 +63,27 @@ function generateContainmentAccessor(link: Containment, gc: GeneratedCode, class
     });
     classdecl.addMethod({
       name: `add${capitalize(link.name)}`,
-      parameters: [{name: 'index', type: 'number'}, {name: 'conceptName?', type: 'string'}],
+      parameters: [
+        { name: 'index', type: 'number' },
+        { name: 'conceptName?', type: 'string' },
+      ],
       statements: [`this.createChild("${link.name}", index, conceptName || "${link.type}");`],
     });
   } else if (link.optional) {
-    let cast = "";
+    let cast = '';
     if (baseType !== 'ModelNode') {
       cast = ` as (${baseType}| undefined)`;
-    } ;
+    }
     classdecl.addMethod({
       name,
       returnType: `${baseType} | undefined`,
       statements: [`return this.childByLinkName("${link.name}")${cast}`],
     });
   } else {
-    let cast = " as ModelNode";
+    let cast = ' as ModelNode';
     if (baseType !== 'ModelNode') {
       cast = ` as ${baseType}`;
-    };
+    }
     classdecl.addMethod({
       name,
       returnType: baseType,
@@ -156,8 +159,9 @@ function generateEditingSupportForContainment(link: Containment, classdecl: Clas
     classdecl.addMethod({
       name: `${link.name}HorizontalColl`,
       returnType: 'VNode',
-      parameters: [{name: 'separator', type: 'null | string | (() => VNode)', initializer: 'null'}],
-      statements: [`      let sepGen : (() => VNode) | undefined = undefined;
+      parameters: [{ name: 'separator', type: 'null | string | (() => VNode)', initializer: 'null' }],
+      statements: [
+        `      let sepGen : (() => VNode) | undefined = undefined;
       if (separator != null) {
         if (typeof separator === "string") {
           sepGen = () => fixedCell(this, separator);
@@ -165,12 +169,16 @@ function generateEditingSupportForContainment(link: Containment, classdecl: Clas
           sepGen = separator;
         }
       }
-      return horizontalCollectionCell(this, '${link.name}', sepGen);`],
+      return horizontalCollectionCell(this, '${link.name}', sepGen);`,
+      ],
     });
     classdecl.addMethod({
       name: `${link.name}VerticalColl`,
       returnType: 'VNode',
-      parameters: [{name: 'wrapInRows?', type: 'boolean'}, {name: 'extraClasses?', type: 'string[]'}],
+      parameters: [
+        { name: 'wrapInRows?', type: 'boolean' },
+        { name: 'extraClasses?', type: 'string[]' },
+      ],
       statements: [`return verticalCollectionCell(this, '${link.name}', wrapInRows, extraClasses);`],
     });
   } else {
@@ -194,7 +202,10 @@ function generateEditingSupportForProperty(prop: Property, classdecl: ClassDecla
   classdecl.addMethod({
     name: `${prop.name}EditableCell`,
     returnType: 'VNode',
-    parameters: [{name: 'data', type: 'IData'}, {name: 'classNames', type: "string[]", initializer:"[]"}],
+    parameters: [
+      { name: 'data', type: 'IData' },
+      { name: 'classNames', type: 'string[]', initializer: '[]' },
+    ],
     statements: [`return editableCell(data, this, ${classdecl.getName()}.${propertyConstName(prop.name)}, classNames)`],
   });
 }
@@ -213,11 +224,15 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
     const className = gc.cleanClassName(simpleName(c.qualifiedName));
     languageFile.addStatements('// tslint:disable-next-line:max-classes-per-file');
     const classDeclaration = languageFile.addClass({ name: className });
-    classDeclaration.setIsAbstract(c.isAbstract)
+    classDeclaration.setIsAbstract(c.isAbstract);
     classDeclaration.setIsExported(true);
     classDeclaration.setExtends(parent);
 
-    classDeclaration.addProperty({ name: 'CONCEPT_NAME', isStatic: true, initializer: `"${toCleanConceptName(c.qualifiedName)}"` });
+    classDeclaration.addProperty({
+      name: 'CONCEPT_NAME',
+      isStatic: true,
+      initializer: `"${toCleanConceptName(c.qualifiedName)}"`,
+    });
 
     // Constants for links and properties names
     const relevantContainments: Containment[] = c.declaredContainments.concat(

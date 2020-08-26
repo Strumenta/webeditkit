@@ -59,7 +59,7 @@ import { registerIssuesForModel, registerIssuesForNode } from '../internal';
 export interface Alternative {
   conceptName: string;
   alias: string;
-  node?: NodeData
+  node?: NodeData;
 }
 
 export interface AlternativeForDirectReference {
@@ -446,7 +446,7 @@ export class WsCommunication {
       container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
-      smartRefNodeId: node?.id
+      smartRefNodeId: node?.id,
     } as AddChild);
   }
 
@@ -486,7 +486,7 @@ export class WsCommunication {
       container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
-      smartRefNodeId: node?.id
+      smartRefNodeId: node?.id,
     } as SetChild);
   }
 

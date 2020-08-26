@@ -25,13 +25,9 @@ export function pressChar(element: Element, letter: string, code: number) {
 
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
   // @ts-ignore
-  element.dispatchEvent(
-    new w.KeyboardEvent('keydown', { key: letter, code: code.toString(), bubbles: true }),
-  ); // x
+  element.dispatchEvent(new w.KeyboardEvent('keydown', { key: letter, code: code.toString(), bubbles: true })); // x
   // @ts-ignore
-  element.dispatchEvent(
-    new w.KeyboardEvent('keyup', { key: letter, code: code.toString(), bubbles: true }),
-  ); // x
+  element.dispatchEvent(new w.KeyboardEvent('keyup', { key: letter, code: code.toString(), bubbles: true })); // x
 }
 
 export function pressArrowLeft(element: Element) {
@@ -40,13 +36,9 @@ export function pressArrowLeft(element: Element) {
 
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
   // @ts-ignore
-  element.dispatchEvent(
-    new w.KeyboardEvent('keydown', { code: '37', key: 'ArrowLeft' }),
-  ); // x
+  element.dispatchEvent(new w.KeyboardEvent('keydown', { code: '37', key: 'ArrowLeft' })); // x
   // @ts-ignore
-  element.dispatchEvent(
-    new w.KeyboardEvent('keyup', { code: '37', key: 'ArrowLeft' }),
-  ); // x
+  element.dispatchEvent(new w.KeyboardEvent('keyup', { code: '37', key: 'ArrowLeft' })); // x
 }
 
 export function pressArrowRight(element: Element) {
