@@ -26,11 +26,11 @@ export function pressChar(element: Element, letter: string, code: number) {
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
   // @ts-ignore
   element.dispatchEvent(
-    new w.KeyboardEvent('keydown', { char: letter, key: letter, charKode: code, keyCode: code, bubbles: true }),
+    new w.KeyboardEvent('keydown', { key: letter, code: code.toString(), bubbles: true }),
   ); // x
   // @ts-ignore
   element.dispatchEvent(
-    new w.KeyboardEvent('keyup', { char: letter, key: letter, charKode: code, keyCode: code, bubbles: true }),
+    new w.KeyboardEvent('keyup', { key: letter, code: code.toString(), bubbles: true }),
   ); // x
 }
 
@@ -41,11 +41,11 @@ export function pressArrowLeft(element: Element) {
   // https://css-tricks.com/snippets/javascript/javascript-keycodes/
   // @ts-ignore
   element.dispatchEvent(
-    new w.KeyboardEvent('keydown', { code: 'ArrowLeft', key: 'ArrowLeft', charKode: 37, keyCode: 37 }),
+    new w.KeyboardEvent('keydown', { code: '37', key: 'ArrowLeft' }),
   ); // x
   // @ts-ignore
   element.dispatchEvent(
-    new w.KeyboardEvent('keyup', { code: 'ArrowLeft', key: 'ArrowLeft', charKode: 37, keyCode: 37 }),
+    new w.KeyboardEvent('keyup', { code: '37', key: 'ArrowLeft' }),
   ); // x
 }
 
@@ -56,19 +56,15 @@ export function pressArrowRight(element: Element) {
   // @ts-ignore
   element.dispatchEvent(
     new w.KeyboardEvent('keydown', {
-      code: 'ArrowRight',
+      code: '39',
       key: 'ArrowRight',
-      charKode: 39,
-      keyCode: 39,
     }),
   ); // x
   // @ts-ignore
   element.dispatchEvent(
     new w.KeyboardEvent('keyup', {
-      code: 'ArrowRight',
+      code: '39',
       key: 'ArrowRight',
-      charKode: 39,
-      keyCode: 39,
     }),
   ); // x
 }
@@ -80,19 +76,15 @@ export function pressEnter(element: Element) {
   // @ts-ignore
   element.dispatchEvent(
     new w.KeyboardEvent('keydown', {
-      code: 'Enter',
+      code: '13',
       key: 'Enter',
-      charKode: 13,
-      keyCode: 13,
     }),
   ); // x
   // @ts-ignore
   element.dispatchEvent(
     new w.KeyboardEvent('keyup', {
-      code: 'Enter',
+      code: '13',
       key: 'Enter',
-      charKode: 13,
-      keyCode: 13,
     }),
   ); // x
 }
@@ -104,19 +96,15 @@ export function pressBackspace(element: Element) {
   // @ts-ignore
   element.dispatchEvent(
     new w.KeyboardEvent('keydown', {
-      code: 'Backspace',
+      code: '8',
       key: 'Backspace',
-      charKode: 8,
-      keyCode: 8,
     }),
   ); // x
   // @ts-ignore
   element.dispatchEvent(
     new w.KeyboardEvent('keyup', {
-      code: 'Backspace',
+      code: '8',
       key: 'Backspace',
-      charKode: 8,
-      keyCode: 8,
     }),
   ); // x
 }
