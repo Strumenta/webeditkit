@@ -37,6 +37,10 @@ export interface ModelInfo {
   intValue: number;
 }
 
+export interface ModelInfoDetailed extends ModelInfo {
+  roots: LimitedNodeData[];
+}
+
 export interface OperationResult<D> {
   success: boolean;
   message: string;

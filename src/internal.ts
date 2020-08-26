@@ -283,8 +283,8 @@ import { registerRenderer, clearRendererRegistry, getRegisteredRenderer } from '
 
 export { registerRenderer, clearRendererRegistry, getRegisteredRenderer };
 
-import { setup, addModel, loadDataModel, baseUrlForTarget } from './facade';
-export { setup, addModel, loadDataModel, baseUrlForTarget };
+import { setup, addModel, loadModule, loadDataModel, loadModel, baseUrlForTarget } from './facade';
+export { setup, addModel, loadModule, loadDataModel, loadModel, baseUrlForTarget };
 
 import { clearDatamodelRoots } from './datamodel/registry';
 export { clearDatamodelRoots };

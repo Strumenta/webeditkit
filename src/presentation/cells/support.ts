@@ -7,12 +7,24 @@ import { ModelNode } from '../../internal';
 import { getDatamodelRoot } from '../../internal';
 import { log } from '../../internal';
 
+export function isDeleting(element: Element | null) {
+  return element?.classList.contains('deleting');
+}
+
+export function setDeleting(element: Element | null) {
+  return element?.classList.add('deleting');
+}
+
+export function unsetDeleting(element: Element | null) {
+  return element?.classList.remove('deleting');
+}
+
 export function handleSelfDeletion(element: HTMLElement, modelNode: ModelNode): void {
   const closest = element.closest('.represent-node');
-  if (closest?.classList.contains('deleting')) {
+  if (isDeleting(closest)) {
     modelNode.deleteMe();
   } else {
-    closest?.classList.add('deleting');
+    setDeleting(closest);
   }
 }
 

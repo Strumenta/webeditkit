@@ -29,6 +29,8 @@ import { ModelNode } from '../../internal';
 import { Ref } from '../../internal';
 import { log } from '../../internal';
 import { EditedValue, IData } from '../../internal';
+import {isDeleting, unsetDeleting} from "./support";
+import {AutocompleteResult} from "autocompleter";
 
 export function childCell(
   node: ModelNode,
@@ -40,15 +42,17 @@ export function childCell(
   if (child == null) {
     if (emptyCell != null) {
       return emptyCell();
+    } else {
+      return fixedCell(
+          node,
+          `<no ${containmentName}>`,
+          ['missing-element'],
+          alternativesProviderForAddingChild(node, containmentName, false, filter),
+      );
     }
-    return fixedCell(
-      node,
-      `<no ${containmentName}>`,
-      ['missing-element'],
-      alternativesProviderForAddingChild(node, containmentName, false, filter),
-    );
+  } else {
+    return renderModelNode(child);
   }
-  return renderModelNode(child);
 }
 
 function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNode {
@@ -181,9 +185,24 @@ export function editableCell(
   const placeholder = '<no ' + propertyName + '>';
 
   const modelValue = modelNode.property(propertyName) || '';
+  let stringValue: string;
+
+  if (typeof modelValue === 'string') {
+    stringValue = modelValue;
+  } else if (typeof modelValue === 'number') {
+    stringValue = modelValue.toString();
+  } else if (typeof modelValue === 'boolean') {
+    stringValue = modelValue.toString();
+  } else if("myNameHint" in (modelValue as any)) {
+    stringValue = (modelValue as any).myNameHint;
+  } else {
+    const error = new Error(`Unsupported model value: ${modelValue}`);
+    (error as any).modelValue = modelValue;
+    throw error;
+  }
   const editedValue = data.editedValues.get(modelNode, propertyName);
 
-  const currentValue = editedValue?.inputFieldValue ?? modelValue;
+  const currentValue = editedValue?.inputFieldValue ?? stringValue;
 
   function setEditedValue(value: string) {
     const ev: EditedValue = data.editedValues.getOrCreate(modelNode, propertyName);
@@ -210,6 +229,10 @@ export function editableCell(
         update: triggerResize,
       },
       on: {
+        blur: (e: FocusEvent) => {
+          const closest = (e.target as HTMLElement).closest('.represent-node');
+          unsetDeleting(closest);
+        },
         keydown: (e: KeyboardEvent) => {
           const isTabNext = e.key === 'Tab' && !e.shiftKey;
           const isTabPrev = e.key === 'Tab' && e.shiftKey;
@@ -301,7 +324,7 @@ export function fixedCell(
   text: string,
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
-  deleter?: () => void,
+  deleter?: (doDelete: boolean) => void,
   onEnter?: () => void,
 ): VNode {
   extraClasses = extraClasses || [];
@@ -314,15 +337,34 @@ export function fixedCell(
     {
       props: { value: text },
       hook: {
-        insert: (vnode: any) => {
+        insert: vnode => {
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
           }
         },
+        prepatch: (oldVNode, vNode) => {
+          if(!vNode.data) {
+            vNode.data = {};
+          }
+          vNode.data.autocomplete = oldVNode.data?.autocomplete;
+        },
+        destroy: vNode => {
+          if(vNode.data?.autocomplete) {
+            (vNode.data.autocomplete as AutocompleteResult).destroy();
+          }
+        },
         update: triggerResize,
       },
       on: {
+        blur: (e: FocusEvent) => {
+          if(deleter) {
+            deleter(false);
+          } else {
+            const closest = (e.target as HTMLElement).closest('.represent-node');
+            unsetDeleting(closest);
+          }
+        },
         click: (e: MouseEvent) => {
           (e.target as HTMLInputElement).setSelectionRange(0, 0);
         },
@@ -347,7 +389,7 @@ export function fixedCell(
             moveDown(target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
-              deleter();
+              deleter(true);
               return true;
             } else if (modelNode != null) {
               handleSelfDeletion(target, modelNode);
@@ -361,8 +403,6 @@ export function fixedCell(
             if (!document.querySelector('.autocomplete')) {
               if (onEnter !== undefined) {
                 onEnter();
-                e.preventDefault();
-                return false;
               } else if (alternativesProvider === undefined) {
                 // We should stop this when the autocomplete is displayed
 
@@ -370,9 +410,10 @@ export function fixedCell(
                 if (modelNode != null) {
                   handleAddingElement(target, modelNode);
                 }
-                e.preventDefault();
-                return false;
               }
+              e.preventDefault();
+              e.stopPropagation();
+              return false;
             }
           }
           log('prevent key on fixed (C)');
@@ -452,6 +493,17 @@ function editingReferenceCell(
             installAutocomplete(vnode, alternativesProvider, false);
           }
         },
+        prepatch: (oldVNode, vNode) => {
+          if(!vNode.data) {
+            vNode.data = {};
+          }
+          vNode.data.autocomplete = oldVNode.data?.autocomplete;
+        },
+        destroy: vNode => {
+          if(vNode.data?.autocomplete) {
+            (vNode.data.autocomplete as AutocompleteResult).destroy();
+          }
+        },
         update: triggerResize,
       },
     },
@@ -464,7 +516,7 @@ export function referenceCell(
   referenceName: string,
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
-  deleter?: () => void,
+  deleter?: (doDelete: boolean) => void,
   opener?: (e: MouseEvent) => boolean,
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
@@ -535,7 +587,7 @@ export function referenceCell(
   // 3) Matching an element
   //
   // Case 1: when we type we move to Case 2
-  // Case 2: if we type something that matches or the user select an entry we got to case 3
+  // Case 2: if we type something that matches or the user select an entry we go to case 3
   // Case 3: if we type we move to case 2
 
   if (modelNode.ref(referenceName) == null) {
@@ -609,12 +661,28 @@ export function referenceCell(
             triggerResize(vnode);
           });
         },
+        prepatch: (oldVNode, vNode) => {
+          if(!vNode.data) {
+            vNode.data = {};
+          }
+          vNode.data.autocomplete = oldVNode.data?.autocomplete;
+        },
+        destroy: vNode => {
+          if(vNode.data?.autocomplete) {
+            (vNode.data.autocomplete as AutocompleteResult).destroy();
+          }
+        },
         update: (vnode: VNode) => {
           vnode.elm!.addEventListener('keydown', kdCaptureListener, true);
           triggerResize(vnode);
         },
       },
       on: {
+        blur: e => {
+          if(deleter) {
+            deleter(false);
+          }
+        },
         click: (e: MouseEvent) => {
           opener?.(e);
         },
@@ -629,7 +697,7 @@ export function referenceCell(
             moveDown(target);
           } else if (e.key === 'Backspace') {
             if (deleter != null) {
-              deleter();
+              deleter(true);
               e.preventDefault();
               return;
             }
@@ -681,7 +749,7 @@ export function horizontalLine(): VNode {
 }
 
 export function alias(node: ModelNode, extraClasses: string[] = []): VNode {
-  return fixedCell(node, node.alias as string, extraClasses);
+  return fixedCell(node, node.conceptAlias as string, extraClasses);
 }
 
 export function name(data: IData, node: ModelNode, extraClasses: string[] = []) {

@@ -73,23 +73,27 @@ export function autoresize(el: HTMLElement, options?: InputWidthOptions) {
 }
 
 export function previous(el: Element | null, selector: string) {
-  while (el) {
-    el = el.previousElementSibling;
-    if (el && el.matches(selector)) {
-      return el;
-    }
+  if(!el) {
+    return null;
   }
-  return null;
+  const prev = el.previousElementSibling;
+  if (prev && prev.matches(selector)) {
+    return prev;
+  } else {
+    return null;
+  }
 }
 
 export function next(el: Element | null, selector: string) {
-  while (el) {
-    el = el.nextElementSibling;
-    if (el && el.matches(selector)) {
-      return el;
-    }
+  if(!el) {
+    return null;
   }
-  return null;
+  const prev = el.nextElementSibling;
+  if (prev && prev.matches(selector)) {
+    return prev;
+  } else {
+    return null;
+  }
 }
 
 function createEvent(eventType: string, bubbles = false, cancelable = true) {

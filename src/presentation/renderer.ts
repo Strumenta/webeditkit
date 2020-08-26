@@ -4,6 +4,7 @@ import { addClass, addToDataset, alternativesProviderForAbstractConcept, fixedCe
 import { setKey, wrapMouseOutHandler, wrapMouseOverHandler } from '../internal';
 import { ModelNode } from '../internal';
 import { editorController } from '../internal';
+import {AlternativesProvider} from "./cells/types";
 
 const renderersByName: { [key: string]: Renderer } = {};
 
@@ -53,14 +54,16 @@ export function renderModelNode(modelNode: ModelNode): VNode {
 
 export function getBasicDefaultRenderer(modelNode: ModelNode): Renderer {
   const abstractConcept = modelNode.isAbstract();
-  return () => {
-    if (abstractConcept) {
-      return fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
-    } else {
-      const label = modelNode.alias || `[default ${modelNode.simpleConceptName()}]`;
-      return fixedCell(modelNode, label, ['default-cell-concrete']);
+  if (abstractConcept) {
+    return () => fixedCell(modelNode, '', ['default-cell-abstract'], alternativesProviderForAbstractConcept(modelNode));
+  } else {
+      const label = modelNode.data.smartReference?.name || modelNode.conceptAlias || `[default ${modelNode.simpleConceptName()}]`;
+    let alternativesProvider: AlternativesProvider;
+    if(modelNode.parent() && modelNode.containmentName()) {
+      alternativesProvider = alternativesProviderForAbstractConcept(modelNode);
     }
-  };
+    return () => fixedCell(modelNode, label, ['default-cell-concrete'], alternativesProvider);
+  }
 }
 
 type DefaultRendererProvider = (modelNode: ModelNode) => Renderer;

@@ -59,6 +59,7 @@ import { registerIssuesForModel, registerIssuesForNode } from '../internal';
 export interface Alternative {
   conceptName: string;
   alias: string;
+  node?: NodeData
 }
 
 export interface AlternativeForDirectReference {
@@ -411,8 +412,8 @@ export class WsCommunication {
     } as DefaultInsertion);
   }
 
-  addChild(container: ModelNode, containmentName: string, conceptName: string): void {
-    this.addChildAtIndex(container, containmentName, -1, conceptName);
+  addChild(container: ModelNode, containmentName: string, conceptName: string, node?: NodeData): void {
+    this.addChildAtIndex(container, containmentName, -1, conceptName, node);
   }
 
   askForErrorsInNode(modelName: string, nodeID: string): void {
@@ -428,6 +429,7 @@ export class WsCommunication {
     containmentName: string,
     index: number,
     conceptName: string,
+    node?: NodeData, // TODO Alessio should this be a ModelNode instead? How?
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
@@ -444,6 +446,7 @@ export class WsCommunication {
       container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
+      smartRefNodeId: node?.id
     } as AddChild);
   }
 
@@ -470,6 +473,7 @@ export class WsCommunication {
     container: ModelNode,
     containmentName: string,
     conceptName: string,
+    node?: NodeData,
     initializer?: NodeProcessor,
     uuid: string = uuidv4(),
   ): void {
@@ -482,6 +486,7 @@ export class WsCommunication {
       container: modelNodeToNodeInModel(container),
       containmentName,
       conceptToInstantiate: conceptName,
+      smartRefNodeId: node?.id
     } as SetChild);
   }
 

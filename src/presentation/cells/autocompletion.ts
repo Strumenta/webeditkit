@@ -1,8 +1,6 @@
-import autocomplete from 'autocompleter';
-import { VNode } from '../../internal';
-
-import { ModelNode } from '../../internal';
-import { Alternative, getWsCommunication } from '../../internal';
+import autocomplete, {AutocompleteResult} from 'autocompleter';
+import {Alternative, getWsCommunication, ModelNode, VNode} from '../../internal';
+import {NodeData} from "../../datamodel/misc";
 
 export function alternativesProviderForAbstractConcept(
   modelNode: ModelNode,
@@ -39,16 +37,16 @@ export function alternativesProviderForAddingChild(
       throw new Error('No WsCommunication registered for model ' + modelNode.modelName());
     }
     ws.askAlternatives(modelNode, containmentName, (alternatives) => {
-      const adder = (conceptName: string) => () => {
+      const adder = (conceptName: string, node?: NodeData) => () => {
         if (replacing) {
-          ws.setChild(modelNode, containmentName, conceptName);
+          ws.setChild(modelNode, containmentName, conceptName, node);
         } else {
-          ws.addChild(modelNode, containmentName, conceptName);
+          ws.addChild(modelNode, containmentName, conceptName, node);
         }
       };
       const uiAlternatives = Array.from(
-        alternatives.filter(filter).map((domElement, index) => {
-          return { label: domElement.alias, execute: adder(domElement.conceptName) };
+        alternatives.filter(filter).map((alt, index) => {
+          return { label: alt.node ? alt.node.name : alt.alias, execute: adder(alt.conceptName, alt.node) };
         }),
       );
       suggestionsReceiver(uiAlternatives);
@@ -69,7 +67,7 @@ export function installAutocomplete(
   vnode: VNode,
   valuesProvider: (suggestionsReceiver: SuggestionsReceiver) => void,
   fixed: boolean,
-): void {
+): AutocompleteResult {
   const input = vnode.elm as HTMLInputElement;
   const ac = autocomplete({
     input,
@@ -105,6 +103,11 @@ export function installAutocomplete(
     },
     preventSubmit: true,
   });
+  if(!vnode.data) {
+    vnode.data = {};
+  }
+  vnode.data.autocomplete = ac;
+  return ac;
 }
 
 export function isAutocompleteVisible(): boolean {
