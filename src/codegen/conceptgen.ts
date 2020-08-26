@@ -39,7 +39,7 @@ export function processConcepts(concepts: Concept[], gc: GeneratedCode, language
   return gc;
 }
 
-const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent', 'index'];
+const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent', 'index', 'constant'];
 
 function capitalize(word: string) {
   return word[0].toUpperCase() + word.slice(1).toLowerCase();
