@@ -128,25 +128,25 @@ function generatePropertyAccessor(prop: Property, classdecl: ClassDeclaration) {
     classdecl.addMethod({
       name,
       returnType: 'string | undefined',
-      statements: [`return this.property("${prop.name} as (string | undefined)")`],
+      statements: [`return this.property("${prop.name}") as (string | undefined)`],
     });
   } else if (prop.type === 'boolean') {
     classdecl.addMethod({
       name,
       returnType: 'boolean | undefined',
-      statements: [`return this.property("${prop.name} as (boolean | undefined)")`],
+      statements: [`return this.property("${prop.name}")  as (boolean | undefined)`],
     });
   } else if (prop.type === 'integer') {
     classdecl.addMethod({
       name,
       returnType: 'number | undefined',
-      statements: [`return this.property("${prop.name} as (number | undefined)")`],
+      statements: [`return this.property("${prop.name}") as (number | undefined)`],
     });
   } else {
     classdecl.addMethod({
       name,
       returnType: 'EnumValue | undefined',
-      statements: [`return this.property("${prop.name} as (EnumValue | undefined)")`],
+      statements: [`return this.property("${prop.name}") as (EnumValue | undefined)`],
     });
   }
 }
