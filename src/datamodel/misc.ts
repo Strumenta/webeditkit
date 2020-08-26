@@ -61,7 +61,7 @@ interface ModelId {
 /// Properties
 ///
 
-interface EnumValue {
+export interface EnumValue {
   myId: string;
   myNameHint: string;
 }
