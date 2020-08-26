@@ -26,12 +26,12 @@ export class GeneratedCode {
 
   processUsedType(typeName: string): string {
     if (this.isInThisLanguage(typeName)) {
-      return simpleName(typeName);
+      return this.cleanClassName(simpleName(typeName));
     } else {
       if (this.ignoreOtherLanguages) {
         return 'ModelNode';
       } else {
-        return simpleName(typeName);
+        return this.cleanClassName(simpleName(typeName));
       }
     }
   }

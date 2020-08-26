@@ -41,6 +41,10 @@ export function processConcepts(concepts: Concept[], gc: GeneratedCode, language
 
 const forbiddenNames = ['alias', 'name', 'property', 'ref', 'parent', 'index'];
 
+function capitalize(word: string){
+  return word[0].toUpperCase()+word.slice(1).toLowerCase();
+}
+
 function generateContainmentAccessor(link: Containment, gc: GeneratedCode, classdecl: ClassDeclaration) {
   let name = link.name;
   if (forbiddenNames.includes(name)) {
@@ -56,6 +60,11 @@ function generateContainmentAccessor(link: Containment, gc: GeneratedCode, class
       name,
       returnType: `${baseType}[]`,
       statements: [`return this.childrenByLinkName("${link.name}")${cast}`],
+    });
+    classdecl.addMethod({
+      name: `add${capitalize(link.name)}`,
+      parameters: [{name: 'index', type: 'number'}, {name: 'conceptName?', type: 'string'}],
+      statements: [`this.createChild("${link.name}", index, conceptName || "${link.type}");`],
     });
   } else if (link.optional) {
     let cast = "";
@@ -170,21 +179,25 @@ function generateEditingSupportForProperty(prop: Property, classdecl: ClassDecla
   });
 }
 
+function toCleanConceptName(qn: string) {
+  return qn.replace('.structure.', '.');
+}
+
 function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile): GeneratedCode {
   console.log(`  -> processing concept ${c.qualifiedName}`);
   if (!c.isInterface) {
     let parent = 'ModelNode';
-    // console.log(`    superConcept ${c.superConcept}`);
     if (c.superConcept != null && c.superConcept !== baseConcept) {
       parent = gc.processParent(c.superConcept);
     }
     const className = gc.cleanClassName(simpleName(c.qualifiedName));
     languageFile.addStatements('// tslint:disable-next-line:max-classes-per-file');
     const classDeclaration = languageFile.addClass({ name: className });
+    classDeclaration.setIsAbstract(c.isAbstract)
     classDeclaration.setIsExported(true);
     classDeclaration.setExtends(parent);
 
-    classDeclaration.addProperty({ name: 'CONCEPT_NAME', isStatic: true, initializer: `"${c.qualifiedName}"` });
+    classDeclaration.addProperty({ name: 'CONCEPT_NAME', isStatic: true, initializer: `"${toCleanConceptName(c.qualifiedName)}"` });
 
     // Constants for links and properties names
     const relevantContainments: Containment[] = c.declaredContainments.concat(
