@@ -44,6 +44,10 @@ export class LimitedModelNode {
     this.limitedData = limitedData;
   }
 
+  isAbstract() : boolean {
+    return this.limitedData.abstractConcept;
+  }
+
   name(): string | undefined {
     return this.limitedData.name;
   }
