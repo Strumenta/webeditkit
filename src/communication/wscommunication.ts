@@ -111,7 +111,7 @@ export class RootsObserver {
 
 export class WsCommunication {
   private ws: WebSocket;
-  private modelName: string; // This is the qualified model name
+  private readonly modelName: string; // This is the qualified model name
   private readonly localName: string; // This is the local model name or target
   private silent: boolean;
   private readonly handlers: { [type: string]: MessageHandler<Message> };
@@ -580,6 +580,10 @@ export class WsCommunication {
       } as GetNode);
     });
     return promise;
+  }
+
+  dispose() {
+    this.ws.close();
   }
 }
 
