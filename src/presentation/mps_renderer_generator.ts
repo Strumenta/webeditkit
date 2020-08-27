@@ -1,4 +1,4 @@
-import { h } from '../internal';
+import { abstractElementCell, h } from '../internal';
 
 import { HttpCommunication } from '../internal';
 import { ModelNode, Ref } from '../internal';
@@ -125,5 +125,11 @@ function generateRendererFromMPSEditorUsingConceptImpl(
   if (cellModel != null) {
     return cellToRenderer(data, cellModel);
   }
-  return (modelNode) => h('span', { style: { backgroundColor: 'red' } }, [`<generated renderer for ${conceptName}>`]);
+  return (modelNode: ModelNode) => {
+    if (modelNode.isAbstract()) {
+      return abstractElementCell(modelNode);
+    } else {
+      return h('span', { style: { backgroundColor: 'red' } }, [`<generated renderer for ${conceptName}>`]);
+    }
+  }
 }
