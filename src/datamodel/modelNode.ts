@@ -292,4 +292,8 @@ export class ModelNode extends LimitedModelNode {
   constant(value: string, extraClasses?: string[], alternativesProvider?: AlternativesProvider, deleter?: (doDelete: boolean) => void, onEnter?: () => void) : VNode {
     return fixedCell(this, value, extraClasses, alternativesProvider, deleter, onEnter);
   }
+
+  conceptAliasCell() : VNode {
+    return this.constant(this.conceptAlias as string)
+  }
 }
