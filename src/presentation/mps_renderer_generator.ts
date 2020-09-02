@@ -1,4 +1,4 @@
-import { abstractElementCell, h } from '../internal';
+import { abstractElementCell, h, tabCell } from '../internal';
 
 import { HttpCommunication } from '../internal';
 import { ModelNode, Ref } from '../internal';
@@ -39,6 +39,8 @@ function cellToRenderer(data: IData, cellModel: ModelNode): Renderer {
     }
   } else if (cellModel.conceptName() === 'jetbrains.mps.lang.editor.CellModel_Constant') {
     return (modelNode) => fixedCell(modelNode, cellModel.property('text') as string);
+  } else if (cellModel.conceptName() === 'jetbrains.mps.lang.editor.CellModel_Indent') {
+    return (modelNode) => tabCell();
   } else if (cellModel.conceptName() === 'jetbrains.mps.lang.editor.CellModel_RefCell') {
     const ref = cellModel.ref('relationDeclaration') as Ref;
     const refData = ref.syncLoadData();

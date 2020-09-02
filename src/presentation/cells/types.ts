@@ -762,14 +762,10 @@ export function keyword(modelNode: ModelNode, text: string): VNode {
 
 export function abstractElementCell(modelNode: ModelNode) : VNode {
   return fixedCell(modelNode, `<replace me>`, ['abstractcell'], (suggestionsReceiver: SuggestionsReceiver) => {
-    console.log("abstractElementCell", "getting ws");
     const ws = getWsCommunication(modelNode.modelName());
-    console.log("abstractElementCell", "got ws", ws);
     const containmentName = modelNode.containmentName() as string;
     const filter = () => true;
-    console.log("abstractElementCell", "asking alternatives", containmentName);
     ws.askAlternatives(modelNode.parent() as ModelNode, containmentName, (alternatives) => {
-      console.log("abstractElementCell", "got alternatives", alternatives);
       const adder = (conceptName: string, node?: NodeData) => () => {
         ws.instantiate(conceptName, modelNode);
       };
@@ -778,7 +774,6 @@ export function abstractElementCell(modelNode: ModelNode) : VNode {
           return { label: alt.node ? alt.node.name : alt.alias, execute: adder(alt.conceptName, alt.node) };
         }),
       );
-      console.log("abstractElementCell", "ui alternatives", uiAlternatives);
       suggestionsReceiver(uiAlternatives);
     });
   });
