@@ -11,7 +11,7 @@ import {
 
 const compareByName = (a: LimitedNodeData, b: LimitedNodeData) => {
   if (a.name === undefined || b.name === undefined) {
-    throw Error(`Cannot compare two nodes without name: ${JSON.stringify(a)}, ${JSON.stringify(b)}`)
+    throw Error(`Cannot compare two nodes without name: ${JSON.stringify(a)}, ${JSON.stringify(b)}`);
   }
   return a.name.localeCompare(b.name);
 };
@@ -109,7 +109,7 @@ export class HttpCommunication {
         try {
           instances.sort(compareByName);
         } catch (e) {
-          console.error(`Error occurred while sorting instances obtained from ${url}: ${e}`)
+          console.error(`Error occurred while sorting instances obtained from ${url}: ${e}`);
         }
         receiver(instances.map((d: LimitedNodeData) => limitedDataToNode(d)));
       } else {

@@ -7,7 +7,7 @@ import {
   nodeIdToString,
   PropertyValue,
   refToNodeInModel,
-  AlternativesProvider
+  AlternativesProvider,
 } from '../internal';
 import { Ref } from '../internal';
 import { ReferenceChange } from '../internal';
@@ -44,7 +44,7 @@ export class LimitedModelNode {
     this.limitedData = limitedData;
   }
 
-  isAbstract() : boolean {
+  isAbstract(): boolean {
     return this.limitedData.abstractConcept;
   }
 
@@ -293,11 +293,17 @@ export class ModelNode extends LimitedModelNode {
     this.data.properties[propertyName] = propertyValue;
   }
 
-  constant(value: string, extraClasses?: string[], alternativesProvider?: AlternativesProvider, deleter?: (doDelete: boolean) => void, onEnter?: () => void) : VNode {
+  constant(
+    value: string,
+    extraClasses?: string[],
+    alternativesProvider?: AlternativesProvider,
+    deleter?: (doDelete: boolean) => void,
+    onEnter?: () => void,
+  ): VNode {
     return fixedCell(this, value, extraClasses, alternativesProvider, deleter, onEnter);
   }
 
-  conceptAliasCell() : VNode {
-    return this.constant(this.conceptAlias as string)
+  conceptAliasCell(): VNode {
+    return this.constant(this.conceptAlias as string);
   }
 }

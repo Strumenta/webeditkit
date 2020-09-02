@@ -124,7 +124,8 @@ function generateReferenceAccessor(link: Reference, classdecl: ClassDeclaration)
       return value.syncLoadData();
     } else {
       throw new Error("reference ${link.name} should not be null");
-    }`],
+    }`,
+      ],
     });
   }
 }

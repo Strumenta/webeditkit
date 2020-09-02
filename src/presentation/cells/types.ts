@@ -760,7 +760,7 @@ export function keyword(modelNode: ModelNode, text: string): VNode {
   return fixedCell(modelNode, text, ['keyword']);
 }
 
-export function abstractElementCell(modelNode: ModelNode) : VNode {
+export function abstractElementCell(modelNode: ModelNode): VNode {
   return fixedCell(modelNode, `<replace me>`, ['abstractcell'], (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
     const containmentName = modelNode.containmentName() as string;

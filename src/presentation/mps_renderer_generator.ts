@@ -128,11 +128,11 @@ function generateRendererFromMPSEditorUsingConceptImpl(
     return cellToRenderer(data, cellModel);
   }
   return (modelNode: ModelNode) => {
-    console.log("generateRendererFromMPSEditorUsingConceptImpl", modelNode.conceptName(), modelNode.isAbstract());
+    console.log('generateRendererFromMPSEditorUsingConceptImpl', modelNode.conceptName(), modelNode.isAbstract());
     if (modelNode.isAbstract()) {
       return abstractElementCell(modelNode);
     } else {
       return h('span', { style: { backgroundColor: 'red' } }, [`<generated renderer for ${conceptName}>`]);
     }
-  }
+  };
 }

@@ -117,7 +117,7 @@ import {
   NodeData,
   PropertyValue,
   EnumValue,
-  abstractElementCell
+  abstractElementCell,
 } from './internal';
 export {
   OperationResult,
@@ -133,5 +133,5 @@ export {
   NodeData,
   PropertyValue,
   EnumValue,
-  abstractElementCell
+  abstractElementCell,
 };

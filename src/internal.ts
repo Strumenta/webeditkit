@@ -322,5 +322,5 @@ import {
 } from './communication/messages';
 
 export { LanguageInfoDetailed, LanguageInfo, Concept, Enum, EnumLiteral, Property, Containment, Link, Reference };
-import { AlternativesProvider, abstractElementCell } from './presentation/cells/types'
-export { AlternativesProvider, abstractElementCell }
+import { AlternativesProvider, abstractElementCell } from './presentation/cells/types';
+export { AlternativesProvider, abstractElementCell };
