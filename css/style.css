@@ -250,3 +250,7 @@ div.horizontal-line {
     display: inline-block;
     width: 100%;
 }
+
+.abstractCell {
+    background-color: #9ecaed;
+}

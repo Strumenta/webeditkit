@@ -126,6 +126,7 @@ function generateRendererFromMPSEditorUsingConceptImpl(
     return cellToRenderer(data, cellModel);
   }
   return (modelNode: ModelNode) => {
+    console.log("generateRendererFromMPSEditorUsingConceptImpl", modelNode.conceptName(), modelNode.isAbstract());
     if (modelNode.isAbstract()) {
       return abstractElementCell(modelNode);
     } else {
