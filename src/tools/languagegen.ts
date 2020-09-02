@@ -41,11 +41,12 @@ function makeRequest<T>(partialUrl: string): T {
 async function processLanguage(languageName: string, destDir: string) {
   console.log('');
   console.log(`(* Processing language ${languageName} *)`);
-  console.log('');
 
   const project = new Project({});
 
   const languageFileName = `${destDir}/${languageName.replace(/\./gi, '_')}.ts`;
+  console.log(`   -> target file: ${languageFileName}`);
+  console.log('');
   const languageFile = project.createSourceFile(languageFileName, '', { overwrite: true });
 
   languageFile.addImportDeclaration({
@@ -86,6 +87,7 @@ async function processLanguage(languageName: string, destDir: string) {
   const registerLanguage = languageFile.addFunction({
     name: 'registerLanguage',
     isExported: true,
+    returnType: 'void',
     statements: languageFile
       .getClasses()
       .filter((cd) => cd.getProperties().filter((p) => p.getName() === 'CONCEPT_NAME').length === 1)

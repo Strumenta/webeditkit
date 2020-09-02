@@ -10,6 +10,9 @@ import {
 } from '../internal';
 
 const compareByName = (a: LimitedNodeData, b: LimitedNodeData) => {
+  if (a.name === undefined || b.name === undefined) {
+    throw Error(`Cannot compare two nodes without name: ${JSON.stringify(a)}, ${JSON.stringify(b)}`)
+  }
   return a.name.localeCompare(b.name);
 };
 
@@ -98,11 +101,16 @@ export class HttpCommunication {
   }
 
   getInstancesOfConcept(modelName: string, conceptName: string, receiver: (nodes: LimitedModelNode[]) => void): void {
-    void fetch(`${this.httpMpsServerAddress}/models/${modelName}/concept/${conceptName}`).then(async (response) => {
+    const url = `${this.httpMpsServerAddress}/models/${modelName}/concept/${conceptName}`;
+    void fetch(url).then(async (response) => {
       const data = (await response.json()) as OperationResult<LimitedNodeData[]>;
       if (data.success) {
         const instances = data.value;
-        instances.sort(compareByName);
+        try {
+          instances.sort(compareByName);
+        } catch (e) {
+          console.error(`Error occurred while sorting instances obtained from ${url}: ${e}`)
+        }
         receiver(instances.map((d: LimitedNodeData) => limitedDataToNode(d)));
       } else {
         console.error(data.message);

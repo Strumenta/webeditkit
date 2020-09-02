@@ -759,3 +759,7 @@ export function name(data: IData, node: ModelNode, extraClasses: string[] = []) 
 export function keyword(modelNode: ModelNode, text: string): VNode {
   return fixedCell(modelNode, text, ['keyword']);
 }
+
+export function abstractElementCell(modelNode: ModelNode) : VNode {
+  return fixedCell(modelNode, `<replace me>`);
+}
