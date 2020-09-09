@@ -218,6 +218,18 @@ function generateEditingSupportForProperty(prop: Property, classdecl: ClassDecla
   });
 }
 
+function generateRegisterRenderer(classdecl: ClassDeclaration) {
+  classdecl.addMethod({
+    name: `registerRenderer`,
+    returnType: 'void',
+    isStatic: true,
+    parameters: [
+      { name: 'renderer', type: `(node: ${classdecl.getName()}) => VNode` }
+    ],
+    statements: [`registerRenderer(${classdecl.getName()}.CONCEPT_NAME, renderer)`],
+  });
+}
+
 function toCleanConceptName(qn: string) {
   return qn.replace('.structure.', '.');
 }
@@ -301,6 +313,8 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
     for (const prop of relevantProperties) {
       generateEditingSupportForProperty(prop, classDeclaration);
     }
+
+    generateRegisterRenderer(classDeclaration);
   } else {
     const className = gc.cleanClassName(simpleName(c.qualifiedName));
     languageFile.addStatements(`// interface ${c.qualifiedName}`);
