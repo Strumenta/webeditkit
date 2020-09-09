@@ -9,6 +9,7 @@ import { AlternativesProvider } from './cells/types';
 const renderersByName: { [key: string]: Renderer } = {};
 
 export type Renderer = (modelNode: ModelNode) => VNode;
+export type SRenderer<T extends ModelNode> = (modelNode: T) => VNode;
 
 export function clearRendererRegistry(): void {
   Object.keys(renderersByName).forEach((key) => {

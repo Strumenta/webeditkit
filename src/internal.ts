@@ -267,10 +267,10 @@ export { EditorController, Observer };
 import { HttpCommunication } from './communication/httpcommunication';
 export { HttpCommunication };
 
-import { Renderer } from './presentation/renderer';
+import { Renderer, SRenderer } from './presentation/renderer';
 import { horizontalLine } from './presentation/cells/types';
 
-export { Renderer, horizontalLine };
+export { Renderer, SRenderer, horizontalLine };
 
 import { forEachDataModel, setDatamodelRoot } from './datamodel/registry';
 
