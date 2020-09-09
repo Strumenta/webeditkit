@@ -7,10 +7,7 @@ import { NodeData, ReferenceData } from '../internal';
 import { OperationResult } from '../internal';
 
 export class Ref {
-  data: ReferenceData;
-
-  constructor(data: ReferenceData) {
-    this.data = data;
+  constructor(public data: ReferenceData) {
   }
 
   loadData(cb: (modelNode: ModelNode) => void): void {

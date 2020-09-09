@@ -38,10 +38,7 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): 
 export type NodeProcessor = (node: ModelNode) => void;
 
 export class LimitedModelNode {
-  readonly limitedData: LimitedNodeData;
-
-  constructor(limitedData: LimitedNodeData) {
-    this.limitedData = limitedData;
+  constructor(readonly limitedData: LimitedNodeData) {
   }
 
   isAbstract(): boolean {
@@ -62,11 +59,8 @@ export class LimitedModelNode {
 }
 
 export class ModelNode extends LimitedModelNode {
-  readonly data: NodeData;
-
-  constructor(data: NodeData) {
+  constructor(readonly data: NodeData) {
     super(data);
-    this.data = data;
   }
 
   childByLinkName(linkName: string): ModelNode | undefined {
