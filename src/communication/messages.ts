@@ -5,6 +5,8 @@
 import { NodeData, NodeId, NodeInModel, PropertiesValues, PropertyValue } from '../internal';
 import { Alternatives } from '../internal';
 import { ModelNode } from '../internal';
+import { com } from 'mps-protocol/kotlin/mps-protocol';
+import EnumLiteralInfo = com.strumenta.mpsprotocol.data.EnumLiteralInfo;
 
 // Refactoring plan:
 // * Revisit NodeId to be a simple string
@@ -292,10 +294,10 @@ export interface RegisterForChanges extends Message {
 // Language and concept
 //
 
-export interface Declaration {
-  conceptName: string;
-  isInterface: boolean;
-}
+// export interface Declaration {
+//   conceptName: string;
+//   isInterface: boolean;
+// }
 
 export interface Link {
   name: string;
@@ -332,23 +334,23 @@ export interface Concept {
   inheritedProperties: Property[];
 }
 
-export interface EnumLiteral {
-  name: string;
-  label: string;
-}
+// export interface EnumLiteral {
+//   name: string;
+//   label: string;
+// }
 
-export interface Enum {
-  name: string;
-  defaultLiteral?: string;
-  literals: EnumLiteral[];
-}
+// export interface Enum {
+//   name: string;
+//   defaultLiteral?: string;
+//   literals: EnumLiteralInfo[];
+// }
 
-export interface LanguageInfo {
-  qualifiedName: string;
-  sourceModuleName: string;
-}
+// export interface LanguageInfo {
+//   qualifiedName: string;
+//   sourceModuleName: string;
+// }
 
-export interface LanguageInfoDetailed extends LanguageInfo {
-  concepts: Concept[];
-  enums: Enum[];
-}
+// export interface LanguageInfoDetailed extends LanguageInfo {
+//   concepts: Concept[];
+//   enums: Enum[];
+// }
