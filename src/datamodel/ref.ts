@@ -7,8 +7,7 @@ import { NodeData, ReferenceData } from '../internal';
 import { OperationResult } from '../internal';
 
 export class Ref {
-  constructor(public data: ReferenceData) {
-  }
+  constructor(public data: ReferenceData) {}
 
   loadData(cb: (modelNode: ModelNode) => void): void {
     let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();

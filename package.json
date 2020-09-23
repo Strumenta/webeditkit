@@ -64,7 +64,8 @@
     "lintfix": "eslint --ext .ts src test --fix",
     "prepare": "npm run build",
     "coverage": "nyc npm run test",
-    "languagegen": "./src/tools/languagegen.ts "
+    "languagegen": "./src/tools/languagegen.ts ",
+    "messagesgen": "./src/tools/messagesgen.ts"
   },
   "repository": {
     "type": "git",

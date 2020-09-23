@@ -63,12 +63,7 @@ import {
   RequestForPropertyChange,
   SetChild,
 } from './communication/generated_messages';
-import {
-  IntentionData,
-  Message,
-  NodeReference,
-  nodeReferenceFromNode,
-} from './communication/base_messages';
+import { IntentionData, Message, NodeReference, nodeReferenceFromNode } from './communication/base_messages';
 import { registerIssuesForModel, registerIssuesForNode } from './communication/issues';
 
 import { setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass } from './datamodel/registry';

@@ -223,17 +223,17 @@ function generateRegisterRenderer(classdecl: ClassDeclaration) {
     name: `registerRenderer`,
     returnType: 'void',
     isStatic: true,
-    parameters: [
-      { name: 'renderer', type: `SRenderer<${classdecl.getName()}>` }
-    ],
-    statements: [`    const r : Renderer = function (node: ModelNode) : VNode {
+    parameters: [{ name: 'renderer', type: `SRenderer<${classdecl.getName()}>` }],
+    statements: [
+      `    const r : Renderer = function (node: ModelNode) : VNode {
   if (node instanceof ${classdecl.getName()}) {
     return renderer(node)
   } else {
     throw Error("Node expected to be ${classdecl.getName()}")
   }
 };
-registerRenderer(${classdecl.getName()}.CONCEPT_NAME, r);`],
+registerRenderer(${classdecl.getName()}.CONCEPT_NAME, r);`,
+    ],
   });
 }
 

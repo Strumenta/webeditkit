@@ -65,7 +65,9 @@ async function processLanguage(languageName: string, destDir: string) {
       'fixedCell',
       'horizontalCollectionCell',
       'verticalCollectionCell',
-      'Renderer', 'SRenderer', 'registerRenderer'
+      'Renderer',
+      'SRenderer',
+      'registerRenderer',
     ],
   });
 

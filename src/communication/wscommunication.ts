@@ -74,9 +74,7 @@ export type AlternativesForDirectReference = AlternativeForDirectReference[];
 type MessageHandler<M extends Message> = (msg: M) => void;
 
 export class Intention implements IntentionData {
-
-  constructor(public ws: WsCommunication, public blockUUID: UUID, public index: number, public description: string) {
-  }
+  constructor(public ws: WsCommunication, public blockUUID: UUID, public index: number, public description: string) {}
 
   execute(): void {
     this.ws.executeIntention(this.blockUUID, this.index);

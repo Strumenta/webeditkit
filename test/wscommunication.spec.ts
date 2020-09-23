@@ -10,9 +10,7 @@ import {
   PropertyChange,
   RequestForPropertyChange,
 } from '../src/communication/generated_messages';
-import {
-  nodeReference,
-} from '../src/communication/base_messages';
+import { nodeReference } from '../src/communication/base_messages';
 import { NodeData } from '../src/datamodel/misc';
 
 const rootData1: NodeData = {

@@ -51,8 +51,7 @@ export interface OperationResult<D> {
 }
 
 export class HttpCommunication {
-  constructor(private readonly httpMpsServerAddress: string) {
-  }
+  constructor(private readonly httpMpsServerAddress: string) {}
 
   async executeAction(modelName: string, nodeIdString: string, actionName: string): Promise<any> {
     return new Promise<any>((resolve, onrejected) => {

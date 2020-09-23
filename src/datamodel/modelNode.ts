@@ -38,8 +38,7 @@ export function reactToAReferenceChange(msg: ReferenceChange, root: ModelNode): 
 export type NodeProcessor = (node: ModelNode) => void;
 
 export class LimitedModelNode {
-  constructor(readonly limitedData: LimitedNodeData) {
-  }
+  constructor(readonly limitedData: LimitedNodeData) {}
 
   isAbstract(): boolean {
     return this.limitedData.abstractConcept;

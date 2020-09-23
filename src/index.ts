@@ -118,7 +118,8 @@ import {
   PropertyValue,
   EnumValue,
   abstractElementCell,
-  Renderer, SRenderer
+  Renderer,
+  SRenderer,
 } from './internal';
 export {
   OperationResult,
@@ -136,4 +137,4 @@ export {
   EnumValue,
   abstractElementCell,
 };
-export { Renderer, SRenderer }
+export { Renderer, SRenderer };
