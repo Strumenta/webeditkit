@@ -18,7 +18,7 @@ import {
 import { flattenArray } from '../src/internal';
 import { addInsertHook } from '../src/internal';
 
-import { DefaultInsertion, PropertyChangeNotification } from '../src/internal';
+import { DefaultInsertion, PropertyChange } from '../src/internal';
 
 import { JSDOM } from 'jsdom';
 

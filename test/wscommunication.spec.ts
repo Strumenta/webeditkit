@@ -428,10 +428,10 @@ describe('WsCommunication', () => {
           messagesReceivedByServer.push(JSON.parse(data as string));
           assertTheseMessagesAreReceived(receivedArray, messagesReceivedByServer.length, data as string, [
             {
-              type: 'propertyChange',
+              type: 'requestForPropertyChange',
               check: (msg) => {
                 expect(msg).to.eql({
-                  type: 'propertyChange',
+                  type: 'requestForPropertyChange',
                   node: {
                     model: 'my.qualified.ModelName',
                     id: {
@@ -441,7 +441,7 @@ describe('WsCommunication', () => {
                   propertyName: 'name',
                   propertyValue: 'my new name',
                   requestId: 'request ID',
-                } as RequestPropertyChange);
+                } as RequestForPropertyChange);
               },
             },
             {
@@ -475,7 +475,7 @@ describe('WsCommunication', () => {
       mockServer.on('connection', (socket) => {
         socket.on('message', (data) => {
           socket.send(
-            JSON.stringify({ type: 'AnswerPropertyChange', requestId: 'request ID' } as AnswerPropertyChange),
+            JSON.stringify({ type: 'answerPropertyChange', requestId: 'request ID' } as AnswerPropertyChange),
           );
         });
       });
@@ -656,14 +656,14 @@ describe('WsCommunication', () => {
       try {
         socket.send(
           JSON.stringify({
-            type: 'PropertyChange',
+            type: 'propertyChange',
             node: {
               model: 'myModelName',
               id: { regularId: '324292001770075100' },
             },
             propertyName: 'name',
             propertyValue: 'My Shiny New Name',
-          } as PropertyChangeNotification),
+          } as PropertyChange),
         );
         expect(root.name()).to.equals('My Shiny New Name');
         mockServer!.close();
