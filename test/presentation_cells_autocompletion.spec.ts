@@ -15,7 +15,8 @@ import { createInstance } from '../src/communication/wscommunication';
 import { compareVNodes, prepareFakeDom, pressChar } from './testutils';
 import { clearDatamodelRoots, dataToNode } from '../src/datamodel/registry';
 import { clearRendererRegistry } from '../src/presentation/renderer';
-import { AskAlternatives, Message, nodeReference } from '../src/communication/messages';
+import { AskAlternatives } from '../src/communication/generated_messages';
+import { Message, nodeReference } from '../src/communication/base_messages';
 import { NodeData } from '../src/datamodel/misc';
 
 import { JSDOM } from 'jsdom';

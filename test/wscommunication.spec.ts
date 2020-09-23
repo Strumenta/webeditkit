@@ -7,10 +7,12 @@ import { assertTheseMessagesAreReceived, clone } from './testutils';
 import { clearDatamodelRoots, dataToNode, setDatamodelRoot } from '../src/internal';
 import {
   AnswerPropertyChange,
+  PropertyChange,
+  RequestForPropertyChange,
+} from '../src/communication/generated_messages';
+import {
   nodeReference,
-  PropertyChangeNotification,
-  RequestPropertyChange,
-} from '../src/communication/messages';
+} from '../src/communication/base_messages';
 import { NodeData } from '../src/datamodel/misc';
 
 const rootData1: NodeData = {

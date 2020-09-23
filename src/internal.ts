@@ -1,7 +1,7 @@
 import { LimitedModelNode, ModelNode } from './datamodel/modelNode';
 import { dataToNode, limitedDataToNode } from './datamodel/registry';
 import { LimitedNodeData, NodeData, ReferenceData } from './datamodel/misc';
-import { UUID } from './communication/messages';
+import { UUID } from './communication/base_messages';
 import {
   getWsCommunication,
   Intention,
@@ -12,7 +12,7 @@ import {
 } from './communication/wscommunication';
 import { getIssuesForNode } from './communication/issues';
 import { IssuesMap } from './datamodel/issues';
-import { IssueDescription } from './communication/messages';
+import { IssueDescription } from './communication/base_messages';
 import { log } from './utils/misc';
 import { NodeInModel } from './datamodel/misc';
 import { editorController } from './presentation/EditorController';
@@ -54,19 +54,21 @@ import {
   GetNodeAnswer,
   InsertNextSibling,
   InstantiateConcept,
-  IntentionData,
-  Message,
   NodeAdded,
-  NodeReference,
-  nodeReferenceFromNode,
   NodeRemoved,
-  PropertyChangeNotification,
+  PropertyChange,
   ReferenceChange,
   RegisterForChanges,
   RequestForDirectReferences,
-  RequestPropertyChange,
+  RequestForPropertyChange,
   SetChild,
-} from './communication/messages';
+} from './communication/generated_messages';
+import {
+  IntentionData,
+  Message,
+  NodeReference,
+  nodeReferenceFromNode,
+} from './communication/base_messages';
 import { registerIssuesForModel, registerIssuesForNode } from './communication/issues';
 
 import { setDefaultBaseUrl, getDefaultBaseUrl, registerDataModelClass } from './datamodel/registry';
@@ -225,11 +227,11 @@ export {
   NodeReference,
   nodeReferenceFromNode,
   NodeRemoved,
-  PropertyChangeNotification,
+  PropertyChange,
   ReferenceChange,
   RegisterForChanges,
   RequestForDirectReferences,
-  RequestPropertyChange,
+  RequestForPropertyChange,
   SetChild,
   registerIssuesForModel,
   registerIssuesForNode,
@@ -299,7 +301,7 @@ export { VNode, toVNode, h, VNodeChildElement };
 import { InsertHook, UpdateHook } from 'snabbdom/hooks';
 export { InsertHook, UpdateHook };
 
-import { nodeReference } from './communication/messages';
+import { nodeReference } from './communication/base_messages';
 export { nodeReference };
 
 import { setDefaultRendererProvider } from './presentation/renderer';
@@ -319,7 +321,7 @@ import {
   Containment,
   Link,
   Reference,
-} from './communication/messages';
+} from './communication/metamodel';
 
 export { LanguageInfoDetailed, LanguageInfo, Concept, Enum, EnumLiteral, Property, Containment, Link, Reference };
 import { AlternativesProvider, abstractElementCell } from './presentation/cells/types';

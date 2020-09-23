@@ -357,7 +357,7 @@ export class WsCommunication {
 
   executeIntention(blockUUID: UUID, index: number): void {
     this.sendMessage({
-      type: 'ExecuteIntention',
+      type: 'executeIntention',
       blockUUID,
       index,
     } as ExecuteIntention);
@@ -373,7 +373,7 @@ export class WsCommunication {
       };
       const nodeIDInModel = modelNode instanceof ModelNode ? nodeReferenceFromNode(modelNode) : modelNode;
       this.sendMessage({
-        type: 'CreateIntentionsBlock',
+        type: 'createIntentionsBlock',
         requestId: uuid1,
         node: nodeIDInModel,
       } as CreateIntentionsBlock);
@@ -411,7 +411,7 @@ export class WsCommunication {
   askForErrorsInNode(modelName: string, nodeID: string): void {
     const msg: AskErrorsForNode = {
       rootNode: { id: { regularId: nodeID }, model: modelName },
-      type: 'AskErrorsForNode',
+      type: 'askErrorsForNode',
     };
     this.sendMessage(msg);
   }
@@ -446,7 +446,7 @@ export class WsCommunication {
     // TODO communicateReferenceChange should become a Reference Change: we are saying
     // to the server that a reference changed
     this.sendMessage({
-      type: 'ReferenceChange',
+      type: 'referenceChange',
       node: modelNodeToNodeInModel(container),
       referenceName,
       referenceValue: ref == null ? null : refToNodeInModel(ref),
@@ -566,7 +566,7 @@ export class WsCommunication {
         resolve(data);
       };
       this.sendMessage({
-        type: 'GetNode',
+        type: 'getNode',
         requestId: uuid,
         node,
       } as GetNode);

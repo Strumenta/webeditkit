@@ -1,13 +1,8 @@
 #! /usr/bin/env npx ts-node
-import request from 'sync-request';
-import { ModelNode, OperationResult, Ref, registerDataModelClass } from '../index';
-import { LanguageInfoDetailed } from '../index';
-import { Project } from 'ts-morph';
+import { InterfaceDeclaration, Project, SourceFile, StructureKind } from 'ts-morph';
 
 import fs from 'fs';
 import commandLineArgs = require('command-line-args');
-import { GeneratedCode } from '../codegen/utils';
-import { processConcepts } from '../codegen/conceptgen';
 
 interface Reference {
   linkName: string
@@ -88,7 +83,84 @@ function reference(node: Node, linkName: string) : Reference | null {
   }
 }
 
-function processMpsRootNode(node: Node, resolver: Resolver) : Message | null {
+function uncapitalize(s: string) : string {
+  if (s.length === 0) return s;
+  if (s.length === 1) return s.toLowerCase();
+  return s.substr(0, 1).toLowerCase() + s.substr(1);
+}
+
+function processType(typeNode: Node | null, resolver: Resolver) : string {
+  let typeStr = "UNDEFINED";
+  if (typeNode?.conceptName === 'jetbrains.mps.baseLanguage.structure.StringType') {
+    typeStr = 'string';
+  } else if (typeNode?.conceptName === 'jetbrains.mps.baseLanguage.structure.IntegerType') {
+    typeStr = 'number';
+  } else if (typeNode?.conceptName === 'jetbrains.mps.baseLanguage.structure.LongType') {
+    typeStr = 'string';
+  } else if (typeNode?.conceptName === 'jetbrains.mps.baseLanguage.structure.ClassifierType') {
+    const ref = reference(typeNode, 'classifier');
+    if (ref == null) {
+      typeStr = 'REFERENCE_NOT_SPECIFIED';
+    } else {
+      const refTarget = resolver.resolve(ref);
+      if (refTarget == null) {
+        // typeStr = 'REFERENCE_UNRESOLVED';
+        // FIXME
+        typeStr = 'PropertyValue';
+      } else {
+        if (refTarget.conceptName === 'jetbrains.mps.baseLanguage.structure.ClassConcept') {
+          typeStr = name(refTarget) ?? 'UNKNOWN';
+        } else {
+          typeStr = refTarget.conceptName;
+        }
+      }
+    }
+  } else if (typeNode?.conceptName === 'jetbrains.mps.baseLanguage.collections.structure.MapType') {
+    typeStr = 'PropertiesValues';
+  } else if (typeNode?.conceptName === 'jetbrains.mps.baseLanguage.collections.structure.ListType') {
+    typeStr = `${processType(child(typeNode, 'elementType'), resolver)}[]`;
+  } else {
+    typeStr = typeNode?.conceptName ?? "UNKNOWN";
+  }
+  if (typeStr === 'RegularNodeIDInfo' || typeStr === 'NodeIDInfo') {
+    typeStr = 'NodeId';
+  }
+  if (typeStr === 'NodeInfoDetailed') {
+    typeStr = 'NodeData';
+  }
+  if (typeStr === 'Intention') {
+    typeStr = 'IntentionData';
+  }
+  return typeStr;
+}
+
+function processProperties(node: Node, resolver: Resolver, interfaceDecl: InterfaceDeclaration) {
+  node.children.filter((c) => c.containmentLinkName === 'member' && c.conceptName === 'jetbrains.mps.baseLanguage.structure.FieldDeclaration')
+    .forEach((c)=>{
+      // FIXME we assume the annotation to be 'Nullable'
+      const annotation = child(c, 'annotation');
+      const typeNode = child(c, 'type');
+      const typeStr = processType(typeNode, resolver);
+      const baseName = name(c) ?? "UNDEFINED";
+      const propertyName = annotation == null ? baseName : `${baseName}?`;
+      interfaceDecl.addMember({
+        name: propertyName,
+        kind: StructureKind.PropertySignature,
+        type: typeStr
+      });
+    });
+}
+
+function generateDataClass(node: Node, resolver: Resolver, languageFile: SourceFile) {
+  const dataClassName = name(node) ?? 'UNKNOWN';
+  const interfaceDecl = languageFile.addInterface({
+    name: dataClassName,
+    isExported: true
+  });
+  processProperties(node, resolver, interfaceDecl);
+}
+
+function processMpsRootNode(node: Node, resolver: Resolver, languageFile: SourceFile) : Message | null {
   if (node.conceptName === 'jetbrains.mps.baseLanguage.structure.ClassConcept') {
     const superclass = child(node, 'superclass');
     if (superclass?.conceptName === 'jetbrains.mps.baseLanguage.structure.ClassifierType') {
@@ -101,6 +173,26 @@ function processMpsRootNode(node: Node, resolver: Resolver) : Message | null {
             || classifierName === 'RequestMessage'
             || classifierName === 'RequestAnswerMessage') {
             console.log(`${name(node)} -> ${classifierName}`)
+            const messageName = name(node) ?? "UNDEFINED";
+            if (messageName !== 'Message' && messageName !== 'Notification' && messageName !== 'RequestMessage' && messageName !== 'RequestAnswerMessage') {
+              const interfaceDecl = languageFile.addInterface({
+                name: messageName,
+                extends: [classifierName ?? "UNEXPECTED"],
+                isExported: true
+              });
+              interfaceDecl.addMember({
+                name: 'type',
+                kind: StructureKind.PropertySignature,
+                type: "'" + uncapitalize(messageName) + "'"
+              });
+              // jetbrains.mps.baseLanguage.structure.ClassConcept
+              processProperties(node, resolver, interfaceDecl);
+              node.children.filter((c) => c.containmentLinkName === 'member' && c.conceptName === 'jetbrains.mps.baseLanguage.structure.ClassConcept')
+                .forEach((c)=>{
+                  // internal class to process
+                  generateDataClass(c, resolver, languageFile);
+                });
+            }
           }
         }
       }
@@ -109,7 +201,7 @@ function processMpsRootNode(node: Node, resolver: Resolver) : Message | null {
   return null;
 }
 
-function processMpsFile(file: string) : Promise<Message[]> {
+function processMpsFile(file: string, languageFile: SourceFile) : Promise<Message[]> {
   return new Promise<Message[]>((resolve, onrejected) =>{
     fs.readFile(file, "utf8", (err, data) => {
       if (err) throw err;
@@ -117,7 +209,7 @@ function processMpsFile(file: string) : Promise<Message[]> {
       const model = JSON.parse(data) as Model;
       const resolver = new Resolver(model);
       model.roots.forEach((value: Node) => {
-        const res = processMpsRootNode(value, resolver);
+        const res = processMpsRootNode(value, resolver, languageFile);
         if (res != null) {
           messages.unshift([res]);
         }
@@ -127,14 +219,14 @@ function processMpsFile(file: string) : Promise<Message[]> {
   });
 }
 
-function main() {
+async function main() {
   const optionDefinitions = [
     { name: 'destdir', alias: 'd', type: String },
     { name: 'mpsserverpath', type: String },
     { name: 'modelsNames', type: String, multiple: true, defaultOption: true },
   ];
   const options = commandLineArgs(optionDefinitions);
-  const mpsserverpath = options.mpsserverpath || '../mpsserver/mpscode';
+  const mpsserverpath = options.mpsserverpath || '../MPSServer/mpscode';
   if (!fs.existsSync(mpsserverpath)) {
     console.error("no mpsserver found at", mpsserverpath);
     process.exit(1);
@@ -157,17 +249,24 @@ function main() {
   }
   const exec = require('child_process').exec;
   const messages = [];
-  // exec(`java -jar ./tools/mpsinterface.jar --destination ${generatedJsonDir} ${mpsserverpath} com.strumenta.mpsserver.logic`, function callback(error:any, stdout:any, stderr:any){
-  //   console.log("=== MODELS EXPORTER : start ===");
-  //   console.error(stderr);
-  //   console.log(stdout);
-  //   console.log("=== MODELS EXPORTER : end ===");
-  // });
-  fs.readdir(generatedJsonDir, (err, files) => {
-    files.forEach(file => {
-      processMpsFile(file).then((value) => {messages.unshift(value);})
-    });
+  exec(`java -jar ./tools/mpsinterface.jar --destination ${generatedJsonDir} ${mpsserverpath} com.strumenta.mpsserver.logic`, function callback(error:any, stdout:any, stderr:any){
+    console.log("=== MODELS EXPORTER : start ===");
+    console.error(stderr);
+    console.log(stdout);
+    console.log("=== MODELS EXPORTER : end ===");
   });
+  const project = new Project({});
+
+  const languageFileName = `${destdir}/communication/generated_messages.ts`;
+  const languageFile = project.createSourceFile(languageFileName, '', { overwrite: true });
+  // import { Message } from './base_messages';
+  languageFile.addImportDeclaration({namedImports:['Message', 'RequestMessage', 'RequestAnswerMessage', 'Notification', 'NodeReference', 'IntentionData', 'Result'], moduleSpecifier: './base_messages'})
+  languageFile.addImportDeclaration({namedImports:['NodeId', 'NodeData', 'PropertiesValues', 'PropertyValue'], moduleSpecifier: '../datamodel/misc'})
+  for (const file of fs.readdirSync(generatedJsonDir)) {
+    const partial = await processMpsFile(`${generatedJsonDir}/${file}`, languageFile)
+    messages.unshift(partial);
+  }
+  await project.save();
 }
 
 main();

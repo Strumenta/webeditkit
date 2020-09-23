@@ -17,7 +17,7 @@
     "lodash.merge": "^4.6.2",
     "rxjs": "^6.6.2",
     "snabbdom": "^0.7.4",
-    "ts-morph": "^7.3.0",
+    "ts-morph": "^8.1.1",
     "ts-sync-request": "^1.4.1",
     "tsify": "^4.0.2"
   },
