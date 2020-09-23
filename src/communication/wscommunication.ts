@@ -46,11 +46,11 @@ import {
   NodeReference,
   nodeReferenceFromNode,
   NodeRemoved,
-  PropertyChangeNotification,
+  PropertyChange,
   ReferenceChange,
   RegisterForChanges,
   RequestForDirectReferences,
-  RequestPropertyChange,
+  RequestForPropertyChange,
   SetChild,
   UUID,
 } from '../internal';
@@ -136,7 +136,7 @@ export class WsCommunication {
   }
 
   private registerHandlersForNodeChanges() {
-    this.registerHandler('propertyChange', (msg: PropertyChangeNotification) => {
+    this.registerHandler('propertyChange', (msg: PropertyChange) => {
       const root = getDatamodelRoot(this.localName);
       if (root == null) {
         throw new Error('data model with local name ' + this.localName + ' was not found');
@@ -510,7 +510,7 @@ export class WsCommunication {
       this.callbacks[requestId] = callback;
     }
     this.sendMessage({
-      type: 'propertyChange',
+      type: 'requestForPropertyChange',
       node: {
         model: modelNode.modelName(),
         id: {
@@ -520,7 +520,7 @@ export class WsCommunication {
       propertyName,
       propertyValue,
       requestId,
-    } as RequestPropertyChange);
+    } as RequestForPropertyChange);
   }
 
   // Get alternative concepts usable

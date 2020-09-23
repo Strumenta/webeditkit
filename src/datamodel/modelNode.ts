@@ -123,7 +123,7 @@ export class ModelNode extends LimitedModelNode {
     }
     reactToAReferenceChange(
       {
-        type: 'ReferenceChange',
+        type: 'referenceChange',
         node: modelNodeToNodeInModel(this),
         referenceName,
         referenceValue: refToNodeInModel(ref),
@@ -185,6 +185,7 @@ export class ModelNode extends LimitedModelNode {
     return this.data.rootName;
   }
 
+
   index(): number {
     if (this.isRoot()) {
       throw new Error('Cannot get index of root');
@@ -205,6 +206,7 @@ export class ModelNode extends LimitedModelNode {
     }
     throw new Error('This element was not found among the children of its parent');
   }
+
 
   addChild(relationName: string, index: number, childData: NodeData): void {
     const children = this.data.children;
@@ -230,7 +232,7 @@ export class ModelNode extends LimitedModelNode {
     index: number,
     childConcept: string,
     initializer?: NodeProcessor,
-    uuid: string = uuidv4(),
+    uuid: string = uuidv4()
   ): void {
     this.ws().addChildAtIndex(this, containmentName, index, childConcept, undefined, initializer, uuid);
   }
@@ -270,6 +272,7 @@ export class ModelNode extends LimitedModelNode {
     return dataToNode(this.data.parent);
   }
 
+
   private ws() {
     return getWsCommunication(this.modelName());
   }
@@ -286,6 +289,7 @@ export class ModelNode extends LimitedModelNode {
     this.data.properties[propertyName] = propertyValue;
   }
 
+
   constant(
     value: string,
     extraClasses?: string[],
@@ -300,3 +304,5 @@ export class ModelNode extends LimitedModelNode {
     return this.constant(this.conceptAlias as string);
   }
 }
+
+// Weirdly enough, without this comment I get a compilation error...
