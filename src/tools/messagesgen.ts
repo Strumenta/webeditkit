@@ -223,7 +223,7 @@ async function main() {
   const optionDefinitions = [
     { name: 'destdir', alias: 'd', type: String },
     { name: 'mpsserverpath', type: String },
-    { name: 'modelsNames', type: String, multiple: true, defaultOption: true },
+    // { name: 'modelsNames', type: String, multiple: true, defaultOption: true },
   ];
   const options = commandLineArgs(optionDefinitions);
   const mpsserverpath = options.mpsserverpath || '../MPSServer/mpscode';
@@ -242,11 +242,11 @@ async function main() {
     fs.mkdirSync(generatedJsonDir, {recursive: true});
   }
 
-  const modelsNames = options.modelsNames;
-  if (modelsNames == null || modelsNames.length === 0) {
-    console.error('no models specified');
-    process.exit(1);
-  }
+  // const modelsNames = options.modelsNames;
+  // if (modelsNames == null || modelsNames.length === 0) {
+  //   console.error('no models specified');
+  //   process.exit(1);
+  // }
   const exec = require('child_process').exec;
   const messages = [];
   exec(`java -jar ./tools/mpsinterface.jar --destination ${generatedJsonDir} ${mpsserverpath} com.strumenta.mpsserver.logic`, function callback(error:any, stdout:any, stderr:any){
