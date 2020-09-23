@@ -321,3 +321,10 @@ import {
 export { LanguageInfoDetailed, LanguageInfo, Concept, Enum, EnumLiteral, Property, Containment, Link, Reference };
 import { AlternativesProvider, abstractElementCell } from './presentation/cells/types';
 export { AlternativesProvider, abstractElementCell };
+
+import { processConcepts } from './codegen/conceptgen'
+import { GeneratedCode } from './codegen/utils'
+export { processConcepts, GeneratedCode }
+
+import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference } from './codegen/metamodel'
+export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference }

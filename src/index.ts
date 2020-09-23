@@ -138,3 +138,9 @@ export {
   abstractElementCell,
 };
 export { Renderer, SRenderer };
+
+import { processConcepts, GeneratedCode } from './internal'
+export { processConcepts, GeneratedCode }
+
+import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference } from './internal'
+export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference }
