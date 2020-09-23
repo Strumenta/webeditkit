@@ -42,6 +42,30 @@ export class Resolver {
   }
 }
 
+export class SResolver {
+  private model: SModel;
+  private idToNode: { [id: string]: SNode } = {};
+
+  processNode(node: SNode) {
+    this.idToNode[node.id()] = node;
+    node.children().forEach((value: SNode) => this.processNode(value));
+  }
+
+  constructor(model: SModel) {
+    this.model = model;
+    this.model.roots().forEach((value: SNode) => this.processNode(value));
+  }
+
+  resolve(ref: ReferenceDef): SNode | null {
+    if (ref.to.startsWith('int:')) {
+      const id = ref.to.substring('int:'.length);
+      return this.idToNode[id];
+    } else {
+      return null;
+    }
+  }
+}
+
 export function child(node: Node, linkName: string): Node | null {
   const selected = node.children.filter((value) => value.containmentLinkName === linkName);
   if (selected.length === 0) {
@@ -69,5 +93,55 @@ export function reference(node: Node, linkName: string): ReferenceDef | null {
     return selected[0];
   } else {
     throw new Error('Too many matching children');
+  }
+}
+
+export class SNode {
+  model: SModel;
+  data: Node;
+  parent: SNode | null;
+  constructor(data: Node, container: SModel | SNode) {
+    this.data = data;
+    if (container instanceof SModel) {
+      this.model = container;
+      this.parent = null;
+    } else if (container instanceof SNode) {
+      this.model = container.model;
+      this.parent = container;
+    } else throw new Error();
+  }
+  conceptName() : string {
+    return this.data.conceptName;
+  }
+  name() : string | null {
+    return nodeName(this.data);
+  }
+  id() : string {
+    return this.data.id;
+  }
+  children() : SNode[] {
+    return this.data.children.map((c:Node)=>new SNode(c, this));
+  }
+  reference(name: string) : ReferenceDef | null {
+    return reference(this.data, name);
+  }
+  property(name: string) : string | null {
+    return property(this.data, name);
+  }
+  containmentLinkName() : string | null {
+    return this.data.containmentLinkName;
+  }
+}
+
+export class SModel {
+  data: Model;
+  constructor(data: Model) {
+    this.data = data;
+  }
+  roots() : SNode[] {
+    return this.data.roots.map((n)=> new SNode(n, this));
+  }
+  name() : string {
+    return this.data.name;
   }
 }

@@ -326,5 +326,5 @@ import { processConcepts } from './codegen/conceptgen'
 import { GeneratedCode } from './codegen/utils'
 export { processConcepts, GeneratedCode }
 
-import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference } from './codegen/metamodel'
-export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference }
+import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver } from './codegen/metamodel'
+export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver }
