@@ -185,7 +185,6 @@ export class ModelNode extends LimitedModelNode {
     return this.data.rootName;
   }
 
-
   index(): number {
     if (this.isRoot()) {
       throw new Error('Cannot get index of root');
@@ -206,7 +205,6 @@ export class ModelNode extends LimitedModelNode {
     }
     throw new Error('This element was not found among the children of its parent');
   }
-
 
   addChild(relationName: string, index: number, childData: NodeData): void {
     const children = this.data.children;
@@ -232,7 +230,7 @@ export class ModelNode extends LimitedModelNode {
     index: number,
     childConcept: string,
     initializer?: NodeProcessor,
-    uuid: string = uuidv4()
+    uuid: string = uuidv4(),
   ): void {
     this.ws().addChildAtIndex(this, containmentName, index, childConcept, undefined, initializer, uuid);
   }
@@ -272,7 +270,6 @@ export class ModelNode extends LimitedModelNode {
     return dataToNode(this.data.parent);
   }
 
-
   private ws() {
     return getWsCommunication(this.modelName());
   }
@@ -288,7 +285,6 @@ export class ModelNode extends LimitedModelNode {
   setProperty(propertyName: string, propertyValue: PropertyValue): void {
     this.data.properties[propertyName] = propertyValue;
   }
-
 
   constant(
     value: string,
