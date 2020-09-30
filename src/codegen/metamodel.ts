@@ -144,4 +144,7 @@ export class SModel {
   name() : string {
     return this.data.name;
   }
+  findRootById(nodeId: string) : SNode | undefined {
+    return this.roots().find((r:SNode) => r.id() === nodeId)
+  }
 }
