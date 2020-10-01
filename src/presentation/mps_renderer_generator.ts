@@ -70,6 +70,9 @@ function cellToRenderer(data: IData, cellModel: ModelNode): Renderer {
     const ref = cellModel.ref('relationDeclaration') as Ref;
     const refData = ref.syncLoadData();
     return (modelNode) => childCell(modelNode, refData.name() as string);
+  } else if (cellModel.conceptName() === 'jetbrains.mps.lang.editor.CellModel_Error') {
+    const text = cellModel.property("text");
+    return (modelNode) => fixedCell(modelNode, `<${text}>`, ['errorCell']);
   } else if (cellModel.conceptName() === 'jetbrains.mps.lang.editor.CellModel_Property') {
     const ref = cellModel.ref('relationDeclaration') as Ref;
     const refData = ref.syncLoadData();
