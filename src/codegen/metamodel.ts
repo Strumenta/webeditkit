@@ -46,7 +46,7 @@ export class SResolver {
   private model: SModel;
   private idToNode: { [id: string]: SNode } = {};
 
-  processNode(node: SNode) {
+  private processNode(node: SNode) {
     this.idToNode[node.id()] = node;
     node.children().forEach((value: SNode) => this.processNode(value));
   }
@@ -122,6 +122,9 @@ export class SNode {
   children() : SNode[] {
     return this.data.children.map((c:Node)=>new SNode(c, this));
   }
+  childrenByLink(containmentLinkName: string) : SNode[] {
+    return this.data.children.filter((c:Node)=>c.containmentLinkName === containmentLinkName).map((c:Node)=>new SNode(c, this));
+  }
   reference(name: string) : ReferenceDef | null {
     return reference(this.data, name);
   }
@@ -145,6 +148,11 @@ export class SModel {
     return this.data.name;
   }
   findRootById(nodeId: string) : SNode | undefined {
-    return this.roots().find((r:SNode) => r.id() === nodeId)
+    const res = this.roots().filter((r:SNode) => r.id() === nodeId)
+    if (res.length === 0) {
+      return undefined
+    } else {
+      return res[0];
+    }
   }
 }

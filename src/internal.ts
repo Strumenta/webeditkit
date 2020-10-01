@@ -328,3 +328,6 @@ export { processConcepts, GeneratedCode }
 
 import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver } from './codegen/metamodel'
 export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver }
+
+import { ObserverAdapter} from './presentation/EditorController';
+export {ObserverAdapter}
