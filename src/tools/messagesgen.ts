@@ -3,82 +3,9 @@ import { InterfaceDeclaration, Project, SourceFile, StructureKind } from 'ts-mor
 
 import fs from 'fs';
 import commandLineArgs = require('command-line-args');
+import { Resolver, reference, child, Node, nodeName, Model } from '../internal';
 
-interface Reference {
-  linkName: string;
-  to: string;
-}
-
-interface Node {
-  properties: { [key: string]: string };
-  children: Node[];
-  references: Reference[];
-  conceptName: string;
-  id: string;
-  containmentLinkName: string;
-}
-
-interface Model {
-  roots: Node[];
-  name: string;
-  uuid: string;
-}
-
-class Message {}
-
-class Resolver {
-  private model: Model;
-  private idToNode: { [id: string]: Node } = {};
-
-  processNode(node: Node) {
-    this.idToNode[node.id] = node;
-    node.children.forEach((value: Node) => this.processNode(value));
-  }
-
-  constructor(model: Model) {
-    this.model = model;
-    this.model.roots.forEach((value: Node) => this.processNode(value));
-  }
-
-  resolve(ref: Reference): Node | null {
-    if (ref.to.startsWith('int:')) {
-      const id = ref.to.substring('int:'.length);
-      return this.idToNode[id];
-    } else {
-      return null;
-    }
-  }
-}
-
-function child(node: Node, linkName: string): Node | null {
-  const selected = node.children.filter((value) => value.containmentLinkName === linkName);
-  if (selected.length === 0) {
-    return null;
-  } else if (selected.length === 1) {
-    return selected[0];
-  } else {
-    throw new Error('Too many matching children');
-  }
-}
-
-function property(node: Node, propertyName: string): string | null {
-  return node.properties[propertyName];
-}
-
-function name(node: Node): string | null {
-  return property(node, 'name');
-}
-
-function reference(node: Node, linkName: string): Reference | null {
-  const selected = node.references.filter((value) => value.linkName === linkName);
-  if (selected.length === 0) {
-    return null;
-  } else if (selected.length === 1) {
-    return selected[0];
-  } else {
-    throw new Error('Too many matching children');
-  }
-}
+class Message { }
 
 function uncapitalize(s: string): string {
   if (s.length === 0) return s;
@@ -106,7 +33,7 @@ function processType(typeNode: Node | null, resolver: Resolver): string {
         typeStr = 'PropertyValue';
       } else {
         if (refTarget.conceptName === 'jetbrains.mps.baseLanguage.structure.ClassConcept') {
-          typeStr = name(refTarget) ?? 'UNKNOWN';
+          typeStr = nodeName(refTarget) ?? 'UNKNOWN';
         } else {
           typeStr = refTarget.conceptName;
         }
@@ -142,7 +69,7 @@ function processProperties(node: Node, resolver: Resolver, interfaceDecl: Interf
       const annotation = child(c, 'annotation');
       const typeNode = child(c, 'type');
       const typeStr = processType(typeNode, resolver);
-      const baseName = name(c) ?? 'UNDEFINED';
+      const baseName = nodeName(c) ?? 'UNDEFINED';
       const propertyName = annotation == null ? baseName : `${baseName}?`;
       interfaceDecl.addMember({
         name: propertyName,
@@ -153,7 +80,7 @@ function processProperties(node: Node, resolver: Resolver, interfaceDecl: Interf
 }
 
 function generateDataClass(node: Node, resolver: Resolver, languageFile: SourceFile) {
-  const dataClassName = name(node) ?? 'UNKNOWN';
+  const dataClassName = nodeName(node) ?? 'UNKNOWN';
   const interfaceDecl = languageFile.addInterface({
     name: dataClassName,
     isExported: true,
@@ -169,15 +96,15 @@ function processMpsRootNode(node: Node, resolver: Resolver, languageFile: Source
       if (classifierRef != null) {
         const classifier = resolver.resolve(classifierRef);
         if (classifier != null) {
-          const classifierName = name(classifier);
+          const classifierName = nodeName(classifier);
           if (
             classifierName === 'Message' ||
             classifierName === 'Notification' ||
             classifierName === 'RequestMessage' ||
             classifierName === 'RequestAnswerMessage'
           ) {
-            console.log(`${name(node)} -> ${classifierName}`);
-            const messageName = name(node) ?? 'UNDEFINED';
+            console.log(`${nodeName(node)} -> ${classifierName}`);
+            const messageName = nodeName(node) ?? 'UNDEFINED';
             if (
               messageName !== 'Message' &&
               messageName !== 'Notification' &&

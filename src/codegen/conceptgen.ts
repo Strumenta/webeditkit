@@ -263,13 +263,13 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
 
     // Constants for links and properties names
     const relevantContainments: Containment[] = c.declaredContainments.concat(
-      c.inheritedContainments.filter((l) => l.declaration.isInterface),
+      c.inheritedContainments.filter((l) => l.declaration != null && l.declaration.isInterface),
     );
     const relevantReferences: Reference[] = c.declaredReferences.concat(
-      c.inheritedReferences.filter((l) => l.declaration.isInterface),
+      c.inheritedReferences.filter((l) => l.declaration != null && l.declaration.isInterface),
     );
     const relevantProperties: Property[] = c.declaredProperties.concat(
-      c.inheritedProperties.filter((p) => p.declaration.isInterface),
+      c.inheritedProperties.filter((p) => p.declaration != null && p.declaration.isInterface),
     );
 
     for (const link of relevantContainments) {
