@@ -375,7 +375,7 @@ describe('Cells.Types', () => {
     it('it should not use extra classes when null', () => {
       const rootNode = dataToNode(rootData1);
       const inputNode = rootNode.childrenByLinkName('inputs')[0];
-      const cell = referenceCell(inputNode, 'type', ['foo', 'bar']);
+      const cell = referenceCell(inputNode, 'type', {extraClasses:['foo', 'bar']});
       expect(toHTML(cell)).to.equal('<input class="fixed empty-reference" value="&lt;no type&gt;">');
     });
     it('it should handle left arrow', (done) => {

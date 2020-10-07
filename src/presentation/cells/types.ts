@@ -511,13 +511,23 @@ function editingReferenceCell(
   );
 }
 
-export function referenceCell(
-  modelNode: ModelNode,
-  referenceName: string,
+interface EmptyCellOptions {
+  text?: string
+  classes?: string[]
+}
+
+interface ReferenceCellOPtions {
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
   deleter?: (doDelete: boolean) => void,
   opener?: (e: MouseEvent) => boolean,
+  emptyCell? : EmptyCellOptions
+}
+
+export function referenceCell(
+  modelNode: ModelNode,
+  referenceName: string,
+  options? : ReferenceCellOPtions
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
@@ -573,9 +583,9 @@ export function referenceCell(
     );
   };
 
-  alternativesProvider = alternativesProvider || defaultAlternativesProvider;
+  const alternativesProvider = options?.alternativesProvider || defaultAlternativesProvider;
 
-  extraClasses = extraClasses || [];
+  const extraClasses = options?.extraClasses || [];
   let extraClassesStr = '';
   if (extraClasses.length > 0) {
     extraClassesStr = '.' + extraClasses.join('.');
@@ -606,9 +616,11 @@ export function referenceCell(
       // CASE 1
       //
       // TODO, capture any character to switch to an editable cell
+      const emptyText = options?.emptyCell?.text || `<no ${referenceName}>`;
+      const emptyClasses = options?.emptyCell?.classes || ['empty-reference'];
       return addToDatasetObj(
         wrapKeydownHandler(
-          fixedCell(modelNode, `<no ${referenceName}>`, ['empty-reference'], alternativesProvider),
+          fixedCell(modelNode, emptyText, emptyClasses, alternativesProvider),
           (event: KeyboardEvent) => {
             if (event.ctrlKey) {
               log('should trigger autocompletion');
@@ -679,8 +691,8 @@ export function referenceCell(
       },
       on: {
         blur: (e) => {
-          if (deleter) {
-            deleter(false);
+          if (options?.deleter) {
+            options?.deleter(false);
           }
         },
         click: (e: MouseEvent) => {
@@ -696,8 +708,8 @@ export function referenceCell(
           } else if (!isAutocompleteVisible() && e.key === 'ArrowDown') {
             moveDown(target);
           } else if (e.key === 'Backspace') {
-            if (deleter != null) {
-              deleter(true);
+            if (options?.deleter != null) {
+              options?.deleter(true);
               e.preventDefault();
               return;
             }
