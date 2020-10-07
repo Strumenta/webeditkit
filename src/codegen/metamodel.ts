@@ -134,6 +134,19 @@ export class SNode {
   containmentLinkName() : string | null {
     return this.data.containmentLinkName;
   }
+  findNodeById(nodeId: string) : SNode | undefined {
+    if (this.id() === nodeId) {
+      return this;
+    }
+    const children = this.children();
+    for (const c of children) {
+      const partial = c.findNodeById(nodeId);
+      if (partial != null) {
+        return partial;
+      }
+    }
+    return undefined;
+  }
 }
 
 export class SModel {
@@ -154,5 +167,15 @@ export class SModel {
     } else {
       return res[0];
     }
+  }
+  findNodeById(nodeId: string) : SNode | undefined {
+    const roots = this.roots();
+    for (const r of roots) {
+      const partial = r.findNodeById(nodeId);
+      if (partial != null) {
+        return partial;
+      }
+    }
+    return undefined;
   }
 }
