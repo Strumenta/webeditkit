@@ -201,8 +201,12 @@ function generateEditingSupportForContainment(link: Containment, classdecl: Clas
 function generateEditingSupportForReference(link: Reference, classdecl: ClassDeclaration) {
   classdecl.addMethod({
     name: `${link.name}ReferenceCell`,
+    parameters: [{
+      name: 'options?',
+      type: 'ReferenceCellOptions'
+    }],
     returnType: 'VNode',
-    statements: [`return referenceCell(this, ${classdecl.getName()}.${linkConstName(link.name)})`],
+    statements: [`return referenceCell(this, ${classdecl.getName()}.${linkConstName(link.name)}, options)`],
   });
 }
 

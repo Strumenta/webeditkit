@@ -139,8 +139,8 @@ export {
 };
 export { Renderer, SRenderer };
 
-import { processConcepts, GeneratedCode } from './internal'
-export { processConcepts, GeneratedCode }
+import { processConcepts, GeneratedCode, ReferenceCellOptions } from './internal'
+export { processConcepts, GeneratedCode, ReferenceCellOptions }
 
 import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter } from './internal'
 export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter }

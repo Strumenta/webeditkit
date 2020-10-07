@@ -61,6 +61,7 @@ async function processLanguage(languageName: string, destDir: string) {
       'EnumValue',
       'Ref',
       'referenceCell',
+      'ReferenceCellOptions',
       'registerDataModelClass',
       'fixedCell',
       'horizontalCollectionCell',

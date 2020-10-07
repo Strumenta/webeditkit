@@ -511,23 +511,19 @@ function editingReferenceCell(
   );
 }
 
-interface EmptyCellOptions {
-  text?: string
-  classes?: string[]
-}
-
-interface ReferenceCellOPtions {
+export interface ReferenceCellOptions {
   extraClasses?: string[],
   alternativesProvider?: AlternativesProvider,
   deleter?: (doDelete: boolean) => void,
   opener?: (e: MouseEvent) => boolean,
-  emptyCell? : EmptyCellOptions
+  emptyCellText?: string
+  emptyCellClasses?: string[]
 }
 
 export function referenceCell(
   modelNode: ModelNode,
   referenceName: string,
-  options? : ReferenceCellOPtions
+  options? : ReferenceCellOptions
 ): VNode {
   const defaultAlternativesProvider = (suggestionsReceiver: SuggestionsReceiver) => {
     const ws = getWsCommunication(modelNode.modelName());
@@ -616,8 +612,8 @@ export function referenceCell(
       // CASE 1
       //
       // TODO, capture any character to switch to an editable cell
-      const emptyText = options?.emptyCell?.text || `<no ${referenceName}>`;
-      const emptyClasses = options?.emptyCell?.classes || ['empty-reference'];
+      const emptyText = options?.emptyCellText || `<no ${referenceName}>`;
+      const emptyClasses = options?.emptyCellClasses || ['empty-reference'];
       return addToDatasetObj(
         wrapKeydownHandler(
           fixedCell(modelNode, emptyText, emptyClasses, alternativesProvider),

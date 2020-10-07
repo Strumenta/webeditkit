@@ -73,6 +73,7 @@ import { baseUrlForModelName } from './facade';
 import {
   fixedCell,
   referenceCell,
+  ReferenceCellOptions,
   horizontalCollectionCell,
   editableCell,
   emptyRow,
@@ -330,4 +331,4 @@ import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, referen
 export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver }
 
 import { ObserverAdapter} from './presentation/EditorController';
-export {ObserverAdapter}
+export {ObserverAdapter, ReferenceCellOptions}
