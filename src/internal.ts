@@ -337,3 +337,7 @@ export {ObserverAdapter, ReferenceCellOptions}
 import {GetInstancesOfConcept, GetInstancesOfConceptAnswer, GetRoots, GetRootsAnswer} from './communication/generated_messages';
 export {GetInstancesOfConcept, GetInstancesOfConceptAnswer, GetRoots, GetRootsAnswer}
 export {WsGlobalCommunication}
+import {getWsGlobalCommunication} from  './communication/wscommunication'
+export {getWsGlobalCommunication}
+import {getDefaultWsUrl, setDefaultWsUrl} from './datamodel/registry';
+export {getDefaultWsUrl, setDefaultWsUrl}

@@ -6,6 +6,7 @@ const datamodelClasses = new Map<string, new (n: NodeData) => ModelNode>();
 
 class Registry {
   static defaultBaseUrl: string | undefined = undefined;
+  static defaultWsUrl: string | undefined = undefined;
 }
 
 export function setDefaultBaseUrl(value: string | undefined): void {
@@ -14,6 +15,14 @@ export function setDefaultBaseUrl(value: string | undefined): void {
 
 export function getDefaultBaseUrl(): string | undefined {
   return Registry.defaultBaseUrl;
+}
+
+export function setDefaultWsUrl(value: string | undefined): void {
+  Registry.defaultWsUrl = value;
+}
+
+export function getDefaultWsUrl(): string | undefined {
+  return Registry.defaultWsUrl;
 }
 
 ///

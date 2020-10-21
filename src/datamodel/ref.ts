@@ -1,15 +1,18 @@
 import { SyncRequestClient } from 'ts-sync-request';
 
-import { ModelNode } from '../internal';
+import { ModelNode, NodeReference } from '../internal';
 import { baseUrlForModelName } from '../internal';
 import { dataToNode, getDefaultBaseUrl } from '../internal';
 import { NodeData, ReferenceData } from '../internal';
 import { OperationResult } from '../internal';
+import base = Mocha.reporters.base;
+import { getWsGlobalCommunication } from '../internal';
+import { getDefaultWsUrl } from '../internal';
 
 export class Ref {
   constructor(public data: ReferenceData) {}
 
-  loadData(cb: (modelNode: ModelNode) => void): void {
+  private loadDatUsingHttp(cb: (modelNode: ModelNode) => void): void {
     let baseUrl = baseUrlForModelName(this.data.model.qualifiedName) || getDefaultBaseUrl();
     if (baseUrl == null) {
       throw new Error(
@@ -28,6 +31,27 @@ export class Ref {
         }
         cb(dataToNode(data.value as NodeData));
       });
+  }
+
+  private loadDatUsingWs(wsUrl: string, cb: (modelNode: ModelNode) => void): void {
+    const globalWs = getWsGlobalCommunication(wsUrl);
+    if (globalWs == null) {
+      throw new Error(
+        'No global ws created'
+      );
+    }
+    const ref : NodeReference = { model: this.data.model.qualifiedName, id: {regularId: this.data.id.regularId}};
+    console.log("loading ref using WS");
+    globalWs.getNodeData(ref).then((data)=>cb(dataToNode(data)));
+  }
+
+  loadData(cb: (modelNode: ModelNode) => void): void {
+    const wsUrl = getDefaultWsUrl();
+    if (wsUrl == null) {
+      this.loadDatUsingHttp(cb);
+    } else {
+      this.loadDatUsingWs(wsUrl, cb);
+    }
   }
 
   syncLoadData(): ModelNode {

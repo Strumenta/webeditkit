@@ -61,6 +61,8 @@ import {
 import { registerIssuesForModel, registerIssuesForNode } from '../internal';
 import { GetInstancesOfConcept } from '../internal';
 import exp from 'constants';
+import { getDefaultBaseUrl } from '../internal';
+import { getDefaultWsUrl } from '../internal';
 
 export interface Alternative {
   conceptName: string;
@@ -289,6 +291,9 @@ export class WsGlobalCommunication {
     this.registerHandler('GetRootsAnswer', (msg: GetRootsAnswer) => {
       this.invokeCallback(msg.requestId, msg.nodes);
     });
+    this.registerHandler('GetNodeAnswer', (msg: GetNodeAnswer) => {
+      this.invokeCallback(msg.requestId, msg.nodeData);
+    });
   }
 
   private invokeCallback(requestId: string, ...args: any[]) {
@@ -311,6 +316,20 @@ export class WsGlobalCommunication {
 
   setVerbose(): void {
     this.silent = false;
+  }
+
+  async getNodeData(node: NodeReference, uuid: string = uuidv4()): Promise<NodeData> {
+    const promise = new Promise<NodeData>((resolve, reject) => {
+      this.callbacks[uuid] = (data: NodeData) => {
+        resolve(data);
+      };
+      this.sendMessage({
+        type: 'getNode',
+        requestId: uuid,
+        node,
+      } as GetNode);
+    });
+    return promise;
   }
 }
 
@@ -776,6 +795,7 @@ export class WsCommunication {
     } as RequestForDirectReferences);
   }
 
+  // TODO: avoid duplication
   async getNodeData(node: NodeReference, uuid: string = uuidv4()): Promise<NodeData> {
     const promise = new Promise<NodeData>((resolve, reject) => {
       this.callbacks[uuid] = (data: NodeData) => {
@@ -796,6 +816,19 @@ export class WsCommunication {
 }
 
 const instances: { [modelName: string]: WsCommunication } = {};
+let wsGlobalInstance : WsGlobalCommunication | undefined;
+
+export function getWsGlobalCommunication(wsUrl?: string): WsGlobalCommunication | undefined {
+  if (wsGlobalInstance == null) {
+    if (wsUrl == null) {
+      wsUrl = getDefaultWsUrl();
+    }
+    if (wsUrl != null) {
+      wsGlobalInstance = new WsGlobalCommunication(wsUrl);
+    }
+  }
+  return wsGlobalInstance;
+}
 
 export function getWsCommunication(modelName: string): WsCommunication {
   return instances[modelName];
