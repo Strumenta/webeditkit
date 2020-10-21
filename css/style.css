@@ -252,7 +252,9 @@ div.horizontal-line {
 }
 
 .abstractCell {
-    background-color: #9ecaed;
+    /*background-color: #9ecaed;*/
+    color: #ff6666;
+    background-color: pink;
 }
 
 .errorCell {

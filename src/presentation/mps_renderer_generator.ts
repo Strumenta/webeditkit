@@ -24,7 +24,7 @@ export function generateRendererFromMPSEditor(
   data: IData,
   httpCommunication: HttpCommunication,
 ): (node: ModelNode) => Renderer {
-  return (node: ModelNode) => generateRendererFromMPSEditorUsingConcept(data, httpCommunication, node.conceptName());
+  return (node: ModelNode) => generateRendererFromMPSEditorUsingConcept(data, httpCommunication, node.conceptName(), node.isAbstract());
 }
 
 function cellToRenderer(data: IData, cellModel: ModelNode): Renderer {
@@ -114,9 +114,10 @@ export function generateRendererFromMPSEditorUsingConcept(
   data: IData,
   httpCommunication: HttpCommunication,
   conceptName: string,
+  isAbstractConcept: boolean
 ): Renderer {
   if (!(conceptName in renderersCache)) {
-    renderersCache[conceptName] = generateRendererFromMPSEditorUsingConceptImpl(data, httpCommunication, conceptName);
+    renderersCache[conceptName] = generateRendererFromMPSEditorUsingConceptImpl(data, httpCommunication, conceptName, isAbstractConcept);
   }
   return renderersCache[conceptName];
 }
@@ -125,7 +126,13 @@ function generateRendererFromMPSEditorUsingConceptImpl(
   data: IData,
   httpCommunication: HttpCommunication,
   conceptName: string,
+  isAbstractConcept: boolean
 ): Renderer {
+  if (isAbstractConcept) {
+    return (modelNode: ModelNode) => {
+      return abstractElementCell(modelNode);
+    };
+  }
   const cellModel = httpCommunication.getMpsEditor(conceptName);
   if (cellModel != null) {
     return cellToRenderer(data, cellModel);
