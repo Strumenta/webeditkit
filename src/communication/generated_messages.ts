@@ -7,8 +7,8 @@ import {
   IntentionData,
   Result,
 } from './base_messages';
-import { NodeId, NodeData, PropertiesValues, PropertyValue } from '../datamodel/misc';
-import { LimitedNodeData } from '../../dist/internal';
+import { NodeId, NodeData, PropertiesValues, PropertyValue } from '../internal';
+import { LimitedNodeData } from '../internal';
 
 export interface CreateRoot extends Message {
   type: 'createRoot';

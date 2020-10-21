@@ -8,6 +8,7 @@ import {
   AlternativeForDirectReference,
   Alternative,
   WsCommunication,
+  WsGlobalCommunication,
   createInstance,
 } from './communication/wscommunication';
 import { getIssuesForNode } from './communication/issues';
@@ -335,3 +336,4 @@ export {ObserverAdapter, ReferenceCellOptions}
 
 import {GetInstancesOfConcept, GetInstancesOfConceptAnswer, GetRoots, GetRootsAnswer} from './communication/generated_messages';
 export {GetInstancesOfConcept, GetInstancesOfConceptAnswer, GetRoots, GetRootsAnswer}
+export {WsGlobalCommunication}

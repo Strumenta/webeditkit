@@ -144,3 +144,5 @@ export { processConcepts, GeneratedCode, ReferenceCellOptions }
 
 import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter } from './internal'
 export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter }
+import {WsGlobalCommunication} from './internal';
+export {WsGlobalCommunication}

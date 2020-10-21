@@ -1,5 +1,6 @@
 import {
-  GetRoots,
+  GetInstancesOfConceptAnswer,
+  GetRoots, GetRootsAnswer,
   limitedDataToNode,
   LimitedModelNode, LimitedNodeData,
   modelNodeToNodeInModel,
@@ -59,6 +60,7 @@ import {
 } from '../internal';
 import { registerIssuesForModel, registerIssuesForNode } from '../internal';
 import { GetInstancesOfConcept } from '../internal';
+import exp from 'constants';
 
 export interface Alternative {
   conceptName: string;
@@ -90,6 +92,7 @@ type NodeAddedCallback = (addedNodeID: NodeId) => void;
 type DirectAlternativesReceiver = (alternatives: AlternativesForDirectReference) => void;
 type AlternativesReceiver = (alternatives: Alternatives) => void;
 type NodeDataReceiver = (data: NodeData) => void;
+type LimitedNodesDataReceiver = (data: LimitedNodeData[]) => void;
 type LimitedModelNodesReceiver = (data: LimitedModelNode[]) => void;
 type Callback =
   | NodeProcessor
@@ -98,13 +101,222 @@ type Callback =
   | AlternativesReceiver
   | DirectAlternativesReceiver
   | NodeDataReceiver
-  | LimitedModelNodesReceiver;
+  | LimitedNodesDataReceiver;
 
 export class RootsObserver {
   nodeAdded: (modelName: string, node: ModelNode) => void;
   nodeRemoved: (modelName: string, nodeId: NodeId) => void;
 }
 
+abstract class AbstractWsCommunication {
+  private ws: WebSocket;
+  private silent: boolean;
+  private readonly handlers: { [type: string]: MessageHandler<Message> };
+  private readonly callbacks: { [requestId: string]: Callback };
+
+  constructor(url: string, ws?: WebSocket) {
+    this.ws = ws || new WebSocket(url);
+    this.callbacks = {};
+    this.silent = true;
+
+    this.handlers = {};
+    this.registerHandlers();
+
+    this.ws.onmessage = (event) => {
+      if (!this.silent) {
+        console.info('onmessage', event);
+      }
+      const data = JSON.parse(event.data) as Message;
+      if (!this.silent) {
+        console.info('  data: ', data);
+      }
+      const handler = this.handlers[data.type.toLowerCase()];
+      if (handler == null) {
+        if (!this.silent) {
+          console.warn('data', data);
+        }
+        throw new Error('Unknown message type: ' + data.type);
+      } else {
+        handler(data);
+        return;
+      }
+    };
+  }
+
+  dispose() {
+    this.ws.close();
+  }
+
+  protected sendMessage(message: Message, nAttempts = 10) {
+    if (this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    } else if (this.ws.readyState === WebSocket.CONNECTING) {
+      if (nAttempts > 0) {
+        setTimeout(() => {
+          this.sendMessage(message, nAttempts - 1);
+        }, 25);
+      } else {
+        throw new Error(
+          `Cannot send message because it is not connected. Cannot send: ${JSON.stringify(message)}. Status: ${
+            this.ws.readyState
+          }`,
+        );
+      }
+    } else {
+      console.log('message not sent because not connected or connecting', message);
+    }
+  }
+
+  protected registerHandler(type: string, handler: MessageHandler<Message>) {
+    this.handlers[type.toLowerCase()] = handler;
+  }
+
+  protected abstract registerHandlers() : void;
+
+  protected invokeCallback(requestId: string, ...args: any[]) {
+    const cb = this.getAndDeleteCallback(requestId);
+    if (cb != null) {
+      // @ts-ignore
+      cb(...args);
+    }
+  }
+
+  protected getAndDeleteCallback(requestId: string) {
+    const cb = this.callbacks[requestId];
+    delete this.callbacks[requestId];
+    return cb;
+  }
+
+  setSilent(): void {
+    this.silent = true;
+  }
+
+  setVerbose(): void {
+    this.silent = false;
+  }
+}
+
+export class WsGlobalCommunication {
+  private ws: WebSocket;
+  private silent: boolean;
+  private readonly handlers: { [type: string]: MessageHandler<Message> };
+  private readonly callbacks: { [requestId: string]: Callback };
+
+  constructor(url: string, ws?: WebSocket) {
+    this.ws = ws || new WebSocket(url);
+    this.callbacks = {};
+    this.silent = true;
+
+    this.handlers = {};
+    this.registerHandlers();
+
+    this.ws.onmessage = (event) => {
+      if (!this.silent) {
+        console.info('onmessage', event);
+      }
+      const data = JSON.parse(event.data) as Message;
+      if (!this.silent) {
+        console.info('  data: ', data);
+      }
+      const handler = this.handlers[data.type.toLowerCase()];
+      if (handler == null) {
+        if (!this.silent) {
+          console.warn('data', data);
+        }
+        throw new Error('Unknown message type: ' + data.type);
+      } else {
+        handler(data);
+        return;
+      }
+    };
+  }
+
+  dispose() {
+    this.ws.close();
+  }
+
+  getInstancesOfConcept(modelName: string, conceptName: string, receiver: LimitedModelNodesReceiver, uuid: string = uuidv4()): void {
+    this.callbacks[uuid] = (data: LimitedNodeData[]) => {
+      receiver(data.map((el)=>new LimitedModelNode(el)));
+    };
+    this.sendMessage({
+      type: 'getInstancesOfConcept',
+      requestId: uuid,
+      modelName,
+      conceptName
+    } as GetInstancesOfConcept);
+  }
+
+  getRoots(modelName: string, receiver: LimitedModelNodesReceiver, uuid: string = uuidv4()): void {
+    this.callbacks[uuid] = (data: LimitedNodeData[]) => {
+      receiver(data.map((el)=>new LimitedModelNode(el)));
+    };
+    this.sendMessage({
+      type: 'getRoots',
+      requestId: uuid,
+      modelName
+    } as GetRoots);
+  }
+
+  private sendMessage(message: Message, nAttempts = 10) {
+    if (this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    } else if (this.ws.readyState === WebSocket.CONNECTING) {
+      if (nAttempts > 0) {
+        setTimeout(() => {
+          this.sendMessage(message, nAttempts - 1);
+        }, 25);
+      } else {
+        throw new Error(
+          `Cannot send message because it is not connected. Cannot send: ${JSON.stringify(message)}. Status: ${
+            this.ws.readyState
+          }`,
+        );
+      }
+    } else {
+      console.log('message not sent because not connected or connecting', message);
+    }
+  }
+
+  private registerHandler(type: string, handler: MessageHandler<Message>) {
+    this.handlers[type.toLowerCase()] = handler;
+  }
+
+  private registerHandlers() {
+    this.registerHandler('GetInstancesOfConceptAnswer', (msg: GetInstancesOfConceptAnswer) => {
+      this.invokeCallback(msg.requestId, msg.nodes);
+    });
+    this.registerHandler('GetRootsAnswer', (msg: GetRootsAnswer) => {
+      this.invokeCallback(msg.requestId, msg.nodes);
+    });
+  }
+
+  private invokeCallback(requestId: string, ...args: any[]) {
+    const cb = this.getAndDeleteCallback(requestId);
+    if (cb != null) {
+      // @ts-ignore
+      cb(...args);
+    }
+  }
+
+  private getAndDeleteCallback(requestId: string) {
+    const cb = this.callbacks[requestId];
+    delete this.callbacks[requestId];
+    return cb;
+  }
+
+  setSilent(): void {
+    this.silent = true;
+  }
+
+  setVerbose(): void {
+    this.silent = false;
+  }
+}
+
+/**
+ * It is used to communicate w.r.t. a specific model.
+ */
 export class WsCommunication {
   private ws: WebSocket;
   private readonly modelName: string; // This is the qualified model name
@@ -580,29 +792,6 @@ export class WsCommunication {
 
   dispose() {
     this.ws.close();
-  }
-
-  getInstancesOfConcept(modelName: string, conceptName: string, uuid: string = uuidv4(), receiver: LimitedModelNodesReceiver): void {
-    this.callbacks[uuid] = (data: LimitedModelNode[]) => {
-      receiver(data);
-    };
-    this.sendMessage({
-      type: 'getInstancesOfConcept',
-      requestId: uuid,
-      modelName,
-      conceptName
-    } as GetInstancesOfConcept);
-  }
-
-  getRoots(modelName: string, uuid: string = uuidv4(), receiver: LimitedModelNodesReceiver): void {
-    this.callbacks[uuid] = (data: LimitedModelNode[]) => {
-      receiver(data);
-    };
-    this.sendMessage({
-      type: 'getRoots',
-      requestId: uuid,
-      modelName
-    } as GetRoots);
   }
 }
 
