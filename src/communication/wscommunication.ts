@@ -1,8 +1,11 @@
 import {
+  GetRoots,
+  limitedDataToNode,
+  LimitedModelNode, LimitedNodeData,
   modelNodeToNodeInModel,
   NodeData,
   NodeId,
-  nodeIdToString,
+  nodeIdToString, OperationResult,
   PropertiesValues,
   PropertyValue,
   refToNodeInModel,
@@ -55,6 +58,7 @@ import {
   UUID,
 } from '../internal';
 import { registerIssuesForModel, registerIssuesForNode } from '../internal';
+import { GetInstancesOfConcept } from '../internal';
 
 export interface Alternative {
   conceptName: string;
@@ -86,13 +90,15 @@ type NodeAddedCallback = (addedNodeID: NodeId) => void;
 type DirectAlternativesReceiver = (alternatives: AlternativesForDirectReference) => void;
 type AlternativesReceiver = (alternatives: Alternatives) => void;
 type NodeDataReceiver = (data: NodeData) => void;
+type LimitedModelNodesReceiver = (data: LimitedModelNode[]) => void;
 type Callback =
   | NodeProcessor
   | IntentionsCallback
   | NodeAddedCallback
   | AlternativesReceiver
   | DirectAlternativesReceiver
-  | NodeDataReceiver;
+  | NodeDataReceiver
+  | LimitedModelNodesReceiver;
 
 export class RootsObserver {
   nodeAdded: (modelName: string, node: ModelNode) => void;
@@ -574,6 +580,29 @@ export class WsCommunication {
 
   dispose() {
     this.ws.close();
+  }
+
+  getInstancesOfConcept(modelName: string, conceptName: string, uuid: string = uuidv4(), receiver: LimitedModelNodesReceiver): void {
+    this.callbacks[uuid] = (data: LimitedModelNode[]) => {
+      receiver(data);
+    };
+    this.sendMessage({
+      type: 'getInstancesOfConcept',
+      requestId: uuid,
+      modelName,
+      conceptName
+    } as GetInstancesOfConcept);
+  }
+
+  getRoots(modelName: string, uuid: string = uuidv4(), receiver: LimitedModelNodesReceiver): void {
+    this.callbacks[uuid] = (data: LimitedModelNode[]) => {
+      receiver(data);
+    };
+    this.sendMessage({
+      type: 'getRoots',
+      requestId: uuid,
+      modelName
+    } as GetRoots);
   }
 }
 

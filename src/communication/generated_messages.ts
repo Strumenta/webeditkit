@@ -8,6 +8,7 @@ import {
   Result,
 } from './base_messages';
 import { NodeId, NodeData, PropertiesValues, PropertyValue } from '../datamodel/misc';
+import { LimitedNodeData } from '../../dist/internal';
 
 export interface CreateRoot extends Message {
   type: 'createRoot';
@@ -241,4 +242,28 @@ export interface InstantiateConcept extends Message {
   type: 'instantiateConcept';
   nodeToReplace: NodeReference;
   conceptToInstantiate: string;
+}
+
+export interface GetInstancesOfConcept extends RequestMessage {
+  type: 'getInstancesOfConcept';
+  modelName: string;
+  conceptName: string;
+}
+
+export interface GetRoots extends RequestMessage {
+  type: 'getRoots';
+  modelName: string;
+}
+
+export interface GetInstancesOfConceptAnswer extends RequestAnswerMessage {
+  type: 'getInstancesOfConceptAnswer';
+  modelName: string;
+  conceptName: string;
+  nodes: LimitedNodeData[];
+}
+
+export interface GetRootsAnswer extends RequestAnswerMessage {
+  type: 'getRootsAnswer';
+  modelName: string;
+  nodes: LimitedNodeData[];
 }

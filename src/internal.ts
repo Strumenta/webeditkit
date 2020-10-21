@@ -332,3 +332,6 @@ export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, referen
 
 import { ObserverAdapter} from './presentation/EditorController';
 export {ObserverAdapter, ReferenceCellOptions}
+
+import {GetInstancesOfConcept, GetInstancesOfConceptAnswer, GetRoots, GetRootsAnswer} from './communication/generated_messages';
+export {GetInstancesOfConcept, GetInstancesOfConceptAnswer, GetRoots, GetRootsAnswer}
