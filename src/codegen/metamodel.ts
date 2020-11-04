@@ -60,6 +60,9 @@ export class SResolver {
     if (ref.to.startsWith('int:')) {
       const id = ref.to.substring('int:'.length);
       return this.idToNode[id];
+    } else if (ref.to.startsWith(`ext:${this.model.uuid()}:`)) {
+      const id = ref.to.substring(`ext:${this.model.uuid()}:`.length);
+      return this.idToNode[id];
     } else {
       return null;
     }
@@ -177,5 +180,9 @@ export class SModel {
       }
     }
     return undefined;
+  }
+
+  uuid() : string {
+    return this.data.uuid;
   }
 }
