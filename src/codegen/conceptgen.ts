@@ -45,8 +45,11 @@ function capitalize(word: string) {
   return word[0].toUpperCase() + word.slice(1).toLowerCase();
 }
 
-function generateContainmentAccessor(link: Containment, gc: GeneratedCode, classdecl: ClassDeclaration) {
+function generateContainmentAccessor(link: Containment, gc: GeneratedCode, classdecl: ClassDeclaration, hasPropertyWithSameName: boolean) {
   let name = link.name;
+  if (hasPropertyWithSameName) {
+    name = "containment" + capitalize(name)
+  }
   if (forbiddenNames.includes(name)) {
     name = name + '_';
   }
@@ -305,7 +308,8 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile)
 
     // Generate accessor
     for (const link of relevantContainments) {
-      generateContainmentAccessor(link, gc, classDeclaration);
+      const hasPropertyWithSameName = relevantProperties.find((prop:Property)=>prop.name === link.name) != null;
+      generateContainmentAccessor(link, gc, classDeclaration, hasPropertyWithSameName);
     }
     for (const link of relevantReferences) {
       generateReferenceAccessor(link, classDeclaration);
