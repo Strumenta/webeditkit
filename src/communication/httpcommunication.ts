@@ -55,14 +55,15 @@ export class HttpCommunication {
 
   async executeAction(modelName: string, nodeIdString: string, actionName: string): Promise<any> {
     return new Promise<any>((resolve, onrejected) => {
-      void fetch(`${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}`, {
+      const url = `${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}`;
+      void fetch(url, {
         method: 'POST',
       }).then(async (response) => {
         const data = (await response.json()) as OperationResult<any>;
         if (data.success) {
           resolve(data.value);
         } else {
-          onrejected(data.message);
+          onrejected({message: data.message, url});
         }
       });
     });
