@@ -53,9 +53,11 @@ export interface OperationResult<D> {
 export class HttpCommunication {
   constructor(private readonly httpMpsServerAddress: string) {}
 
-  async executeAction(modelName: string, nodeIdString: string, actionName: string): Promise<any> {
+  async executeAction(modelName: string, nodeIdString: string, actionName: string,
+                      params?: {[key:string]:string}): Promise<any> {
     return new Promise<any>((resolve, onrejected) => {
-      const url = `${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}`;
+      const paramsCleaned = params == null ? {} : params;
+      const url = `${this.httpMpsServerAddress}/models/${modelName}/${nodeIdString}/action/${actionName}?${new URLSearchParams(paramsCleaned)}`;
       void fetch(url, {
         method: 'POST',
       }).then(async (response) => {

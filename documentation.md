@@ -32,5 +32,5 @@ Those elements:
 
 ```
 npm link
-MPSSERVER_PORT=2939 languagegen my.lanugage -d destination_dir
+MPSSERVER_PORT=2939 languagegen my.langugage -d destination_dir
 ```

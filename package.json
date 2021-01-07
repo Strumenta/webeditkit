@@ -1,6 +1,6 @@
 {
   "name": "webeditkit",
-  "version": "1.2.13-dev",
+  "version": "1.2.13",
   "description": "A framework to create projectional editors",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

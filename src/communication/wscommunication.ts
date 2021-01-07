@@ -318,14 +318,14 @@ export class WsGlobalCommunication {
     this.silent = false;
   }
 
-  async getNodeData(node: NodeReference, uuid: string = uuidv4()): Promise<NodeData> {
+  async getNodeData(node: NodeReference, requestId: string = uuidv4()): Promise<NodeData> {
     const promise = new Promise<NodeData>((resolve, reject) => {
-      this.callbacks[uuid] = (data: NodeData) => {
+      this.callbacks[requestId] = (data: NodeData) => {
         resolve(data);
       };
       this.sendMessage({
         type: 'getNode',
-        requestId: uuid,
+        requestId,
         node,
       } as GetNode);
     });
