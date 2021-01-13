@@ -141,6 +141,9 @@ export class ModelNode extends LimitedModelNode {
   }
 
   findNodeById(nodeIdStr: string): ModelNode | undefined {
+    if (nodeIdStr == null) {
+      throw new Error("findNodeById: nodeIdStr should not be null");
+    }
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
