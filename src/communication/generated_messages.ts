@@ -65,6 +65,7 @@ export interface DefaultInsertion extends RequestMessage {
   modelName: string;
   container: string;
   containmentName: string;
+  conceptName?: string;
 }
 
 export interface AnswerDefaultInsertion extends RequestAnswerMessage {

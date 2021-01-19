@@ -148,5 +148,5 @@ import {WsGlobalCommunication} from './internal';
 export {WsGlobalCommunication}
 import {getWsGlobalCommunication} from  './internal'
 export {getWsGlobalCommunication}
-import {getDefaultWsUrl, setDefaultWsUrl} from './internal';
-export {getDefaultWsUrl, setDefaultWsUrl}
+import {getDefaultWsUrl, setDefaultWsUrl, CollectionCellOptions} from './internal';
+export {getDefaultWsUrl, setDefaultWsUrl, CollectionCellOptions}
