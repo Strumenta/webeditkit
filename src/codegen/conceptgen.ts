@@ -187,10 +187,9 @@ function generateEditingSupportForContainment(link: Containment, classdecl: Clas
       name: `${link.name}VerticalColl`,
       returnType: 'VNode',
       parameters: [
-        { name: 'wrapInRows?', type: 'boolean' },
-        { name: 'extraClasses?', type: 'string[]' },
+        { name: 'options?', type: 'CollectionCellOptions' }
       ],
-      statements: [`return verticalCollectionCell(this, '${link.name}', wrapInRows, extraClasses);`],
+      statements: [`return verticalCollectionCell(this, '${link.name}', options);`],
     });
   } else {
     classdecl.addMethod({
