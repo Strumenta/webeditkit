@@ -124,7 +124,7 @@ export function verticalCollectionCell(
           console.log('got enter -> triggering adding element', event.target);
           const targetNode = domElementToModelNode(event.target as HTMLElement);
           console.log('  adding after', targetNode, 'container is', modelNode);
-          targetNode?.insertNextSibling();
+          targetNode?.insertNextSibling(options?.defaultChildConcept);
           event.stopPropagation();
         }
       }

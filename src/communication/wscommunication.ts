@@ -690,11 +690,12 @@ export class WsCommunication {
     } as ReferenceChange);
   }
 
-  insertNextSibling(sibling: ModelNode): void {
+  insertNextSibling(sibling: ModelNode, conceptName?: string): void {
     this.sendMessage({
       type: 'insertNextSibling',
       modelName: sibling.modelName(),
       sibling: sibling.idString(),
+      conceptName
     } as InsertNextSibling);
   }
 

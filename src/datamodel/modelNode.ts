@@ -247,8 +247,8 @@ export class ModelNode extends LimitedModelNode {
     this.ws().setChild(this, containmentName, childConcept, undefined, initializer, uuid);
   }
 
-  insertNextSibling(): void {
-    this.ws().insertNextSibling(this);
+  insertNextSibling(conceptName?: string): void {
+    this.ws().insertNextSibling(this, conceptName);
   }
 
   removeChild(relationName: string, childData: NodeData): void {
