@@ -76,7 +76,7 @@ export class GeneratedCode {
   addImports(sourceFile: SourceFile) {
     for (const key of Object.keys(this.imports)) {
       sourceFile.addImportDeclaration({
-        moduleSpecifier: `./${key.replace(".", "_")}`,
+        moduleSpecifier: `./${key.replace(/\./gi, "_")}`,
         namedImports: this.imports[key]
       });
     }
