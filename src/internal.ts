@@ -84,6 +84,7 @@ import {
   row,
   tabCell,
   verticalCollectionCell,
+  CollectionCellOptions,
   verticalGroupCell,
 } from './presentation/cells/types';
 import { Data } from './presentation/cells/data';
@@ -133,6 +134,7 @@ export {
   row,
   tabCell,
   verticalCollectionCell,
+  CollectionCellOptions,
   verticalGroupCell,
   SuggestionsReceiver,
   addInsertHook,

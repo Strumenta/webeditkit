@@ -141,6 +141,9 @@ export class ModelNode extends LimitedModelNode {
   }
 
   findNodeById(nodeIdStr: string): ModelNode | undefined {
+    if (nodeIdStr == null) {
+      throw new Error("findNodeById: nodeIdStr should not be null");
+    }
     if (this.idString() === nodeIdStr.toString()) {
       return this;
     }
@@ -244,8 +247,8 @@ export class ModelNode extends LimitedModelNode {
     this.ws().setChild(this, containmentName, childConcept, undefined, initializer, uuid);
   }
 
-  insertNextSibling(): void {
-    this.ws().insertNextSibling(this);
+  insertNextSibling(conceptName?: string): void {
+    this.ws().insertNextSibling(this, conceptName);
   }
 
   removeChild(relationName: string, childData: NodeData): void {

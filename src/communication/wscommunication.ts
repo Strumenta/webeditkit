@@ -627,6 +627,7 @@ export class WsCommunication {
     container: ModelNode,
     containmentName: string,
     reactorToInsertion: (addedNodeID: NodeId) => void,
+    conceptName?: string,
     uuid: string = uuidv4(),
   ): void {
     this.callbacks[uuid] = reactorToInsertion;
@@ -634,6 +635,7 @@ export class WsCommunication {
       type: 'defaultInsertion',
       modelName: container.modelName(),
       container: container.idString(),
+      conceptName,
       requestId: uuid,
       containmentName,
     } as DefaultInsertion);
@@ -688,11 +690,12 @@ export class WsCommunication {
     } as ReferenceChange);
   }
 
-  insertNextSibling(sibling: ModelNode): void {
+  insertNextSibling(sibling: ModelNode, conceptName?: string): void {
     this.sendMessage({
       type: 'insertNextSibling',
       modelName: sibling.modelName(),
       sibling: sibling.idString(),
+      conceptName
     } as InsertNextSibling);
   }
 

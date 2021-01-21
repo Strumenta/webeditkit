@@ -55,7 +55,12 @@ export function childCell(
   }
 }
 
-function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNode {
+interface EmptyCollectionCellOptions {
+  defaultChildConcept?: string
+}
+
+function emptyCollectionCell(modelNode: ModelNode, containmentName: string,
+                             options?: EmptyCollectionCellOptions): VNode {
   const ws = getWsCommunication(modelNode.modelName());
   return fixedCell(
     modelNode,
@@ -70,30 +75,36 @@ function emptyCollectionCell(modelNode: ModelNode, containmentName: string): VNo
       ws.triggerDefaultInsertion(modelNode, containmentName, (addedNodeID: NodeId) => {
         const nodeIdStr = nodeIdToString(addedNodeID);
         focusOnNode(nodeIdStr, modelNode.rootName());
-      });
+      }, options?.defaultChildConcept);
     },
   );
+}
+
+export interface CollectionCellOptions {
+  wrapInRows?: boolean,
+  extraClasses?: string[],
+  defaultChildConcept?: string
 }
 
 export function verticalCollectionCell(
   modelNode: ModelNode,
   containmentName: string,
-  wrapInRows = true,
-  extraClasses: string[] = [],
+  options?: CollectionCellOptions,
 ): VNode {
-  const extraClassesStr = extraClassesToSuffix(extraClasses);
+  const extraClassesStr = extraClassesToSuffix(options?.extraClasses || []);
   const children = modelNode.childrenByLinkName(containmentName);
   const data = { dataset: { relation_represented: containmentName } };
   let baseNode;
   if (children.length === 0) {
     baseNode = h('div.vertical-collection.represent-collection' + extraClassesStr, data, [
-      emptyCollectionCell(modelNode, containmentName),
+      emptyCollectionCell(modelNode, containmentName, { defaultChildConcept: options?.defaultChildConcept }),
     ]);
   } else {
     baseNode = h(
       'div.vertical-collection.represent-collection' + extraClassesStr,
       data,
       map(modelNode.childrenByLinkName(containmentName), (el) => {
+        const wrapInRows = (options != null && options.wrapInRows) || options == null;
         if (wrapInRows) {
           return row(renderModelNode(el));
         } else {
@@ -113,7 +124,7 @@ export function verticalCollectionCell(
           console.log('got enter -> triggering adding element', event.target);
           const targetNode = domElementToModelNode(event.target as HTMLElement);
           console.log('  adding after', targetNode, 'container is', modelNode);
-          targetNode?.insertNextSibling();
+          targetNode?.insertNextSibling(options?.defaultChildConcept);
           event.stopPropagation();
         }
       }

@@ -75,35 +75,43 @@ class IntentionsMenu {
   constructor(triggerElement: HTMLElement, intentions: Intention[]) {
     const domParser = new DOMParser();
     let node = domParser.parseFromString("<div id='intentions-menu'></div>", 'text/html');
-    document.body.append(node);
+    // @ts-ignore
+    document.body.append(node.documentElement.querySelector("body").children[0]);
 
     for (const i of intentions) {
-      node = domParser.parseFromString(`<input value='${i.description}'><br>`, 'text/html');
-      document.getElementById('intentions-menu')?.append(node);
+      node = domParser.parseFromString(`<input value='${i.description}'>`, 'text/html');
+      const children = node.documentElement.querySelector("body")?.children || new HTMLCollection();
+      // tslint:disable-next-line:prefer-for-of
+      for (let index=0;index<children.length;index++) {
+        const item = children[index];
+        document.getElementById('intentions-menu')?.append(item);
+      }
     }
 
     // Otherwise the handler will kill also future intentions menus
     this.myIntentionsMenu = document.getElementById('intentions-menu') as HTMLDivElement;
-    document.querySelector('#intentions-menu input')?.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Enter') {
-        intentions[this.indexOfNode(e.target as Element, 'input')].execute();
-        this.deleteMenu();
-      } else if (e.key === 'Escape') {
-        this.deleteMenu();
-      } else if (e.key === 'ArrowDown') {
-        const dest = next(e.target as Element, 'input') as HTMLElement;
-        if (dest) {
-          dest.focus();
+    document.querySelectorAll('#intentions-menu input').forEach((el) =>
+      el.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+          intentions[this.indexOfNode(e.target as Element, 'input')].execute();
+          this.deleteMenu();
+        } else if (e.key === 'Escape') {
+          this.deleteMenu();
+        } else if (e.key === 'ArrowDown') {
+          const dest = next(e.target as Element, 'input') as HTMLElement;
+          if (dest) {
+            dest.focus();
+          }
+        } else if (e.key === 'ArrowUp') {
+          const dest = previous(e.target as Element, 'input') as HTMLElement;
+          if (dest) {
+            dest.focus();
+          }
         }
-      } else if (e.key === 'ArrowUp') {
-        const dest = previous(e.target as Element, 'input') as HTMLElement;
-        if (dest) {
-          dest.focus();
-        }
-      }
-      e.preventDefault();
-      return false;
-    });
+        e.preventDefault();
+        return false;
+      })
+    );
     const left = triggerElement.getBoundingClientRect().left;
     const top = triggerElement.getBoundingClientRect().bottom;
     this.myIntentionsMenu.style.left = `${left}px`;
@@ -117,7 +125,7 @@ class IntentionsMenu {
       return element && element.parentElement?.matches('#intentions-menu');
     }
 
-    (document.querySelector('#intentions-menu input:first') as HTMLElement)?.focus();
+    (document.querySelector('#intentions-menu input') as HTMLElement)?.focus();
 
     autoresize(document.querySelector('#intentions-menu input') as HTMLElement, myAutoresizeOptions);
     document.body.addEventListener('focusin', (e) => {
