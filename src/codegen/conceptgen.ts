@@ -2,19 +2,20 @@ import { Concept, Containment, IData, Property, Reference } from '..';
 import { baseConcept, linkConstName, GeneratedCode, propertyConstName, simpleName } from './utils';
 import { ClassDeclaration, SourceFile } from 'ts-morph';
 
-export function processConcepts(concepts: Concept[], gc: GeneratedCode, languageFile: SourceFile): GeneratedCode {
+export function processConcepts(concepts: Concept[], gc: GeneratedCode, languageFile: SourceFile,
+                                coGeneratedLanguages: string[]): GeneratedCode {
   const skipped: Concept[] = [];
   for (const c of concepts) {
     if (c.superConcept != null && c.superConcept !== baseConcept) {
       if (gc.considerDependency(c.superConcept)) {
-        gc = processConcept(c, gc, languageFile);
+        gc = processConcept(c, gc, languageFile, coGeneratedLanguages);
         gc.generatedConcepts.push(c.qualifiedName);
       } else {
         console.log(`  (skipping ${c.qualifiedName} because ${c.superConcept} has not been processed yet)`);
         skipped.push(c);
       }
     } else {
-      gc = processConcept(c, gc, languageFile);
+      gc = processConcept(c, gc, languageFile, coGeneratedLanguages);
       gc.generatedConcepts.push(c.qualifiedName);
     }
   }
@@ -29,7 +30,7 @@ export function processConcepts(concepts: Concept[], gc: GeneratedCode, language
       console.log();
       console.log(`  reexamining skipped concepts ${skipped.length}, new cycle`);
       console.log();
-      return processConcepts(skipped, gc, languageFile);
+      return processConcepts(skipped, gc, languageFile, coGeneratedLanguages);
     } else {
       console.log();
       console.log('  all concepts processed');
@@ -248,12 +249,12 @@ function toCleanConceptName(qn: string) {
   return qn.replace('.structure.', '.');
 }
 
-function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile): GeneratedCode {
+function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile, coGeneratedLanguages: string[]): GeneratedCode {
   console.log(`  -> processing concept ${c.qualifiedName}`);
   if (!c.isInterface) {
     let parent = 'ModelNode';
     if (c.superConcept != null && c.superConcept !== baseConcept) {
-      parent = gc.processParent(c.superConcept);
+      parent = gc.processParent(c.superConcept, coGeneratedLanguages);
     }
     const className = gc.cleanClassName(simpleName(c.qualifiedName));
     languageFile.addStatements('// tslint:disable-next-line:max-classes-per-file');

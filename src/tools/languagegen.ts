@@ -38,7 +38,7 @@ function makeRequest<T>(partialUrl: string): T {
   }
 }
 
-async function processLanguage(languageName: string, destDir: string) {
+async function processLanguage(languageName: string, destDir: string, coGeneratedLanguages: string[]) {
   console.log('');
   console.log(`(* Processing language ${languageName} *)`);
 
@@ -80,7 +80,7 @@ async function processLanguage(languageName: string, destDir: string) {
   const langInfo = makeRequest<LanguageInfoDetailed>(`/languages/${languageName}`);
   try {
     const gc = new GeneratedCode(languageName);
-    processConcepts(langInfo.concepts, gc, languageFile);
+    processConcepts(langInfo.concepts, gc, languageFile, coGeneratedLanguages);
   } catch (e) {
     console.error(`issue processing language data: ${e}`);
     process.exit(5);
@@ -120,7 +120,7 @@ function main() {
     process.exit(1);
   }
   for (const languageName of languages) {
-    processLanguage(languageName, destdir);
+    processLanguage(languageName, destdir, languages);
   }
 }
 

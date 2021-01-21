@@ -36,9 +36,11 @@ export class GeneratedCode {
     }
   }
 
-  processParent(parentName: string): string {
+  processParent(parentName: string, coGeneratedLanguages: string[]): string {
     if (this.isInThisLanguage(parentName)) {
-      // console.log(`    superConcept is in the language`);
+      return this.cleanClassName(simpleName(parentName));
+    } else if (coGeneratedLanguages.find((ln)=>this.isInLanguage(parentName, ln))) {
+      // TODO add import
       return this.cleanClassName(simpleName(parentName));
     } else {
       if (this.ignoreOtherLanguages) {
@@ -52,8 +54,11 @@ export class GeneratedCode {
   }
 
   isInThisLanguage(name: string): boolean {
-    const res: boolean = name.startsWith(`${this.languageName}.structure.`);
-    // console.log(`  isInThisLanguage prefix=<${this.languageName}.structure.>, name=<${name}> res=${res}`);
+    return this.isInLanguage(name, this.languageName)
+  }
+
+  isInLanguage(name: string, languageName: string): boolean {
+    const res: boolean = name.startsWith(`${languageName}.structure.`);
     return res;
   }
 
