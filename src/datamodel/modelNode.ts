@@ -1,4 +1,4 @@
-import { dataToNode, fixedCell } from '../internal';
+import { baseUrlForModelName, dataToNode, fixedCell, getDefaultBaseUrl, HttpCommunication } from '../internal';
 import { getWsCommunication } from '../internal';
 import {
   LimitedNodeData,
@@ -273,8 +273,31 @@ export class ModelNode extends LimitedModelNode {
     return dataToNode(this.data.parent);
   }
 
+  executeAction(actionName: string, params?: {[key:string]:string}) : Promise<any> {
+    const mn = this.modelName();
+    if (mn == null) {
+      throw new Error("model name not obtained");
+    }
+    console.log("modelNode executeAction", mn, this.idString(), actionName, params);
+    return this.http().executeAction(mn, this.idString(), actionName, params);
+  }
+
   private ws() {
     return getWsCommunication(this.modelName());
+  }
+
+  private http() {
+    let baseUrl = baseUrlForModelName(this.modelName()) || getDefaultBaseUrl();
+    if (baseUrl == null) {
+      throw new Error(
+        'No base url specified for model ' + this.modelName() + ' and no default base url available',
+      );
+    }
+    if (!baseUrl.startsWith('http://')) {
+      baseUrl = 'http://' + baseUrl;
+    }
+    console.log("modelNode http", baseUrl);
+    return new HttpCommunication(baseUrl);
   }
 
   deleteMe(): void {

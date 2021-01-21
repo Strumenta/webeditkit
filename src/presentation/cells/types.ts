@@ -330,6 +330,33 @@ export function flagCell(modelNode: ModelNode, propertyName: string, extraClasse
   }
 }
 
+type OnInsertHook = (vnode: VNode) => void;
+
+interface FixedCellOptions {
+  extraClasses?: string[],
+  alternativesProvider?: AlternativesProvider,
+  deleter?: (doDelete: boolean) => void,
+  onEnter?: () => void,
+  onInsert?: OnInsertHook
+}
+
+export function readOnlyCell(
+  node: ModelNode,
+  startText: string,
+  textCalculator: Promise<string>
+) : VNode {
+  return fixedCell(node, startText, [], undefined, undefined, undefined, (vnode: VNode) => {
+    textCalculator.then((description:string)=>{
+      (vnode.elm! as HTMLInputElement).value = description;
+      triggerResize(vnode);
+    }).catch((reason:any) => {
+      (vnode.elm! as HTMLInputElement).value = `<FAILED: ${JSON.stringify(reason)}>`;
+      triggerResize(vnode);
+    });
+  });
+}
+
+// TODO use FixedCellOptions
 export function fixedCell(
   modelNode: ModelNode | undefined,
   text: string,
@@ -337,6 +364,7 @@ export function fixedCell(
   alternativesProvider?: AlternativesProvider,
   deleter?: (doDelete: boolean) => void,
   onEnter?: () => void,
+  onInsert?: OnInsertHook,
 ): VNode {
   extraClasses = extraClasses || [];
   let extraClassesStr = '';
@@ -352,6 +380,9 @@ export function fixedCell(
           addAutoresize(vnode);
           if (alternativesProvider != null) {
             installAutocomplete(vnode, alternativesProvider, true);
+          }
+          if (onInsert != null) {
+            onInsert(vnode);
           }
         },
         prepatch: (oldVNode, vNode) => {

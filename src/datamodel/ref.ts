@@ -69,6 +69,8 @@ export class Ref {
     if (!response.success) {
       throw new Error('No data obtained');
     }
-    return dataToNode(response.value);
+    const node = dataToNode(response.value);
+    node.injectModelName(this.data.model.qualifiedName, undefined);
+    return node;
   }
 }

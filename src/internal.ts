@@ -73,6 +73,7 @@ import { baseUrlForModelName } from './facade';
 
 import {
   fixedCell,
+  readOnlyCell,
   referenceCell,
   ReferenceCellOptions,
   horizontalCollectionCell,
@@ -342,4 +343,6 @@ export {WsGlobalCommunication}
 import {getWsGlobalCommunication} from  './communication/wscommunication'
 export {getWsGlobalCommunication}
 import {getDefaultWsUrl, setDefaultWsUrl} from './datamodel/registry';
-export {getDefaultWsUrl, setDefaultWsUrl}
+export {getDefaultWsUrl, setDefaultWsUrl, readOnlyCell}
+//import {triggerResize} from './presentation/cells/support'
+//export {triggerResize}
