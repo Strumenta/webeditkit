@@ -254,7 +254,7 @@ function processConcept(c: Concept, gc: GeneratedCode, languageFile: SourceFile,
   if (!c.isInterface) {
     let parent = 'ModelNode';
     if (c.superConcept != null && c.superConcept !== baseConcept) {
-      parent = gc.processParent(c.superConcept, coGeneratedLanguages);
+      parent = gc.processParent(c.superConcept, gc, coGeneratedLanguages);
     }
     const className = gc.cleanClassName(simpleName(c.qualifiedName));
     languageFile.addStatements('// tslint:disable-next-line:max-classes-per-file');

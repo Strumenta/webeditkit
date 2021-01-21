@@ -42,7 +42,27 @@ export class Resolver {
   }
 }
 
-export class SResolver {
+export interface IResolver {
+  resolve(ref: ReferenceDef): SNode | null
+}
+
+export class CombinedResolver implements IResolver {
+  private elements: IResolver[];
+
+  constructor(elements: IResolver[]) {
+    this.elements = elements;
+  }
+
+  addElement(element: IResolver) {
+    this.elements.push(element);
+  }
+
+  resolve(ref: ReferenceDef): SNode | null {
+    return this.elements.map((el)=>el.resolve(ref)).find((res)=>res != null) || null;
+  }
+}
+
+export class SResolver implements IResolver {
   private model: SModel;
   private idToNode: { [id: string]: SNode } = {};
 

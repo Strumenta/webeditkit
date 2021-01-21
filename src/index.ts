@@ -142,8 +142,8 @@ export { Renderer, SRenderer };
 import { processConcepts, GeneratedCode, ReferenceCellOptions } from './internal'
 export { processConcepts, GeneratedCode, ReferenceCellOptions }
 
-import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter } from './internal'
-export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter }
+import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, IResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter } from './internal'
+export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, IResolver, NodeId, NodeInModel, IssueDescription, ObserverAdapter }
 import {WsGlobalCommunication} from './internal';
 export {WsGlobalCommunication}
 import {getWsGlobalCommunication} from  './internal'

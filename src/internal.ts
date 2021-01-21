@@ -328,8 +328,8 @@ import { processConcepts } from './codegen/conceptgen'
 import { GeneratedCode } from './codegen/utils'
 export { processConcepts, GeneratedCode }
 
-import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver } from './codegen/metamodel'
-export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver }
+import { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, IResolver } from './codegen/metamodel'
+export { ReferenceDef, Node, Model, Resolver, child, property, nodeName, reference, SModel, SNode, SResolver, IResolver }
 
 import { ObserverAdapter} from './presentation/EditorController';
 export {ObserverAdapter, ReferenceCellOptions}

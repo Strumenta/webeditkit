@@ -1,3 +1,5 @@
+import { SourceFile } from 'ts-morph';
+
 export const baseConcept = 'jetbrains.mps.lang.core.structure.BaseConcept';
 
 export class GeneratedCode {
@@ -9,6 +11,10 @@ export class GeneratedCode {
   constructor(languageName: string) {
     this.languageName = languageName;
   }
+
+  // addImport(path: string, names: string[]) {
+  //
+  // }
 
   cleanClassName(name: string): string {
     if (simpleName(name) !== name) {
@@ -36,12 +42,17 @@ export class GeneratedCode {
     }
   }
 
-  processParent(parentName: string, coGeneratedLanguages: string[]): string {
+  processParent(parentName: string, gc: GeneratedCode, coGeneratedLanguages: string[]): string {
     if (this.isInThisLanguage(parentName)) {
       return this.cleanClassName(simpleName(parentName));
     } else if (coGeneratedLanguages.find((ln)=>this.isInLanguage(parentName, ln))) {
+      const containingLanguage = coGeneratedLanguages.find((ln)=>this.isInLanguage(parentName, ln));
+      const cleanedParentName = this.cleanClassName(simpleName(parentName));
       // TODO add import
-      return this.cleanClassName(simpleName(parentName));
+      // import {AbstractActivity} from "./gescomplus_dsl_core";
+      // gc.addImport(`./${(containingLanguage as string).replace(".", "_")}`, [cleanedParentName]);
+      gc.considerDependency(parentName);
+      return cleanedParentName;
     } else {
       if (this.ignoreOtherLanguages) {
         // console.log(`    superConcept ignore because not in the language`);
@@ -62,22 +73,35 @@ export class GeneratedCode {
     return res;
   }
 
+  addImports(sourceFile: SourceFile) {
+    for (const key of Object.keys(this.imports)) {
+      sourceFile.addImportDeclaration({
+        moduleSpecifier: `./${key.replace(".", "_")}`,
+        namedImports: this.imports[key]
+      });
+    }
+  }
+
   considerDependency(dependency: string): boolean {
+    // console.log("Considering dependency", dependency);
     if (this.generatedConcepts.includes(dependency)) {
+      // console.log("  Considering dependency, included in generated concepts", dependency);
       return true;
     }
     if (this.isInThisLanguage(dependency)) {
       // concept part of this language but not yet generated
+      // console.log("  Considering dependency, is in this language", dependency);
       return false;
     }
     // concept to be imported
-    if (!this.ignoreOtherLanguages) {
+    if (/*!this.ignoreOtherLanguages*/true) {
       const classSimpleName = dependency.split('.').pop() as string;
       const rest = dependency.substring(0, dependency.length - classSimpleName.length);
       if (!rest.endsWith('.structure.')) {
         throw new Error('invalid dependency ' + dependency);
       }
       const importedLanguageName = rest.substring(0, rest.length - '.structure.'.length);
+      // console.log("  Considering dependency, added as ", importedLanguageName, classSimpleName);
       if (this.imports[importedLanguageName] == null) {
         this.imports[importedLanguageName] = [];
       }
