@@ -534,7 +534,7 @@ describe('Cells.Types', () => {
     });
     it('it should be rendered in a certain way for not empty children not wrapping in rows', () => {
       const aNode = dataToNode(rootData1);
-      const cell = verticalCollectionCell(aNode, 'inputs', false);
+      const cell = verticalCollectionCell(aNode, 'inputs', {wrapInRows:false});
       expect(toHTML(cell)).to.eql(
         '<div class="vertical-collection represent-collection"><input class="fixed default-cell-concrete represent-node" value="[default Input]"><input class="fixed default-cell-concrete represent-node" value="[default Input]"></div>',
       );

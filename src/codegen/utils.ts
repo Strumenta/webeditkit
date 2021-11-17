@@ -94,7 +94,7 @@ export class GeneratedCode {
       return false;
     }
     // concept to be imported
-    if (/*!this.ignoreOtherLanguages*/true) {
+    if (!this.ignoreOtherLanguages) {
       const classSimpleName = dependency.split('.').pop() as string;
       const rest = dependency.substring(0, dependency.length - classSimpleName.length);
       if (!rest.endsWith('.structure.')) {

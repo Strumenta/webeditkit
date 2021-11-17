@@ -561,6 +561,7 @@ describe('WsCommunication', () => {
         mockServer!.close();
         done();
       },
+      undefined,
       uuid,
     );
   });
