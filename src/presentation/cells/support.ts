@@ -62,18 +62,20 @@ export function triggerResize(vnode: VNode): void {
   inputWidthUpdate(vnode.elm as HTMLElement, myAutoresizeOptions);
 }
 
-export function flattenArray(value: any): any[] {
+export function flattenArray(value: any, removingNulls = false): any[] {
   const originalArray: any[] = Array.from(value);
-  return flatten(originalArray);
+  return flatten(originalArray, [], removingNulls);
 }
 
-const flatten = (arr: any[], result: any[] = []): any[] => {
+const flatten = (arr: any[], result: any[] = [], removingNulls = false): any[] => {
   for (let i = 0, length = arr.length; i < length; i++) {
     const value = arr[i];
     if (Array.isArray(value)) {
       flatten(value, result);
     } else {
-      result.push(value);
+      if (!removingNulls || value != null) {
+        result.push(value);
+      }
     }
   }
   return result;

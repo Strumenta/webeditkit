@@ -94,6 +94,9 @@ function injectErrors(vnode: VNode, issues: IssuesMap): VNode {
   if (children != null) {
     for (let i = 0; i < children.length; i++) {
       if (typeof children[i] !== 'string') {
+        if (children[i] == null) {
+          throw Error("unexpected null child");
+        }
         children[i] = injectErrors(children[i] as VNode, issues);
       }
     }

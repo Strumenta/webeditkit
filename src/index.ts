@@ -150,3 +150,4 @@ import {getWsGlobalCommunication} from  './internal'
 export {getWsGlobalCommunication}
 import {getDefaultWsUrl, setDefaultWsUrl, CollectionCellOptions, triggerResize, readOnlyCell} from './internal';
 export {getDefaultWsUrl, setDefaultWsUrl, CollectionCellOptions, triggerResize, readOnlyCell}
+export {wrapInsertHook}

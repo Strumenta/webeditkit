@@ -783,7 +783,7 @@ export function referenceCell(
 }
 
 export function row(...elements: FlattableNode[]): VNode {
-  return h('div.row', {}, flattenArray(elements));
+  return h('div.row', {}, flattenArray(elements, true));
 }
 
 export function emptyRow(): VNode {
