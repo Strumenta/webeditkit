@@ -152,3 +152,5 @@ import {getDefaultWsUrl, setDefaultWsUrl, CollectionCellOptions, triggerResize, 
 export {getDefaultWsUrl, setDefaultWsUrl, CollectionCellOptions, triggerResize, readOnlyCell}
 import {wrapInsertHook} from './internal';
 export {wrapInsertHook}
+import {NodeReference, WsCommunication} from './internal'
+export {NodeReference, WsCommunication}
