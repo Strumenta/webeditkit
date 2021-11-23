@@ -38,6 +38,12 @@ export interface AddChild extends RequestMessage {
   conceptToInstantiate: string;
   index: number;
   smartRefNodeId?: NodeId;
+  idOfNewNode?: NodeId;
+}
+
+export interface MoveChild extends RequestMessage {
+    child: NodeReference;
+    index: number;
 }
 
 export interface SetChild extends Message {

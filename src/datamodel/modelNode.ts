@@ -1,4 +1,4 @@
-import { baseUrlForModelName, dataToNode, fixedCell, getDefaultBaseUrl, HttpCommunication } from '../internal';
+import { baseUrlForModelName, dataToNode, fixedCell, getDefaultBaseUrl, HttpCommunication, NodeId } from '../internal';
 import { getWsCommunication } from '../internal';
 import {
   LimitedNodeData,
@@ -233,9 +233,14 @@ export class ModelNode extends LimitedModelNode {
     index: number,
     childConcept: string,
     initializer?: NodeProcessor,
+    nodeId?: NodeId,
     uuid: string = uuidv4(),
   ): void {
-    this.ws().addChildAtIndex(this, containmentName, index, childConcept, undefined, initializer, uuid);
+    this.ws().addChildAtIndex(this, containmentName, index, childConcept, undefined, initializer, nodeId, uuid);
+  }
+
+  moveMe(index: number) : void {
+    this.ws().moveChild(this, index);
   }
 
   createSingleChild(

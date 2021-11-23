@@ -63,6 +63,7 @@ import { GetInstancesOfConcept } from '../internal';
 import exp from 'constants';
 import { getDefaultBaseUrl } from '../internal';
 import { getDefaultWsUrl } from '../internal';
+import { MoveChild } from './generated_messages';
 
 export interface Alternative {
   conceptName: string;
@@ -660,6 +661,7 @@ export class WsCommunication {
     conceptName: string,
     node?: NodeData, // TODO Alessio should this be a ModelNode instead? How?
     initializer?: NodeProcessor,
+    idOfNewNode?: NodeId,
     uuid: string = uuidv4(),
   ): void {
     if (index < -1) {
@@ -676,6 +678,7 @@ export class WsCommunication {
       containmentName,
       conceptToInstantiate: conceptName,
       smartRefNodeId: node?.id,
+      idOfNewNode
     } as AddChild);
   }
 
@@ -725,6 +728,14 @@ export class WsCommunication {
       type: 'deleteNode',
       node: modelNodeToNodeInModel(node),
     } as DeleteNode);
+  }
+
+  moveChild(node: ModelNode, index: number): void {
+    this.sendMessage({
+      type: 'moveChild',
+      node: modelNodeToNodeInModel(node),
+      index
+    } as MoveChild);
   }
 
   deleteNodeById(modelName: string, nodeId: string): void {
