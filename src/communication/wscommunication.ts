@@ -733,7 +733,7 @@ export class WsCommunication {
   moveChild(node: ModelNode, index: number): void {
     this.sendMessage({
       type: 'moveChild',
-      node: modelNodeToNodeInModel(node),
+      child: modelNodeToNodeInModel(node),
       index
     } as MoveChild);
   }
