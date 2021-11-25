@@ -131,8 +131,9 @@ abstract class AbstractWsCommunication {
     this.registerHandlers();
 
     this.ws.onclose = (event) => {
-      console.log("hey, why is this closing?", event)
+      console.log("WebSocket connection is closing", event)
     }
+
     this.ws.onopen = () => {
       this.wsKeepAlive();
     }
