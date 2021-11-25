@@ -117,6 +117,11 @@ abstract class AbstractWsCommunication {
   private readonly handlers: { [type: string]: MessageHandler<Message> };
   private readonly callbacks: { [requestId: string]: Callback };
 
+  private wsKeepAlive() {
+    ws.send("KEEP-ALIVE")
+    setTimeout(() => {this.wsKeepAlive()}, 20000)
+  }
+
   constructor(url: string, ws?: WebSocket) {
     this.ws = ws || new WebSocket(url);
     this.callbacks = {};
@@ -124,6 +129,13 @@ abstract class AbstractWsCommunication {
 
     this.handlers = {};
     this.registerHandlers();
+
+    this.ws.onclose = (event) => {
+      console.log("hey, why is this closing?", event)
+    }
+    this.ws.onopen = () => {
+      this.wsKeepAlive();
+    }
 
     this.ws.onmessage = (event) => {
       if (!this.silent) {
