@@ -118,7 +118,7 @@ abstract class AbstractWsCommunication {
   private readonly callbacks: { [requestId: string]: Callback };
 
   private wsKeepAlive() {
-    ws.send("KEEP-ALIVE")
+    this.ws.send("KEEP-ALIVE")
     setTimeout(() => {this.wsKeepAlive()}, 20000)
   }
 
