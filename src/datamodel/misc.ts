@@ -17,9 +17,10 @@ export function nodeIdToString(nodeId: NodeId): string {
 
 export interface LimitedNodeData {
   abstractConcept: boolean;
+  interfaceConcept: boolean;
   concept: string;
   id: NodeId;
-  name: string;
+  name: string | null;
   conceptAlias?: string;
 }
 
